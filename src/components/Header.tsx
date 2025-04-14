@@ -28,6 +28,9 @@ const  Header : React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false
 
     const handleLogout = () => {
         localStorage.clear()
+        sessionStorage.clear()
+        document.cookie = "token=; path=/;"
+        document.cookie = "role=; path=/;"
         router.push(ROUTES.LOGIN)
     }
 

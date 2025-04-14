@@ -23,8 +23,14 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-        const secret = new TextEncoder().encode(process.env.TOKEN_SECRET);
-        const { payload } = await jwtVerify(token, secret);
+        const secret = process.env.TOKEN_SECRET;
+
+        if (!secret || secret.trim() === "") {
+            throw new Error("Secret key is missing or invalid.");
+        }
+        
+        const encodedSecret = new TextEncoder().encode(secret);
+        const { payload } = await jwtVerify(token, encodedSecret);
 
         const userRole = payload.role as string;
 
@@ -64,6 +70,7 @@ export const config = {
         "/login",
         "/signup",
         "/admin/:path*",
-        "/user-profile", // Include user route explicitly
+        "/user-profile/:path*",
+        "/events/:path*",
     ],
 };
