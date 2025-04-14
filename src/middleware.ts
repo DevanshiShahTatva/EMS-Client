@@ -3,11 +3,11 @@ import { jwtVerify } from "jose";
 import { ROLE, ROUTES } from "./utils/constant";
 
 const adminDefaultRoute = ROUTES.ADMIN.DASHBOARD;
-const userDefaultRoute = ROUTES.USER_PROFILE;
+const userDefaultRoute = ROUTES.USER_EVENTS;
 
 const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP];
 const adminRoutes = [ROUTES.ADMIN.DASHBOARD, ROUTES.ADMIN.EVENTS];
-const userRoutes = [ROUTES.USER_PROFILE];
+const userRoutes = [ROUTES.USER_PROFILE, ROUTES.USER_EVENTS];
 
 export async function middleware(request: NextRequest) {
     const currentPath = request.nextUrl.pathname;

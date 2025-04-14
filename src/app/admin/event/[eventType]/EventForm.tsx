@@ -15,7 +15,11 @@ import { useRouter } from 'next/navigation';
 import Loader from '@/components/Loader';
 import QuilEditor from './QuilEditor';
 
-function CreateEventpage() {
+interface EventFormProps {
+  eventType : string
+}
+
+const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
 
   const router = useRouter()
 
@@ -399,8 +403,6 @@ function CreateEventpage() {
       toast.error("Some error has occured.")
       setLoder(false)
     }
-
-
   }
 
   useEffect(() => {
@@ -411,11 +413,11 @@ function CreateEventpage() {
   }, [formValues.start_time, formValues.end_time]);
 
     return (
-      <div className="my-5 lg:mx-40 md:mx-20 mx-5">
+      <div className="my-5 md:my-10 lg:mx-15 md:mx-15 mx-5">
         {loader && <Loader />}
 
         <div className="rounded-[12px] bg-white p-5">
-          <p className="text-2xl font-bold mb-10 text-center">Create Event</p>
+          <p className="text-2xl font-bold mb-10">{eventType === 'create' ? "Create" : "Update"} Event</p>
 
           <CustomTextField
             label="Title"
@@ -779,4 +781,4 @@ function CreateEventpage() {
     );
 }
 
-export default CreateEventpage
+export default EventForm

@@ -1,5 +1,5 @@
 export interface EventsDataTypes {
-    id?: string
+    id: string
     img: string;
     title: string;
     category: string;
