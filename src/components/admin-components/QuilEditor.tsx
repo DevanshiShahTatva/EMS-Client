@@ -2,21 +2,13 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import 'react-quill-new/dist/quill.snow.css';
+import { IQuilEditorProps } from "@/app/admin/event/types";
 
-type QuilEditorProps = {
-  label: string;
-  name : string
-  value: string;
-  onChange: (value : string) => void;
-  errorKey : boolean;
-  placeholder?: string;
-  errorMsg?: string;
-  required?: boolean;
-};
+
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
-const QuilEditor: React.FC<QuilEditorProps> = ({
+const QuilEditor: React.FC<IQuilEditorProps> = ({
   label,
   value,
   name,

@@ -1,23 +1,36 @@
 "use client";
 
 import React, { useEffect, useState } from 'react'
-import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
-import { useRouter } from 'next/navigation';
-import { API_ROUTES, PAGINATION_OPTIONS, ROUTES } from '@/utils/constant';
-import moment from 'moment';
-import Select from 'react-select';
-import { apiCall, getAuthToken } from '@/utils/helper';
-import { getTicketPriceRange } from './helper';
+
+// Custom Compoents
 import Loader from '@/components/Loader';
 import DeleteDialog from '@/components/DeleteModal';
-import { toast } from 'react-toastify';
+
+// types import
 import { EventResponse, EventsDataTypes } from '@/utils/types';
+
+// library support 
+import { useRouter } from 'next/navigation';
+import moment from 'moment';
+import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
+import { toast } from 'react-toastify';
+import Select from 'react-select';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+
+// constant import
+import { API_ROUTES, PAGINATION_OPTIONS, ROUTES } from '@/utils/constant';
+
+
+// helper functions
+import { apiCall, getAuthToken } from '@/utils/helper';
+import { getStatus, getTicketPriceRange } from './helper';
+
+
 
 function EventsListpage() {
   const router = useRouter()
@@ -71,17 +84,6 @@ function EventsListpage() {
     setSearchQuery(keyword)
     setEventsData(searchResult)
     setCurrentPage(1)
-  };
-
-  const getStatus = (startDate: string, endDate: string, tickets: number) => {
-    const now = moment();
-    const start = moment(startDate);
-    const end = moment(endDate);
-
-    if (tickets === 0) return "Sold Out";
-    if (now.isBefore(start)) return "Upcoming";
-    if (now.isAfter(end)) return "Ended";
-    return "Ongoing";
   };
 
   const statusColor = {

@@ -4,13 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Formik, Form, FormikHelpers } from "formik";
+import { toast } from "react-toastify";
 import { ROUTES, API_ROUTES } from "@/utils/constant";
+import { apiCall } from "@/utils/services/request";
 import { InitialLogInValues, LogInFormSchema } from "./helper";
+import { ILogInFormValues } from "./types";
 import FormikTextField from "@/components/common/FormikTextField";
 import Logo from "@/components/common/Logo";
-import { apiCall } from "@/utils/helper";
-import { toast } from "react-toastify";
-import { ILogInFormValues } from "./types";
 
 const LogInPage = () => {
   const router = useRouter();
@@ -22,16 +22,12 @@ const LogInPage = () => {
     const response = await apiCall({
       endPoint: API_ROUTES.AUTH.LOGIN,
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
+      body: values,
     });
 
-    const result = await response.json();
+    if (response.success) {
+      const { token, role } = response.data;
 
-    if (result.success) {
-      const { token, role } = result.data;
       if (rememberMe) {
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
@@ -45,14 +41,14 @@ const LogInPage = () => {
       }
 
       if (role === "admin") {
-        router.push("/admin/dashboard");
+        router.push(ROUTES.ADMIN.DASHBOARD);
       } else {
-        router.push("/events");
+        router.push(ROUTES.USER_EVENTS);
       }
 
-      toast.success(result.message);
+      toast.success(response.message);
     } else {
-      toast.error(result.message || "Login failed. Please try again.");
+      toast.error(response.message || "Login failed. Please try again.");
     }
   };
 

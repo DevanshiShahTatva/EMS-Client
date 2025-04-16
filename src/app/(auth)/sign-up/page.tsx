@@ -6,10 +6,9 @@ import { useRouter } from "next/navigation";
 import { Formik, Form, FormikHelpers } from "formik";
 import { toast } from "react-toastify";
 import { ROUTES, API_ROUTES } from "@/utils/constant";
-import Logo from "@/components/common/Logo";
+import { apiCall } from "@/utils/services/request";
 import FormikTextField from "@/components/common/FormikTextField";
-import { apiCall } from "@/utils/helper";
-
+import Logo from "@/components/common/Logo";
 import { InitialSignupValues, SignupFormSchema, TITLE } from "./helper";
 import { ISignupFormValues } from "./types";
 
@@ -17,23 +16,21 @@ const SignUpPage = () => {
   const router = useRouter();
 
   const handleSignupSubmit = async (values: ISignupFormValues, actions: FormikHelpers<ISignupFormValues>) => {
-    actions.setSubmitting(false);
+    actions.setSubmitting(true);
 
     const response = await apiCall({
       endPoint: API_ROUTES.AUTH.SIGNUP,
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
+      body: values,
     });
 
-    const result = await response.json();
-    if (result.success) {
-      router.push("/login");
-      toast.success(result.message);
+    actions.setSubmitting(false);
+
+    if (response.success) {
+      router.push(ROUTES.LOGIN);
+      toast.success(response.message);
     } else {
-      toast.error(result.message || "Signup failed. Please try again.");
+      toast.error(response.message || "Signup failed. Please try again.");
     }
   };
 

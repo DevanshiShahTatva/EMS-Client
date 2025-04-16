@@ -1,26 +1,9 @@
 import { AUTOCOMPLETE_API } from "@/utils/constant";
 import React, { useState, useEffect } from "react";
-import { EventLocation, LocationField } from "./helper";
-
-interface Suggestion {
-  display_name: string;
-  lat: string;
-  lon: string;
-}
-
-interface Props {
-  getLocationData: (locationData: LocationField) => void
-  label: string,
-  name: string,
-  required: boolean
-  placeholder?: string;
-  errorMsg?: string;
-  errorKey?: boolean
-  defaultValue?: EventLocation; 
-}
+import { IAddressAutoCompleteProps, ISuggestion } from "../../app/admin/event/types";
 
 
-const AddressAutocomplete: React.FC<Props> = ({
+const AddressAutocomplete: React.FC<IAddressAutoCompleteProps> = ({
   getLocationData,
   label,
   name,
@@ -36,7 +19,7 @@ const AddressAutocomplete: React.FC<Props> = ({
 }) => {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState(query);
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<ISuggestion[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
   // Debounce logic inside component
@@ -86,7 +69,7 @@ const AddressAutocomplete: React.FC<Props> = ({
     }
   }, [defaultValue]);
 
-  const handleSelect = (fullLocation: Suggestion) => {
+  const handleSelect = (fullLocation: ISuggestion) => {
     setQuery(fullLocation.display_name);
     setShowDropdown(false);
     const locationFields = {

@@ -1,24 +1,9 @@
 "use client";
 
+import { ITextFieldProps } from "@/app/admin/event/types";
 import React from "react";
 
-type TextFieldProps = {
-  label: string;
-  name: string;
-  errorKey : boolean;
-  type?: string;
-  placeholder?: string;
-  value: string;
-  errorMsg?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: () => void;
-  required?: boolean;
-  readOnly?:boolean;
-  disabled?:boolean;
-  multiple?: boolean;
-};
-
-const CustomTextField: React.FC<TextFieldProps> = ({
+const CustomTextField: React.FC<ITextFieldProps> = ({
   label,
   name,
   placeholder,

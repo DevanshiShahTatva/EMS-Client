@@ -1,44 +1,51 @@
 "use client"
 
 import React, { useEffect, useState, useRef } from 'react'
+
+// Custom Compoents
+import Loader from '@/components/Loader';
 import CustomTextField from './InputField';
-import { EventFormData, EventFormDataErrorTypes, InitialEventFormDataErrorTypes, InitialEventFormDataValues, LocationField, OptionType, Ticket } from './helper';
-import { ALLOWED_FILE_FORMATS, API_ROUTES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB, ROUTES } from '@/utils/constant';
+import QuilEditor from './QuilEditor';
+import AddressAutocomplete from './AddressAutoComplete.web';
 import CustomSelectField from './SelectField';
 import CustomDateTimePicker from './DateTimePicker';
-import { PencilSquareIcon , TrashIcon, CheckIcon, XMarkIcon} from "@heroicons/react/24/outline"
+
+// types import
+import { EventDataObjResponse, EventImage } from '@/utils/types';
+import { IEventFormData, IEventFormDataErrorTypes, IEventFormProps, ILocationField, IOptionType, ITicket } from '../../app/admin/event/types';
+
+// library support 
 import moment from 'moment';
-import { apiCall, getAuthToken } from '@/utils/helper';
+import { PencilSquareIcon , TrashIcon, CheckIcon, XMarkIcon} from "@heroicons/react/24/outline"
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
-import Loader from '@/components/Loader';
-import QuilEditor from './QuilEditor';
-import { EventDataObjResponse, EventImage } from '@/utils/interfaces';
-import AddressAutocomplete from './AddressAutoComplete.web';
 
-interface EventFormProps {
-  eventType : string
-}
+// constant import
+import { ALLOWED_FILE_FORMATS, API_ROUTES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB, ROUTES } from '@/utils/constant';
 
-const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
+// helper functions
+import { apiCall, getAuthToken } from '@/utils/helper';
+import { InitialEventFormDataErrorTypes, InitialEventFormDataValues } from '../../app/admin/event/helper';
+
+const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
 
   const router = useRouter();
   const isEditMode = eventType !== "create" ? true : false 
 
-  const [formValues, setFormValues] = useState<EventFormData>(InitialEventFormDataValues)
-  const [formValuesError, setFormValuesError] = useState<EventFormDataErrorTypes>(InitialEventFormDataErrorTypes)
+  const [formValues, setFormValues] = useState<IEventFormData>(InitialEventFormDataValues)
+  const [formValuesError, setFormValuesError] = useState<IEventFormDataErrorTypes>(InitialEventFormDataErrorTypes)
 
-  const [tickets, setTickets] = useState<Ticket[]>(INITIAL_TICKETS_TYPES);
+  const [tickets, setTickets] = useState<ITicket[]>(INITIAL_TICKETS_TYPES);
   const [addRowVisible, setAddRowVisible] = useState(false)
 
-  const [newTicket, setNewTicket] = useState<Omit<Ticket, "id">>({
+  const [newTicket, setNewTicket] = useState<Omit<ITicket, "id">>({
     type: "",
     price: "",
     maxQty: 0,
     description: "",
   });
 
-  const [editCache, setEditCache] = useState<{ [key: string]: Partial<Ticket> }>({});
+  const [editCache, setEditCache] = useState<{ [key: string]: Partial<ITicket> }>({});
 
   const [images, setImages] = useState<File[]>([]);
   const [fileError, setFileError] = useState<null | string>(null)
@@ -135,7 +142,7 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
 
   const handleAdd = () => {
     if (!newTicket.type || newTicket.maxQty <= 0) return;
-    const newItem: Ticket = {
+    const newItem: ITicket = {
       ...newTicket,
       id: Date.now().toString(),
     };
@@ -179,7 +186,7 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
     setEditCache(newCache);
   };
 
-  const handleUpdate = (id: string, key: keyof Ticket, value: string | number) => {
+  const handleUpdate = (id: string, key: keyof ITicket, value: string | number) => {
     setEditCache((prev) => ({
       ...prev,
       [id]: {
@@ -231,7 +238,7 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
     }));
   }
 
-  const handleLocationChange = (location: LocationField) => {
+  const handleLocationChange = (location: ILocationField) => {
     if (location.location.trim() === "") {
       setFormValuesError((prevState) => ({
         ...prevState,
@@ -311,7 +318,7 @@ const EventForm : React.FC<EventFormProps> = ( { eventType }) => {
     }));
   }
 
-  const handleCatogoryField = (value : OptionType | null) => {
+  const handleCatogoryField = (value : IOptionType | null) => {
     if(value === null) {
       setFormValuesError((prevState) => ({
           ...prevState,

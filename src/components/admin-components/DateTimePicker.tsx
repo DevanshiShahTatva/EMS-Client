@@ -1,29 +1,16 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
 import DateTimePicker from "react-datetime-picker";
 
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 
-type ValuePiece = Date | null;
-type Value = ValuePiece | [ValuePiece, ValuePiece];
+import { IDateTimePickerFieldProps } from "@/app/admin/event/types";
 
-type DateTimePickerFieldProps = {
-  label: string;
-  name: string;
-  value: Value;
-  onChange: (value: Date | null) => void;
-  errorMsg?: string;
-  errorKey?: boolean;
-  onBlur?: () => void;
-  required?: boolean;
-  disabled?: boolean;
-  minDate? : Date
-};
 
-const CustomDateTimePicker: React.FC<DateTimePickerFieldProps> = ({
+
+const CustomDateTimePicker: React.FC<IDateTimePickerFieldProps> = ({
   label,
   name,
   value,

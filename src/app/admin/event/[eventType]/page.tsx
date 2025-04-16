@@ -1,12 +1,15 @@
 import React from 'react'
-import EventForm from './EventForm'
 import { NextPage } from 'next';
 
-interface EventPageProps { 
-  params: Promise<{ eventType: string }>;
-}
+// custom compoents
+import EventForm from '../../../../components/admin-components/EventForm'
 
-const EventPage : NextPage<EventPageProps> = async ( { params }) => {
+// types 
+import { IEventPageProps } from '../types';
+
+
+
+const EventPage : NextPage<IEventPageProps> = async ( { params }) => {
   const eventMode = (await params).eventType;
   return (
     <div>

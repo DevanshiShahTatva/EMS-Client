@@ -2,25 +2,13 @@
 
 import React from 'react';
 import Select from 'react-select';
-import { OptionType } from './helper';
+import { ISelectFieldsProps } from '@/app/admin/event/types';
 
 
 
-type SelectFieldsProps = {
-  label: string;
-  name: string;
-  errorKey : boolean;
-  options :  any[];
-  value: OptionType | null;
-  onChange: (option: OptionType | null) => void;
-  placeholder?: string;
-  errorMsg?: string;
-  required?: boolean;
-  readOnly?:boolean;
-  disabled?:boolean;
-};
 
-const CustomSelectField: React.FC<SelectFieldsProps> = ({
+
+const CustomSelectField: React.FC<ISelectFieldsProps> = ({
   label,
   name,
   placeholder,
