@@ -1,5 +1,5 @@
 import React from 'react'
-import { EventCategory } from '@/types/events'
+import { EventCategory } from '@/utils/types'
 interface CategoryTabsProps {
   activeCategory: EventCategory
   setActiveCategory: (category: EventCategory) => void

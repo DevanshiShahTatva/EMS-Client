@@ -6,7 +6,7 @@ import { FilterOptions } from '@/components/events-components/FilterOptions'
 import { FeaturedEvent } from '@/components/events-components/FeaturedEvent'
 import { EventList } from '@/components/events-components/EventList'
 import { EVENT_DATA } from '@/utils/constant'
-import { EventData, EventCategory, SortOption } from "@/types/events";
+import { EventData, EventCategory, SortOption } from "@/utils/types";
 const EventsPage: React.FC = () => {
   const [events, setEvents] = useState<EventData[]>(EVENT_DATA)
   const [filteredEvents, setFilteredEvents] = useState<EventData[]>(EVENT_DATA)

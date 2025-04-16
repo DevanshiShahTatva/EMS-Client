@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import { HeartIcon, CalendarIcon, ClockIcon, TagIcon } from 'lucide-react'
-import { EventData } from '@/types/events'
+import { EventData } from '@/utils/types'
 interface EventCardProps {
   event: EventData
 }

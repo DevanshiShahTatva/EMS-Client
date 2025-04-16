@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import { SlidersIcon, ChevronDownIcon } from 'lucide-react'
-import { SortOption } from '@/types/events'
+import { SortOption } from '@/utils/types'
 interface FilterOptionsProps {
   sortOption: SortOption
   setSortOption: (option: SortOption) => void
