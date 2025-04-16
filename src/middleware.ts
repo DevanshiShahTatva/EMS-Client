@@ -14,6 +14,7 @@ export async function middleware(request: NextRequest) {
 
     const isPublicRoute = publicRoutes.includes(currentPath);
     const token = request.cookies.get("token")?.value;
+    // const token = localStorage.getItem("token") || sessionStorage.getItem("token") || ""
 
     if (!token) {
         if (!isPublicRoute) {

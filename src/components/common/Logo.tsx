@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import React from 'react';
-import LogoPath from '../../../../public/assets/eventlyLogo1.png';
+import LogoPath from '../../../public/assets/eventlyLogo1.png';
 
 type LogoProps = {
     width?: number;

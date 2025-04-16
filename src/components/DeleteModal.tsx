@@ -1,11 +1,11 @@
 "use client";
 
-import { DeleteModalProps } from "@/utils/interfaces";
+import { IDeleteModalProps } from "@/utils/types";
 import { XMarkIcon, TrashIcon } from "@heroicons/react/24/solid";
 import React from "react";
 
 
-const DeleteModal: React.FC<DeleteModalProps> = ({
+const DeleteModal: React.FC<IDeleteModalProps> = ({
   isOpen,
   onClose,
   onConfirm,

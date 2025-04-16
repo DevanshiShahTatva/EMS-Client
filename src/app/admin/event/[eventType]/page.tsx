@@ -3,7 +3,7 @@ import EventForm from './EventForm'
 import { NextPage } from 'next';
 
 interface EventPageProps { 
-  params:Promise<{ eventType: string }>
+  params: Promise<{ eventType: string }>;
 }
 
 const EventPage : NextPage<EventPageProps> = async ( { params }) => {

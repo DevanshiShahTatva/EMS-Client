@@ -36,33 +36,33 @@ export type EventFormDataErrorTypes = {
 };
 
 export interface LocationField {
-  latitude: number,
-  longitude: number,
-  location: string
+    latitude: number,
+    longitude: number,
+    location: string
 }
 
 
-export const InitialEventFormDataValues : EventFormData = {
-        title: "",
-        description: "",
-        location: {
-          address: "Ahmedabad",
-          lat: 23.022505,
-          long: 72.5713621,
-        },
-        start_time: null,
-        end_time: null,
-        duration: "",
-        category: null,
-        ticket_type: [
-          {
+export const InitialEventFormDataValues: EventFormData = {
+    title: "",
+    description: "",
+    location: {
+        address: "Ahmedabad",
+        lat: 23.022505,
+        long: 72.5713621,
+    },
+    start_time: null,
+    end_time: null,
+    duration: "",
+    category: null,
+    ticket_type: [
+        {
             type: "",
             price: "",
             max_qty: "",
             description: "",
-          },
-        ],
-        images: [],
+        },
+    ],
+    images: [],
 }
 
 export const InitialEventFormDataErrorTypes = {
@@ -78,17 +78,17 @@ export const InitialEventFormDataErrorTypes = {
 };
 
 export type OptionType = {
-  label: string;
-  value: string;
-  icon: string;
+    label: string;
+    value: string;
+    icon: string;
 };
 
 
 export type Ticket = {
-  id: string;
-  type: string;
-  price: string;
-  maxQty: number;
-  description: string;
-  isEditing?: boolean;
+    id: string;
+    type: string;
+    price: string;
+    maxQty: number;
+    description: string;
+    isEditing?: boolean;
 };

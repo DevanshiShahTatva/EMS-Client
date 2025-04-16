@@ -41,7 +41,7 @@ const EventsPage: React.FC = () => {
     setFilteredEvents(result)
   }, [searchQuery, activeCategory, sortOption])
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="mx-auto p-10">
       <h1 className="text-3xl font-bold mb-6">Discover Events</h1>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />

@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Formik, Form, FormikHelpers } from "formik";
 import { ROUTES, API_ROUTES } from "@/utils/constant";
-import { InitialLogInValues, ILogInFormValues } from "./helper";
-import { LogInFormSchema } from "./schema";
-import FormikTextField from "@/app/components/common/FormikTextField";
-import Logo from "@/app/components/common/Logo";
+import { InitialLogInValues, LogInFormSchema } from "./helper";
+import FormikTextField from "@/components/common/FormikTextField";
+import Logo from "@/components/common/Logo";
 import { apiCall } from "@/utils/helper";
 import { toast } from "react-toastify";
+import { ILogInFormValues } from "./types";
 
 const LogInPage = () => {
   const router = useRouter();
@@ -32,9 +32,6 @@ const LogInPage = () => {
 
     if (result.success) {
       const { token, role } = result.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", role);
-
       if (rememberMe) {
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
@@ -100,7 +97,7 @@ const LogInPage = () => {
                     type="submit"
                     disabled={isSubmitting}
                     className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50">
-                    Log In
+                    {isSubmitting ? "Logging In..." : "Log In"}
                   </button>
 
                   <p className="text-center text-sm text-gray-500 mt-4">

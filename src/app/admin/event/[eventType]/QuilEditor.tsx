@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import ReactQuill from 'react-quill-new';
+import dynamic from "next/dynamic";
 import 'react-quill-new/dist/quill.snow.css';
 
 type QuilEditorProps = {
@@ -13,6 +13,8 @@ type QuilEditorProps = {
   errorMsg?: string;
   required?: boolean;
 };
+
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 const QuilEditor: React.FC<QuilEditorProps> = ({
   label,
@@ -32,8 +34,6 @@ const QuilEditor: React.FC<QuilEditorProps> = ({
       >
         {label} {required && <span className="text-red-500">*</span>}
       </label>
-
-      {errorKey}
 
       <ReactQuill
         theme="snow"
