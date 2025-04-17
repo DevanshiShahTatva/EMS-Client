@@ -5,23 +5,23 @@ export const getAuthToken = () => {
   return token
 }
 
-export const apiCall = async ({ endPoint, method = 'GET', body, headers = {} }: ApiParams) => {
-  try {
-    const options: RequestInit = {
-      method,
-      headers: {
-        ...headers,
-      },
-    };
+// export const apiCall = async ({ endPoint, method = 'GET', body, headers = {} }: ApiParams) => {
+//   try {
+//     const options: RequestInit = {
+//       method,
+//       headers: {
+//         ...headers,
+//       },
+//     };
 
-    if (body && method !== 'GET') {
-      options.body = body;
-    }
+//     if (body && method !== 'GET') {
+//       options.body = body;
+//     }
 
-    return await fetch(endPoint, options);
+//     return await fetch(endPoint, options);
 
-  } catch (error) {
-    console.error('API Error:', error);
-    throw error;
-  }
-};
+//   } catch (error) {
+//     console.error('API Error:', error);
+//     throw error;
+//   }
+// };

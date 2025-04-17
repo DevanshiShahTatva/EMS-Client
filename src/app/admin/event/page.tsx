@@ -3,8 +3,9 @@
 import React, { useEffect, useState } from 'react'
 
 // Custom Compoents
-import Loader from '@/components/Loader';
-import DeleteDialog from '@/components/DeleteModal';
+import Loader from '@/components/common/Loader';
+import DeleteDialog from '@/components/common/DeleteModal';
+import FilterModal from '@/components/common/FilterModal';
 
 // types import
 import { EventResponse, EventsDataTypes } from '@/utils/types';
@@ -12,7 +13,7 @@ import { EventResponse, EventsDataTypes } from '@/utils/types';
 // library support 
 import { useRouter } from 'next/navigation';
 import moment from 'moment';
-import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
+import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon, ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/outline"
 import { toast } from 'react-toastify';
 import Select from 'react-select';
 import {
@@ -27,10 +28,8 @@ import { API_ROUTES, PAGINATION_OPTIONS, ROUTES } from '@/utils/constant';
 
 
 // helper functions
-import { apiCall, getAuthToken } from '@/utils/helper';
-import { getStatus, getTicketPriceRange } from './helper';
-
-
+import { apiCall } from '@/utils/services/request';
+import { getStatus, getTicketPriceRange, sortEvents } from './helper';
 
 function EventsListpage() {
   const router = useRouter()
@@ -43,6 +42,9 @@ function EventsListpage() {
   const [loading, setLoading] = useState<boolean>(true)
   const [deletableEventId, setDeletableId] = useState<string>("")
 
+  const [filterModal, setFilterModal] = useState(false)
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
+  const [sortByKey, setSortByKey] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
 
   const totalItems = allEventsData.length;
@@ -70,6 +72,23 @@ function EventsListpage() {
     setDeletableId(eventId)
   }
 
+  const openFilterModal = () => {
+    setFilterModal(true)
+  }
+
+  const closeFilterModal = () => {
+    setFilterModal(false)
+  }
+
+  const sortEventsByKey = (key : keyof Omit<EventsDataTypes, "img"> | "status") => {
+    const sortingOrder = key === sortByKey ? sortOrder : "asc";
+    const result = sortEvents(allEventsData, key, sortingOrder);
+    const order = sortOrder === "asc" ? "desc" : "asc";
+    setAllEventsData(result);
+    setSortOrder(order);
+    setSortByKey(key);
+  };
+
   const searchEvents = (keyword: string) => {
     const lowerKeyword = keyword.toString().toLowerCase();
     const searchResult = allEventsData.filter(event =>
@@ -94,18 +113,13 @@ function EventsListpage() {
   };
 
   const fetchEvents = async () => {
-    const request = await apiCall({
+    const response = await apiCall({
       endPoint: API_ROUTES.ADMIN.GET_EVENTS,
       method: "GET",
-      headers: {
-        token: getAuthToken()
-      }
     })
 
-    const result = await request.json()
-
-    if (result && result.success && result.data.length > 0) {
-      const receivedArrayObj: EventResponse = result.data
+    if (response && response.success && response.data.length > 0) {
+      const receivedArrayObj: EventResponse = response.data
 
       const modifiedArray = receivedArrayObj.map(item => {
         return {
@@ -139,15 +153,10 @@ function EventsListpage() {
 
   const deleteEvents = async () => {
     setLoading(true)
-    const request = await apiCall({
+    const result = await apiCall({
       endPoint: API_ROUTES.ADMIN.DELETE_EVENT(deletableEventId),
       method: "DELETE",
-      headers: {
-        token: getAuthToken()
-      }
     })
-
-    const result = await request.json()
 
     if (result && result.success) {
       fetchEvents()
@@ -170,6 +179,29 @@ function EventsListpage() {
     );
     setEventsData(paginated);
   }, [allEventsData, currentPage, itemsPerPage]);
+
+  const renderSortableRow = (
+    title: string,
+    sortKey: keyof Omit<EventsDataTypes, "img"> | "status"
+  ) => {
+    return (
+      <div
+        className="flex gap-1 cursor-pointer"
+        onClick={() => sortEventsByKey(sortKey)}
+      >
+        <p>{title}</p>
+        {sortByKey === sortKey && (
+          <div>
+            {sortOrder === "asc" ? (
+              <ArrowDownIcon className="h-4 w-4" />
+            ) : (
+              <ArrowUpIcon className="h-4 w-4" />
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="my-5 md:my-10 lg:mx-15 md:mx-15 mx-5">
@@ -197,7 +229,10 @@ function EventsListpage() {
             </div>
 
             {/* Filters Button */}
-            <button className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md">
+            <button
+              onClick={openFilterModal}
+              className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
+            >
               <FunnelIcon className="w-6 h-6 font-bold mr-2" />
               Filters
             </button>
@@ -220,14 +255,30 @@ function EventsListpage() {
             <thead className="bg-gray-100 text-xs uppercase">
               <tr>
                 <th className="p-3">Image</th>
-                <th className="p-3">Title</th>
-                <th className="p-3">Category</th>
-                <th className="p-3">Start Date/Time</th>
-                <th className="p-3">Duration</th>
-                <th className="p-3">Location</th>
-                <th className="p-3">Ticket Price</th>
-                <th className="p-3">Tickets Available</th>
-                <th className="p-3">Status</th>
+                <th className="p-3">
+                  {renderSortableRow("Title", "title")}
+                </th>
+                <th className="p-3">
+                  {renderSortableRow("Category", "category")}
+                </th>
+                <th className="p-3">
+                  {renderSortableRow("Start Date/Time", "startTime")}
+                </th>
+                <th className="p-3">
+                  {renderSortableRow("Duration", "duration")}
+                </th>
+                <th className="p-3">
+                  {renderSortableRow("Location", "location")}
+                </th>
+                <th className="p-3">
+                  {renderSortableRow("Ticket Price","price")}
+                </th>
+                <th className="p-3">
+                  {renderSortableRow("Tickets Available", "ticketsAvailable")}
+                </th>
+                <th className="p-3">
+                  {renderSortableRow("Status", "status")}
+                </th>
                 <th className="p-3">Actions</th>
               </tr>
             </thead>
@@ -255,22 +306,22 @@ function EventsListpage() {
                       <td className="p-3">{event.title}</td>
                       <td className="p-3">{event.category}</td>
                       <td className="p-3">
-                        {moment(event.startTime).format(
-                          "DD MMM YYYY, h:mm A"
-                        )}
+                        {moment(event.startTime).format("DD MMM YYYY, h:mm A")}
                       </td>
                       <td className="p-3">{event.duration}</td>
                       <td className="p-3 max-w-40">
                         <TooltipProvider>
                           <Tooltip>
-                            <TooltipTrigger className='truncate max-w-40'>{event.location}</TooltipTrigger>
+                            <TooltipTrigger className="truncate max-w-40">
+                              {event.location}
+                            </TooltipTrigger>
                             <TooltipContent>
-                              <p className=' text-white font-bold'>{event.location}</p>
+                              <p className=" text-white font-bold">
+                                {event.location}
+                              </p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
-
-
                       </td>
                       <td className="p-3">{event.price}</td>
                       <td className="p-3">{event.ticketsAvailable}</td>
@@ -330,10 +381,11 @@ function EventsListpage() {
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
-                    className={`w-8 h-8 text-sm rounded border ${currentPage === page
+                    className={`w-8 h-8 text-sm rounded border ${
+                      currentPage === page
                         ? "bg-black text-white"
                         : "bg-white text-black"
-                      }`}
+                    }`}
                   >
                     {page}
                   </button>
@@ -403,6 +455,13 @@ function EventsListpage() {
         onClose={() => setDeletableId("")}
         onConfirm={deleteEvents}
         loading={loading}
+      />
+
+      {/* Filter Popup */}
+      <FilterModal
+        isOpen={filterModal}
+        onClose={closeFilterModal}
+        applyFilters={closeFilterModal}
       />
     </div>
   );

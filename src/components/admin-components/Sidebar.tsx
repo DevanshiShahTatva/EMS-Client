@@ -1,17 +1,19 @@
-import { ADMIN_SIDEBAR_ITEMS } from "@/utils/constant";
+import React from "react";
+
+// library imports
 import Link from "next/link";
-import React, { ReactNode} from "react";
 import Image from "next/image";
-import CrossIconPath from "../../public/assets/CrossIcon.svg"
 
-interface SidebarPageProps {
-  children : ReactNode, 
-  isOpen?: boolean; 
-  onClose?: () => void,
-  activeLink? : string
-}
+// images path
+import CrossIconPath from "../../../public/assets/CrossIcon.svg"
 
-const Sidebar: React.FC<SidebarPageProps> = ({ children, isOpen, onClose, activeLink = "" }) => {
+// constant support
+import { ADMIN_SIDEBAR_ITEMS } from "@/utils/constant";
+
+// types import
+import { ISidebarPageProps } from "@/utils/types";
+
+const Sidebar: React.FC<ISidebarPageProps> = ({ children, isOpen, onClose, activeLink = "" }) => {
 
   return (
     <>

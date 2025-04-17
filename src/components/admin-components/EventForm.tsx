@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 
 // Custom Compoents
-import Loader from '@/components/Loader';
+import Loader from '@/components/common/Loader';
 import CustomTextField from './InputField';
 import QuilEditor from './QuilEditor';
 import AddressAutocomplete from './AddressAutoComplete.web';
@@ -24,7 +24,7 @@ import { useRouter } from 'next/navigation';
 import { ALLOWED_FILE_FORMATS, API_ROUTES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB, ROUTES } from '@/utils/constant';
 
 // helper functions
-import { apiCall, getAuthToken } from '@/utils/helper';
+import { apiCall } from '@/utils/services/request';
 import { InitialEventFormDataErrorTypes, InitialEventFormDataValues } from '../../app/admin/event/helper';
 
 const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
@@ -464,19 +464,14 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
     formData.append("images", file); // assuming `file` is a File object
   })}
 
-    const headersWeb = {
-      token : getAuthToken(),
-    }
-
-    const request = await apiCall({
+    const result = await apiCall({
       endPoint : isEditMode ? API_ROUTES.ADMIN.UPDATE_EVENT(eventType) :  API_ROUTES.ADMIN.CREATE_EVENT,
-      headers : headersWeb,
       method: isEditMode ? "PUT" : "POST",
-      body: formData
+      body: formData,
+      isFormData: true,
+      headers:{}
     })
     
-    const result = await request.json();
-
     if(result.success) {
       setLoder(false)
       router.push(ROUTES.ADMIN.EVENTS)
@@ -498,15 +493,10 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
    const fetchEventWithId = async () => {
     setLoder(true)
 
-     const request = await apiCall({
+     const result = await apiCall({
        endPoint: API_ROUTES.ADMIN.SHOW_EVENT(eventType),
        method: "GET",
-       headers: {
-         token: getAuthToken(),
-       },
      });
-
-     const result = await request.json();
 
      if (result && result.success && result.data) {
        const receivedObj : EventDataObjResponse = result.data;
