@@ -7,13 +7,17 @@ interface FormikTextFieldProps {
     label?: string;
     type?: string;
     placeholder?: string;
+    maxLength?:number;
+    endIcon?:React.ReactNode; 
 }
 
 const FormikTextField: React.FC<FormikTextFieldProps> = ({
     name,
     label = '',
     type = 'text',
-    placeholder = ''
+    placeholder = '',
+    maxLength ,
+    endIcon
 }) => {
     return (
         <div>
@@ -22,13 +26,21 @@ const FormikTextField: React.FC<FormikTextFieldProps> = ({
                     {label}
                 </label>
             )}
+            <div className='relative'>
             <Field
                 type={type}
                 name={name}
                 id={name}
                 placeholder={placeholder}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all no-spinner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                maxLength={maxLength}
             />
+            {endIcon && (
+                <div className="absolute right-3 top-[60%] transform -translate-y-[60%]">
+                    {endIcon}
+                </div>
+            )}
+            </div>
             <ErrorMessage
                 name={name}
                 component="div"

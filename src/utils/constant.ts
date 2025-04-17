@@ -8,7 +8,8 @@ export const ROUTES = {
         DASHBOARD: "/admin/dashboard",
         EVENTS: "/admin/event",
         CREATE_EVENT: "/admin/event/create",
-    }
+    },
+    RESET_PASSWORD:"/reset-password"
 }
 
 export const API_ROUTES = {
@@ -22,6 +23,8 @@ export const API_ROUTES = {
     AUTH: {
         LOGIN: `/login`,
         SIGNUP: `/signup`,
+        FORGOT_PASSWORD: `/forgot_password`,
+        RESET_PASSWORD:`/reset_password`
     }
 }
 

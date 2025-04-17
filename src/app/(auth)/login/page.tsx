@@ -84,7 +84,7 @@ const LogInPage = () => {
                       />
                       Remember Me
                     </label>
-                    <Link href="#" className="text-[#4F46E5] hover:underline font-medium">
+                    <Link href="forgot-password" className="text-[#4F46E5] hover:underline font-medium">
                       Forgot Password?
                     </Link>
                   </div>
