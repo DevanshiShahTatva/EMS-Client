@@ -1,8 +1,10 @@
 "use client";
 import React, { ReactNode, useState } from 'react'
-import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
 import { usePathname } from 'next/navigation';
+
+// custom componetns
+import Header from '@/components/common/Header';
+import Sidebar from '@/components/admin-components/Sidebar';
 
 const Layout : React.FC<{children : ReactNode}> = ( { children }) => {
 

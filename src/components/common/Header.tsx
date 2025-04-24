@@ -1,12 +1,21 @@
 "use client";
 
+import { useEffect, useState } from 'react';
+
+// Next js library support
 import Link from 'next/link';
-import { ROUTES } from '@/utils/constant';
-import { Button } from "@/components/ui/button"
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+
+// Custom compponents
+import { ROUTES } from '@/utils/constant';
+import { Button } from "@/components/ui/button"
+
+// Custom helpers
 import { getAuthToken } from '@/utils/helper';
+
+// Other library
+import Cookie from 'js-cookie'
 
 interface HeaderPageProps {
   toggleSidebar?: () => void,
@@ -26,13 +35,12 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false }
     router.push(ROUTES.SIGN_UP)
   }
 
-    const handleLogout = () => {
-        localStorage.clear()
-        sessionStorage.clear()
-        document.cookie = "token=; path=/;"
-        document.cookie = "role=; path=/;"
-        router.push(ROUTES.LOGIN)
-    }
+  const handleLogout = () => {
+    localStorage.clear()
+    sessionStorage.clear()
+    Cookie.remove("authToken")
+    router.push(ROUTES.LOGIN)
+  }
 
   const navToProfile = () => {
     router.push(ROUTES.USER_PROFILE)

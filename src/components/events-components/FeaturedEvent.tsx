@@ -1,7 +1,9 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { HeartIcon, CalendarIcon, ClockIcon, TagIcon } from 'lucide-react'
-import { EventData } from '@/utils/types'
+import { EventData } from '../../app/events/types'
+import { API_ROUTES } from '@/utils/constant'
+import { apiCall } from '@/utils/services/request'
 interface FeaturedEventProps {
   event: EventData
 }
@@ -18,6 +20,20 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
     day: 'numeric',
     year: 'numeric',
   })
+  const handleLikeEvent = async () => {
+    const response = await apiCall({
+      endPoint: API_ROUTES.ADMIN.GET_EVENTS + `/${event.id}/like`,
+      method: "POST",
+    });
+    if (response.success) {
+      setIsLiked(!isLiked)
+    }
+  };
+
+  useEffect(() => {
+    setIsLiked(event.isLiked)
+  }, [event])
+
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
       <div className="flex flex-col md:flex-row">
@@ -28,7 +44,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
             className="w-full h-64 md:h-full object-cover"
           />
           <button
-            onClick={() => setIsLiked(!isLiked)}
+            onClick={handleLikeEvent}
             className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md"
           >
             <HeartIcon
@@ -45,7 +61,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
               {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
             </span>
           </div>
-          <p className="text-gray-600 mb-6">{event.description}</p>
+          <div className="text-gray-600 mb-6" dangerouslySetInnerHTML={{ __html: event.description }} />
           <div className="space-y-3 mb-6">
             <div className="flex items-center text-gray-600">
               <CalendarIcon className="h-5 w-5 mr-3" />
@@ -53,7 +69,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
             </div>
             <div className="flex items-center text-gray-600">
               <ClockIcon className="h-5 w-5 mr-3" />
-              <span>{event.time}</span>
+              <span>{formattedDate}</span>
             </div>
             <div className="flex items-center text-gray-600">
               <TagIcon className="h-5 w-5 mr-3" />

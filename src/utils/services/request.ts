@@ -1,3 +1,4 @@
+import { getAuthToken } from '../helper';
 import { IRequestParams } from '../types';
 import api from './api';
 
@@ -16,14 +17,10 @@ export const apiCall = async ({
 
         // Include Authorization token if needed
         if (withToken && typeof window !== 'undefined') {
-            const token = localStorage.getItem('token');
+            const token = getAuthToken();
             if (token) {
-                finalHeaders['Authorization'] = `Bearer ${token}`;
+                finalHeaders['token'] = `${token}`;
             }
-        }
-
-        if (!isFormData) {
-            finalHeaders['Content-Type'] = 'application/json';
         }
 
         const config = {

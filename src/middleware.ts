@@ -7,14 +7,12 @@ const userDefaultRoute = ROUTES.USER_EVENTS;
 
 const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP];
 const adminRoutes = [ROUTES.ADMIN.DASHBOARD, ROUTES.ADMIN.EVENTS];
-const userRoutes = [ROUTES.USER_PROFILE, ROUTES.USER_EVENTS];
+const userRoutes = [ROUTES.USER_PROFILE, ROUTES.USER_EVENTS, ROUTES.USER_EVENTS_DETAILS];
 
 export async function middleware(request: NextRequest) {
     const currentPath = request.nextUrl.pathname;
-
     const isPublicRoute = publicRoutes.includes(currentPath);
-    const token = request.cookies.get("token")?.value;
-    // const token = localStorage.getItem("token") || sessionStorage.getItem("token") || ""
+    const token = request.cookies.get("authToken")?.value;
 
     if (!token) {
         if (!isPublicRoute) {
@@ -24,16 +22,13 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-        const secret = process.env.TOKEN_SECRET;
-
-        if (!secret || secret.trim() === "") {
-            throw new Error("Secret key is missing or invalid.");
-        }
-        
-        const encodedSecret = new TextEncoder().encode(secret);
-        const { payload } = await jwtVerify(token, encodedSecret);
-
+        const secret = new TextEncoder().encode(process.env.NEXT_PUBLIC_TOKEN_SECRET);
+        const { payload } = await jwtVerify(token, secret);
         const userRole = payload.role as string;
+
+        if (!userRole) {
+            return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
+        }
 
         const roleRoutes: Record<string, string[]> = {
             [ROLE.Admin]: adminRoutes,
@@ -48,13 +43,12 @@ export async function middleware(request: NextRequest) {
         const allowedRoutes = roleRoutes[userRole] || [];
         const defaultRedirect = defaultRoutes[userRole] || "/";
 
-        // If trying to access a public route while logged in, redirect to role-based default
         if (isPublicRoute) {
             return NextResponse.redirect(new URL(defaultRedirect, request.url));
         }
 
-        // If current path is not allowed for the role, redirect
-        if (!allowedRoutes.includes(currentPath)) {
+        const isAllowed = allowedRoutes.some(route => currentPath.startsWith(route));
+        if (!isAllowed) {
             return NextResponse.redirect(new URL(defaultRedirect, request.url));
         }
 
@@ -69,9 +63,9 @@ export const config = {
     matcher: [
         "/",
         "/login",
-        "/signup",
+        "/sign-up",
+        "/events",
         "/admin/:path*",
-        "/user-profile/:path*",
-        "/events/:path*",
+        "/user/:path*",
     ],
 };

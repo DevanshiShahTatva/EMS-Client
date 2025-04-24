@@ -1,12 +1,25 @@
 'use client'
-import React, { useState } from 'react'
-import { HeartIcon, CalendarIcon, ClockIcon, TagIcon } from 'lucide-react'
-import { EventData } from '@/utils/types'
+import React, { useEffect, useState } from 'react'
+import { HeartIcon, CalendarIcon, MapPin, TagIcon } from 'lucide-react'
+import { EventData } from '../../app/events/types'
+import { useRouter } from 'next/navigation'
+import { API_ROUTES, ROUTES } from '@/utils/constant';
+import { apiCall } from '@/utils/services/request';
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
+import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
+
 interface EventCardProps {
   event: EventData
 }
 export const EventCard: React.FC<EventCardProps> = ({ event }) => {
-  const [isLiked, setIsLiked] = useState(event.isLiked)
+  const [isLiked, setIsLiked] = useState(false)
   const statusColors = {
     ongoing: 'bg-yellow-100 text-yellow-800',
     ended: 'bg-red-100 text-red-800',
@@ -17,6 +30,25 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     day: 'numeric',
     year: 'numeric',
   })
+  const router = useRouter();
+  const navigateToEventDetails = (eventId: string) => {
+    router.push(`${ROUTES.USER_EVENTS}\\${eventId}`);
+  }
+
+  const handleLikeEvent = async () => {
+    const response = await apiCall({
+      endPoint: API_ROUTES.ADMIN.GET_EVENTS + `/${event.id}/like`,
+      method: "POST",
+    });
+    if (response.success) {
+      setIsLiked(!isLiked)
+    }
+  };
+
+  useEffect(() => {
+    setIsLiked(event.isLiked)
+  }, [event])
+
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 flex flex-col h-full">
       <div className="relative">
@@ -26,7 +58,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
           className="w-full h-48 object-cover"
         />
         <button
-          onClick={() => setIsLiked(!isLiked)}
+          onClick={handleLikeEvent}
           className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-sm"
         >
           <HeartIcon
@@ -43,21 +75,34 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
             {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
           </span>
         </div>
-        <p className="text-gray-600 text-sm line-clamp-2 mb-4">
-          {event.description}
-        </p>
+        <div className="text-gray-600 text-sm line-clamp-2 mb-4" dangerouslySetInnerHTML={{ __html: event.description }} />
         <div className="mt-auto space-y-2">
           <div className="flex items-center text-sm text-gray-500">
-            <CalendarIcon className="h-4 w-4 mr-2" />
-            <span>{formattedDate}</span>
+            <Square3Stack3DIcon className="h-4 w-4 mr-2" />
+            <span className='font-bold'>{event.category}</span>
           </div>
           <div className="flex items-center text-sm text-gray-500">
-            <ClockIcon className="h-4 w-4 mr-2" />
-            <span>{event.time}</span>
+            <MapPin className="h-4 w-4 mr-2" />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger className="truncate max-w-60 font-bold">
+                  {event.location}
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className=" text-white font-bold">
+                    {event.location}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div className="flex items-center text-sm text-gray-500">
+            <CalendarIcon className="h-4 w-4 mr-2" />
+            <span className='font-bold'>{formattedDate}</span>
           </div>
           <div className="flex items-center text-sm text-gray-500">
             <TagIcon className="h-4 w-4 mr-2" />
-            <span>{event.priceRange}</span>
+            <span className='font-bold'>{event.priceRange}</span>
           </div>
         </div>
       </div>
@@ -65,6 +110,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         <button
           disabled={event.isSoldOut}
           className={`w-full py-2 px-4 rounded-md font-medium ${event.isSoldOut ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+          onClick={() => navigateToEventDetails(event.id)}
         >
           {event.isSoldOut ? 'Sold Out' : 'View Details'}
         </button>

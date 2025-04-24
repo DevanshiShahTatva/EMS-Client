@@ -1,5 +1,4 @@
 import { LucideIcon } from "lucide-react";
-
 export interface IDeleteModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -7,6 +6,44 @@ export interface IDeleteModalProps {
     title?: string;
     description?: string;
     loading?: boolean
+}
+
+export interface IFilterModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    applyFilters: (filterValues : IApplyFiltersKey) => void;
+    maxTicketPrice?: number
+    isUserRole? : boolean
+    filterValues? : IApplyFiltersKey
+}
+
+export interface IEventRangeDate {
+    from : Date | string
+    to : Date | string
+}
+
+export interface IEventPrice {
+    max : number
+    min : number
+}
+
+export interface IApplyFiltersKey {
+    catogories?: string[]
+    durations?: string[]
+    status? : string
+    ticketsTypes?: string
+    eventsDates?: IEventRangeDate
+    priceRange?: IEventPrice
+    search? : string
+    likeEvent? : string
+    locationRadius? : string
+}
+
+export interface ISidebarPageProps {
+  children : React.ReactNode, 
+  isOpen?: boolean; 
+  onClose?: () => void,
+  activeLink? : string
 }
 
 export type EventStatus = 'ongoing' | 'ended' | 'upcoming';
@@ -52,6 +89,8 @@ export interface EventsDataTypes {
     location: string;
     price: string | number;
     ticketsAvailable: number;
+    totalTickets : number,
+    ticketsArray : EventTicket[]
 }
 
 

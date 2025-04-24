@@ -10,7 +10,7 @@ const DeleteModal: React.FC<IDeleteModalProps> = ({
   onClose,
   onConfirm,
   title = "Confirm Delete",
-  description = "Are you sure you want this event? This action cannot be undone.",
+  description = "Are you sure you want to delete this event? This action cannot be undone.",
   loading = false
 }) => {
   if (!isOpen || loading) return null;

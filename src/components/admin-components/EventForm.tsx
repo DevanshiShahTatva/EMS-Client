@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 
 // Custom Compoents
-import Loader from '@/components/Loader';
+import Loader from '@/components/common/Loader';
 import CustomTextField from './InputField';
 import QuilEditor from './QuilEditor';
 import AddressAutocomplete from './AddressAutoComplete.web';
@@ -24,7 +24,7 @@ import { useRouter } from 'next/navigation';
 import { ALLOWED_FILE_FORMATS, API_ROUTES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB, ROUTES } from '@/utils/constant';
 
 // helper functions
-import { apiCall, getAuthToken } from '@/utils/helper';
+import { apiCall } from '@/utils/services/request';
 import { InitialEventFormDataErrorTypes, InitialEventFormDataValues } from '../../app/admin/event/helper';
 
 const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
@@ -464,19 +464,14 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
     formData.append("images", file); // assuming `file` is a File object
   })}
 
-    const headersWeb = {
-      token : getAuthToken(),
-    }
-
-    const request = await apiCall({
+    const result = await apiCall({
       endPoint : isEditMode ? API_ROUTES.ADMIN.UPDATE_EVENT(eventType) :  API_ROUTES.ADMIN.CREATE_EVENT,
-      headers : headersWeb,
       method: isEditMode ? "PUT" : "POST",
-      body: formData
+      body: formData,
+      isFormData: true,
+      headers:{}
     })
     
-    const result = await request.json();
-
     if(result.success) {
       setLoder(false)
       router.push(ROUTES.ADMIN.EVENTS)
@@ -498,15 +493,10 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
    const fetchEventWithId = async () => {
     setLoder(true)
 
-     const request = await apiCall({
+     const result = await apiCall({
        endPoint: API_ROUTES.ADMIN.SHOW_EVENT(eventType),
        method: "GET",
-       headers: {
-         token: getAuthToken(),
-       },
      });
-
-     const result = await request.json();
 
      if (result && result.success && result.data) {
        const receivedObj : EventDataObjResponse = result.data;
@@ -695,7 +685,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
               Ticket types <span className="text-red-500">*</span>
             </label>
 
-            <div className="w-full">
+            <div className="w-full overflow-x-auto sm:overflow-x-visible">
               <table className="min-w-full table-auto border border-gray-300">
                 <thead>
                   <tr className="bg-gray-100 text-left">
@@ -778,7 +768,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                         <td className="border px-4 py-2">
                           {ticket.description}
                         </td>
-                        <td className="border px-4 py-2 text-center space-x-2">
+                        <td className="border px-4 py-2 text-center md:space-x-2">
                           <button
                             className="text-blue-600 p-1 cursor-pointer font-bold"
                             onClick={() => handleEdit(ticket.id)}
@@ -914,7 +904,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
               )}
 
               {existingImages.length > 0 && (
-                <div className="grid grid-cols-12 gap-4 p-3 border-dashed rounded-[12px] border-gray-300 border-2">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 p-3 border-dashed rounded-[12px] border-gray-300 border-2">
                   {existingImages.map((file, index) => {
                     const imageUrl =
                       "url" in file
@@ -923,7 +913,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                     return (
                       <div
                         key={index}
-                        className="relative w-full h-48 border rounded-lg overflow-hidden shadow col-span-4"
+                        className="relative w-full h-48 border rounded-lg overflow-hidden shadow col-span-1 md:col-span-4"
                       >
                         <img
                           src={imageUrl}
@@ -985,13 +975,13 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
               )}
 
               {images.length > 0 && (
-                <div className="grid grid-cols-12 gap-4 p-3 border-dashed rounded-[12px] border-gray-300 border-2">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 p-3 border-dashed rounded-[12px] border-gray-300 border-2">
                   {images.map((file, index) => {
                     const url = URL.createObjectURL(file);
                     return (
                       <div
                         key={index}
-                        className="relative w-full h-48 border rounded-lg overflow-hidden shadow col-span-4"
+                        className="relative w-full h-48 border rounded-lg overflow-hidden shadow col-span-1 md:col-span-4"
                       >
                         <img
                           src={url}
