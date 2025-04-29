@@ -1,40 +1,19 @@
-import { IApplyFiltersKey } from "@/utils/types";
-
-export interface IEventDetailPageProps {
-    params: Promise<{ eventId: string }>;
-}
-
-export interface LabelValue {
-    label: string;
-    value: string;
-    rowKey : keyof IApplyFiltersKey
-}
-
-
 import { LucideIcon } from "lucide-react";
 export type EventStatus = 'ongoing' | 'ended' | 'upcoming';
 export type EventCategory = 'Music' | 'all' | 'Film & Media' | 'Food & Drink' | 'Sports' | 'Art & Culture' | 'Business' | 'Wellness' | 'Education' | 'Gaming';
 export type SortOption = 'none' | 'date-asc' | 'date-desc' | 'title-asc' | 'title-desc';
 export interface EventData {
-    id: string;
-    title: string;
-    description: string;
-    image: string;
-    date: string;
-    priceRange: string;
-    category: EventCategory | string;
-    isSoldOut: boolean;
-    isLiked: boolean;
-    status: EventStatus;
-    isFeatured: boolean;
-    startTime?: string;
-    endTime?: string;
-    ticketsAvailable?: number;
-    totalTickets?: number,
-    ticketsArray?: EventTicket[],
-    location?: string;
-    lat? : number,
-    lng?: number
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  date: string;
+  priceRange: string;
+  category: EventCategory | string;
+  isSoldOut: boolean;
+  isLiked: boolean;
+  status: EventStatus;
+  isFeatured: boolean;
 }
   export interface Category {
     id: string;
@@ -51,6 +30,20 @@ export interface EventData {
   }
 
   
+export interface EventsDataTypes {
+  id: string
+  img: string;
+  title: string;
+  category: string;
+  startTime: string;
+  endTime: string;
+  duration: string;
+  location: string;
+  price: string | number;
+  ticketsAvailable: number;
+}
+
+
 export type EventLocation = {
   address: string;
   lat: number;
@@ -92,8 +85,8 @@ export type EventDataObjResponse = {
   images: EventImage[]; // optional, since second object has no images
   createdAt: string;
   updatedAt: string;
-  __v?: number;
   isLiked:boolean;
+  __v?: number;
 };
 
 export type EventResponse = EventDataObjResponse[];

@@ -1,4 +1,7 @@
-import React, { useEffect, useRef, createElement } from 'react'
+'use client'
+
+import React, { useEffect, useRef, useState } from 'react'
+
 interface GoogleMapProps {
   location: {
     lat: number
@@ -6,53 +9,84 @@ interface GoogleMapProps {
   }
   locationName: string
 }
-const GoogleMap: React.FC<GoogleMapProps> = ({ location, locationName }) => {
-  const mapRef = useRef<HTMLDivElement>(null)
-  const mapInstanceRef = useRef<any>(null)
-  useEffect(() => {
-    // Load the Google Maps script
-    const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap`
-    script.async = true
-    script.defer = true
-    // Define the callback function
-    window.initMap = function () {
-      if (mapRef.current && !mapInstanceRef.current) {
-        mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
-          center: location,
-          zoom: 15,
-        })
-        new window.google.maps.Marker({
-          position: location,
-          map: mapInstanceRef.current,
-          title: locationName,
-        })
-      }
-    }
-    document.head.appendChild(script)
-    return () => {
-      // Clean up
-      document.head.removeChild(script)
-    }
-  }, [location, locationName])
-  return (
-    <div className="w-full h-64 bg-gray-200 rounded-lg overflow-hidden">
-      <div ref={mapRef} className="w-full h-full">
-        <div className="w-full h-full flex items-center justify-center">
-          <p className="text-gray-500">Loading map...</p>
-          <p className="text-xs text-gray-400 mt-2">
-            Note: To use Google Maps, please add your API key
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-}
-// Add this to make TypeScript happy with the global window object
+
 declare global {
   interface Window {
     initMap: () => void
     google: any
   }
 }
+
+const GoogleMap: React.FC<GoogleMapProps> = ({ location, locationName }) => {
+  const mapRef = useRef<HTMLDivElement>(null)
+  const [isMapLoaded, setIsMapLoaded] = useState(false)
+
+  useEffect(() => {
+    const initMap = () => {
+      if (window.google && mapRef.current) {
+        const map = new window.google.maps.Map(mapRef.current, {
+          center: location,
+          zoom: 15,
+        })
+
+        const marker = new window.google.maps.Marker({
+          position: location,
+          map: map,
+          title: locationName,
+        })
+
+        const handleClick = () => {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              (pos) => {
+                const origin = `${pos.coords.latitude},${pos.coords.longitude}`
+                const destination = `${location.lat},${location.lng}`
+                const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`
+                window.open(mapsUrl, '_blank')
+              },
+              () => {
+                const fallbackUrl = `https://www.google.com/maps/dir/?api=1&destination=${location.lat},${location.lng}`
+                window.open(fallbackUrl, '_blank')
+              }
+            )
+          }
+        }
+
+        map.addListener('click', handleClick)
+        marker.addListener('click', handleClick)
+        setIsMapLoaded(true)
+      }
+    }
+
+    // Load Google Maps script
+    if (!window.google) {
+      const existingScript = document.getElementById('googleMaps')
+      if (!existingScript) {
+        const script = document.createElement('script')
+        script.id = 'googleMaps'
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}`
+        script.async = true
+        script.defer = true
+        script.onload = initMap
+        document.head.appendChild(script)
+      } else {
+        existingScript.addEventListener('load', initMap)
+      }
+    } else {
+      initMap()
+    }
+  }, [location, locationName])
+
+  return (
+    <div className="w-full h-64 rounded-lg overflow-hidden shadow">
+      {!isMapLoaded && (
+        <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
+          Loading map...
+        </div>
+      )}
+      <div ref={mapRef} className="w-full h-full" />
+    </div>
+  )
+}
+
 export default GoogleMap

@@ -1,20 +1,14 @@
-import PaymentSuccessPage from '@/components/events-components/PaymentsPage';
-import React from 'react'
 
-interface Props {
-    params:{
-        eventId:string;
-    }
-}
+import { Suspense } from 'react'
+import PaymentSuccessPage from '@/components/events-components/PaymentsPage'
 
-export default function EventDetailsPage({params}:Props) {
-    const { eventId } = params;
+const PaymentSuccess = () => {
   return (
-    <PaymentSuccessPage tickets={{
-          totalPrice: 0,
-          quantity: 0,
-          type: ''
-      }} eventTitles={''} />
+    <Suspense fallback={<div>Loading...</div>}>
+        <PaymentSuccessPage
+        />
+    </Suspense>
   )
 }
 
+export default PaymentSuccess

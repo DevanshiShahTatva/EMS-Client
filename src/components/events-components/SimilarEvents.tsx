@@ -4,19 +4,9 @@ import { CalendarIcon, MapPinIcon } from 'lucide-react'
 import { EventData, EventDataObjResponse } from '../../app/events/types'
 import { getTicketPriceRange } from '@/app/admin/event/helper'
 import { EventResponse } from '@/utils/types'
-interface Event {
-  id: number
-  title: string
-  date: string
-  time: string
-  location: string
-  images: string[]
-  category: string
-  isFree: boolean
-  price: number
-}
+
 interface SimilarEventsProps {
-  events: EventDataObjResponse[] | null | undefined;
+  events: EventDataObjResponse[] | undefined;
 }
 const SimilarEvents: React.FC<SimilarEventsProps> = ({ events }) => {
   if (!events) {

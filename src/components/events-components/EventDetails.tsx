@@ -1,31 +1,50 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { ArrowLeftIcon, CalendarIcon, ClockIcon, MapPinIcon, TagIcon } from 'lucide-react';
-import ImageCarousel from '@/components/events-components/ImageCarousel';
-import EventDescription from '@/components/events-components/EventDescription';
-import SimilarEvents from '@/components/events-components/SimilarEvents';
-import { EventDataObjResponse, EventDetails } from '../../app/events/types';
-import { getTicketPriceRange } from '@/app/admin/event/helper';
-import { areAllTicketsBooked, getEventStatus, getSimilarEvents, isNearbyWithUserLocation } from "@/app/events/event-helper";
-import { apiCall } from '@/utils/services/request';
-import { API_ROUTES } from '@/utils/constant';
-import { useRouter } from 'next/navigation';
-import Loader from '../common/Loader';
-import BookingButton from './BookingButton';
+import {
+  ArrowLeftIcon,
+  CalendarIcon,
+  ClockIcon,
+  MapPinIcon,
+  TagIcon,
+} from 'lucide-react'
+import ImageCarousel from '@/components/events-components/ImageCarousel'
+import EventDescription from '@/components/events-components/EventDescription'
+import SimilarEvents from '@/components/events-components/SimilarEvents'
+import { EventDataObjResponse, EventDetails } from '@/types/events'
+import { getTicketPriceRange } from '@/app/admin/event/helper'
+import {
+  areAllTicketsBooked,
+  getEventStatus,
+  getSimilarEvents,
+  isNearbyWithUserLocation,
+} from '@/app/events/event-helper'
+import { apiCall } from '@/utils/services/request'
+import { API_ROUTES } from '@/utils/constant'
+import { useRouter } from 'next/navigation'
+import Loader from '../common/Loader'
+import BookingButton from './BookingButton'
+import GoogleMap from './GoogleMap'
 
-export default function EventDetailsPage ({ eventId}:{eventId:string}) {
+export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
   const [event, setEventDetail] = useState<EventDetails>()
   const [loading, setLoading] = useState<boolean>(true)
-  const router = useRouter();
-  const navigateToHome=()=>{
-    router.push("/events");
+  const router = useRouter()
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('eventId', eventId)
+    }
+  }, [eventId])
+
+  const navigateToHome = () => {
+    router.push('/events')
   }
-  
+
   const fetchEvents = async () => {
     const result = await apiCall({
       endPoint: API_ROUTES.ADMIN.GET_EVENTS,
-      method: "GET",
+      method: 'GET',
     })
 
     if (result?.success && result.data?.length > 0) {
@@ -37,7 +56,7 @@ export default function EventDetailsPage ({ eventId}:{eventId:string}) {
   const getEventDetail = async () => {
     const result = await apiCall({
       endPoint: `${API_ROUTES.ADMIN.GET_EVENTS}/${eventId}`,
-      method: "GET",
+      method: 'GET',
     })
 
     if (result?.success && result.data) {
@@ -45,12 +64,14 @@ export default function EventDetailsPage ({ eventId}:{eventId:string}) {
     }
     setLoading(false)
   }
+
   useEffect(() => {
     if (eventId) {
       fetchEvents()
       getEventDetail()
     }
   }, [eventId])
+
   if (!event || !eventId) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -72,10 +93,12 @@ export default function EventDetailsPage ({ eventId}:{eventId:string}) {
       </div>
     )
   }
-  const similarEvents = getSimilarEvents(eventsDetails,eventId)
+
+  const similarEvents = getSimilarEvents(eventsDetails, eventId)
+
   return (
     <div className="min-h-screen bg-gray-50">
-     {loading && <Loader />}
+      {loading && <Loader />}
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex items-center">
           <button
@@ -95,9 +118,7 @@ export default function EventDetailsPage ({ eventId}:{eventId:string}) {
           <div className="lg:col-span-2 mb-6 lg:mb-0">
             <div
               className="bg-white shadow rounded-lg overflow-hidden"
-              style={{
-                height: '400px',
-              }}
+              style={{ height: '400px' }}
             >
               <ImageCarousel images={event.images} />
             </div>
@@ -111,12 +132,15 @@ export default function EventDetailsPage ({ eventId}:{eventId:string}) {
                 <div className="flex items-center text-gray-600">
                   <CalendarIcon className="h-5 w-5 mr-2 text-gray-400" />
                   <span>
-                    {new Date(event.startDateTime).toLocaleDateString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
+                    {new Date(event.startDateTime).toLocaleDateString(
+                      'en-US',
+                      {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      }
+                    )}
                   </span>
                 </div>
                 <div className="flex items-center text-gray-600">
@@ -144,7 +168,11 @@ export default function EventDetailsPage ({ eventId}:{eventId:string}) {
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Availability:</span>
                   <span
-                    className={`font-medium ${areAllTicketsBooked(event.tickets) ? 'text-red-600' : 'text-green-600'}`}
+                    className={`font-medium ${
+                      areAllTicketsBooked(event.tickets)
+                        ? 'text-red-600'
+                        : 'text-green-600'
+                    }`}
                   >
                     {areAllTicketsBooked(event.tickets)
                       ? 'Sold Out'
@@ -152,9 +180,9 @@ export default function EventDetailsPage ({ eventId}:{eventId:string}) {
                   </span>
                 </div>
               </div>
-              <BookingButton 
+              <BookingButton
                 tickets={event.tickets}
-                eventTitle={event.title}                
+                eventTitle={event.title}
               />
             </div>
           </div>
@@ -163,8 +191,14 @@ export default function EventDetailsPage ({ eventId}:{eventId:string}) {
           <EventDescription description={event.description} />
         </div>
         <div className="mt-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Location</h2>
-          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Location
+          </h2>
+          <GoogleMap
+            location={{lat:event.location.lat,lng:event.location.lng}}
+            locationName={event.location.address}
+          />
+        </div>
         <SimilarEvents events={similarEvents} />
       </main>
     </div>

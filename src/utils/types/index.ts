@@ -128,6 +128,7 @@ export type EventDataObjResponse = {
     images: EventImage[]; // optional, since second object has no images
     createdAt: string;
     updatedAt: string;
+    isLiked:boolean;
     __v?: number;
 };
 
