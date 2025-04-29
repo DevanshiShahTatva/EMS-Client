@@ -1,92 +1,63 @@
-'use client'
+'use client';
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import 'leaflet/dist/leaflet.css';
 
-interface GoogleMapProps {
+const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
+import { useMapEvent } from 'react-leaflet';
+interface OpenStreetMapProps {
   location: {
-    lat: number
-    lng: number
-  }
-  locationName: string
+    lat: number;
+    lng: number;
+  };
+  locationName: string;
 }
 
-declare global {
-  interface Window {
-    initMap: () => void
-    google: any
-  }
-}
-
-const GoogleMap: React.FC<GoogleMapProps> = ({ location, locationName }) => {
-  const mapRef = useRef<HTMLDivElement>(null)
-  const [isMapLoaded, setIsMapLoaded] = useState(false)
-
-  useEffect(() => {
-    const initMap = () => {
-      if (window.google && mapRef.current) {
-        const map = new window.google.maps.Map(mapRef.current, {
-          center: location,
-          zoom: 15,
-        })
-
-        const marker = new window.google.maps.Marker({
-          position: location,
-          map: map,
-          title: locationName,
-        })
-
-        const handleClick = () => {
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-              (pos) => {
-                const origin = `${pos.coords.latitude},${pos.coords.longitude}`
-                const destination = `${location.lat},${location.lng}`
-                const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`
-                window.open(mapsUrl, '_blank')
-              },
-              () => {
-                const fallbackUrl = `https://www.google.com/maps/dir/?api=1&destination=${location.lat},${location.lng}`
-                window.open(fallbackUrl, '_blank')
-              }
-            )
+const GoogleMap: React.FC<OpenStreetMapProps> = ({ location, locationName }) => {
+  
+  const MapClickHandler = () => {
+    useMapEvent('click', () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const origin = `${position.coords.latitude},${position.coords.longitude}`;
+            const destination = `${location.lat},${location.lng}`;
+            const url = `https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=${origin};${destination}`;
+            window.open(url, '_blank');
+          },
+          () => {
+            alert('Unable to fetch your current location');
           }
-        }
-
-        map.addListener('click', handleClick)
-        marker.addListener('click', handleClick)
-        setIsMapLoaded(true)
-      }
-    }
-
-    // Load Google Maps script
-    if (!window.google) {
-      const existingScript = document.getElementById('googleMaps')
-      if (!existingScript) {
-        const script = document.createElement('script')
-        script.id = 'googleMaps'
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}`
-        script.async = true
-        script.defer = true
-        script.onload = initMap
-        document.head.appendChild(script)
+        );
       } else {
-        existingScript.addEventListener('load', initMap)
+        alert('Geolocation is not supported by your browser');
       }
-    } else {
-      initMap()
-    }
-  }, [location, locationName])
+    });
+    return null;
+  };
 
   return (
-    <div className="w-full h-64 rounded-lg overflow-hidden shadow">
-      {!isMapLoaded && (
-        <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
-          Loading map...
-        </div>
-      )}
-      <div ref={mapRef} className="w-full h-full" />
+    <div className="w-full h-96 rounded-lg overflow-hidden shadow">
+      <MapContainer
+        center={[location.lat, location.lng]}
+        zoom={14}
+        style={{ width: '100%', height: '100%' }}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; OpenStreetMap contributors"
+        />
+        <Marker position={[location.lat, location.lng]}>
+          <Popup>{locationName}</Popup>
+        </Marker>
+        <MapClickHandler />
+      </MapContainer>
     </div>
-  )
-}
+  );
+};
 
-export default GoogleMap
+export default GoogleMap;

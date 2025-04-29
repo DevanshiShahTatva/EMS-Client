@@ -564,10 +564,10 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
   },[eventType])
 
     return (
-      <div className="my-5 md:my-10 lg:mx-15 md:mx-15 mx-5">
+      <div className="m-10">
         {loader && <Loader />}
 
-        <div className="rounded-[12px] bg-white p-5">
+        <div className="rounded-[12px] bg-white p-6 shadow-lg border-2 border-gray-200">
           <p className="text-2xl font-bold mb-10">
             {isEditMode ? "Update" : "Create"} Event
           </p>

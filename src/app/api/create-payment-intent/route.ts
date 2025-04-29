@@ -17,7 +17,7 @@ export async function POST(req: Request) {
             product_data: {
               name: `${eventTitle} - ${tickets.type}`,
             },
-            unit_amount: Math.round(tickets.totalPrice * 100),
+            unit_amount: Math.round(tickets.totalPrice),
           },
           quantity: tickets.quantity,
         },
@@ -26,7 +26,6 @@ export async function POST(req: Request) {
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/events`,
     })
-
     return NextResponse.json({ url: session.url })
   } catch (error) {
     console.error('Stripe error:', error)

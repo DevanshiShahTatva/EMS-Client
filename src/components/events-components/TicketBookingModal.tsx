@@ -6,8 +6,9 @@ import {
   Plus as PlusIcon,
   Minus as MinusIcon,
 } from 'lucide-react'
-import { EventTicket } from '@/types/events'
+import { EventTicket } from "@/app/events/types";
 import axios from 'axios'
+import { getTicketStatus } from '@/app/events/event-helper';
 
 interface TicketBookingModalProps {
   isOpen: boolean
@@ -83,19 +84,18 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-scroll no-scrollbar">
-      <div className="bg-white rounded-lg w-full max-w-md mt-40">
-        <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-900">Book Tickets</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-500"
-            aria-label="Close"
-          >
-            <CloseIcon className="h-6 w-6" />
-          </button>
-        </div>
-
+    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center p-4 z-999 overflow-y-auto no-scrollbar">
+  <div className="bg-white rounded-lg w-full max-w-lg max-h-full overflow-y-auto no-scrollbar">
+    <div className="flex justify-between items-center p-6 border-b">
+      <h2 className="text-xl font-semibold text-gray-900">Book Tickets</h2>
+      <button
+        onClick={onClose}
+        className="text-gray-400 hover:text-gray-500"
+        aria-label="Close"
+      >
+        <CloseIcon className="h-6 w-6" />
+      </button>
+    </div>
         <div className="p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">
             {eventTitle}
@@ -107,7 +107,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                 ticket.totalBookedSeats
               )
               const isSelected = selectedType === ticket.type
-
+              const { status,color } = getTicketStatus(ticket);
               return (
                 <div
                   key={ticket.type}
@@ -170,9 +170,14 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                         Add
                       </button>
                     )}
-                    <span className="text-sm text-gray-500">
-                      {available} seat{available !== 1 && 's'} left
-                    </span>
+                    <div className="flex flex-col gap-1 text-sm text-gray-500">
+                      <span>
+                        Status: <span style={{ color }}>{status}</span>
+                      </span>
+                      <span>
+                        {available} seat{available !== 1 ? 's' : ''} left
+                      </span>
+                    </div>
                   </div>
                 </div>
               )

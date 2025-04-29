@@ -131,3 +131,80 @@ export interface EventDetails {
   isLiked: boolean
   likesCount: number
 }
+
+
+export interface EventData {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  date: string;
+  priceRange: string;
+  category: EventCategory | string;
+  isSoldOut: boolean;
+  isLiked: boolean;
+  status: EventStatus;
+  isFeatured: boolean;
+}
+  export interface Category {
+    id: string;
+    name: string;
+    icon: LucideIcon;
+  }
+  export interface Ticket {
+    type: string;
+    price: number;
+    totalSeats: number;
+    totalBookedSeats: number;
+    description: string;
+    _id: string;
+  }
+
+  
+export interface EventsDataTypes {
+  id: string
+  img: string;
+  title: string;
+  category: string;
+  startTime: string;
+  endTime: string;
+  duration: string;
+  location: string;
+  price: string | number;
+  ticketsAvailable: number;
+}
+
+
+export interface Ticket {
+  type: string
+  price: number
+  totalSeats: number
+  totalBookedSeats: number
+  description: string
+  _id: string
+}
+
+export interface Location {
+  address: string
+  lat: number
+  lng: number
+}
+
+export interface EventDetails {
+  _id: string
+  title: string
+  description: string 
+  location: Location
+  startDateTime: string
+  endDateTime: string
+  duration: string
+  category: string
+  tickets: Ticket[]
+  images: EventImage[]
+  createdAt: string
+  updatedAt: string
+  __v: number
+  likes: string[]
+  isLiked: boolean
+  likesCount: number
+}

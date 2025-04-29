@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react'
+import Image from 'next/image';
 
 // Custom Compoents
 import Loader from '@/components/common/Loader';
@@ -238,10 +239,10 @@ function EventsListpage() {
   };
 
   return (
-    <div className="my-5 md:my-10 lg:mx-15 md:mx-15 mx-5">
+    <div className="m-10">
       {loading && <Loader />}
 
-      <div className="rounded-[12px] bg-white p-5">
+      <div className="rounded-[12px] bg-white p-6 shadow-lg border-2 border-gray-200">
         <p className="text-2xl font-bold">All Events</p>
 
         {/* Search Bar & Filters  */}
@@ -365,9 +366,11 @@ function EventsListpage() {
                         {event.img === "" ? (
                           "-"
                         ) : (
-                          <img
+                          <Image
                             src={event.img}
                             alt="avatar"
+                            width={40}
+                            height={40}
                             className="w-10 h-10 rounded-full"
                           />
                         )}

@@ -9,6 +9,8 @@ interface FormikTextFieldProps {
     placeholder?: string;
     maxLength?:number;
     endIcon?:React.ReactNode; 
+    readOnly?: boolean;
+    disabled?: boolean;
 }
 
 const FormikTextField: React.FC<FormikTextFieldProps> = ({
@@ -17,7 +19,9 @@ const FormikTextField: React.FC<FormikTextFieldProps> = ({
     type = 'text',
     placeholder = '',
     maxLength ,
-    endIcon
+    endIcon,
+    readOnly = false,
+    disabled = false,
 }) => {
 
     const [field, meta] = useField(name);
@@ -37,11 +41,13 @@ const FormikTextField: React.FC<FormikTextFieldProps> = ({
                 name={name}
                 id={name}
                 placeholder={placeholder}
-                className={`w-full px-4 py-2 border
+                className={`w-full px-4 py-2 border disabled:bg-gray-100 disabled:text-gray-500
                     ${hasError ? "border-red-500 focus:ring-red-500 focus:border-red-500" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"} 
                       rounded-lg focus:outline-none focus:ring-1
                     outline-none transition-all no-spinner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                 maxLength={maxLength}
+                readOnly={readOnly}
+                disabled={disabled}
             />
             {endIcon && (
                 <div className="absolute right-3 top-[60%] transform -translate-y-[60%]">

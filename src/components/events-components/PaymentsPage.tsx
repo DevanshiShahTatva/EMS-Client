@@ -5,7 +5,7 @@ import { CheckCircleIcon } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { apiCall } from '@/utils/services/request'
 import { API_ROUTES } from '@/utils/constant'
-import { CheckoutTicket } from '@/types/events'
+import { CheckoutTicket } from '@/app/events/types';
 
 const PaymentSuccessPage = () => {
   const router = useRouter()

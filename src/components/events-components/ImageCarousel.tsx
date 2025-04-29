@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
-import { EventImage } from '@/types/events'
+import { EventImage } from '@/app/events/types'
 interface ImageCarouselProps {
   images:EventImage[];
   autoSwitchInterval?: number

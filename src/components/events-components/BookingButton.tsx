@@ -2,14 +2,16 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation';
 import TicketBookingModal from './TicketBookingModal'
 import { areAllTicketsBooked } from '@/app/events/event-helper';
-import { EventTicket } from '@/types/events';
+import { EventTicket } from '@/app/events/types';
 interface BookingButtonProps {
   tickets:EventTicket[];
   eventTitle: string;
+  status:boolean;
 }
 const BookingButton: React.FC<BookingButtonProps> = ({
   tickets,
   eventTitle,
+  status
 }) => {
   const navigate = useRouter()
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -42,10 +44,11 @@ const BookingButton: React.FC<BookingButtonProps> = ({
   return (
     <>
       <button
+        disabled={status}
         onClick={handleBookingClick}
-        className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
+        className={`w-full py-3 px-4 font-medium rounded-md transition-colors ${status ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
       >
-        Book Tickets
+        {status ? "Event Ended":"Book Tickets"}
       </button>
       <TicketBookingModal
         isOpen={isModalOpen}

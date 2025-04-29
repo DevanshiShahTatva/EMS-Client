@@ -1,9 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
 import { CalendarIcon, MapPinIcon } from 'lucide-react'
-import { EventData, EventDataObjResponse } from '../../app/events/types'
+import { EventDataObjResponse } from '../../app/events/types'
 import { getTicketPriceRange } from '@/app/admin/event/helper'
-import { EventResponse } from '@/utils/types'
 
 interface SimilarEventsProps {
   events: EventDataObjResponse[] | undefined;
@@ -19,7 +18,7 @@ const SimilarEvents: React.FC<SimilarEventsProps> = ({ events }) => {
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {events.map((event) => (
-          <Link href={`/event/${event._id}`} key={event._id} className="block">
+          <Link href={`/events/${event._id}`} key={event._id} className="block">
             <div className="bg-white overflow-hidden shadow rounded-lg transition-shadow hover:shadow-md flex">
               <div className="w-1/3">
                 <img
