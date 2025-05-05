@@ -10,7 +10,7 @@ import { Formik, Form, FormikHelpers } from "formik";
 import { toast } from "react-toastify";
 
 // Constants
-import { ROUTES, API_ROUTES } from "@/utils/constant";
+import { ROUTES, API_ROUTES, LOG_IN_IMAGE_BANNER_LINK } from "@/utils/constant";
 
 // Helper Functions and Schemas
 import { apiCall } from "@/utils/services/request";
@@ -104,7 +104,7 @@ const ResetPasswordPage = () => {
                           onClick={() =>
                             togglePasswordVisibility("newPassword")
                           }
-                          className="text-gray-500"
+                          className="text-gray-500 cursor-pointer"
                         >
                           {showPassword.newPassword ? (
                             <EyeSlashIcon className="h-6 w-6 text-gray-500 mt-1" />
@@ -118,6 +118,7 @@ const ResetPasswordPage = () => {
                     <FormikTextField
                       name="confirmPassword"
                       label="Confirm New Password"
+                      placeholder="Enter your confirm new password"
                       type={showPassword.confirmPassword ? "text" : "password"}
                       endIcon={
                         <button
@@ -125,7 +126,7 @@ const ResetPasswordPage = () => {
                           onClick={() =>
                             togglePasswordVisibility("confirmPassword")
                           }
-                          className="text-gray-500"
+                          className="text-gray-500 cursor-pointer"
                         >
                           {showPassword.confirmPassword ? (
                             <EyeSlashIcon className="h-6 w-6 text-gray-500 " />
@@ -139,7 +140,7 @@ const ResetPasswordPage = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
+                      className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
                     >
                       {isSubmitting
                         ? "Resetting Password..."
@@ -167,7 +168,7 @@ const ResetPasswordPage = () => {
 
           <div className="relative w-full h-full bg-[#fff] text-white">
             <Image
-              src="https://img.freepik.com/free-vector/sign-page-abstract-concept-illustration_335657-2242.jpg?semt=ais_hybrid&w=740"
+              src={LOG_IN_IMAGE_BANNER_LINK}
               alt="reset password illustration"
               fill
               className="object-contain p-8"

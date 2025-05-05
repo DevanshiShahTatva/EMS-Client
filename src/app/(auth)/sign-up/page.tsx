@@ -1,19 +1,31 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
+
+// Next library support
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+// Other library support
 import { Formik, Form, FormikHelpers } from "formik";
 import { toast } from "react-toastify";
-import { ROUTES, API_ROUTES } from "@/utils/constant";
+
+// Constant imports
+import { ROUTES, API_ROUTES, SIGN_UP_IMAGE_BANNER_LINK } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
 import FormikTextField from "@/components/common/FormikTextField";
-import Logo from "@/components/common/Logo";
 import { InitialSignupValues, SignupFormSchema, TITLE } from "./helper";
+
+// Logo image & Icons
+import Logo from "@/components/common/Logo";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+
+// Type support
 import { ISignupFormValues } from "./types";
 
 const SignUpPage = () => {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSignupSubmit = async (values: ISignupFormValues, actions: FormikHelpers<ISignupFormValues>) => {
     actions.setSubmitting(true);
@@ -57,14 +69,34 @@ const SignUpPage = () => {
               onSubmit={handleSignupSubmit}>
               {({ isSubmitting }) => (
                 <Form className="space-y-5">
-                  <FormikTextField name="name" label="Your Name" type="text" />
-                  <FormikTextField name="email" label="Email" type="email" />
-                  <FormikTextField name="password" label="Password" type="password" />
+                  <FormikTextField name="name" label="Your Name" placeholder="Enter your name" type="text" />
+                  <FormikTextField name="email" label="Email" placeholder="Enter your email" type="email" />
+                  <FormikTextField
+                    name="password"
+                    label="Password"
+                    placeholder="Enter your password"
+                    type={showPassword ? "text" : "password"}
+                    endIcon={
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowPassword(!showPassword)
+                        }
+                        className="text-gray-500 cursor-pointer"
+                      >
+                        {showPassword ? (
+                          <EyeSlashIcon className="h-6 w-6 text-gray-500 mt-1" />
+                        ) : (
+                          <EyeIcon className="h-6 w-6 text-gray-500 mt-1" />
+                        )}
+                      </button>
+                    }
+                  />
 
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50">
+                    className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 cursor-pointer">
                     {isSubmitting ? "Creating Account..." : "Create Account"}
                   </button>
 
@@ -87,7 +119,7 @@ const SignUpPage = () => {
         {/* Right: Illustration */}
         <div className="relative w-full h-full bg-[#fff] text-white">
           <Image
-            src="https://img.freepik.com/free-vector/privacy-policy-concept-illustration_114360-7853.jpg?semt=ais_hybrid&w=740"
+            src={SIGN_UP_IMAGE_BANNER_LINK}
             alt="signup illustration"
             fill
             className="object-contain p-8"

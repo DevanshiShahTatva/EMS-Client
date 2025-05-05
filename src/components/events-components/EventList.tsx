@@ -1,6 +1,6 @@
 import React from 'react'
 import { EventCard } from './EventCard'
-import { EventData } from '@/utils/types'
+import { EventData } from '../../app/events/types'
 interface EventListProps {
   events: EventData[]
 }

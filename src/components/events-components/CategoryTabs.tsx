@@ -1,5 +1,5 @@
 import React from 'react'
-import { EventCategory } from '@/utils/types'
+import { EventCategory } from '@/app/events/types'
 interface CategoryTabsProps {
   activeCategory: EventCategory
   setActiveCategory: (category: EventCategory) => void
@@ -17,26 +17,43 @@ export const CategoryTabs: React.FC<CategoryTabsProps> = ({
       label: 'All',
     },
     {
-      id: 'movies',
-      label: 'Movies',
+      id: 'Film & Media',
+      label: 'Film & Media',
     },
     {
-      id: 'conference',
-      label: 'Conference',
+      id: 'Business',
+      label: 'Business',
     },
     {
-      id: 'party',
-      label: 'Party',
+      id: 'Art & Culture',
+      label: 'Art & Culture',
     },
     {
-      id: 'music',
+      id: 'Music',
       label: 'Music',
     },
     {
-      id: 'dance',
-      label: 'Dance',
+      id: 'Gaming',
+      label: 'Gaming',
+    },
+    {
+      id: 'Food & Drink',
+      label: 'Food & Drink',
+    },
+    {
+      id: 'Sports',
+      label: 'Sports',
+    },
+    {
+      id: 'Education',
+      label: 'Education',
+    },
+    {
+      id: 'Wellness',
+      label: 'Wellness',
     },
   ]
+
   return (
     <div className="border-b border-gray-200 overflow-x-auto">
       <div className="flex space-x-1 min-w-full py-2">

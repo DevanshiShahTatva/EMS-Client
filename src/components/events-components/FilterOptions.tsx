@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import { SlidersIcon, ChevronDownIcon } from 'lucide-react'
-import { SortOption } from '@/utils/types'
+import { SortOption } from '../../app/events/types'
 interface FilterOptionsProps {
   sortOption: SortOption
   setSortOption: (option: SortOption) => void
@@ -40,7 +40,7 @@ export const FilterOptions: React.FC<FilterOptionsProps> = ({
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+        className="flex w-max items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
       >
         <SlidersIcon className="h-4 w-4" />
         <span>{currentLabel}</span>

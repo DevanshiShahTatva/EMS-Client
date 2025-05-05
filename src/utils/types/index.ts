@@ -3,7 +3,6 @@ export interface IDeleteModalProps {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: () => void;
-    title?: string;
     description?: string;
     loading?: boolean
 }
@@ -11,7 +10,32 @@ export interface IDeleteModalProps {
 export interface IFilterModalProps {
     isOpen: boolean;
     onClose: () => void;
-    applyFilters: () => void;
+    applyFilters: (filterValues : IApplyFiltersKey) => void;
+    maxTicketPrice?: number
+    isUserRole? : boolean
+    filterValues? : IApplyFiltersKey
+}
+
+export interface IEventRangeDate {
+    from : Date | string
+    to : Date | string
+}
+
+export interface IEventPrice {
+    max : number
+    min : number
+}
+
+export interface IApplyFiltersKey {
+    catogories?: string[]
+    durations?: string[]
+    status? : string
+    ticketsTypes?: string
+    eventsDates?: IEventRangeDate
+    priceRange?: IEventPrice
+    search? : string
+    likeEvent? : string
+    locationRadius? : string
 }
 
 export interface ISidebarPageProps {
@@ -64,6 +88,8 @@ export interface EventsDataTypes {
     location: string;
     price: string | number;
     ticketsAvailable: number;
+    totalTickets : number,
+    ticketsArray : EventTicket[]
 }
 
 
@@ -101,6 +127,7 @@ export type EventDataObjResponse = {
     images: EventImage[]; // optional, since second object has no images
     createdAt: string;
     updatedAt: string;
+    isLiked:boolean;
     __v?: number;
 };
 

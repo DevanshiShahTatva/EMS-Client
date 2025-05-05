@@ -67,21 +67,47 @@ npm start
 ## 🧾 Folder Structure
 
 ```
-├── components
-│   ├── EventCard
-│   ├── EventForm
-│   └── AddressAutocomplete
-├── pages
-│   ├── index.tsx
-│   ├── create.tsx
-│   └── edit/[id].tsx
 ├── public
-├── styles
-│   └── globals.css
-├── utils
-│   └── helpers.ts
+│
+├── src
+│   ├── app
+│   │   ├── (auth)
+│   │   ├── admin
+│   │   ├── api
+│   │   ├── events
+│   │   ├── faq
+│   │   ├── payment-success
+│   │   ├── terms-and-conditions
+│   │   ├── user
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   └── globals.css
+│   │
+│   ├── components
+│   ├── admin-components
+│   │   └── (Admin-specific UI components)
+│   ├── common
+│   │   └── (Shared components like buttons, inputs, modals)
+│   ├── events-components
+│   │   └── (Components related to events listing, event details)
+│   └── ui
+│       └── (General UI like Cards, Loaders, Icons, etc.)
+│   │
+│   ├── utils
+│   │   ├── create-payment
+│   │   ├── services
+│   │   ├── types
+│   │   ├── constant.ts
+│   │   └── helper.ts
+│
+├── middleware.ts
+│
+├── .env.example
 ├── .env.local
-├── tailwind.config.js
+├── .gitignore
+├── components.json
+├── eslint.config.mjs
+├── tailwind.config.ts
 ├── tsconfig.json
 └── README.md
 ```

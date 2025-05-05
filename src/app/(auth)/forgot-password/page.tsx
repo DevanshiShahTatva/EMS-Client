@@ -14,7 +14,7 @@ import Logo from "@/components/common/Logo";
 import FormikTextField from "@/components/common/FormikTextField";
 
 // Constants Imports
-import { API_ROUTES, ROUTES } from "@/utils/constant";
+import { API_ROUTES, LOG_IN_IMAGE_BANNER_LINK, ROUTES } from "@/utils/constant";
 
 // Types & Interfaces (TypeScript)
 import { IForgotPassValues } from "./types";
@@ -69,12 +69,12 @@ function ForgotPasswordPage() {
             >
               {({ isSubmitting }) => (
                 <Form className="space-y-5">
-                  <FormikTextField name="email" label="Email" type="email" />
+                  <FormikTextField name="email" placeholder="Enter your email" label="Email" type="email" />
 
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
+                    className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     {isSubmitting ? "Sending OTP..." : "Send OTP"}
                   </button>
@@ -100,7 +100,7 @@ function ForgotPasswordPage() {
 
         <div className="relative w-full h-full bg-[#fff] text-white">
           <Image
-            src="https://img.freepik.com/free-vector/sign-page-abstract-concept-illustration_335657-2242.jpg?semt=ais_hybrid&w=740"
+            src={LOG_IN_IMAGE_BANNER_LINK}
             alt="forgot password illustration"
             fill
             className="object-contain p-8"

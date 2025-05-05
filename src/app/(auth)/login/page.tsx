@@ -1,23 +1,38 @@
 "use client";
 import React, { useState } from "react";
+
+// Next library support
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+// Other library support
 import { Formik, Form, FormikHelpers } from "formik";
 import { toast } from "react-toastify";
-import { ROUTES, API_ROUTES } from "@/utils/constant";
+
+// Constant imports
+import { ROUTES, API_ROUTES, LOG_IN_IMAGE_BANNER_LINK } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
 import { InitialLogInValues, LogInFormSchema } from "./helper";
-import { ILogInFormValues } from "./types";
 import FormikTextField from "@/components/common/FormikTextField";
+
+// types support
+import { ILogInFormValues } from "./types";
+
+// Logo & Icons
 import Logo from "@/components/common/Logo";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+
+// Other library support
+import Cookie from 'js-cookie'
 
 const LogInPage = () => {
   const router = useRouter();
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogInSubmit = async (values: ILogInFormValues, actions: FormikHelpers<ILogInFormValues>) => {
-    actions.setSubmitting(false);
+    actions.setSubmitting(true);
 
     const response = await apiCall({
       endPoint: API_ROUTES.AUTH.LOGIN,
@@ -25,9 +40,11 @@ const LogInPage = () => {
       body: values,
     });
 
+    actions.setSubmitting(false);
+
     if (response.success) {
       const { token, role } = response.data;
-
+      Cookie.set("authToken", token)
       if (rememberMe) {
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
@@ -47,6 +64,7 @@ const LogInPage = () => {
       }
 
       toast.success(response.message);
+      
     } else {
       toast.error(response.message || "Login failed. Please try again.");
     }
@@ -71,8 +89,28 @@ const LogInPage = () => {
             <Formik initialValues={InitialLogInValues} validationSchema={LogInFormSchema} onSubmit={handleLogInSubmit}>
               {({ isSubmitting }) => (
                 <Form className="space-y-5">
-                  <FormikTextField name="email" label="Email" type="email" />
-                  <FormikTextField name="password" label="Password" type="password" />
+                  <FormikTextField name="email" label="Email" placeholder="Enter your email" type="email" />
+                  <FormikTextField 
+                      name="password" 
+                      label="Password" 
+                      placeholder="Enter your password" 
+                      type={showPassword ? "text" : "password"}
+                      endIcon={
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowPassword(!showPassword)
+                          }
+                          className="text-gray-500 cursor-pointer"
+                        >
+                          {showPassword ? (
+                            <EyeSlashIcon className="h-6 w-6 text-gray-500 mt-1" />
+                          ) : (
+                            <EyeIcon className="h-6 w-6 text-gray-500 mt-1" />
+                          )}
+                        </button>
+                      } 
+                   />
 
                   <div className="flex items-center justify-between text-sm text-gray-600">
                     <label className="flex items-center gap-2 cursor-pointer">
@@ -92,7 +130,7 @@ const LogInPage = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50">
+                    className="w-full cursor-pointer bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50">
                     {isSubmitting ? "Logging In..." : "Log In"}
                   </button>
 
@@ -115,7 +153,7 @@ const LogInPage = () => {
         {/* Right: Illustration */}
         <div className="relative w-full h-full bg-[#fff] text-white">
           <Image
-            src="https://img.freepik.com/free-vector/sign-page-abstract-concept-illustration_335657-2242.jpg?semt=ais_hybrid&w=740"
+            src={LOG_IN_IMAGE_BANNER_LINK}
             alt="dashboard preview"
             fill
             className="object-contain p-8"

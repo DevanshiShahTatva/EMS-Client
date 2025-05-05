@@ -564,10 +564,10 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
   },[eventType])
 
     return (
-      <div className="my-5 md:my-10 lg:mx-15 md:mx-15 mx-5">
+      <div className="m-10">
         {loader && <Loader />}
 
-        <div className="rounded-[12px] bg-white p-5">
+        <div className="rounded-[12px] bg-white p-6 shadow-lg border-2 border-gray-200">
           <p className="text-2xl font-bold mb-10">
             {isEditMode ? "Update" : "Create"} Event
           </p>
@@ -685,7 +685,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
               Ticket types <span className="text-red-500">*</span>
             </label>
 
-            <div className="w-full">
+            <div className="w-full overflow-x-auto sm:overflow-x-visible">
               <table className="min-w-full table-auto border border-gray-300">
                 <thead>
                   <tr className="bg-gray-100 text-left">
@@ -768,7 +768,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                         <td className="border px-4 py-2">
                           {ticket.description}
                         </td>
-                        <td className="border px-4 py-2 text-center space-x-2">
+                        <td className="border px-4 py-2 text-center md:space-x-2">
                           <button
                             className="text-blue-600 p-1 cursor-pointer font-bold"
                             onClick={() => handleEdit(ticket.id)}
@@ -904,7 +904,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
               )}
 
               {existingImages.length > 0 && (
-                <div className="grid grid-cols-12 gap-4 p-3 border-dashed rounded-[12px] border-gray-300 border-2">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 p-3 border-dashed rounded-[12px] border-gray-300 border-2">
                   {existingImages.map((file, index) => {
                     const imageUrl =
                       "url" in file
@@ -913,7 +913,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                     return (
                       <div
                         key={index}
-                        className="relative w-full h-48 border rounded-lg overflow-hidden shadow col-span-4"
+                        className="relative w-full h-48 border rounded-lg overflow-hidden shadow col-span-1 md:col-span-4"
                       >
                         <img
                           src={imageUrl}
@@ -975,13 +975,13 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
               )}
 
               {images.length > 0 && (
-                <div className="grid grid-cols-12 gap-4 p-3 border-dashed rounded-[12px] border-gray-300 border-2">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 p-3 border-dashed rounded-[12px] border-gray-300 border-2">
                   {images.map((file, index) => {
                     const url = URL.createObjectURL(file);
                     return (
                       <div
                         key={index}
-                        className="relative w-full h-48 border rounded-lg overflow-hidden shadow col-span-4"
+                        className="relative w-full h-48 border rounded-lg overflow-hidden shadow col-span-1 md:col-span-4"
                       >
                         <img
                           src={url}

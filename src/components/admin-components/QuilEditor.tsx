@@ -30,6 +30,7 @@ const QuilEditor: React.FC<IQuilEditorProps> = ({
       <ReactQuill
         theme="snow"
         placeholder={placeholder}
+        className="custom-quill"
         value={value}
         onChange={onChange}
       />
