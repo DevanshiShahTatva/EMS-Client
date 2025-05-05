@@ -31,24 +31,24 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     year: 'numeric',
   })
   const router = useRouter();
-  const navigateToEventDetails=(eventId:string)=>{
-    router.push(`${ROUTES.USER_EVENTS}\\${eventId}`);  
+  const navigateToEventDetails = (eventId: string) => {
+    router.push(`${ROUTES.USER_EVENTS}\\${eventId}`);
   }
 
   const handleLikeEvent = async () => {
     const response = await apiCall({
-      endPoint: API_ROUTES.ADMIN.GET_EVENTS+`/${event.id}/like`,
+      endPoint: API_ROUTES.ADMIN.GET_EVENTS + `/${event.id}/like`,
       method: "POST",
     });
     if (response.success) {
       setIsLiked(!isLiked)
-    } 
+    }
   };
 
-  useEffect(()=>{
-   setIsLiked(event.isLiked)
-  },[event])
- 
+  useEffect(() => {
+    setIsLiked(event.isLiked)
+  }, [event])
+
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 flex flex-col h-full">
       <div className="relative">
@@ -75,7 +75,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
             {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
           </span>
         </div>
-        <div className="text-gray-600 text-sm line-clamp-2 mb-4" dangerouslySetInnerHTML={{__html:event.description}}/>
+        <div className="text-gray-600 text-sm line-clamp-2 mb-4" dangerouslySetInnerHTML={{ __html: event.description }} />
         <div className="mt-auto space-y-2">
           <div className="flex items-center text-sm text-gray-500">
             <Square3Stack3DIcon className="h-4 w-4 mr-2" />
@@ -110,7 +110,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         <button
           disabled={event.isSoldOut}
           className={`w-full py-2 px-4 rounded-md font-medium ${event.isSoldOut ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
-          onClick={()=>navigateToEventDetails(event.id)}
+          onClick={() => navigateToEventDetails(event.id)}
         >
           {event.isSoldOut ? 'Sold Out' : 'View Details'}
         </button>
