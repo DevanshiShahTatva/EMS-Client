@@ -38,21 +38,30 @@ function Footer() {
             <footer className="bg-gray-900 text-white py-8 px-10">
                 <div className="m-0 md:mx-auto md:text-start text-center flex flex-col items-center md:items-start md:flex-row md:justify-between gap-4 md:gap-6">
                     <div>
-                    <Link
-                        className="flex title-font font-medium items-center text-gray-900 md:mb-0 w-fit"
-                        href={ROUTES.HOME}
-                        >
-                        <Image
-                            src={"/assets/eventlyLogo1.png"}
-                            alt='logo'
-                            width={130}
-                            height={60}
-                            style={{ backgroundColor: "white" }}
-                        />
-                    </Link>
-                        {/* <h3 className="text-2xl font-bold mb-2">Evently</h3> */}
+                        <Link
+                            className="relative flex title-font font-medium items-center text-gray-900 md:mb-0 w-fit"
+                            href={ROUTES.HOME}
+                            >
+                            <div className='absolute z-10'>
+                            <Image
+                                src={"/assets/ticket_icon.png"}
+                                alt='logo'
+                                width={36}
+                                height={36}
+                            />
+                            </div>
+                            <Image
+                                src={"/assets/eventlyLogo1.png"}
+                                alt='logo'
+                                width={130}
+                                height={60}
+                                style={{ filter: "invert(1)" }}
+                            />
+                        </Link>
                         <p className="text-gray-300">Experience more, worry less.</p>
                     </div>
+                    <div className='flex flex-col md:flex-row gap-6 md:gap-25'>
+                        <div className='flex flex-row gap-7'>
                     <div className="flex flex-col">
                         <h4 className="font-semibold mb-2">Quick Links</h4>
                         <Link href={ROUTES.HOME} className="text-gray-300 hover:underline">Home</Link>
@@ -71,9 +80,10 @@ function Footer() {
                         <Link href={ROUTES.FAQs} className="text-gray-300 hover:underline">FAQs</Link>
                         <Link href={ROUTES.TERMS_AND_CONDITIONS} className="text-gray-300 hover:underline">Terms & Conditions</Link>
                     </div>
+                    </div>
                     <div>
                         <h4 className="font-semibold mb-2">Follow Us</h4>
-                        <div className="flex gap-4">
+                        <div className="flex gap-4 justify-center">
                             <Link href={ROUTES.HOME} className="text-gray-300 hover:text-white">
                                 <Image
                                     src={Instagram}
@@ -103,9 +113,10 @@ function Footer() {
                             </Link>
                         </div>
                     </div>
+                    </div>
                 </div>
-                <div className="text-center text-gray-400 mt-8 text-sm">
-                    Copyright © {new Date().getFullYear()} All Rights Reserved. 
+                <div className="border-t border-t-[gray] text-center text-gray-400 mt-8 text-sm">
+                   <div className='pt-5'>Copyright © {new Date().getFullYear()} All Rights Reserved.</div>
                 </div>
             </footer>
         </div>
