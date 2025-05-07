@@ -202,23 +202,6 @@ export const PROFILE_TAB_OPTIONS = [
     { id: 3, value: "password", label: "Change Password" },
 ]
 
-export const FEATURES_DATA = [
-    {
-        title: "Discover Events",
-        description: "Evently connects you with amazing events happening around you! Whether it's a concert, a festival, or a creative workshop, you can easily explore what's going on in your city. Stay up to date with the latest happenings and never miss out on fun events nearby.",
-        imageUrl: "/assets/banner-image-1.png",
-    },
-    {
-        title: "Easy & Secure Booking",
-        description: "Booking your tickets has never been easier or more secure. With just a few clicks, you can reserve your spot at any event. Our secure payment system ensures your details are kept safe while you enjoy a smooth booking process. Say goodbye to paper tickets — everything is stored digitally.",
-        imageUrl: "/assets/banner-image-2.jpg",
-    },
-    {
-        title: "Instant E-Tickets",
-        description: "Evently provides instant electronic tickets right on your phone! No need to worry about printing or losing physical tickets. Once you've booked, your e-ticket is ready to use immediately. Simply show your phone at the venue for quick access to the event. Fast, easy, and efficient — everything you need in one place.",
-        imageUrl: "/assets/tickets.png",
-    },
-]
 
 export const FAQs_DATA = [
   {

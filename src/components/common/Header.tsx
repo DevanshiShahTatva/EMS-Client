@@ -142,7 +142,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
 
   return (
     <div>
-      <header className="text-gray-600 body-font border-b border-b-gray-200">
+      <header className="text-gray-600 body-font border-b border-b-gray-200 z-100 relative">
         <div className="mx-auto flex flex-wrap py-3 flex-row items-center justify-between px-2 md:px-10">
           <button
             onClick={() => {
