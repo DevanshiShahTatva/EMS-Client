@@ -29,12 +29,12 @@ const ContactSection = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <a
               onClick={navToFAQs}
-              className="inline-block px-6 py-3 border border-[#007EFF] text-[#007EFF] font-medium rounded-md hover:bg-[#E6F2FF]  transition">
+              className="inline-block px-6 py-3 border border-[#007EFF] text-[#007EFF] font-medium rounded-md hover:bg-[#E6F2FF]  transition cursor-pointer">
               View our FAQs
             </a>
             <a
               onClick={navToContact}
-              className="inline-block px-6 py-3 bg-[#007EFF] text-white font-medium rounded-md hover:bg-[#0066cc] transition">
+              className="inline-block px-6 py-3 bg-[#007EFF] text-white font-medium rounded-md hover:bg-[#0066cc] transition cursor-pointer">
               Contact us
             </a>
           </div>

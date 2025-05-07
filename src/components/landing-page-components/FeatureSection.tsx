@@ -62,7 +62,7 @@ const FeatureSection = () => {
                 </div>
 
                 <div className="mt-6">
-                  <a href="#" className="flex items-center text-blue-600 font-medium hover:underline">
+                  <a className="flex items-center text-blue-600 font-medium hover:underline cursor-pointer">
                     Learn more
                     <CircleArrowRight className="w-5 h-5 ml-2 text-blue-600 transition-transform group-hover:translate-x-1" />
                   </a>

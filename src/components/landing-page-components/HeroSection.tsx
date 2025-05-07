@@ -71,7 +71,7 @@ const HeroSection = () => {
           ref={(el) => {
             imageLayersRef.current[0] = el;
           }}
-          className="absolute hero-image z-20 p3 hidden md:block"
+          className="absolute hero-image z-2 p3 hidden md:block"
           data-speed="0.3"
           src="https://res.cloudinary.com/dv2n0s4mh/image/upload/v1746600519/hero-layer-3_w15q1u.png"
           alt="Background layer 3"
@@ -85,7 +85,7 @@ const HeroSection = () => {
           ref={(el) => {
             imageLayersRef.current[1] = el;
           }}
-          className="absolute hero-image z-10 p2 hidden md:block"
+          className="absolute hero-image z-1 p2 hidden md:block"
           data-speed="0.2"
           src="https://res.cloudinary.com/dv2n0s4mh/image/upload/v1746600518/hero-layer-2_qmoxxt.png"
           alt="Background layer 2"
@@ -99,7 +99,7 @@ const HeroSection = () => {
           ref={(el) => {
             imageLayersRef.current[2] = el;
           }}
-          className="absolute hero-image z-30 p1 hidden md:block"
+          className="absolute hero-image z-3 p1 hidden md:block"
           data-speed="0.1"
           src="https://res.cloudinary.com/dv2n0s4mh/image/upload/v1746600519/hero-layer-1_xponnu.png"
           alt="Background layer 1"
@@ -111,7 +111,7 @@ const HeroSection = () => {
 
         {/* Content overlay */}
         <motion.div
-          className="relative z-40 text-center px-6 pt-24 pb-12 max-w-xl mx-auto"
+          className="relative z-4 text-center px-6 pt-24 pb-12 max-w-xl mx-auto"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}>
@@ -134,7 +134,7 @@ const HeroSection = () => {
 
           <motion.a
             onClick={navToEvents}
-            className="inline-block px-8 py-4 bg-[#007EFF] text-white font-medium rounded-lg hover:bg-[#0066cc] transition shadow-lg mb-12"
+            className="inline-block px-8 py-4 bg-[#007EFF] text-white font-medium rounded-lg hover:bg-[#0066cc] transition shadow-lg mb-12 cursor-pointer"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}>
@@ -145,8 +145,8 @@ const HeroSection = () => {
 
       <section className="bg-[#F5F7FC] py-12 md:py-20">
         <div className="relative">
-          <div className="max-w-6xl mx-[20px] md:mx-auto flex flex-col md:flex-row items-center gap-10 bg-white rounded-2xl shadow-lg p-12 relative z-10">
-            <div className="md:w-1/2 z-20">
+          <div className="max-w-6xl mx-[20px] md:mx-auto flex flex-col md:flex-row items-center gap-10 bg-white rounded-2xl shadow-lg p-12 relative z-1">
+            <div className="md:w-1/2 z-2">
               <span className="text-sm font-semibold text-[#007EFF] uppercase block mb-2">
                 Find Events That Suit You
               </span>
@@ -162,7 +162,7 @@ const HeroSection = () => {
 
               <a
                 onClick={navToEvents}
-                className="inline-block mt-6 px-6 py-3 border border-[#007EFF] text-[#007EFF] rounded-md font-medium hover:bg-[#E6F2FF] transition">
+                className="inline-block mt-6 px-6 py-3 border border-[#007EFF] text-[#007EFF] rounded-md font-medium hover:bg-[#E6F2FF] transition cursor-pointer">
                 Choose Your Next Experience
               </a>
             </div>
@@ -171,7 +171,7 @@ const HeroSection = () => {
               <img
                 src="https://res.cloudinary.com/dv2n0s4mh/image/upload/v1746600663/card-2_abz5nv.png"
                 alt="Reach life goals faster"
-                className="md:absolute md:bottom-[-208px] md:right-4 z-10"
+                className="md:absolute md:bottom-[-208px] md:right-4 z-1"
               />
             </div>
           </div>
