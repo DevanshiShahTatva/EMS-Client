@@ -229,7 +229,7 @@ const MyEventsPage = () => {
                                     <p className='text-gray-500 mb-3'>{item.eventCatogory}</p>
 
                                     <div className='flex gap-3 items-center my-2'>
-                                        <CalendarDays className='h-5 w-5' />
+                                        <CalendarDays className='h-[30px] w-[30px]' />
                                         <p className='text-gray-800 text-md'>{item.eventStartTime} <span className='font-bold'>to</span> {item.eventEndTime}</p>
                                     </div>
 

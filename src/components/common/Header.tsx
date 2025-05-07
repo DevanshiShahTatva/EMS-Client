@@ -143,7 +143,47 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
   return (
     <div>
       <header className="text-gray-600 body-font border-b border-b-gray-200">
-        <div className="mx-auto flex flex-wrap py-3 px-10 flex-row items-center justify-between h-20">
+        <div className="mx-auto flex flex-wrap py-3 flex-row items-center justify-between px-2 md:px-10">
+          <button
+            onClick={() => {
+              isAdmiRole
+              ? toggleSidebar?.()
+              : setIsMobileMenuOpen(!isMobileMenuOpen)
+            }}
+            className="md:hidden text-gray-700 focus:outline-none"
+          >
+            {isMobileMenuOpen ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            )}
+          </button>
           <div className="flex gap-2">
             <Link
               className="flex title-font font-medium items-center text-gray-900 md:mb-0"
@@ -157,28 +197,6 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                 height={60}
               />
             </Link>
-
-            {isAdmiRole && (
-              <button
-                onClick={toggleSidebar}
-                className="text-gray-700 ml-3 md:hidden"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              </button>
-            )}
           </div>
 
           {!isAdmiRole &&
@@ -191,44 +209,6 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                 )
                 }
               </nav>
-
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden text-gray-700 focus:outline-none"
-              >
-                {isMobileMenuOpen ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
-                )}
-              </button>
-
               {/* Mobile Navigation */}
               {isMobileMenuOpen && (
               <div className={`fixed z-40 top-0 left-0 w-full h-full bg-white shadow-md md:hidden transition-transform duration-300 ease-in-out transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -266,7 +246,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                 <div ref={menuRef} className='relative'>
                   <div
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="flex items-center space-x-4 p-2 bg-white rounded-md w-max cursor-pointer"
+                    className="flex items-center p-2 bg-white rounded-md w-max cursor-pointer space-x-2 md:space-x-4"
                   >
                     {logo !== "" ?
                       <Image
@@ -281,9 +261,11 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                         {isAdmiRole ? "A" : name.charAt(0).toUpperCase()}
                       </button>
                     }
+                    <div className='hidden md:block'>
                     <div>
                       <div className="text-sm font-medium text-gray-900">{isAdmiRole ? "Admin" : name}</div>
                       <div className="text-xs text-gray-500">{isAdmiRole ? "Admin" : "User"}</div>
+                    </div>
                     </div>
                     <button className="ml-auto focus:outline-none">
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
