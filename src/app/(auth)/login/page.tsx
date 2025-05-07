@@ -48,13 +48,9 @@ const LogInPage = () => {
       if (rememberMe) {
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
-        document.cookie = `token=${encodeURIComponent(token)}; path=/;`;
-        document.cookie = `role=${role}; path=/;`;
       } else {
         sessionStorage.setItem("token", token);
         sessionStorage.setItem("role", role);
-        document.cookie = `token=${encodeURIComponent(token)}; path=/;`;
-        document.cookie = `role=${role}; path=/;`;
       }
 
       if (role === "admin") {
