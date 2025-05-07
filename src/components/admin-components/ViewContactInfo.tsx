@@ -33,7 +33,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
         </div>
         {/* Title Section End */}
 
-        <div className="max-h-96 overflow-auto scrollbar-none border-b-1 px-6 py-0 border-b-gray-300">
+        <div className="max-h-[500px] overflow-auto scrollbar-none px-6 py-2">
           {/* Content UI Start */}
 
                   <DisabledTextField
@@ -67,21 +67,6 @@ const ContactModal: React.FC<ContactModalProps> = ({
           {/* Content UI End*/}
         </div>
 
-        {/* Buttons */}
-        <div className="flex justify-center gap-3 p-6">
-          <button
-            onClick={onClose}
-            className="w-full cursor-pointer px-4 py-2 rounded-[8px] font-bold border border-gray-500 text-gray-700 hover:bg-gray-100"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onClose}
-            className="w-full cursor-pointer px-4 py-2 rounded-[8px] font-bold bg-blue-500 text-white hover:bg-blue-600"
-          >
-             Mark As Done
-          </button>
-        </div>
       </div>
     </div>
   );

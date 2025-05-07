@@ -62,6 +62,7 @@ export type ITicket = {
     maxQty: number;
     description: string;
     isEditing?: boolean;
+    _id : string,
 };
 
 export interface ISuggestion {
@@ -74,7 +75,7 @@ export interface IAddressAutoCompleteProps {
   getLocationData: (locationData: ILocationField) => void
   label: string,
   name: string,
-  required: boolean
+  required?: boolean
   placeholder?: string;
   errorMsg?: string;
   errorKey?: boolean

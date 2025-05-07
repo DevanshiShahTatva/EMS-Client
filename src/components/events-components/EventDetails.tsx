@@ -5,19 +5,21 @@ import {
   CalendarIcon,
   ClockIcon,
   MapPinIcon,
-  TagIcon,
+  TagIcon,Map
 } from 'lucide-react'
 import ImageCarousel from '@/components/events-components/ImageCarousel'
 import EventDescription from '@/components/events-components/EventDescription'
 import SimilarEvents from '@/components/events-components/SimilarEvents'
 import { EventDataObjResponse, EventDetails } from '@/app/events/types'
-import { getTicketPriceRange } from '@/app/admin/event/helper'
+import { getTicketPriceRange, onwardPriceRange } from '@/app/admin/event/helper'
 import {
   areAllTicketsBooked,
+  getAllTicketStatus,
   getEventStatus,
   getSimilarEvents,
   hasEventEnded,
   isNearbyWithUserLocation,
+  openMapDirection,
 } from '@/app/events/event-helper'
 import { apiCall } from '@/utils/services/request'
 import { API_ROUTES } from '@/utils/constant'
@@ -76,6 +78,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
   if (!event || !eventId) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        {loading && <Loader />}
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             Event not found
@@ -96,7 +99,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
   }
 
   const similarEvents = getSimilarEvents(eventsDetails, eventId)
-
+  const {status,color} = getAllTicketStatus(event.tickets);
   return (
     <div className="min-h-screen bg-gray-50">
       {loading && <Loader />}
@@ -104,7 +107,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
         <div className="mx-auto py-6 px-4 sm:px-6 lg:px-8 flex items-center">
           <button
             onClick={() => navigateToHome()}
-            className="mr-4 p-1 rounded-full hover:bg-gray-100"
+            className="mr-4 p-1 rounded-full hover:bg-gray-100 cursor-pointer"
             aria-label="Back to events"
           >
             <ArrowLeftIcon className="h-5 w-5 text-gray-600" />
@@ -116,10 +119,10 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
       </header>
       <main className="mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-          <div className="lg:col-span-2 mb-6 lg:mb-0">
+          <div className="lg:col-span-2 lg:mb-0">
             <div
               className="bg-white shadow rounded-lg overflow-hidden"
-              style={{ height: '400px' }}
+              style={{ height: '380px' }}
             >
               <ImageCarousel images={event.images} />
             </div>
@@ -129,8 +132,8 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">
                 {event.title}
               </h2>
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center text-gray-600">
+              <div className="space-y-3 pb-4">
+                <div className="flex items-top text-gray-600">
                   <CalendarIcon className="h-5 w-5 mr-2 text-gray-400" />
                   <span>
                     {new Date(event.startDateTime).toLocaleDateString(
@@ -158,7 +161,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                     Duration - ({event.duration})
                   </span>
                 </div>
-                <div className="flex items-center text-gray-600">
+                <div className="flex items-top text-gray-600">
                   <MapPinIcon className="h-5 w-5 mr-2 text-gray-400 shrink-0" />
                   <span >{event.location.address}</span>
                 </div>
@@ -167,33 +170,22 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                   <span>{event.category}</span>
                 </div>
               </div>
-              <div className="border-t border-gray-200 pt-4 mb-6">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-gray-600">Price:</span>
-                  <span className="font-semibold text-lg">
-                    {getTicketPriceRange(event.tickets)}
+              <div className="flex items-center justify-between bg-white pt-4 border-t-2 border-gray-200 w-full">
+                <div className="flex flex-col">
+                  <span className="font-semibold text-md mb-1">
+                    {onwardPriceRange(event.tickets)}
+                  </span>
+                  <span className={`${color} text-md`}>
+                    {status}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Availability:</span>
-                  <span
-                    className={`font-medium ${
-                      areAllTicketsBooked(event.tickets)
-                        ? 'text-red-600'
-                        : 'text-green-600'
-                    }`}
-                  >
-                    {areAllTicketsBooked(event.tickets)
-                      ? 'Sold Out'
-                      : 'Available'}
-                  </span>
-                </div>
+
+                <BookingButton
+                  tickets={event.tickets}
+                  eventTitle={event.title}
+                  status={hasEventEnded(event.endDateTime)}
+                />
               </div>
-              <BookingButton
-                tickets={event.tickets}
-                eventTitle={event.title}
-                status={hasEventEnded(event.endDateTime)}
-              />
             </div>
           </div>
         </div>
@@ -201,9 +193,14 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
           <EventDescription description={event.description} />
         </div>
         <div className="mt-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Location
-          </h2>
+          <div className='flex items-center justify-between mb-4'>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Location
+            </h2>
+            <button className='text-sm text-blue-600 hover:underline font-medium cursor-pointer' onClick={()=>openMapDirection(event.location)}>
+              Get Directions
+            </button>
+          </div>
           <GoogleMap
             location={{lat:event.location.lat,lng:event.location.lng}}
             locationName={event.location.address}

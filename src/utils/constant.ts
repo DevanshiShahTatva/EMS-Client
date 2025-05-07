@@ -13,7 +13,9 @@ export const ROUTES = {
         DASHBOARD: "/admin/dashboard",
         EVENTS: "/admin/event",
         CREATE_EVENT: "/admin/event/create",
-        CONTACT_US : "/admin/contact-us"
+        CONTACT_US : "/admin/contact-us",
+        FAQs : "/admin/faqs",
+        CREATE_FAQs : "/admin/faqs/create",
     },
     RESET_PASSWORD: "/reset-password"
 }
@@ -49,12 +51,14 @@ export const API_ROUTES = {
         PROFILE : {
             UPDATE_USER_INFO : "/update/user",
             RESET_EMAIL : "/reset_setting_email",
-            VERIFY_EMAIL : "/veset_setting_email",
+            VERIFY_EMAIL : "/verify_setting_email",
             RESET_PASSWORD: "/reset_setting_password"
         },
         USER_DETAILS : "/user_details"
     },
-    CONNNTACT_US : "/contact-us"
+    CONNNTACT_US : "/contact-us",
+    UPDATE_CONTACT_US_STATUS : (id: string) => `/contact-us/${id}/status`,
+    FAQs : "/faq"
 }
 export const LIGHT_COLORS = [
     '#FFB3BA', // Light Red
@@ -98,6 +102,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 1, title: "Dashboard", route: ROUTES.ADMIN.DASHBOARD, icon: "/assets/DashboardIcon.svg" },
     { id: 2, title: "Events", route: ROUTES.ADMIN.EVENTS, icon: "/assets/EventsIcon.svg" },
     { id: 3, title: "Support Requests", route: ROUTES.ADMIN.CONTACT_US, icon:  "/assets/support.svg"},
+    { id: 4, title: "FAQs", route: ROUTES.ADMIN.FAQs, icon:  "/assets/faqs.svg"},
 ]
 
 export const USER_HEADER_ITEMS = [
@@ -121,6 +126,8 @@ export const CATOGORIES_ITEMS = [
 
 export const SIGN_UP_IMAGE_BANNER_LINK = "https://img.freepik.com/free-vector/privacy-policy-concept-illustration_114360-7853.jpg?semt=ais_hybrid&w=740"
 export const LOG_IN_IMAGE_BANNER_LINK = "https://img.freepik.com/free-vector/sign-page-abstract-concept-illustration_335657-2242.jpg?semt=ais_hybrid&w=740"
+export const CONTACT_US_IMAGE_BANNER_LINK = "https://d2r3fkmprkayl1.cloudfront.net/Eventtitans-new-img/EventTitans-inner/inner-page-img15.png"
+export const FAQ_BANNER_LINK = "https://backend-23.nubeseo.es/wp-content/uploads/2024/12/faqs-que-es.jpg"
 
 export enum ROLE {
     Admin = "admin",
@@ -128,23 +135,22 @@ export enum ROLE {
 }
 
 export const INITIAL_TICKETS_TYPES = [
-    { id: "1", type: "Premium", price: "300", maxQty: 100, description: "All access, Goodies" },
-    { id: "2", type: "Standard", price: "150", maxQty: 50, description: "Front row, extra access" },
-    { id: "3", type: "Free", price: "0", maxQty: 50, description: "General admission" },
+    { id: "1", type: "Premium", price: "300", maxQty: 100, description: "All access, Goodies", _id: "" },
+    { id: "2", type: "Standard", price: "150", maxQty: 50, description: "Front row, extra access", _id: "" },
+    { id: "3", type: "Free", price: "0", maxQty: 50, description: "General admission", _id: "" },
 ]
 
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string;
 
 export const AUTOCOMPLETE_API = (debouncedQuery: string) => `https://us1.locationiq.com/v1/search.php?key=${apiKey}&q=${encodeURIComponent(
     debouncedQuery
-)}&format=json&limit=5`
+)}&format=json`
 
 
 export const ALLOWED_FILE_FORMATS = ["jpg", "jpeg", "png", "webp"];
 export const MAX_FILE_SIZE_MB = 2;
 
 export const PAGINATION_OPTIONS = [
-    { value: 5, label: '5' },
     { value: 10, label: '10' },
     { value: 20, label: '20' },
     { value: 50, label: '50' },

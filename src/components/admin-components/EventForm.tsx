@@ -43,6 +43,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
     price: "",
     maxQty: 0,
     description: "",
+    _id : "",
   });
 
   const [editCache, setEditCache] = useState<{ [key: string]: Partial<ITicket> }>({});
@@ -147,7 +148,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
       id: Date.now().toString(),
     };
     setTickets([...tickets, newItem]);
-    setNewTicket({ type: "", price: "", maxQty: 0, description: "" });
+    setNewTicket({ type: "", price: "", maxQty: 0, description: "", _id: "" });
     setAddRowVisible(false)
   };
 
@@ -444,6 +445,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
     
     // Append ticket_type array items
     tickets.forEach((ticket, index) => {
+      isEditMode && ticket._id === ticket.id && formData.append(`tickets[${index}][_id]`, ticket.id);
       formData.append(`tickets[${index}][type]`, ticket.type);
       formData.append(`tickets[${index}][price]`, ticket.price);
       formData.append(`tickets[${index}][totalSeats]`, `${ticket.maxQty}`);
@@ -507,7 +509,8 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
           type: item.type, 
           price: item.price.toString(), 
           maxQty: item.totalSeats - item.totalBookedSeats, 
-          description: item.description
+          description: item.description,
+          _id: item._id
         }
        })
 
@@ -585,7 +588,6 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                 ? "Enter valid event title"
                 : "Event title must be between 5 and 100 characters"
             }
-            required
           />
 
           <QuilEditor
@@ -602,7 +604,6 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                 ? "Event description must be at least 20 characters long"
                 : ""
             }
-            required
           />
 
           <AddressAutocomplete
@@ -613,7 +614,6 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
             placeholder="Enter event location"
             errorKey={formValuesError.location}
             errorMsg="Enter valid event location"
-            required
           />
 
           <div className="grid grid-cols-1 md:grid-cols-12 md:gap-3 gap-0">
@@ -625,7 +625,6 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                 onChange={(val) => handleStartTimeChange(val)}
                 errorKey={formValuesError.start_time}
                 errorMsg="Enter valid event start time"
-                required
               />
             </div>
             <div className="md:col-span-6 col-span-12">
@@ -641,7 +640,6 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                 }
                 errorKey={formValuesError.end_time}
                 errorMsg="Enter valid event end time"
-                required
               />
             </div>
           </div>
@@ -671,7 +669,6 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                   options={CATOGORIES_ITEMS}
                   errorKey={formValuesError.category}
                   errorMsg="Enter valid event category"
-                  required
                 />
               </div>
             </div>
@@ -682,7 +679,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
               htmlFor={"Ticket types"}
               className="block text-sm font-bold text-gray-700 mb-1"
             >
-              Ticket types <span className="text-red-500">*</span>
+              Ticket types
             </label>
 
             <div className="w-full overflow-x-auto sm:overflow-x-visible">
@@ -692,7 +689,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                     <th className="border px-4 py-2 w-1/5 font-semibold">
                       Ticket Type
                     </th>
-                    <th className="border px-4 py-2 w-1/5">Price ($/₹)</th>
+                    <th className="border px-4 py-2 w-1/5">Price (₹)</th>
                     <th className="border px-4 py-2 w-1/5">Max Qty</th>
                     <th className="border px-4 py-2 w-1/5">Description</th>
                     <th className="border px-4 py-2 w-1/5 text-center">
@@ -839,13 +836,29 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                           }
                         />
                       </td>
-                      <td className="border px-2 py-1 text-center">
+                      <td className="border px-4 py-2 text-center md:space-x-2">
                         <button
                           onClick={handleAdd}
-                          className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                          className="bg-blue-600 cursor-pointer text-white px-3 py-1 rounded hover:bg-blue-700"
                         >
                           Add
                         </button>
+                        <button
+                            className="bg-red-600 cursor-pointer text-white px-3 py-1 rounded hover:bg-red-700"
+                            onClick={() => {
+                              const emptyRow = {
+                                type: "",
+                                price: "",
+                                maxQty: 0,
+                                description: "",
+                                _id: ""
+                              }
+                              setNewTicket(emptyRow)
+                              setAddRowVisible(false)
+                            }}
+                          >
+                            Delete
+                          </button>
                       </td>
                     </tr>
                   )}
@@ -875,7 +888,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <label className="block text-sm font-bold text-gray-700 mb-1">
-                  Images <span className="text-red-500">*</span>
+                  Images
                 </label>
 
                 <button
@@ -947,7 +960,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <label className="block text-sm font-bold text-gray-700 mb-1">
-                  Images <span className="text-red-500">*</span>
+                  Images
                 </label>
 
                 <button

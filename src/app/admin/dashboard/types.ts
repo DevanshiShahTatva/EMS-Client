@@ -6,6 +6,7 @@ export interface IBarChartProps {
 export interface IDoughnutChartProps {
     data: number[];
     labels: string[];
+    showCustomLabels?: boolean
 }
 
 export interface IHeatmapChartProps {
@@ -21,6 +22,7 @@ export interface ILineChartProps {
 export interface IPieChartProps {
     labels: string[];
     data: number[];
+    showCustomLabels?: boolean
 }
 
 export interface IStatResponse {

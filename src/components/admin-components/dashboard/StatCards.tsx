@@ -5,7 +5,7 @@ import { HandCoins, MapPinCheck, PackageCheck, Users } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { apiCall } from '@/utils/services/request';
 import { API_ROUTES } from '@/utils/constant';
-import { getTruthyNumber, formatNumberShort } from '@/utils/helper';
+import { getTruthyNumber, formatNumberShort, RupeeSymbol } from '@/utils/helper';
 import TooltipWrapper from '@/components/common/TooltipWrapper';
 import { IStatResponse } from '@/app/admin/dashboard/types';
 
@@ -55,8 +55,8 @@ const StatCards: React.FC = () => {
     const cards = useMemo(() => {
         return (Object.keys(iconMap) as TStatKey[]).map((key) => ({
             label: key,
-            value: formatNumberShort(stats[key]),
-            rawValue: stats[key],
+            value: key === 'Revenue' ? `${RupeeSymbol} ` + formatNumberShort(stats[key]) : formatNumberShort(stats[key]),
+            rawValue: key === 'Revenue' ? `${RupeeSymbol} ` + stats[key] : stats[key],
             Icon: iconMap[key],
         }));
     }, [stats]);

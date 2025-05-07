@@ -48,14 +48,14 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({
         <>
           <button
             onClick={goToPrevious}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full"
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full cursor-pointer"
             aria-label="Previous image"
           >
             <ChevronLeftIcon className="h-6 w-6" />
           </button>
           <button
             onClick={goToNext}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full cursor-pointer"
             aria-label="Next image"
           >
             <ChevronRightIcon className="h-6 w-6" />

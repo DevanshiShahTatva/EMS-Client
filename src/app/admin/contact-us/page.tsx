@@ -7,21 +7,22 @@ import TooltipWrapper from '@/components/common/TooltipWrapper'
 import Pagination from '@/components/admin-components/Pagination'
 import DeleteModal from '@/components/common/DeleteModal'
 import ContactModal from '@/components/admin-components/ViewContactInfo'
+import TableSkeleton from '@/components/common/TableSkeloton'
 
 // Icons
-import { MagnifyingGlassIcon, TrashIcon, EyeIcon } from "@heroicons/react/24/outline"
+import { MagnifyingGlassIcon, TrashIcon, EyeIcon, EnvelopeIcon } from "@heroicons/react/24/outline"
+import { SquareCheckBig } from 'lucide-react'
 
 // Types
 import { IRequestResponse, IRequestType } from './types'
 
 // Helpers & Constant
 import { API_ROUTES } from '@/utils/constant'
-import { getPaginatedData, getSearchResults, INITIAL_CONTATC_INFO } from './helper'
+import { getPaginatedData, getSearchResults, INITIAL_CONTATC_INFO, statusColor } from './helper'
 
 
 //  Services
 import { apiCall } from '@/utils/services/request'
-import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'react-toastify'
 
 const AdminContactUsPage = () => {
@@ -38,7 +39,7 @@ const AdminContactUsPage = () => {
     const [viewModal, setViewModal] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
 
-    const [itemsPerPage, setItemsPerPage] = useState(5);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
     const totalItems = requestsData.length;
@@ -106,7 +107,32 @@ const AdminContactUsPage = () => {
 
             if(response && response.success) {
                 await fetchRequestData()
-                toast.success("Item Deleted Successfully")
+                toast.success("Record Deleted Successfully")
+                setCurrentPage(1)
+                setSelectedIds([])
+            }
+        } catch (err) {
+            console.error('Error fetching chart data', err);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const markAsComplete = async (id : string) => {
+        setLoading(true);
+        try {
+            const httpBody = {
+                "status": "responded"
+            }
+            const response = await apiCall({ 
+                endPoint: API_ROUTES.UPDATE_CONTACT_US_STATUS(id), 
+                method: 'PATCH',
+                body :  httpBody
+            });
+
+            if(response && response.success) {
+                await fetchRequestData()
+                toast.success("Status Updated Successfully")
                 setCurrentPage(1)
                 setSelectedIds([])
             }
@@ -156,58 +182,62 @@ const AdminContactUsPage = () => {
 
     const renderTableRows = () => {
         return tableRowData.map(item =>
-            <tr key={item._id} className="even:bg-blue-50">
+            <tr key={item._id} className="border-b hover:bg-gray-50">
                 <td className="pl-4 w-8">
                     <input
                         type="checkbox"
-                        className="form-checkbox accent-[#2563EB] h-5 w-5 cursor-pointer"
+                        className="form-checkbox accent-[#2563EB] h-4 w-4 cursor-pointer"
                         checked={selectedIds.includes(item._id)}
                         onChange={() => selectParticulartRowId(item._id)}
                     />
                 </td>
-                <td className="p-4 text-slate-900 font-medium">{item.name}</td>
-                <td className="p-4 text-slate-600 font-medium">{item.email}</td>
-                <td className="p-4 text-slate-600 font-medium">{item.subject}</td>
-                <td className="p-4 text-slate-600 font-medium">
+                <td className="p-4">{item.name}</td>
+                <td className="p-4">{item.email}</td>
+                <td className="p-4">{item.subject}</td>
+                <td className="p-4">
                     <TooltipWrapper tooltip={`${item.message}`}>
                         <p className='max-w-60 truncate'>{item.message}</p>
                     </TooltipWrapper>
                 </td>
                 <td className="p-4">
-                    <button
-                        className="text-blue-500 hover:text-blue-700 cursor-pointer ml-4"
-                        onClick={() => openViewModal(item)}
+                    <span
+                        className={`px-2 py-1 rounded-full text-xs capitalize font-semibold ${statusColor[item.status as keyof typeof statusColor]}`}
                     >
-                        <EyeIcon className="h-5 w-5" />
-                    </button>
+                        {item.status}
+                    </span>
+                </td>
+                <td className="p-4">
+                    <div className='flex gap-2 items-center'>
+                        <button
+                            disabled={item.status !== "pending"}
+                            className="text-green-700 hover:text-green-800 cursor-pointer disabled:cursor-not-allowed ml-4 disabled:text-gray-400"
+                            onClick={() => markAsComplete(item._id)}
+                        >
+                            <SquareCheckBig className="h-5 w-5" />
+                        </button>
+                        <button
+                            className="text-blue-500 hover:text-blue-700 cursor-pointer ml-4"
+                            onClick={() => openViewModal(item)}
+                        >
+                            <EyeIcon className="h-5 w-5" />
+                        </button>
+                        <a
+                            className="text-gray-700 hover:text-gray-800 cursor-pointer ml-4"
+                            href={`mailto:${item.email}`}
+                            target='_blank'
+                        >
+                            <EnvelopeIcon className="h-5 w-5" />
+                        </a>
+                    </div>
                 </td>
             </tr>
         )
     }
 
     const renderSkeleton = () => {
-        return Array.from({ length: itemsPerPage }).map((_, i) => (
-            <tr key={i} className="even:bg-blue-50">
-                <td className="pl-4 w-8">
-                    <Skeleton className="h-5 w-5 rounded-sm" />
-                </td>
-                <td className="p-4">
-                    <Skeleton className="h-4 w-32" />
-                </td>
-                <td className="p-4">
-                    <Skeleton className="h-4 w-40" />
-                </td>
-                <td className="p-4">
-                    <Skeleton className="h-4 w-28" />
-                </td>
-                <td className="p-4">
-                    <Skeleton className="h-4 w-60" />
-                </td>
-                <td className="p-4">
-                    <Skeleton className="h-5 w-5 ml-4" />
-                </td>
-            </tr>
-        ))
+        return (
+            <TableSkeleton rows={itemsPerPage} columns={7} />
+        ) 
     }
 
     const renderNoDataFound = () => {
@@ -254,22 +284,23 @@ const AdminContactUsPage = () => {
 
               {/* TABLE  */}
               <div className="overflow-x-auto my-2">
-                  <table className="min-w-full bg-white">
-                      <thead className="bg-gray-700 whitespace-nowrap">
+                  <table className="min-w-full bg-white text-gray-700 text-sm">
+                      <thead className="bg-gray-100 whitespace-nowrap">
                           <tr>
                               <th className="pl-4 w-8">
                                   <input
                                       type="checkbox"
-                                      className="form-checkbox accent-[#2563EB] h-5 w-5 cursor-pointer"
+                                      className="form-checkbox accent-[#2563EB] h-4 w-4 cursor-pointer"
                                       checked={!loading && selectedIds.length === allRequestsData.length}
                                       onChange={() => selectAllRowsId()}
                                   />
                               </th>
-                              <th className="p-4 text-left font-medium text-white">Name</th>
-                              <th className="p-4 text-left font-medium text-white">Email</th>
-                              <th className="p-4 text-left font-medium text-white">Subject</th>
-                              <th className="p-4 text-left font-medium text-white">Message</th>
-                              <th className="p-4 text-left font-medium text-white">Actions</th>
+                              <th className="p-4 text-left">Name</th>
+                              <th className="p-4 text-left">Email</th>
+                              <th className="p-4 text-left">Subject</th>
+                              <th className="p-4 text-left">Message</th>
+                              <th className="p-4 text-left">Status</th>
+                              <th className="p-4 text-left">Actions</th>
                           </tr>
                       </thead>
                       <tbody className="whitespace-nowrap">

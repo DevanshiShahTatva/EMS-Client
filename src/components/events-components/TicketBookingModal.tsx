@@ -90,7 +90,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
       <h2 className="text-xl font-semibold text-gray-900">Book Tickets</h2>
       <button
         onClick={onClose}
-        className="text-gray-400 hover:text-gray-500"
+        className="text-gray-400 hover:text-gray-500 cursor-pointer"
         aria-label="Close"
       >
         <CloseIcon className="h-6 w-6" />
@@ -111,7 +111,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
               return (
                 <div
                   key={ticket.type}
-                  className={`p-4 rounded-lg border-2 transition-colors ${
+                  className={`p-4 rounded-lg border-2 transition-colors cursor-pointer ${
                     isSelected
                       ? 'border-blue-600 bg-blue-50'
                       : 'border-gray-200 hover:border-gray-300'
@@ -127,7 +127,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                       </p>
                     </div>
                     <span className="font-semibold text-gray-900">
-                      ${ticket.price}
+                    ₹{ticket.price}
                     </span>
                   </div>
 
@@ -137,7 +137,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                         <div className="flex items-center space-x-3">
                           <button
                             onClick={() => handleQuantityChange(quantity - 1)}
-                            className="p-1 rounded-full border border-gray-300 hover:bg-gray-100"
+                            className="p-1 rounded-full border border-gray-300 hover:bg-gray-100 cursor-pointer"
                             disabled={quantity <= 0}
                           >
                             <MinusIcon className="h-4 w-4" />
@@ -145,7 +145,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                           <span className="w-8 text-center">{quantity}</span>
                           <button
                             onClick={() => handleQuantityChange(quantity + 1)}
-                            className="p-1 rounded-full border border-gray-300 hover:bg-gray-100"
+                            className="p-1 rounded-full border border-gray-300 hover:bg-gray-100 cursor-pointer"
                             disabled={quantity >= available}
                           >
                             <PlusIcon className="h-4 w-4" />
@@ -163,7 +163,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                         className={`px-4 py-2 text-sm font-medium rounded-md ${
                           available === 0
                             ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                            : 'text-blue-600 hover:bg-blue-50'
+                            : 'text-blue-600 hover:bg-blue-50 cursor-pointer border border-blue-600 rounded'
                         }`}
                         disabled={available === 0}
                       >
@@ -172,7 +172,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                     )}
                     <div className="flex flex-col gap-1 text-sm text-gray-500">
                       <span>
-                        Status: <span style={{ color }}>{status}</span>
+                        Status: <span className={`rounded-md ${color} p-1`}>{status}</span>
                       </span>
                       <span>
                         {available} seat{available !== 1 ? 's' : ''} left
@@ -184,11 +184,11 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
             })}
           </div>
 
-          <div className="mt-6 border-t pt-4">
+          <div className="mt-6 pt-4">
             <div className="flex justify-between items-center mb-4">
               <span className="text-gray-900 font-medium">Total Amount:</span>
               <span className="text-xl font-semibold text-gray-900">
-                ${totalPrice.toFixed(2)}
+              ₹{totalPrice.toFixed(2)}
               </span>
             </div>
             <form action={handleProceedToPayment} className="max-w-md mx-auto">
@@ -199,7 +199,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
               disabled={!selectedType || quantity === 0}
               className={`w-full py-3 px-4 rounded-md text-white font-medium ${
                 selectedType && quantity > 0
-                  ? 'bg-blue-600 hover:bg-blue-700'
+                  ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
                   : 'bg-gray-300 cursor-not-allowed'
               }`}
             >

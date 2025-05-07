@@ -67,7 +67,7 @@ export default function MostBookedUsersTable() {
 
     const loadingSkeleton = useMemo(() => (
         Array.from({ length: 10 }).map((_, index) => (
-            <TableHeader key={index}>
+            <TableHeader key={index} className='text-xs uppercase bg-gray-100'>
                 <TableRow>
                     <TableCell><Skeleton className="h-4 w-10" /></TableCell>
                     <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
@@ -83,12 +83,12 @@ export default function MostBookedUsersTable() {
 
         return (
             <>
-                <TableHeader>
+                <TableHeader className='text-xs uppercase bg-gray-100'>
                     <TableRow className="hover:bg-transparent">
-                        <TableHead className="w-[100px] font-bold">ID</TableHead>
-                        <TableHead className="font-bold">Name</TableHead>
-                        <TableHead className="font-bold">Email</TableHead>
-                        <TableHead className="text-center font-bold">Total No. of Bookings</TableHead>
+                        <TableHead className="w-[100px] text-gray-700 font-[700]">ID</TableHead>
+                        <TableHead className="text-gray-700 font-[700]">Name</TableHead>
+                        <TableHead className="text-gray-700 font-[700]">Email</TableHead>
+                        <TableHead className="text-center text-gray-700 font-[700]">Total No. of Bookings</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -112,7 +112,7 @@ export default function MostBookedUsersTable() {
     }, [loading, loadingSkeleton, users]);
 
     return (
-        <div>
+        <div className='mt-6'>
             <Table>{tableContent}</Table>
         </div>
     );

@@ -4,11 +4,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
 import { Skeleton } from '@/components/ui/skeleton';
 import DateRangeFilter from '@/components/admin-components/dashboard/DateRangeFilter';
-import { chartTitle } from './ChartCard';
 import { API_ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
 import LineChart from '../charts/LineChart';
-import { DASHBOARD_TITLE, getCurrentYear } from '@/app/admin/dashboard/helper';
+import { getCurrentYear } from '@/app/admin/dashboard/helper';
 import { IFilter, IRevenueData } from '@/app/admin/dashboard/types';
 
 const TotalRevenueOverTime: React.FC = () => {
@@ -57,8 +56,7 @@ const TotalRevenueOverTime: React.FC = () => {
 
     return (
         <div>
-            <div className="flex justify-between mb-6">
-                {chartTitle(DASHBOARD_TITLE.LINE_CHART)}
+            <div className="my-6">
                 <DateRangeFilter
                     onChange={setFilter}
                     allowedTypes={['monthly', 'yearly']}
@@ -70,7 +68,7 @@ const TotalRevenueOverTime: React.FC = () => {
             {loading ? (
                 <Skeleton className="w-full h-100 rounded-xl" />
             ) : (
-                <div className="min-h-[300px] max-h-[450px] w-full flex items-center justify-center">
+                <div className="w-full flex items-center justify-center h-[400px]">
                     <LineChart data={data} labels={chartLabels} />
                 </div>
             )}

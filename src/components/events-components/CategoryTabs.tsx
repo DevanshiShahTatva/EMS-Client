@@ -61,7 +61,7 @@ export const CategoryTabs: React.FC<CategoryTabsProps> = ({
           <button
             key={category.id}
             onClick={() => setActiveCategory(category.id)}
-            className={`px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap ${activeCategory === category.id ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+            className={`px-4 py-2 text-sm font-medium rounded-md cursor-pointer whitespace-nowrap ${activeCategory === category.id ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
           >
             {category.label}
           </button>

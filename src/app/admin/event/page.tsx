@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 
 // Custom Compoents
-import Loader from '@/components/common/Loader';
 import DeleteDialog from '@/components/common/DeleteModal';
 import FilterModal from '@/components/common/FilterModal';
 import ChartCard from '@/components/admin-components/dashboard/ChartCard';
 import Pagination from '@/components/admin-components/Pagination';
+import TableSkeleton from '@/components/common/TableSkeloton';
 
 // types import
 import { EventResponse, EventsDataTypes, IApplyFiltersKey } from '@/utils/types';
@@ -36,7 +36,7 @@ import { getStatus, getTicketPriceRange, sortEvents, getFilteredData, getMaxTick
 function EventsListpage() {
   const router = useRouter()
 
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [allEventsData, setAllEventsData] = useState<EventsDataTypes[]>([]) // Initial
@@ -83,8 +83,10 @@ function EventsListpage() {
     if (key === sortByKey) {
       newOrder = sortOrder === "asc" ? "desc" : "asc";
     }
-    const result = sortEvents(rowData, key, newOrder);
-    setRowData(result);
+    const result = sortEvents(eventsData, key, newOrder);
+    const rowResult = getPaginatedData(result, 1, itemsPerPage);
+    setRowData(rowResult);
+    setEventsData(result)
     setSortOrder(newOrder);
     setSortByKey(key);
   };
@@ -178,19 +180,24 @@ function EventsListpage() {
   }
 
   const deleteEvents = async () => {
-    setLoading(true)
-    const result = await apiCall({
-      endPoint: API_ROUTES.ADMIN.DELETE_EVENT(deletableEventId),
-      method: "DELETE",
-    })
+    try {
+      const result = await apiCall({
+        endPoint: API_ROUTES.ADMIN.DELETE_EVENT(deletableEventId),
+        method: "DELETE",
+      })
 
-    if (result && result.success) {
-      fetchEvents()
-      setDeletableId("")
-      toast.success("Event deleted successfully")
-    } else {
-      toast.warning("Something went wrong. try again later")
-      setLoading(false)
+      if (result && result.success) {
+        setDeletableId("")
+        toast.success("Event deleted successfully")
+        setLoading(true)
+        fetchEvents()
+        setCurrentPage(1)
+      } else {
+        toast.warning("Something went wrong. try again later")
+      }
+
+    } catch (err) {
+      console.log("ERROR_AT_EVENT_DELETE", err)
     }
   }
 
@@ -231,8 +238,6 @@ function EventsListpage() {
 
   return (
     <div className="p-8">
-      {loading && <Loader />}
-
       <ChartCard>
         <p className="text-2xl font-bold">All Events</p>
 
@@ -344,7 +349,9 @@ function EventsListpage() {
               </tr>
             </thead>
             <tbody>
-              {rowData.length > 0 ? (
+              {loading ?
+                <TableSkeleton rows={itemsPerPage} columns={10} />
+               : rowData.length > 0 ? (
                 rowData.map((event, idx) => {
                   const status = getStatus(
                     event.startTime,

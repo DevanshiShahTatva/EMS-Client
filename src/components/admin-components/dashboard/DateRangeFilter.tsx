@@ -10,7 +10,7 @@ import {
     SelectContent,
     SelectItem,
 } from '@/components/ui/select';
-import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 type FilterType = 'overall' | 'monthly' | 'yearly';
 
@@ -92,10 +92,9 @@ export default function DateRangeFilter({
             : value;
 
     return (
-        <div>
+        <div className='flex justify-between items-center'>
             <p className="text-sm mb-1 font-bold">
-                Filter By:
-                <span className="ml-2 text-md text-black">{displayValue}</span>
+                <span className="text-[16px] text-black">{displayValue}</span>
             </p>
 
             <div className="flex text-black gap-2 items-center">
@@ -105,9 +104,8 @@ export default function DateRangeFilter({
                         onValueChange={handleChangeType}
                         disabled={allowedTypes.length === 1}
                     >
-                        <SelectTrigger className="w-[150px] focus:outline-none focus:ring-0 focus:ring-offset-0">
+                        <SelectTrigger className="w-[150px] focus:outline-none focus:ring-0 focus:ring-offset-0 border-gray-300">
                             <SelectValue placeholder="Select Range" />
-                            <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
                         </SelectTrigger>
                         <SelectContent>
                             {allowedTypes.includes('monthly') && <SelectItem value="monthly">Monthly</SelectItem>}

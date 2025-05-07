@@ -7,12 +7,24 @@ import {
   TagIcon,
   ArrowBigLeftIcon,
   ArrowBigRightIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
 } from 'lucide-react'
 import { EventData } from '../../app/events/types'
 import { API_ROUTES, ROUTES } from '@/utils/constant'
 import { apiCall } from '@/utils/services/request'
 import { useRouter } from 'next/navigation'
-
+import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { toast } from 'react-toastify'
 interface FeaturedEventProps {
   event: EventData[]
 }
@@ -33,18 +45,23 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
 
     intervalRef.current = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % event.length)
-    }, 5000)
+    }, 10000)
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
   }, [event.length])
 
-  const handleLikeEvent = async (eventId: string) => {
-    const response = await apiCall({
-      endPoint: `${API_ROUTES.ADMIN.GET_EVENTS}/${eventId}/like`,
-      method: 'POST',
-    })
+const handleLikeEvent = async (eventId: string) => {
+  let likeCheck = event.findIndex((ev)=>ev.id==eventId);
+  if(!event[likeCheck].isLiked)
+    toast.success("Liked an Event!");
+   else 
+    toast.error("Disliked an Event!");
+   const response = await apiCall({
+      endPoint: API_ROUTES.ADMIN.GET_EVENTS+`/${eventId}/like`,
+      method: "POST",
+    });
     if (response.success) {
       setLikedEvents(prev => ({
         ...prev,
@@ -70,7 +87,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
       router.push(`${ROUTES.USER_EVENTS}\\${eventId}`);  
   }
   return (
-    <div className="relative w-full max-w-5xl mx-auto overflow-hidden">
+    <div className="relative w-full mx-auto overflow-hidden">
       <div
         className="flex transition-transform duration-500 ease-in-out"
         style={{
@@ -89,7 +106,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
           return (
             <div
               key={ev.id}
-              className="w-full flex-shrink-0 px-4"
+              className="w-full flex-shrink-0"
               style={{ width: '100%' }}
             >
               <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
@@ -102,7 +119,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
                     />
                     <button
                       onClick={() => handleLikeEvent(ev.id)}
-                      className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md"
+                      className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md cursor-pointer"
                     >
                       <HeartIcon
                         className={`h-6 w-6 ${
@@ -126,25 +143,31 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
                       className="text-gray-600 mb-6"
                       dangerouslySetInnerHTML={{ __html: ev.description }}
                     />
+                  <div className="mt-auto space-y-2 mb-4">
+                    <div className="flex items-center text-gray-600">
+                      <Square3Stack3DIcon className="h-5 w-5 mr-3" />
+                      <span>{ev.category}</span>
+                    </div>
                     <div className="space-y-3 mb-6">
                       <div className="flex items-center text-gray-600">
                         <CalendarIcon className="h-5 w-5 mr-3" />
                         <span>{formattedDate}</span>
                       </div>
-                      <div className="flex items-center text-gray-600">
-                        <ClockIcon className="h-5 w-5 mr-3" />
-                        <span>{formattedDate}</span>
+                      <div className="flex items-top text-gray-600">
+                       <MapPin className="h-6 w-6 mr-3 shrink-0" />
+                        <span>{ev.location}</span>
                       </div>
                       <div className="flex items-center text-gray-600">
                         <TagIcon className="h-5 w-5 mr-3" />
                         <span className="font-medium">{ev.priceRange}</span>
                       </div>
-                    </div>
+                      </div>
+                  </div>
                     <div className="mt-auto">
                       <button
                         disabled={ev.isSoldOut}
                         onClick={()=>navigateToEventDetails(ev.id)}
-                        className={`py-3 px-6 rounded-md font-medium ${
+                        className={`py-3 px-6 rounded-md font-medium cursor-pointer ${
                           ev.isSoldOut
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                             : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -160,20 +183,32 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
           )
         })}
       </div>
-
       {event.length > 1 && (
         <>
+          <div className="flex justify-center mt-4 mb-4 space-x-2">
+            {event.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`h-3 w-3 rounded-full transition-all duration-300 ${
+                  currentSlide === index
+                    ? 'bg-blue-600 scale-110'
+                    : 'bg-gray-300 hover:bg-gray-400'
+                }`}
+              />
+            ))}
+          </div>
           <button
             onClick={prevSlide}
-            className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
+            className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md cursor-pointer"
           >
-            <ArrowBigLeftIcon />
+            <ChevronLeft />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md"
+            className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md cursor-pointer"
           >
-            <ArrowBigRightIcon />
+            <ChevronRight />
           </button>
         </>
       )}

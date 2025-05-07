@@ -7,7 +7,7 @@ import { API_ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
 import { Button } from '@/components/ui/button';
 import TableModal from './TableModal';
-import { chartTitle } from './ChartCard';
+import { CardTitle } from './ChartCard';
 import { DASHBOARD_TITLE, RevenueTableColumns } from '@/app/admin/dashboard/helper';
 import { IMostRevenueByEventsData } from '@/app/admin/dashboard/types';
 
@@ -62,31 +62,27 @@ const MostRevenueByEvents = () => {
     const chartData = useMemo(() => data.map((item) => item.totalRevenue), [data]);
 
     return (
-        <div className="w-full max-w-2xl mx-auto">
-            <div className="flex justify-between gap-4">
-                {chartTitle(DASHBOARD_TITLE.BAR_CHART1)}
-
-                {loading ? (
-                    <Skeleton className="w-[100px] h-8 mb-4" />
-                ) : (
+        <div>
+            <CardTitle
+                title={DASHBOARD_TITLE.BAR_CHART1}
+                right={
                     <Button
                         variant="link"
-                        className="underline text-primary px-0 cursor-pointer"
+                        className="underline text-primary p-0 h-7 cursor-pointer"
                         onClick={handleViewDetails}
                     >
                         View Details
                     </Button>
+                } />
+            <div className="p-6">
+                {loading ? (
+                    <Skeleton className="h-90 w-full rounded-md" />
+                ) : (
+                    <div className="min-h-[250px] h-[400px] md:h-[360px] w-full flex items-center justify-center">
+                        <BarChart data={chartData} labels={chartLabels} />
+                    </div>
                 )}
             </div>
-
-            {loading ? (
-                <Skeleton className="h-75 w-full rounded-md" />
-            ) : (
-                <div className="min-h-[250px] h-[400px] md:h-[300px] w-full flex items-center justify-center">
-                    <BarChart data={chartData} labels={chartLabels} />
-                </div>
-            )}
-
             <TableModal
                 open={open}
                 onClose={() => setOpen(false)}

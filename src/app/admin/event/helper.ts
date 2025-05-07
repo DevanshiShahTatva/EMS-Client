@@ -10,13 +10,18 @@ export const getTicketPriceRange = (data: EventTicket[]) => {
 
     const priceRange =
         minPrice === 0
-            ? `${maxPrice === 0 ? "Free" : `Free - ${maxPrice}`}`
+            ? `${maxPrice === 0 ? "Free" : `Free - ₹${maxPrice}`}`
             : minPrice === maxPrice
-                ? `${minPrice}`
-                : `${minPrice} - ${maxPrice}`;
+                ? `₹${minPrice}`
+                : `₹${minPrice} - ₹${maxPrice}`;
     return priceRange
 };
-
+export const onwardPriceRange=(data:EventTicket[])=>{
+    const price = data.map((ticket)=>ticket.price);
+    const minPrice = Math.min(...price);
+    const priceOnwards =  minPrice===0 ? 'Starting from Free' : `₹ ${minPrice} onwards`
+    return priceOnwards;
+}
 export const getMaxTicketPrice = (events: EventsDataTypes[]): number => {
     let maxPrice = 0;
   
@@ -107,14 +112,6 @@ export const sortEvents = (
         return totalMinutes;
     };
 
-    const priceRangeDiff = (price: string): number => {
-        const cleaned = price.toLowerCase().replace("free", "0");
-        const [minStr, maxStr] = cleaned.split("-").map(p => p.trim());
-        const min = parseInt(minStr) || 0;
-        const max = parseInt(maxStr) || 0;
-        return Math.abs(max - min);
-    };
-
     return [...events].sort((a, b) => {
         let valA: any = a[key as keyof EventsDataTypes];
         let valB: any = b[key as keyof EventsDataTypes];
@@ -135,8 +132,17 @@ export const sortEvents = (
         }
 
         if (key === "price") {
-            valA = priceRangeDiff(valA as string);
-            valB = priceRangeDiff(valB as string);
+            const pricesA = a.ticketsArray.map(t => t.price);
+            const pricesB = b.ticketsArray.map(t => t.price);
+
+            const minA = Math.min(...pricesA);
+            const maxA = Math.max(...pricesA);
+            const minB = Math.min(...pricesB);
+            const maxB = Math.max(...pricesB);
+
+            valA = order === "asc" ? minA : maxA;
+            valB = order === "asc" ? minB : maxB;
+           
         }
 
         if (key === "duration") {

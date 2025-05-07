@@ -54,19 +54,21 @@ const GenericTable = <T extends Record<string, any>>({
                 disabled={loading}
             />
 
-            <div className="border rounded-md overflow-hidden">
-                <Table>
-                    <TableHeader>
-                        <TableRow className='bg-gray-200'>
+            <div>
+                <Table className='text-gray-700'>
+                    <TableHeader className="bg-gray-100 text-xs uppercase">
+                        <TableRow className='hover:bg-transparent'>
                             {columns.map(col => (
-                                <TableHead key={col.key} className='font-bold'>{col.label}</TableHead>
+                                <TableHead key={col.key} className='text-gray-700 font-[700]'>
+                                    {col.label}
+                                </TableHead>
                             ))}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {loading ? (
                             Array.from({ length: pageSize }).map((_, i) => (
-                                <TableRow key={i}>
+                                <TableRow key={i} className="hover:bg-transparent">
                                     {columns.map((_, j) => (
                                         <TableCell key={j}>
                                             <Skeleton className="h-4 w-full" />
@@ -75,14 +77,14 @@ const GenericTable = <T extends Record<string, any>>({
                                 </TableRow>
                             ))
                         ) : paginatedData.length === 0 ? (
-                            <TableRow>
+                            <TableRow className="hover:bg-transparent">
                                 <TableCell colSpan={columns.length} className="text-center">
                                     No data found.
                                 </TableCell>
                             </TableRow>
                         ) : (
                             paginatedData.map((row, i) => (
-                                <TableRow key={i}>
+                                <TableRow key={i} className="hover:bg-transparent">
                                     {columns.map(col => (
                                         <TableCell key={col.key}>{row[col.key]}</TableCell>
                                     ))}

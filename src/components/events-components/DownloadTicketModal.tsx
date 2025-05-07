@@ -1,92 +1,78 @@
 "use client";
-import React from 'react'
-
-// library support
+import React from 'react';
+import moment from 'moment';
 import { usePDF } from "react-to-pdf";
 import { QRCodeCanvas } from "qrcode.react";
-
-// Types support
-import { IBooking } from '@/app/user/my-events/types'
-
-// Custom css
-import "../../app/viewTicket.css"
-
-// Helpers
-import { formatDateTime } from '@/app/user/my-events/helper';
-
-// icons
 import { XMarkIcon } from "@heroicons/react/24/solid";
-
+import { IBooking } from '@/app/user/my-events/types';
 
 interface ITicketProps {
-    isOpen: boolean;
+  isOpen: boolean;
   onClose: () => void;
-    eventData : IBooking | null
+  eventData: IBooking | null;
 }
 
-const DownloadTicketModal : React.FC<ITicketProps> = ({ eventData, isOpen, onClose }) => {
+const DownloadTicketModal: React.FC<ITicketProps> = ({ eventData, isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  if(eventData === null) return null
+  if (eventData === null) return null
 
-    const ticketData = {
-        id: "TICKET-123456",
-    };
+  const ticketData = {
+    id: "TICKET-123456",
+  };
 
-    // Use the usePdf hook
-    const { toPDF, targetRef } = usePDF({
-        filename: `${eventData.event.title}-${new Date().getTime()}-ticket.pdf`,
-    });
+  const { toPDF, targetRef } = usePDF({
+    filename: `${eventData.event.title}-${new Date().getTime()}-ticket.pdf`,
+  });
 
-    const downoadTicket = () => {
-       toPDF()
-       onClose()
-    }
+  const downloadTicket = () => {
+    toPDF();
+    onClose();
+  }
 
   return (
-    <>
-
-      <div className="fixed inset-0 z-45 flex items-center justify-center bg-black/60 bg-opacity-40">
-        <div className="bg-white w-full max-w-full sm:max-w-xl rounded-lg shadow-xl relative">
-
-        <div className="flex justify-between items-center border-b-1 px-6 py-5 border-b-gray-300">
-          <p className="font-bold text-xl">Ticket Details</p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 bg-opacity-40">
+      <div className="bg-white rounded-2xl shadow-xl max-w-sm relative w-[300px] md:w-full">
+        <div className='absolute top-4 right-3'>
           <XMarkIcon onClick={onClose} className="h-6 w-6 cursor-pointer" />
         </div>
-
-          
-            <div className="ticket-summary-container" ref={targetRef}>
-              <h2 className="ticket-summary-title">Ticket Summary</h2>
-
-              <p className='event-name'>Name:  <span className="event-time-text">{eventData.event.title}</span> </p>
-              <p className='event-name'>Timing: <span className="event-time-text">{formatDateTime(eventData.event.startDateTime)} - {formatDateTime(eventData.event.endDateTime)}</span> </p>
-              <p className='event-name last-child'>Location:  <span className="event-time-text"> {eventData.event.location.address}</span> </p>
-
-              <p className="scan-text">Scan below QR code at entrace of venue: </p>
-              <hr />
-
-              <div className='qr-box'>
-                <br />
+        <div className="max-w-sm mx-auto bg-white rounded-3xl shadow-lg overflow-hidden">
+          <div className="px-6 py-4 border-b">
+            <h2 className="text-center text-lg font-semibold">Overview</h2>
+          </div>
+          <div className="flex justify-center">
+            <div className="w-full max-w-md py-4 space-y-4 flex flex-col justify-center border" ref={targetRef}>
+              <div className="flex flex-col gap-1 px-6 text-sm space-y-1  text-center">
+                <div><span className='text-black font-bold text-[22px]'>{eventData.event.title}</span></div>
+                <div><span className='text-black font-bold'>{eventData.event.location.address}</span></div>
+                <div><span className='text-black font-bold'>{moment(eventData.event.startDateTime).local().format("DD MMM YYYY")} - {moment(eventData.event.endDateTime).local().format("DD MMM YYYY")}</span></div>
+                <div><span className='text-black font-bold'>{moment(eventData.event.startDateTime).local().format('hh:mm A')} - {moment(eventData.event.endDateTime).local().format('hh:mm A')}</span></div>
+                <div><span className='text-black font-bold'>Rs. ₹{eventData.totalAmount}</span></div>
+              </div>
+              <div className="relative my-4">
+                <div className="absolute left-[-21px] top-1/2 -translate-y-1/2 w-10 h-[40px] bg-[#685757] rounded-full shadow-md"></div>
+                <div className="absolute right-[-21px] top-1/2 -translate-y-1/2 w-10 h-[40px] bg-[#685757] rounded-full shadow-md"></div>
+                <div className="border-t-[1.5px] border-dashed mx-4"></div>
+              </div>
+              <div className="px-6 flex flex-col items-center space-y-2">
                 <QRCodeCanvas
                   value={JSON.stringify(ticketData)}
                   size={150}
                 />
+                <div className="text-sm">Ticket ID <span className="font-medium">{Math.floor(100000 + Math.random() * 900000)}</span></div>
               </div>
-
             </div>
-
-          <div className='text-end border-t-1 border-t-gray-300'>
-            <button onClick={() => downoadTicket()} className='px-4 py-2 mr-5 my-5 font-bold bg-blue-500 text-white cursor-pointer rounded-[8px] text-center hover:bg-blue-600'>
-              Download Ticket
+          </div>
+          <div className="p-4">
+            <button onClick={() => downloadTicket()} className="w-full bg-gradient-to-r from-indigo-500 to-blue-500 text-white py-2 rounded-xl font-medium cursor-pointer">
+              Download ticket
             </button>
           </div>
-
         </div>
       </div>
-          
-    </>
-  )
+    </div>
+  );
 }
 
-export default DownloadTicketModal
+export default DownloadTicketModal;

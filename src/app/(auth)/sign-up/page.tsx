@@ -112,7 +112,7 @@ const SignUpPage = () => {
           </div>
 
           <p className="text-xs text-gray-400 text-center mt-10">
-            Copyright © {new Date().getFullYear()} All Rights Reserved
+            Copyright © {new Date().getFullYear()} All Rights Reserved.
           </p>
         </div>
 

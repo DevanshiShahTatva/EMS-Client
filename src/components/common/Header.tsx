@@ -9,22 +9,17 @@ import { useRouter } from 'next/navigation';
 
 // Custom compponents
 import { API_ROUTES, ROUTES, USER_HEADER_ITEMS } from '@/utils/constant';
-import { Button } from "@/components/ui/button"
 
 // Custom helpers
-import { getAuthToken, getUserLogo, setUserLogo } from '@/utils/helper';
-import { INITIAL_USER_INFO } from '@/app/user/profile/helper';
+import { getAuthToken, getUserLogo, setUserLogo, setUserName, getUserName } from '@/utils/helper';
 
 // Other library
 import Cookie from 'js-cookie'
-import { TicketsIcon, UserCircle } from 'lucide-react';
+import { TicketsIcon, UserCircle, LogOut } from 'lucide-react';
 
 // images path
 import CrossIconPath from "../../../public/assets/CrossIcon.svg"
 import { apiCall } from '@/utils/services/request';
-
-// Types support
-import { IUserInfo } from '@/app/user/profile/types';
 
 
 
@@ -38,9 +33,9 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
 
   const [authToken, setAuthToken] = useState("")
   const [logo, setLogo] = useState("")
+  const [name, setName] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [userInfo, setUserInfo] = useState<IUserInfo>(INITIAL_USER_INFO);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter()
 
@@ -76,7 +71,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
        withToken: true
     })
 
-    if(result && result.success) {
+    if(result?.success) {
       const receivedObj = result.data[0]
 
       const userInfo = {
@@ -87,9 +82,10 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
         "profileimage": receivedObj.profileimage === null ? "" : receivedObj.profileimage.url
       }
 
-      setUserLogo(userInfo.profileimage)
-      setLogo(userInfo.profileimage)
-      setUserInfo(userInfo)
+      setUserLogo(userInfo.profileimage);
+      setUserName(userInfo.name);
+      setLogo(userInfo.profileimage);
+      setName(userInfo.name);
     }
   }
 
@@ -101,11 +97,29 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
   }, [authToken])
 
   useEffect(() => {
+    const handleLogoUpdate = () => {
+      const updatedLogo = getUserLogo();
+      setLogo(updatedLogo);
+    };
+  
+    window.addEventListener("userLogoUpdated", handleLogoUpdate);
+  
+    return () => {
+      window.removeEventListener("userLogoUpdated", handleLogoUpdate);
+    };
+  }, []);
+
+  useEffect(() => {
     const logoUrl = getUserLogo()
     if (logoUrl !== "") {
       setLogo(logoUrl)
     }
   }, [logo])
+
+  useEffect(() => {
+    const name = getUserName();
+    name && setName(name);
+  }, [name]);
 
   useEffect(() => {
     const token = getAuthToken()
@@ -129,7 +143,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
   return (
     <div>
       <header className="text-gray-600 body-font border-b border-b-gray-200">
-        <div className="mx-auto flex flex-wrap py-5 px-10 flex-row items-center justify-between">
+        <div className="mx-auto flex flex-wrap py-3 px-10 flex-row items-center justify-between h-20">
           <div className="flex gap-2">
             <Link
               className="flex title-font font-medium items-center text-gray-900 md:mb-0"
@@ -246,69 +260,68 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
               )}
             </>
           }
-
           <div className="flex gap-4 items-center">
             {authToken !== "" ? (
               <div className="flex gap-4 items-center">
-                {isAdmiRole ?
-                  <div className='hover:underline cursor-pointer text-gray-500 font-semibold'>
-                     admin@evently.com
-                  </div>
-                 : 
-                  <div ref={menuRef}>
+                <div ref={menuRef} className='relative'>
+                  <div
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center space-x-4 p-2 bg-white rounded-md w-max cursor-pointer"
+                  >
                     {logo !== "" ?
                       <Image
+                        height={30}
+                        width={30}
                         src={logo}
-                        width={40}
-                        height={40}
                         alt="Logo"
-                        className="cursor-pointer relative rounded-full"
-                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        className="rounded-full h-[30px] w-[30px] object-cover"
                       />
                       :
-                      <button
-                        className='h-10 w-10 rounded-full bg-indigo-600 text-white font-bold cursor-pointer relative'
-                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      >
-                        {userInfo.name.charAt(0).toUpperCase()}
+                      <button className='h-10 w-10 rounded-full bg-indigo-600 text-white font-bold relative cursor-pointer'>
+                        {isAdmiRole ? "A" : name.charAt(0).toUpperCase()}
                       </button>
                     }
-                    
-                    
-
-                    {/* Dropdown Menu */}
-                    {isDropdownOpen && (
-                      <div className="absolute right-10 mt-2 top-15 bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50">
-                        <button onClick={navToProfile} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
-                          <UserCircle className="w-5 h-5 mr-3" />
-                          Profile
-                        </button>
-                        <button onClick={navToMyEvents} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
-                          <TicketsIcon className="w-5 h-5 mr-3" />
-                          My Events
-                        </button>
-                      </div>
-                    )}
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">{isAdmiRole ? "Admin" : name}</div>
+                      <div className="text-xs text-gray-500">{isAdmiRole ? "Admin" : "User"}</div>
+                    </div>
+                    <button className="ml-auto focus:outline-none">
+                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"></path>
+                      </svg>
+                    </button>
                   </div>
-                }
-
-                <Button
-                  variant="link"
-                  onClick={handleLogout}
-                  className="cursor-pointer text-base"
-                >
-                  Logout
-                </Button>
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-2 top-[43px] bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50 w-[160px]">
+                      {!isAdmiRole && (
+                        <>
+                          <button onClick={navToProfile} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
+                            <UserCircle className="w-5 h-5 mr-3" />
+                            Profile
+                          </button>
+                          <button onClick={navToMyEvents} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
+                            <TicketsIcon className="w-5 h-5 mr-3" />
+                            My Events
+                          </button>
+                        </>
+                      )}
+                      <button onClick={handleLogout} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
+                        <LogOut className="w-5 h-5 mr-3" />
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
-                <div className="flex gap-4">
-                  <button onClick={navToLogIn} className="px-4 py-2 cursor-pointer border border-indigo-600 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-50">
-                    Login
-                  </button>
-                  <button onClick={navToSignUp} className="px-4 py-2 cursor-pointer font-semibold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                    Signup
-                  </button>
-                </div>
+              <div className="flex gap-4">
+                <button onClick={navToLogIn} className="px-4 py-2 cursor-pointer border border-indigo-600 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-50">
+                  Login
+                </button>
+                <button onClick={navToSignUp} className="px-4 py-2 cursor-pointer font-semibold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                  Signup
+                </button>
+              </div>
             )}
           </div>
         </div>

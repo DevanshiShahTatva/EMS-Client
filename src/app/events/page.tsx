@@ -154,8 +154,8 @@ const EventsPage: React.FC = () => {
       return 0
     })
 
-  const featuredEvent = filteredEvents.filter(event => event.isFeatured)
-  const regularEvents = filteredEvents.filter(event => !event.isFeatured)
+  const featuredEvent = filteredEvents.filter(event => event.isFeatured && event.status!=="ended");
+  const regularEvents = filteredEvents;
   return (
 
     <div className="mx-auto p-10">
@@ -164,7 +164,7 @@ const EventsPage: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 
         {/* Search Bar  */}
-        <div className="relative flex-grow w-full bg-white">
+        <div className="relative flex-grow w-full bg-white rounded-lg">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <SearchIcon className="h-5 w-5 text-gray-400" />
           </div>
@@ -173,15 +173,14 @@ const EventsPage: React.FC = () => {
             placeholder="Search events..."
             value={searchQuery}
             onChange={(e) => handleSearchQuery(e.target.value)}
-            className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="pl-10 pr-4 py-2.5 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
-
         <div className='flex gap-2 justify-between md:justify-start'>
 
           <button
             onClick={openFilterModal}
-            className="flex items-center cursor-pointer bg-white border-1 text- px-4 py-2 text-sm font-medium text-gray-700 border-gray-300 rounded-lg"
+            className="flex items-center cursor-pointer bg-white border-1 text- px-4 py-3 text-sm font-medium text-gray-700 border-gray-300 rounded-lg"
           >
             <FunnelIcon className="w-5 h-5 font-bold mr-2" />
             Filters
@@ -196,18 +195,18 @@ const EventsPage: React.FC = () => {
 
         {appliedFiltersArray.map((item, index) => {
           return (
-            <div key={index} className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 gap-2">
+            <div key={index} className="inline-flex items-center px-4 py-3 rounded-full bg-blue-100 gap-2">
               <p className='text-blue-600 text-lg font-semibold'> {item.label} </p>
               <button className='cursor-pointer' onClick={() => removeFilterChip(item.rowKey, item.value)}>
                 <XMarkIcon className='h-5 w-5 font-bold text-blue-500 hover:text-blue-700 focus:outline-none' />
               </button>
-            </div>
+            </div>  
           )
         })}
 
       </div>
 
-      {featuredEvent && (
+      {(featuredEvent && searchQuery==="") && (
         <div className="mb-8 mt-6">
           <h2 className="text-xl font-semibold mb-4">Featured Event</h2>
           <FeaturedEvent event={featuredEvent} />

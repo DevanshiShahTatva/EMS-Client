@@ -1,11 +1,11 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { HeartIcon, CalendarIcon, MapPin, TagIcon } from 'lucide-react'
 import { EventData } from '../../app/events/types'
 import { useRouter } from 'next/navigation'
 import { API_ROUTES, ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
-
+import { toast } from 'react-toastify'
 import {
   Tooltip,
   TooltipContent,
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip"
 
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
+import he from 'he'
 
 interface EventCardProps {
   event: EventData
@@ -36,6 +37,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
   }
 
   const handleLikeEvent = async () => {
+    if(!isLiked)
+      toast.success("Liked the Event!")
+    else
+      toast.error("Disliked the Event!");
     const response = await apiCall({
       endPoint: API_ROUTES.ADMIN.GET_EVENTS + `/${event.id}/like`,
       method: "POST",
@@ -45,10 +50,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     }
   };
 
-  useEffect(() => {
-    setIsLiked(event.isLiked)
-  }, [event])
-
+  useEffect(()=>{
+   setIsLiked(event.isLiked)
+  },[event])
+  const decodedHTML = useMemo(()=>he.decode(event.description),[event.description]);
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 flex flex-col h-full">
       <div className="relative">
@@ -59,7 +64,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         />
         <button
           onClick={handleLikeEvent}
-          className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-sm"
+          className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-sm cursor-pointer"
         >
           <HeartIcon
             className={`h-5 w-5 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
@@ -75,7 +80,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
             {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
           </span>
         </div>
-        <div className="text-gray-600 text-sm line-clamp-2 mb-4" dangerouslySetInnerHTML={{ __html: event.description }} />
+        <div className="text-gray-600 text-sm line-clamp-2 mb-4" dangerouslySetInnerHTML={{__html:decodedHTML}}/>
         <div className="mt-auto space-y-2">
           <div className="flex items-center text-sm text-gray-500">
             <Square3Stack3DIcon className="h-4 w-4 mr-2" />
@@ -109,8 +114,8 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
       <div className="px-4 pb-4">
         <button
           disabled={event.isSoldOut}
-          className={`w-full py-2 px-4 rounded-md font-medium ${event.isSoldOut ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
-          onClick={() => navigateToEventDetails(event.id)}
+          className={`w-full py-2 px-4 rounded-md font-medium ${event.isSoldOut ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'}`}
+          onClick={()=>navigateToEventDetails(event.id)}
         >
           {event.isSoldOut ? 'Sold Out' : 'View Details'}
         </button>

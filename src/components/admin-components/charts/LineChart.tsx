@@ -14,6 +14,7 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { ILineChartProps } from '@/app/admin/dashboard/types';
+import { formatNumberShort, RupeeSymbol } from '@/utils/helper';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -33,13 +34,37 @@ const LineChart: React.FC<ILineChartProps> = ({ data, labels }) => {
     };
 
     const options: ChartOptions<'line'> = {
+        maintainAspectRatio: false,
         responsive: true,
         plugins: {
-            legend: { position: 'bottom' as const },
+            legend: { position: 'bottom' as const, display: false },
             title: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        const value = context.formattedValue;
+                        return `Revenue: ${RupeeSymbol} ${value}`;
+                    },
+                },
+            },
         },
         scales: {
-            y: { beginAtZero: true },
+            y: {
+                beginAtZero: true,
+                suggestedMin: 0,
+                suggestedMax: Math.max(...data) * 1.1, // 10% above the highest value
+                ticks: {
+                    callback: (value) => formatNumberShort(Number(value)),
+                    color: '#6B7280',
+                    count: 6,
+                },
+            },
+            x: {
+                grid: {
+                    display: false,
+                },
+            },
+
         },
     };
 

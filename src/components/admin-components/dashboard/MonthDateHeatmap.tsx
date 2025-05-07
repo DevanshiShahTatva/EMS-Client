@@ -2,13 +2,13 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { chartTitle } from './ChartCard';
 import DateRangeFilter from './DateRangeFilter';
 import { Skeleton } from '@/components/ui/skeleton';
 import { apiCall } from '@/utils/services/request';
 import { API_ROUTES } from '@/utils/constant';
-import { DASHBOARD_TITLE, getCurrentYear } from '@/app/admin/dashboard/helper';
+import { getCurrentYear } from '@/app/admin/dashboard/helper';
 import { IMonthDateHeatmapData, TOutputData } from '@/app/admin/dashboard/types';
+import { ChartLegendSkeleton } from '../charts/PieChart';
 
 const HeatmapChart = dynamic(() => import('../charts/HeatmapChart'), { ssr: false });
 
@@ -54,8 +54,9 @@ const MonthDateHeatmap: React.FC = () => {
 
     return (
         <div>
-            <div className="flex justify-between mb-6">
-                {chartTitle(DASHBOARD_TITLE.HEATMAP)}
+
+
+            <div className="my-6">
                 <DateRangeFilter
                     onChange={setFilter}
                     allowedTypes={['yearly']}
@@ -65,7 +66,10 @@ const MonthDateHeatmap: React.FC = () => {
             </div>
 
             {loading ? (
-                <Skeleton className="w-full h-[400px] rounded-xl" />
+                <>
+                    <Skeleton className="w-full h-[400px] rounded-xl" />
+                    <ChartLegendSkeleton />
+                </>
             ) : (
                 <HeatmapChart series={chartData} categories={days} />
             )}

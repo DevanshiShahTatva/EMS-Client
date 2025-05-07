@@ -13,7 +13,7 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { BALANCED_COLORS } from '@/utils/constant';
-import { formatNumberShort } from '@/utils/helper';
+import { formatNumberShort, RupeeSymbol } from '@/utils/helper';
 import { IBarChartProps } from '@/app/admin/dashboard/types';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title);
@@ -33,9 +33,18 @@ export default function BarChart({ data, labels }: IBarChartProps) {
 
     const options: ChartOptions<'bar'> = useMemo(() => ({
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 display: false,
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        const value = context.formattedValue;
+                        return `Revenue: ${RupeeSymbol} ${value}`; // ← Append any string here
+                    },
+                },
             },
         },
         scales: {
@@ -44,13 +53,18 @@ export default function BarChart({ data, labels }: IBarChartProps) {
                 ticks: {
                     callback: (value) => formatNumberShort(Number(value)),
                     color: '#6B7280',
+                    count: 6
                 },
+               
             },
             x: {
                 categoryPercentage: 0.6,
                 barPercentage: 0.7,
                 ticks: {
                     color: '#6B7280',
+                },
+                grid: {
+                    display: false, 
                 },
             },
         },

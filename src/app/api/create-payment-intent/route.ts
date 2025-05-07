@@ -13,7 +13,7 @@ export async function POST(req: Request) {
       line_items: [
         {
           price_data: {
-            currency: 'usd',
+            currency: 'inr',
             product_data: {
               name: `${eventTitle} - ${tickets.type}`,
             },

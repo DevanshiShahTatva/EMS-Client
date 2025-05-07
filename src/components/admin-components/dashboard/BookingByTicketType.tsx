@@ -6,6 +6,7 @@ import { API_ROUTES } from '@/utils/constant';
 import { Skeleton } from '@/components/ui/skeleton';
 import DoughnutChart from '../charts/DoughnutChart';
 import { IBookingByTicketTypeData } from '@/app/admin/dashboard/types';
+import { ChartLegendSkeleton } from '../charts/PieChart';
 
 const BookingByTicketType: React.FC = () => {
 
@@ -43,19 +44,18 @@ const BookingByTicketType: React.FC = () => {
         fetchData();
     }, [fetchData]);
 
-
-    if (loading) {
-        return (
-            <div className="mt-6 w-full flex justify-center items-center">
-                <Skeleton className="w-40 sm:w-60 md:w-70 lg:w-75 aspect-square rounded-full" />
-            </div>
-        );
-    }
-
     return (
-        <div className="mt-7 min-h-[250px] h-[350px] md:h-[300px] w-full flex items-center justify-center">
-            <DoughnutChart data={data} labels={labels} />
-        </div>
+        <>
+            <div className='mt-12'>
+            {loading ?
+                <div className="w-full flex justify-center items-center flex-col">
+                    <Skeleton className="sm:w-40 md:w-50 lg:w-62.5 aspect-square rounded-full" />
+                    <ChartLegendSkeleton />
+                </div> :
+                <DoughnutChart data={data} labels={labels} showCustomLabels />
+            }
+            </div>
+        </>
     );
 };
 
