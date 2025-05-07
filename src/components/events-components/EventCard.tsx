@@ -32,8 +32,8 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     year: 'numeric',
   })
   const router = useRouter();
-  const navigateToEventDetails=(eventId:string)=>{
-    router.push(`${ROUTES.USER_EVENTS}\\${eventId}`);  
+  const navigateToEventDetails = (eventId: string) => {
+    router.push(`${ROUTES.USER_EVENTS}\\${eventId}`);
   }
 
   const handleLikeEvent = async () => {
@@ -42,12 +42,12 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     else
       toast.error("Disliked the Event!");
     const response = await apiCall({
-      endPoint: API_ROUTES.ADMIN.GET_EVENTS+`/${event.id}/like`,
+      endPoint: API_ROUTES.ADMIN.GET_EVENTS + `/${event.id}/like`,
       method: "POST",
     });
     if (response.success) {
       setIsLiked(!isLiked)
-    } 
+    }
   };
 
   useEffect(()=>{

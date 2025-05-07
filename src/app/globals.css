@@ -112,7 +112,6 @@
   --sidebar-ring: #8c8c8c; /* Replaced oklch with hex */
 }
 
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -138,11 +137,11 @@
 }
 
 .selectDateClass .aria-selected\:text-primary-foreground[aria-selected="true"] {
-  color : white !important
+  color: white !important;
 }
 
 .custom-quill .ql-editor {
-  height : 200px;
+  height: 200px;
 }
 
 .custom-quill .ql-editor.ql-blank::before {
@@ -158,4 +157,42 @@
 .no-scrollbar {
   -ms-overflow-style: none; 
   scrollbar-width: none;    
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+#home-hero-section-wrapper {
+  height: 593px;
+  position: relative;
+  /* margin: 70 auto; */
+}
+
+.hero-image {
+  position: absolute;
+  top: 0;
+  height: 593px;
+  object-fit: contain;
+}
+
+.hero-image.p1 {
+  max-width: 1332px;
+  top: 70px;
+}
+
+.hero-image.p2 {
+  max-width: 1394px;
+  top: 120px;
+}
+
+.hero-image.p3 {
+  max-width: 1098px;
+  top: 40px;
+}
+
+@keyframes scrollGrid {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: -1600px;
+  }
 }
