@@ -145,6 +145,13 @@
   height : 200px;
 }
 
+.custom-quill .ql-editor.ql-blank::before {
+  color: #9ca3af; /* Tailwind's gray-400 */
+  font-style: normal;
+  font-size: 1rem; /* Tailwind text-md */
+  font-family: 'DM Sans', 'DM Sans Fallback', sans-serif;
+  content: attr(data-placeholder); /* fallback if needed */
+}
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

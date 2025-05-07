@@ -97,6 +97,19 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
   }, [authToken])
 
   useEffect(() => {
+    const handleLogoUpdate = () => {
+      const updatedLogo = getUserLogo();
+      setLogo(updatedLogo);
+    };
+  
+    window.addEventListener("userLogoUpdated", handleLogoUpdate);
+  
+    return () => {
+      window.removeEventListener("userLogoUpdated", handleLogoUpdate);
+    };
+  }, []);
+
+  useEffect(() => {
     const logoUrl = getUserLogo()
     if (logoUrl !== "") {
       setLogo(logoUrl)
@@ -132,7 +145,11 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
       <header className="text-gray-600 body-font border-b border-b-gray-200">
         <div className="mx-auto flex flex-wrap py-3 flex-row items-center justify-between px-2 md:px-10">
           <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            onClick={() => {
+              isAdmiRole
+              ? toggleSidebar?.()
+              : setIsMobileMenuOpen(!isMobileMenuOpen)
+            }}
             className="md:hidden text-gray-700 focus:outline-none"
           >
             {isMobileMenuOpen ? (
@@ -180,28 +197,6 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                 height={60}
               />
             </Link>
-
-            {isAdmiRole && (
-              <button
-                onClick={toggleSidebar}
-                className="text-gray-700 ml-3 md:hidden"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              </button>
-            )}
           </div>
 
           {!isAdmiRole &&
@@ -279,7 +274,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                     </button>
                   </div>
                   {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 top-[43px] bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50 w-[200px]">
+                    <div className="absolute right-0 mt-2 top-[43px] bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50 w-[160px]">
                       {!isAdmiRole && (
                         <>
                           <button onClick={navToProfile} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">

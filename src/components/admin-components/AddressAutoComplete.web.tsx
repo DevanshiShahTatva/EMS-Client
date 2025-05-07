@@ -46,10 +46,13 @@ const AddressAutocomplete: React.FC<IAddressAutoCompleteProps> = ({
         const data = await res.json();
   
         // ✅ Avoid opening dropdown for already-selected value
-        if (data.length === 1 && data[0].display_name === query) {
-          setShowDropdown(false);
-          setSuggestions([]);
-          return;
+        if (data.length > 0) {
+          const findLocationName = data.filter((item: any) => item.display_name === query)
+          if(findLocationName.length > 0) {
+            setShowDropdown(false);
+            setSuggestions([]);
+            return;
+          }
         }
   
         setSuggestions(data);
@@ -72,6 +75,7 @@ const AddressAutocomplete: React.FC<IAddressAutoCompleteProps> = ({
   const handleSelect = (fullLocation: ISuggestion) => {
     setQuery(fullLocation.display_name);
     setShowDropdown(false);
+    setSuggestions([])
     const locationFields = {
       latitude: parseFloat(fullLocation.lat),
       longitude: parseFloat(fullLocation.lon),

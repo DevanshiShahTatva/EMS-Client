@@ -39,7 +39,7 @@ const CustomSelectField: React.FC<ISelectFieldsProps> = ({
         padding: "2px",
         height: "3rem",
         borderRadius: "0.375rem",
-        fontSize: "0.875rem",
+        fontSize: "1rem",
         minHeight: "2.5rem",
       }),
       option: (base: any, state: any) => ({
@@ -50,7 +50,13 @@ const CustomSelectField: React.FC<ISelectFieldsProps> = ({
           ? "#eff6ff"
           : "white",
         color: state.isSelected ? "white" : "#1f2937", // gray-800
-        fontSize: "0.875rem",
+        fontSize: "1rem",
+      }),
+      placeholder: (base: any) => ({
+        ...base,
+        fontSize: "1rem", // Tailwind's text-md
+        fontFamily: "'DM Sans', 'DM Sans Fallback', sans-serif",
+        color: "#9ca3af", // Tailwind's gray-400
       }),
     };
 

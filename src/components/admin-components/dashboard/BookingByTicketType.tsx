@@ -7,8 +7,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import DoughnutChart from '../charts/DoughnutChart';
 import { IBookingByTicketTypeData } from '@/app/admin/dashboard/types';
 import { ChartLegendSkeleton } from '../charts/PieChart';
-import { chartTitle } from './ChartCard';
-import { DASHBOARD_TITLE } from '@/app/admin/dashboard/helper';
 
 const BookingByTicketType: React.FC = () => {
 
@@ -48,9 +46,7 @@ const BookingByTicketType: React.FC = () => {
 
     return (
         <>
-            <div className='mb-12'>
-                {chartTitle(DASHBOARD_TITLE.DOUGHNUT_CHART)}
-            </div>
+            <div className='mt-12'>
             {loading ?
                 <div className="w-full flex justify-center items-center flex-col">
                     <Skeleton className="sm:w-40 md:w-50 lg:w-62.5 aspect-square rounded-full" />
@@ -58,6 +54,7 @@ const BookingByTicketType: React.FC = () => {
                 </div> :
                 <DoughnutChart data={data} labels={labels} showCustomLabels />
             }
+            </div>
         </>
     );
 };

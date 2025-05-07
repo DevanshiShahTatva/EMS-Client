@@ -4,11 +4,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
 import { Skeleton } from '@/components/ui/skeleton';
 import DateRangeFilter from '@/components/admin-components/dashboard/DateRangeFilter';
-import { chartTitle } from './ChartCard';
 import { API_ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
 import LineChart from '../charts/LineChart';
-import { DASHBOARD_TITLE, getCurrentYear } from '@/app/admin/dashboard/helper';
+import { getCurrentYear } from '@/app/admin/dashboard/helper';
 import { IFilter, IRevenueData } from '@/app/admin/dashboard/types';
 
 const TotalRevenueOverTime: React.FC = () => {
@@ -57,8 +56,6 @@ const TotalRevenueOverTime: React.FC = () => {
 
     return (
         <div>
-
-            {chartTitle(DASHBOARD_TITLE.LINE_CHART)}
             <div className="my-6">
                 <DateRangeFilter
                     onChange={setFilter}

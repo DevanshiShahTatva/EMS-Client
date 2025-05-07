@@ -1,3 +1,4 @@
+import { RupeeSymbol } from "@/utils/helper"
 import moment from "moment"
 
 export const DASHBOARD_TITLE = {
@@ -20,7 +21,7 @@ export const LikeTableColumns = [
 
 export const RevenueTableColumns = [
     { label: 'Event Title', key: 'eventTitle' },
-    { label: 'Total Revenue', key: 'totalRevenue' },
+    { label: `Total Revenue (${RupeeSymbol})`, key: 'totalRevenue' },
 ]
 
 export const getCurrentYear = moment().format('YYYY')

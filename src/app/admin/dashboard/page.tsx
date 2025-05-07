@@ -1,5 +1,5 @@
 import React from 'react'
-import ChartCard from '@/components/admin-components/dashboard/ChartCard';
+import { CardWithTitle } from '@/components/admin-components/dashboard/ChartCard';
 import StatCards from '@/components/admin-components/dashboard/StatCards';
 import TopEventsChart from '@/components/admin-components/dashboard/TopEventsChart';
 import BookingByTicketType from '@/components/admin-components/dashboard/BookingByTicketType';
@@ -8,6 +8,7 @@ import MostRevenueByEvents from '@/components/admin-components/dashboard/MostRev
 import RevenueByCategory from '@/components/admin-components/dashboard/RevenueByCategory';
 import MostBookedUsersTable from '@/components/admin-components/dashboard/MostBookedUsersTable';
 import MonthDateHeatmap from '@/components/admin-components/dashboard/MonthDateHeatmap';
+import { DASHBOARD_TITLE } from './helper';
 
 function DashboardPage() {
 
@@ -17,48 +18,48 @@ function DashboardPage() {
 
             <div className="flex flex-wrap -m-4 mt-4">
                 <div className="lg:w-1/2 w-full p-4 h-full">
-                    <ChartCard>
+                    <div className="bg-white rounded-lg shadow-lg w-full">
                         <TopEventsChart />
-                    </ChartCard>
+                    </div>
                 </div>
                 <div className="lg:w-1/2 w-full p-4 h-full">
-                    <ChartCard>
+                    <div className="bg-white rounded-lg shadow-lg w-full">
                         <MostRevenueByEvents />
-                    </ChartCard>
+                    </div>
                 </div>
             </div>
 
-            
+
 
             <div className="flex flex-wrap -m-4 mt-4">
                 <div className="lg:w-1/2 w-full p-4 h-full">
-                    <ChartCard>
+                    <CardWithTitle title={DASHBOARD_TITLE.BAR_CHART2}>
                         <RevenueByCategory />
-                    </ChartCard>
+                    </CardWithTitle>
                 </div>
                 <div className="lg:w-1/2 w-full p-4 h-full">
-                    <ChartCard>
+                    <CardWithTitle title={DASHBOARD_TITLE.DOUGHNUT_CHART}>
                         <BookingByTicketType />
-                    </ChartCard>
+                    </CardWithTitle>
                 </div>
             </div>
 
             <div className="flex flex-wrap mt-8">
-                <ChartCard>
+                <CardWithTitle title={DASHBOARD_TITLE.TABLE}>
                     <MostBookedUsersTable />
-                </ChartCard>
+                </CardWithTitle>
             </div>
 
             <div className="flex flex-wrap mt-8">
-                <ChartCard>
+                <CardWithTitle title={DASHBOARD_TITLE.LINE_CHART}>
                     <TotalRevenueOverTime />
-                </ChartCard>
+                </CardWithTitle>
             </div>
 
             <div className="flex flex-wrap mt-8">
-                <ChartCard>
+                <CardWithTitle title={DASHBOARD_TITLE.HEATMAP}>
                     <MonthDateHeatmap />
-                </ChartCard>
+                </CardWithTitle>
             </div>
         </section >
     )

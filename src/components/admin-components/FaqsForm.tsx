@@ -110,7 +110,7 @@ const FAQForm : React.FC = () => {
                               <button
                                   disabled={isSubmitting}
                                  type='submit'
-                                  className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-medium sm:w-max w-full py-3 px-6 rounded-[12px] hover:opacity-90 transition disabled:cursor-not-allowed cursor-pointer"
+                                  className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-medium sm:w-max w-full py-3 px-6 rounded-[12px] disabled:opacity-50 transition disabled:cursor-not-allowed cursor-pointer"
                               >
                                   {isSubmitting ? "Submitting..." : "Submit"}
                               </button>

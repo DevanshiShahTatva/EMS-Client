@@ -1,80 +1,160 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useField, ErrorMessage } from 'formik';
+import React, { useRef, useState, useEffect } from "react";
+import { ErrorMessage } from "formik";
 
 // icons
-import { PencilSquareIcon } from "@heroicons/react/24/outline"
-
-
+import { TrashIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { API_ROUTES } from "@/utils/constant";
+import { apiCall } from "@/utils/services/request";
+import { toast } from "react-toastify";
+import Image from "next/image";
 
 interface Props {
-    name: string;
-    defaultImage?: string;
-    label?: string
+  name: string;
+  defaultImage?: string;
+  label?: string;
+  fetchUserInfo: () => void;
+  userName: string;
 }
 
-const FormikFileUpload: React.FC<Props> = ({ name, defaultImage, label = "" }) => {
-    const [field, , helpers] = useField(name);
-    const inputRef = useRef<HTMLInputElement>(null);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(defaultImage || null);
+const FormikFileUpload: React.FC<Props> = ({
+  name,
+  defaultImage,
+  label = "",
+  fetchUserInfo,
+  userName,
+}) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    defaultImage || null
+  );
+  const [isImageLoading, setIsImageLoading] = useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.currentTarget.files?.[0];
-        if (file) {
-            helpers.setValue(file);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.currentTarget.files?.[0];
+    if (file) {
+      // Generate preview URL
+      const fileUrl = URL.createObjectURL(file);
+      setPreviewUrl(fileUrl);
+      handleProfileImageSubmit(file, false);
+    }
+  };
 
-            // Generate preview URL
-            const fileUrl = URL.createObjectURL(file);
-            setPreviewUrl(fileUrl);
-        }
+  const handleImageClick = () => {
+    inputRef.current?.click();
+  };
+
+  const handleDelete = () => {
+    setPreviewUrl(null);
+    if (inputRef.current) inputRef.current.value = "";
+    handleProfileImageSubmit(null, true);
+  };
+
+  // Cleanup URL object on unmount or file change
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
+  }, [previewUrl]);
 
-    const handleImageClick = () => {
-        inputRef.current?.click();
-    };
+  useEffect(() => {
+    setPreviewUrl(defaultImage || null);
+  }, [defaultImage]);
 
-    // Cleanup URL object on unmount or file change
-    useEffect(() => {
-        return () => {
-            if (previewUrl) URL.revokeObjectURL(previewUrl);
-        };
-    }, [previewUrl]);
+  const handleProfileImageSubmit = async (
+    file: File | null,
+    deleteImage: boolean
+  ) => {
+    setIsImageLoading(true);
+    const formData = new FormData();
+    if (file) {
+      formData.append("profileimage", file);
+    }
 
-    return (
-        <div className='my-4'>
-            {label && (
-                <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-3">
-                    {label}
-                </label>
-            )}
-            <div className='relative'>
-                <div
-                    className="w-40 h-40 rounded-full overflow-hidden cursor-pointer border border-gray-900 flex items-center justify-center"
-                >
-                    <img
-                        src={previewUrl || defaultImage}
-                        alt="Upload"
-                        className="w-full h-full object-cover"
-                    />
-                </div>
+    if (deleteImage) {
+      formData.append("deleteImage", "true");
+    }
 
-                {/* Edit Icon */}
-                <div className="absolute top-25 left-33 rounded-full p-2 bg-blue-500 cursor-pointer">
-                    <PencilSquareIcon className="w-5 h-5 text-white font-bold" onClick={handleImageClick} />
-                </div>
-            </div>
-            
+    const result = await apiCall({
+      headers: {},
+      endPoint: API_ROUTES.USER.PROFILE.UPDATE_USER_INFO,
+      method: "PUT",
+      body: formData,
+      isFormData: true,
+      withToken: true,
+    });
 
-            <input
-                type="file"
-                accept="image/*"
-                onChange={handleChange}
-                ref={inputRef}
-                className="hidden"
+    if (result && result.success) {
+      toast.success("Profile Updated successfully");
+      fetchUserInfo();
+    }
+    setIsImageLoading(false);
+  };
+
+  return (
+    <div className="my-4 flex flex-col items-center">
+      {label && (
+        <label
+          htmlFor={name}
+          className="block text-sm font-medium text-gray-700 mb-3"
+        >
+          {label}
+        </label>
+      )}
+      <div className="relative mb-5">
+        <div className="w-50 h-50 rounded-full overflow-hidden cursor-pointer border-8 border-white flex items-center justify-center">
+          {previewUrl ? (
+            <Image
+              height={30}
+              width={30}
+              src={previewUrl}
+              alt="Logo"
+              className="w-full h-full object-cover bg-white"
             />
-
-            <ErrorMessage name={name} component="div" className="text-red-500 text-sm mt-1" />
+          ) : (
+            <button className="w-full h-full text-8xl rounded-full bg-indigo-600 text-white font-bold">
+              {userName?.charAt(0).toUpperCase()}
+            </button>
+          )}
         </div>
-    );
+      </div>
+
+      <p className="text-2xl font-bold text-center">Photo</p>
+
+      <button
+        onClick={handleImageClick}
+        className="w-40 bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold mt-10 px-4 py-2 rounded-4xl cursor-pointer whitespace-nowrap flex justify-center items-center gap-2"
+        type="button"
+      >
+        <ArrowUpTrayIcon className="w-5 h-5 text-white" />{" "}
+        {isImageLoading ? "Uploading..." : "Upload Photo"}
+      </button>
+
+      {previewUrl && previewUrl !== "/assets/ProfileIcon.svg" && (
+        <button
+          onClick={handleDelete}
+          className="w-40 bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold mt-10 px-4 py-2 rounded-4xl cursor-pointer whitespace-nowrap flex justify-center items-center gap-2"
+          type="button"
+          disabled={isImageLoading}
+        >
+          <TrashIcon className="w-5 h-5 text-white" /> Delete Photo
+        </button>
+      )}
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleChange}
+        ref={inputRef}
+        className="hidden"
+      />
+
+      <ErrorMessage
+        name={name}
+        component="div"
+        className="text-red-500 text-sm mt-1"
+      />
+    </div>
+  );
 };
 
 export default FormikFileUpload;

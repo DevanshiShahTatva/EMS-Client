@@ -34,10 +34,10 @@ const LineChart: React.FC<ILineChartProps> = ({ data, labels }) => {
     };
 
     const options: ChartOptions<'line'> = {
-        maintainAspectRatio:false,
+        maintainAspectRatio: false,
         responsive: true,
         plugins: {
-            legend: { position: 'bottom' as const },
+            legend: { position: 'bottom' as const, display: false },
             title: { display: false },
             tooltip: {
                 callbacks: {
@@ -61,7 +61,7 @@ const LineChart: React.FC<ILineChartProps> = ({ data, labels }) => {
             },
             x: {
                 grid: {
-                    display: false, 
+                    display: false,
                 },
             },
 

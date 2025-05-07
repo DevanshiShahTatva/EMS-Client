@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import PieChart, { ChartLegendSkeleton } from '../charts/PieChart';
 import TableModal from './TableModal';
-import { chartTitle } from './ChartCard';
+import { CardTitle } from './ChartCard';
 import { DASHBOARD_TITLE, LikeTableColumns } from '@/app/admin/dashboard/helper';
 import { ITopEventsChartData } from '@/app/admin/dashboard/types';
 
@@ -65,36 +65,34 @@ const TopEventsChart = () => {
 
     return (
         <div>
-            <div className="flex justify-between gap-4 mb-6 items-center">
-                {chartTitle(DASHBOARD_TITLE.PIE_CHART)}
 
-                {loading ?
-                    <div className="flex justify-end">
-                        <Skeleton className="w-[100px] h-8 mb-4" />
-                    </div>
-                    :
-                    <Button
-                        variant="link"
-                        className="underline text-primary px-0 cursor-pointer"
-                        onClick={handleViewDetails}
-                    >
-                        View Details
-                    </Button>
-                }
+            <CardTitle
+                title={DASHBOARD_TITLE.PIE_CHART}
+                right={<Button
+                    variant="link"
+                    className="underline text-primary p-0 h-7 cursor-pointer"
+                    onClick={handleViewDetails}
+                >
+                    View Details
+                </Button>
+                } />
+
+            <div className='p-6'>
+
+                {loading ? (
+                    <>
+                        <div className="w-full flex justify-center items-center flex-col">
+                            <Skeleton className="sm:w-40 md:w-50 lg:w-62.5 aspect-square rounded-full" />
+                            <ChartLegendSkeleton />
+                        </div>
+
+                    </>
+                ) : (
+                    <>
+                        <PieChart labels={chartLabels} data={chartData} showCustomLabels />
+                    </>
+                )}
             </div>
-            {loading ? (
-                <>
-                    <div className="w-full flex justify-center items-center flex-col">
-                        <Skeleton className="sm:w-40 md:w-50 lg:w-62.5 aspect-square rounded-full" />
-                        <ChartLegendSkeleton />
-                    </div>
-
-                </>
-            ) : (
-                <>
-                    <PieChart labels={chartLabels} data={chartData} showCustomLabels/>
-                </>
-            )}
             <TableModal
                 open={open}
                 onClose={() => setOpen(false)}

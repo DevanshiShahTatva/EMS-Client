@@ -4,10 +4,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import BarChart from '../charts/BarChart';
 import { Skeleton } from '@/components/ui/skeleton';
 import DateRangeFilter from '@/components/admin-components/dashboard/DateRangeFilter';
-import { chartTitle } from './ChartCard';
 import { API_ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
-import { DASHBOARD_TITLE, getCurrentYear } from '@/app/admin/dashboard/helper';
+import { getCurrentYear } from '@/app/admin/dashboard/helper';
 import { IFilter, IRevenueByCategoryData } from '@/app/admin/dashboard/types';
 
 const RevenueByCategory = () => {
@@ -40,7 +39,6 @@ const RevenueByCategory = () => {
     return (
         <div>
 
-            {chartTitle(DASHBOARD_TITLE.BAR_CHART2)}
             <div className="my-6">
                 <DateRangeFilter
                     onChange={setFilter}
@@ -49,7 +47,7 @@ const RevenueByCategory = () => {
                     initialValue={filter.value}
                 />
             </div>
-            
+
             {loading ? (
                 <Skeleton className="h-75 w-full rounded-md" />
             ) : (
