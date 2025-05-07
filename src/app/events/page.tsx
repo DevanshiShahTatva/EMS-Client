@@ -37,7 +37,7 @@ const EventsPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<EventCategory>('all')
   const [sortOption, setSortOption] = useState<SortOption>('none')
   const [loading, setLoading] = useState<boolean>(true)
-
+  
   const [filterModal, setFilterModal] = useState<boolean>(false)
   const [appliedFilters, setAppliedFilters] = useState<IApplyFiltersKey>({})
   const [appliedFiltersArray, setAppliedFiltersArray] = useState<LabelValue[]>([])
@@ -47,7 +47,7 @@ const EventsPage: React.FC = () => {
 
   const closeFilterModal = () => setFilterModal(false)
 
-  const handleSearchQuery = (keyword: string) => {
+  const handleSearchQuery = (keyword : string) => {
     const updatedFilters = {
       ...appliedFilters,
       search: keyword,
@@ -60,23 +60,23 @@ const EventsPage: React.FC = () => {
     setAppliedFilters(updatedFilters);
   }
 
-  const applyFilters = (filterValues: IApplyFiltersKey) => {
+  const applyFilters = (filterValues : IApplyFiltersKey) => {
     const updatedFilters = {
       ...filterValues,
       search: searchQuery || "", // include active search in filter logic
     };
 
     const results = convertFiltersToArray(filterValues)
-    const filteredData = getFilteredEventsData(allEvents, updatedFilters)
+    const filteredData = getFilteredEventsData(allEvents, updatedFilters) 
     setAppliedFilters(filterValues)
     setAppliedFiltersArray(results)
     setEvents(filteredData)
     closeFilterModal()
   }
 
-  const removeFilterChip = (key: keyof IApplyFiltersKey, value: string) => {
+  const removeFilterChip = (key : keyof IApplyFiltersKey, value : string) => {
     const modifiedArray = appliedFiltersArray.filter(item => item.value !== value)
-    const updatedFiltersObject = removeFilterFromObject(key, value, appliedFilters)
+    const updatedFiltersObject = removeFilterFromObject(key,value,appliedFilters)
     const filteredData = getFilteredEventsData(allEvents, updatedFiltersObject)
     setAppliedFilters(updatedFiltersObject)
     setAppliedFiltersArray(modifiedArray)
@@ -84,82 +84,82 @@ const EventsPage: React.FC = () => {
   }
 
   const fetchEvents = async () => {
-    const result = await apiCall({
-      endPoint: API_ROUTES.ADMIN.GET_EVENTS,
-      method: "GET",
-    })
-    if (result && result.success && result.data.length > 0) {
-      const receivedArrayObj: EventResponse = result.data
-
-      const modifiedArray: EventData[] = await Promise.all(receivedArrayObj.map(async (item) => {
-        return {
-          id: item._id,
-          description: item.description,
-          image: item.images?.length > 0 ? item.images[0]?.url : "",
-          title: item.title,
-          category: item.category,
-          date: moment(item.startDateTime).format(
-            "DD MMM YYYY, h:mm A"
-          ),
-          location: item.location.address,
-          priceRange: getTicketPriceRange(item.tickets),
-          isSoldOut: areAllTicketsBooked(item.tickets),
-          status: getEventStatus(item.startDateTime, item.endDateTime),
-          isFeatured: await isNearbyWithUserLocation(item.location.lat, item.location.lng),
-          isLiked: item.isLiked,
-          startTime: item.startDateTime,
-          endTime: item.endDateTime,
-          ticketsAvailable: item.tickets.reduce(
-            (sum, ticket) => sum + (ticket.totalSeats - ticket.totalBookedSeats),
-            0
-          ),
-          totalTickets: item.tickets.reduce(
-            (sum, ticket) => sum + ticket.totalSeats,
-            0
-          ),
-          ticketsArray: item.tickets,
-          lat: item.location.lat,
-          lng: item.location.lng
+        const result = await apiCall({
+          endPoint : API_ROUTES.ADMIN.GET_EVENTS,
+          method : "GET", 
+        })
+        if(result && result.success && result.data.length > 0) {
+           const receivedArrayObj : EventResponse = result.data
+  
+           const modifiedArray : EventData[] = await Promise.all (receivedArrayObj.map(async (item) => {
+            return {
+              id : item._id,
+              description:item.description,
+              image: item.images?.length > 0 ? item.images[0]?.url : "",
+              title: item.title,
+              category: item.category,
+              date:moment(item.startDateTime).format(
+                "DD MMM YYYY, h:mm A"
+              ),   
+              location: item.location.address,
+              priceRange: getTicketPriceRange(item.tickets ),
+              isSoldOut: areAllTicketsBooked(item.tickets),
+              status:getEventStatus(item.startDateTime,item.endDateTime),
+              isFeatured:await isNearbyWithUserLocation(item.location.lat,item.location.lng),
+              isLiked:item.isLiked,
+              startTime : item.startDateTime,
+              endTime : item.endDateTime,
+              ticketsAvailable: item.tickets.reduce(
+                (sum, ticket) => sum + (ticket.totalSeats - ticket.totalBookedSeats),
+                0
+              ),
+              totalTickets: item.tickets.reduce(
+                (sum, ticket) => sum + ticket.totalSeats,
+                0
+              ),
+              ticketsArray: item.tickets,
+              lat: item.location.lat,
+              lng : item.location.lng
+            }
+           }))
+  
+          setEvents(modifiedArray)
+          setAllEvents(modifiedArray)
+          setLoading(false)
+        } else {
+           setEvents([])
+           setLoading(false)
         }
-      }))
-
-      setEvents(modifiedArray)
-      setAllEvents(modifiedArray)
-      setLoading(false)
-    } else {
-      setEvents([])
-      setLoading(false)
-    }
   }
-  useEffect(() => {
-    fetchEvents();
-  }, [])
+  useEffect(()=>{
+    fetchEvents(); 
+  },[])
   const filteredEvents = events
-    .filter((event) =>
-      event.title.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .filter((event) =>
-      activeCategory === 'all' ? true : event.category === activeCategory
-    )
-    .sort((a, b) => {
-      if (sortOption === 'date-asc') {
-        return new Date(a.date).getTime() - new Date(b.date).getTime()
-      } else if (sortOption === 'date-desc') {
-        return new Date(b.date).getTime() - new Date(a.date).getTime()
-      } else if (sortOption === 'title-asc') {
-        return a.title.localeCompare(b.title)
-      } else if (sortOption === 'title-desc') {
-        return b.title.localeCompare(a.title)
-      }
-      return 0
-    })
+  .filter((event) =>
+    event.title.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+  .filter((event) =>
+    activeCategory === 'all' ? true : event.category === activeCategory
+  )
+  .sort((a, b) => {
+    if (sortOption === 'date-asc') {
+      return new Date(a.date).getTime() - new Date(b.date).getTime()
+    } else if (sortOption === 'date-desc') {
+      return new Date(b.date).getTime() - new Date(a.date).getTime()
+    } else if (sortOption === 'title-asc') {
+      return a.title.localeCompare(b.title)
+    } else if (sortOption === 'title-desc') {
+      return b.title.localeCompare(a.title)
+    }
+    return 0
+  })
 
   const featuredEvent = filteredEvents.filter(event => event.isFeatured && event.status!=="ended");
   const regularEvents = filteredEvents;
   return (
-
+    
     <div className="mx-auto p-10">
-      {loading && <Loader />}
+       {loading && <Loader />}
       <h1 className="text-3xl font-bold mb-6">Discover Events</h1>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 
@@ -186,7 +186,7 @@ const EventsPage: React.FC = () => {
             Filters
           </button>
 
-          <FilterOptions sortOption={sortOption} setSortOption={setSortOption} />
+        <FilterOptions sortOption={sortOption} setSortOption={setSortOption} />
         </div>
 
       </div>
