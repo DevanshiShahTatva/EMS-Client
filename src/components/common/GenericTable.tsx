@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import { TruncatedCell } from '../admin-components/dashboard/MostBookedUsersTable';
 
 interface Column {
     label: string;
@@ -86,7 +87,7 @@ const GenericTable = <T extends Record<string, any>>({
                             paginatedData.map((row, i) => (
                                 <TableRow key={i} className="hover:bg-transparent">
                                     {columns.map(col => (
-                                        <TableCell key={col.key}>{row[col.key]}</TableCell>
+                                        <TableCell key={col.key}><TruncatedCell text={row[col.key]} /></TableCell>
                                     ))}
                                 </TableRow>
                             ))
