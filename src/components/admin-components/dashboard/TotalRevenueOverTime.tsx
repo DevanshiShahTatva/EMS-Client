@@ -7,15 +7,10 @@ import DateRangeFilter from '@/components/admin-components/dashboard/DateRangeFi
 import { API_ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
 import LineChart from '../charts/LineChart';
-import { getCurrentYear } from '@/app/admin/dashboard/helper';
 import { IFilter, IRevenueData } from '@/app/admin/dashboard/types';
 
 const TotalRevenueOverTime: React.FC = () => {
-    const [filter, setFilter] = useState<IFilter>({
-        type: 'yearly',
-        value: getCurrentYear,
-    });
-
+    const [filter, setFilter] = useState<IFilter>({ type: 'overall', value: 'overall' });
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<number[]>([]);
 
@@ -29,19 +24,39 @@ const TotalRevenueOverTime: React.FC = () => {
         if (filter.type === 'yearly') {
             return moment.months();
         }
+        if (filter.type === 'overall') {
+            const currentYear = moment().year();
+            const last5Years = Array.from({ length: 5 }, (_, i) => (currentYear - 4 + i).toString())
+            return last5Years;
+        }
         return [];
     }, [filter]);
 
     const fetchRevenueData = useCallback(async () => {
         setLoading(true);
         try {
-            const endPoint = `${API_ROUTES.ADMIN.REVENUE_OVER_TIME}?period=${filter.type}&reference=${filter.value}`;
+            let endPoint = `${API_ROUTES.ADMIN.REVENUE_OVER_TIME}?period=${filter.type}`;
+            if (filter.type !== 'overall') {
+                endPoint += `&reference=${filter.value}`;
+            }
             const response = await apiCall({ endPoint, method: 'GET' });
 
             const result = (response?.data?.data as IRevenueData[]) || [];
-            const dataValue = result.map(item => item.total)
 
-            setData(dataValue);
+
+            if (filter.type === 'overall') {
+                const currentYear = moment().year();
+                const last5Years = Array.from({ length: 5 }, (_, i) => currentYear - 4 + i);
+                const fullData = last5Years.map(year => {
+                    const yearData = result.find(item => item._id === year.toString());
+                    return yearData ? yearData.total : 0;
+                });
+
+                setData(fullData);
+            } else {
+                const dataValue = result.map(item => item.total);
+                setData(dataValue);
+            }
         } catch (err) {
             console.error('Fetch error:', err);
             setData([]);
@@ -59,7 +74,7 @@ const TotalRevenueOverTime: React.FC = () => {
             <div className="my-6">
                 <DateRangeFilter
                     onChange={setFilter}
-                    allowedTypes={['monthly', 'yearly']}
+                    allowedTypes={['overall', 'monthly', 'yearly']}
                     initialType={filter.type}
                     initialValue={filter.value}
                 />
