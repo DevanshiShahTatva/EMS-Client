@@ -208,69 +208,6 @@ export const PROFILE_TAB_OPTIONS = [
 ]
 
 
-export const FAQs_DATA = [
-  {
-    question: 'How do I book a ticket for an event?',
-    answer: `To book a ticket, simply browse our Events page where you'll find a variety of events listed by category and date. Click on the event you're interested in, review the details, and press the "Book Ticket" button. You'll be guided through a secure checkout process. Once completed, your e-ticket will be available instantly in your profile and sent to your email.`,
-  },
-  {
-    question: 'Can I cancel or reschedule my ticket?',
-    answer: `Cancellation and rescheduling policies vary depending on the event organizer. Some events offer full refunds up to a certain date, while others might not allow cancellations at all. You can find these details on the event description page. For rescheduling, please contact the event organizer directly through the support link provided in your booking summary.`,
-  },
-  {
-    question: 'Will I receive a confirmation after booking?',
-    answer: `Yes! Right after your successful booking, you will receive a confirmation email containing your ticket, event details, and a QR code. This QR code will be used for event entry. Additionally, you can always find your active and past bookings under the "My Tickets" section inside your dashboard.`,
-  },
-  {
-    question: 'How do I find events happening near me?',
-    answer: `We offer powerful search and filtering tools. Simply allow location access or manually set your preferred city to discover concerts, festivals, workshops, and more happening nearby. You can also explore events by category, popularity, or date.`,
-  },
-  {
-    question: 'Is online payment secure?',
-    answer: `Absolutely. We partner with trusted payment providers like Stripe and Razorpay. All transactions are protected using advanced SSL encryption. Your payment information is never stored on our servers, ensuring maximum privacy and security.`,
-  },
-  {
-    question: 'Can I attend events without creating an account?',
-    answer: `No, creating an account is mandatory to book and attend events. This allows us to manage your bookings securely, send you event updates, and provide a personalized experience. It also ensures that you can easily access, manage, or transfer your tickets if needed.`,
-  },
-];
-
-export const TERMS_DATA = [
-    {
-        title: 'Introduction',
-        content: 'These Terms & Conditions ("Terms") govern your use of our event management services ("Services"). By using our Services, you agree to these Terms. If you do not agree with any part of these Terms, you must not use our Services.',
-    },
-    {
-        title: 'User Responsibilities',
-        content: 'As a user of our platform, you agree to provide accurate and complete information when creating or managing events. You are solely responsible for the events you create and for ensuring that all content complies with applicable laws.',
-    },
-    {
-        title: 'Privacy Policy',
-        content: 'We value your privacy. For detailed information on how we collect, use, and protect your personal information, please refer to our Privacy Policy.',
-    },
-    {
-        title: 'Payment and Fees',
-        content: 'If applicable, users may be required to pay a fee for event creation or other premium services. Payment terms and procedures are outlined in our Payment Policy.',
-    },
-    {
-        title: 'Termination of Account',
-        content: 'We reserve the right to suspend or terminate your account if we suspect any violation of our terms, misuse of our Services, or non-payment of fees.',
-    },
-    {
-        title: 'Limitation of Liability',
-        content: 'We are not liable for any damages, losses, or claims arising from your use of the Services. You use the Services at your own risk, and we are not responsible for any third-party content or actions.',
-    },
-    {
-        title: 'Governing Law',
-        content: 'These Terms are governed by the laws of the jurisdiction in which our company is based. Any legal disputes related to the Terms & Conditions will be handled in the applicable courts in that jurisdiction.',
-    },
-    {
-        title: 'Changes to the Terms',
-        content: 'We may update or modify these Terms at any time. Any changes will be posted on this page, and the new Terms will take effect immediately upon posting.',
-    }
-];
-
-
 import {
     MusicIcon,
     PartyPopperIcon,
