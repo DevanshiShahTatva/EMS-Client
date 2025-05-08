@@ -131,6 +131,8 @@ export const SIGN_UP_IMAGE_BANNER_LINK = "https://img.freepik.com/free-vector/pr
 export const LOG_IN_IMAGE_BANNER_LINK = "https://img.freepik.com/free-vector/sign-page-abstract-concept-illustration_335657-2242.jpg?semt=ais_hybrid&w=740"
 export const CONTACT_US_IMAGE_BANNER_LINK = "https://d2r3fkmprkayl1.cloudfront.net/Eventtitans-new-img/EventTitans-inner/inner-page-img15.png"
 export const FAQ_BANNER_LINK = "/assets/faqBanner.png"
+export const TC_BANNER_LINK = "/assets/tc-banner.jpg"
+
 
 export enum ROLE {
     Admin = "admin",

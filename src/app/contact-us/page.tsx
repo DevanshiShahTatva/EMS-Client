@@ -73,13 +73,13 @@ export default function ContactUsPage() {
 
   return (
     <section className="bg-gray-100 py-10 px-4 sm:px-6 md:px-8">
-      <div className="mx-auto flex flex-col lg:flex-row gap-10 items-start">
+      <div className="mx-auto flex flex-col lg:flex-row gap-10 items-stretch">
         {/* Left: Image */}
         <div className="w-full lg:w-1/2">
           <img
             src={CONTACT_US_IMAGE_BANNER_LINK}
             alt="Contact Banner"
-            className="w-full h-auto rounded-xl object-contain"
+            className="w-full h-full rounded-xl object-contain"
           />
         </div>
 
