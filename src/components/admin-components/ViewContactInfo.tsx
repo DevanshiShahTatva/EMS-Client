@@ -5,7 +5,6 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 
 // types
 import { IRequestType } from '@/app/admin/contact-us/types';
-import CustomTextField from './InputField';
 import DisabledTextField from './DisabledTextFileds';
 
 interface ContactModalProps {
