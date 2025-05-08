@@ -51,20 +51,20 @@ export default function FAQPage() {
 
   return (
     <section className="bg-gray-100 py-10 px-4 sm:px-6 md:px-8">
-      <div className="mx-auto flex flex-col lg:flex-row gap-10 items-start">
+      <div className="mx-auto flex flex-col lg:flex-row gap-10 items-stretch">
         {/* Left Side: Banner Image */}
         <div className="w-full lg:w-1/2">
           <img
             src={FAQ_BANNER_LINK}
             alt="FAQ banner"
-            className="w-full h-auto rounded-xl object-contain"
+            className="w-full h-full rounded-xl object-contain"
           />
         </div>
 
         {/* Right Side: FAQs */}
         <div className="w-full lg:w-1/2">
           {loading ? (
-            <Skeleton className="w-full h-60 aspect-square rounded-md" />
+            <Skeleton className="w-full max-h-[auto] lg:max-h-[650px] aspect-square rounded-md" />
           ) : (
             <div className="bg-white shadow-md rounded-md p-6 sm:p-8">
               <h1 className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-6">
