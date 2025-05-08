@@ -16,6 +16,7 @@ export const ROUTES = {
         CONTACT_US : "/admin/contact-us",
         FAQs : "/admin/faqs",
         CREATE_FAQs : "/admin/faqs/create",
+        TERMS_AND_CONDITIONS : "/admin/terms-and-conditions"
     },
     RESET_PASSWORD: "/reset-password"
 }
@@ -58,7 +59,8 @@ export const API_ROUTES = {
     },
     CONNNTACT_US : "/contact-us",
     UPDATE_CONTACT_US_STATUS : (id: string) => `/contact-us/${id}/status`,
-    FAQs : "/faq"
+    FAQs : "/faq",
+    TERMS_AND_CONDITIONS : "/terms-and-conditions"
 }
 export const LIGHT_COLORS = [
     '#FFB3BA', // Light Red
@@ -103,6 +105,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 2, title: "Events", route: ROUTES.ADMIN.EVENTS, icon: "/assets/EventsIcon.svg" },
     { id: 3, title: "Support Requests", route: ROUTES.ADMIN.CONTACT_US, icon:  "/assets/support.svg"},
     { id: 4, title: "FAQs", route: ROUTES.ADMIN.FAQs, icon:  "/assets/faqs.svg"},
+    { id: 5, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
 ]
 
 export const USER_HEADER_ITEMS = [
