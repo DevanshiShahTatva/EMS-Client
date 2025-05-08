@@ -450,3 +450,10 @@ export const hasEventEnded = (endDateTime: string | Date): boolean => {
   endDate.setDate(endDate.getDate() + 1)
   return endDate.getTime() < new Date().getTime()
 }
+
+export const fetchPaymentId =async(sessionId:string)=>{
+  const res = await fetch(`/api/get-payment-intent?session_id=${sessionId}`);
+  const data = await res.json();
+  console.log("Thsi is paymentId",data.paymentIntentId);
+  return data.paymentIntentId;
+}
