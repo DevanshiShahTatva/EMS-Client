@@ -2,7 +2,7 @@
 import * as Yup from "yup";
 
 // types
-import { IFaqData, IFAQsFormValues } from "./types";
+import { IFaqData, IFAQsFormValues, IFAQsItem } from "./types";
 
 
 export const InitialFaqsValues: IFAQsFormValues = {
@@ -36,3 +36,13 @@ export const getSearchResults = (
       faq.question.toLowerCase().includes(lowerKeyword)
     );
 }
+
+
+export const InitialEditFaqsValues : IFAQsItem = {
+     question: '', answer: '' 
+  };
+
+export const FaqsEditValidationSchema = Yup.object({
+    question: Yup.string().trim().required('Question is required'),
+    answer: Yup.string().trim().required('Answer is required'),
+})
