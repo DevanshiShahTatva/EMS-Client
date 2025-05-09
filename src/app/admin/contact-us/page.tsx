@@ -8,6 +8,8 @@ import Pagination from '@/components/admin-components/Pagination'
 import DeleteModal from '@/components/common/DeleteModal'
 import ContactModal from '@/components/admin-components/ViewContactInfo'
 import TableSkeleton from '@/components/common/TableSkeloton'
+import Breadcrumbs from '@/components/common/BreadCrumbs'
+import TitleSection from '@/components/common/TitleSection'
 
 // Icons
 import { MagnifyingGlassIcon, TrashIcon, EyeIcon, EnvelopeIcon } from "@heroicons/react/24/outline"
@@ -16,13 +18,16 @@ import { SquareCheckBig } from 'lucide-react'
 // Types
 import { IRequestResponse, IRequestType } from './types'
 
-// Helpers & Constant
-import { API_ROUTES } from '@/utils/constant'
-import { getPaginatedData, getSearchResults, INITIAL_CONTATC_INFO, statusColor } from './helper'
+// Constant
+import { API_ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant'
 
+// Helpers
+import { getPaginatedData, getSearchResults, INITIAL_CONTATC_INFO, statusColor } from './helper'
 
 //  Services
 import { apiCall } from '@/utils/services/request'
+
+// library
 import { toast } from 'react-toastify'
 
 const AdminContactUsPage = () => {
@@ -223,7 +228,7 @@ const AdminContactUsPage = () => {
                         </button>
                         <a
                             className="text-gray-700 hover:text-gray-800 cursor-pointer ml-4"
-                            href={`mailto:${item.email}`}
+                            href={`mailto:${item.email}?subject=${encodeURIComponent(item.subject)}`}
                             target='_blank'
                         >
                             <EnvelopeIcon className="h-5 w-5" />
@@ -254,7 +259,10 @@ const AdminContactUsPage = () => {
     <div className='p-8'>
 
           <ChartCard>
-              <p className="text-2xl font-bold">All Support Requests</p>
+
+             <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.CONTACT_US.MAIN_PAGE} />
+
+             <TitleSection title='All Support Requests' />
 
               {/* Search Bar & Delete All  */}
               <div className="flex justify-between items-center gap-2 space-x-2 w-full my-5">
