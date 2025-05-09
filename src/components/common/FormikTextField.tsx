@@ -30,7 +30,7 @@ const FormikTextField: React.FC<FormikTextFieldProps> = ({
     const hasError = meta.touched && meta.error;
     
     return (
-        <div>
+        <div className="w-full">
             {label && (
                 <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
                     {label}
