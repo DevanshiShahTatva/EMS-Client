@@ -291,8 +291,6 @@ export const filterEventsByDistance = (events: EventData[], selectedRadius: stri
   return events.filter((event) => {
     if (event.lat && event.lng) {
       const distance = getDistanceInKm(userLat, userLng, event.lat, event.lng);
-      console.log("distance",distance)
-      console.log("radiusKm",radiusKm)
       return distance <= radiusKm;
     }
     return false;
