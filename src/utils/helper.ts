@@ -17,6 +17,12 @@ export const setUserName = (name: string) => {
     localStorage.setItem("name", name);
 }
 
+export const setUserAddress = (country: string, state: string, city: string) => {
+    localStorage.setItem("country", country);
+    localStorage.setItem("state", state);
+    localStorage.setItem("city", city);
+}
+
 export const getUserName = () => {
     const name = localStorage.getItem("name");
     return name;

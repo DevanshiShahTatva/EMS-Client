@@ -9,6 +9,8 @@ import QuilEditor from './QuilEditor';
 import AddressAutocomplete from './AddressAutoComplete.web';
 import CustomSelectField from './SelectField';
 import CustomDateTimePicker from './DateTimePicker';
+import Breadcrumbs from '../common/BreadCrumbs';
+import TitleSection from '../common/TitleSection';
 
 // types import
 import { EventDataObjResponse, EventImage } from '@/utils/types';
@@ -21,7 +23,7 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
 // constant import
-import { ALLOWED_FILE_FORMATS, API_ROUTES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB, ROUTES } from '@/utils/constant';
+import { ALLOWED_FILE_FORMATS, API_ROUTES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB, ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant';
 
 // helper functions
 import { apiCall } from '@/utils/services/request';
@@ -570,10 +572,17 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
       <div className="m-10">
         {loader && <Loader />}
 
+        <Breadcrumbs breadcrumbsItems={
+          isEditMode ? BREAD_CRUMBS_ITEMS.EVENT.UPDATE_PAGE : BREAD_CRUMBS_ITEMS.EVENT.CREATE_PAGE
+        }
+        />
+
         <div className="rounded-[12px] bg-white p-6 shadow-lg border-2 border-gray-200">
-          <p className="text-2xl font-bold mb-10">
-            {isEditMode ? "Update" : "Create"} Event
-          </p>
+
+
+            <div className='mb-5'>
+              <TitleSection title={isEditMode ? "Update Event" : "Create Event"} />
+            </div>
 
           <CustomTextField
             label="Title"

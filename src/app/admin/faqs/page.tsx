@@ -11,12 +11,14 @@ import Pagination from '@/components/admin-components/Pagination';
 import DeleteModal from '@/components/common/DeleteModal';
 import TableSkeleton from '@/components/common/TableSkeloton';
 import EditFaqModal from '@/components/admin-components/EditFaqsModal';
+import Breadcrumbs from '@/components/common/BreadCrumbs';
+import TitleSection from '@/components/common/TitleSection';
 
 // Icons
 import { MagnifyingGlassIcon, TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline"
 
 // Constant imports
-import { API_ROUTES, ROUTES } from '@/utils/constant';
+import { API_ROUTES, BREAD_CRUMBS_ITEMS, ROUTES } from '@/utils/constant';
 
 // Heleper & Service 
 import { apiCall } from '@/utils/services/request';
@@ -180,8 +182,11 @@ const AdminFaqsPage = () => {
   return (
     <div className='p-8'>
 
+      <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.FAQs.LIST_PAGE} />
+
       <ChartCard>
-        <p className="text-2xl font-bold">All FAQs</p>
+
+        <TitleSection title='All FAQs'/>
 
         {/* Search Bar & Delete All  */}
         <div className="flex justify-between items-center gap-2 space-x-2 w-full my-5">
