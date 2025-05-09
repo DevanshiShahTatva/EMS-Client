@@ -196,3 +196,44 @@
     background-position-x: -1600px;
   }
 }
+
+.fc-scroller {
+  overflow: auto !important;
+}
+
+.fc-scroller::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.fc-scroller::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.fc-scroller::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.fc-scroller::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.fc-toolbar.fc-header-toolbar {
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.fc .fc-daygrid-event {
+  border-radius: 5px;
+  margin: 2px 0;
+  cursor: pointer;
+}
+
+.fc .fc-event-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
