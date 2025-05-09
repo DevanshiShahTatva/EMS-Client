@@ -16,7 +16,6 @@ import { getAuthToken } from '@/utils/helper'
 
 function Footer() {
     const router = useRouter();
-
     const [authToken, setAuthToken] = useState("")
 
     const handleLogout = () => {
@@ -60,27 +59,27 @@ function Footer() {
                         </Link>
                         <p className="text-gray-300">Experience more, worry less.</p>
                     </div>
-                    <div className='flex flex-col md:flex-row gap-6 md:gap-25'>
-                        <div className='flex flex-row gap-7'>
-                    <div className="flex flex-col">
-                        <h4 className="font-semibold mb-2">Quick Links</h4>
-                        <Link href={ROUTES.HOME} className="text-gray-300 hover:underline">Home</Link>
-                        <Link href={ROUTES.USER_EVENTS} className="text-gray-300 hover:underline">Browse Events</Link>
-                        {authToken !== "" && (
-                            <>
-                                <Link href={ROUTES.USER_MY_EVENTS} className="text-gray-300 hover:underline">My Events</Link>
-                                <Link href={ROUTES.USER_PROFILE} className="text-gray-300 hover:underline">Profile</Link>
-                                <Link href="#" onClick={handleLogout} className="text-gray-300 hover:underline">Logout</Link>
-                            </>
-                        )}
-                    </div>
-                    <div className="flex flex-col">
-                        <h4 className="font-semibold mb-2">Support</h4>
-                        <Link href={ROUTES.CONTACT_US} className="text-gray-300 hover:underline">Contact Us</Link>
-                        <Link href={ROUTES.FAQs} className="text-gray-300 hover:underline">FAQs</Link>
-                        <Link href={ROUTES.TERMS_AND_CONDITIONS} className="text-gray-300 hover:underline">Terms & Conditions</Link>
-                    </div>
-                    </div>
+                    <div className='flex flex-col md:flex-row gap-6 md:gap-15'>
+                        <div className='flex flex-row gap-15'>
+                            <div className="flex flex-col">
+                                <h4 className="font-semibold mb-2">Quick Links</h4>
+                                <Link href={ROUTES.HOME} className="text-gray-300 hover:underline">Home</Link>
+                                <Link href={ROUTES.USER_EVENTS} className="text-gray-300 hover:underline">Browse Events</Link>
+                                {authToken !== "" && (
+                                    <>
+                                        <Link href={ROUTES.USER_MY_EVENTS} className="text-gray-300 hover:underline">My Events</Link>
+                                        <Link href={ROUTES.USER_PROFILE} className="text-gray-300 hover:underline">Profile</Link>
+                                        <Link href="#" onClick={handleLogout} className="text-gray-300 hover:underline">Logout</Link>
+                                    </>
+                                )}
+                            </div>
+                            <div className="flex flex-col">
+                                <h4 className="font-semibold mb-2">Support</h4>
+                                <Link href={ROUTES.CONTACT_US} className="text-gray-300 hover:underline">Contact Us</Link>
+                                <Link href={ROUTES.FAQs} className="text-gray-300 hover:underline">FAQs</Link>
+                                <Link href={ROUTES.TERMS_AND_CONDITIONS} className="text-gray-300 hover:underline">Terms & Conditions</Link>
+                            </div>
+                        </div>
                     <div>
                         <h4 className="font-semibold mb-2">Follow Us</h4>
                         <div className="flex gap-4 justify-center">
