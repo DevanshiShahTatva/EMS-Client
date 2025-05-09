@@ -6,18 +6,20 @@ import { Skeleton } from '@/components/ui/skeleton';
 import DateRangeFilter from '@/components/admin-components/dashboard/DateRangeFilter';
 import { API_ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
-import { getCurrentYear } from '@/app/admin/dashboard/helper';
 import { IFilter, IRevenueByCategoryData } from '@/app/admin/dashboard/types';
 
 const RevenueByCategory = () => {
-    const [filter, setFilter] = useState<IFilter>({ type: 'yearly', value: getCurrentYear });
+    const [filter, setFilter] = useState<IFilter>({ type: 'overall', value: 'overall' });
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<IRevenueByCategoryData[]>([]);
 
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
-            const endpoint = `${API_ROUTES.ADMIN.REVENUE_BY_CATEGORY}?period=${filter.type}&reference=${filter.value}`;
+            let endpoint = `${API_ROUTES.ADMIN.REVENUE_BY_CATEGORY}?period=${filter.type}`;
+            if (filter.type !== 'overall') {
+                endpoint += `&reference=${filter.value}`;
+            }
             const response = await apiCall({ endPoint: endpoint, method: 'GET' });
             const result = response?.data?.data as IRevenueByCategoryData[] || []
             setData(result);
@@ -38,11 +40,10 @@ const RevenueByCategory = () => {
 
     return (
         <div>
-
             <div className="my-6">
                 <DateRangeFilter
                     onChange={setFilter}
-                    allowedTypes={['monthly', 'yearly']}
+                    allowedTypes={['overall', 'monthly', 'yearly']}
                     initialType={filter.type}
                     initialValue={filter.value}
                 />

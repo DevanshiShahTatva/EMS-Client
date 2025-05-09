@@ -72,80 +72,76 @@ export default function ContactUsPage() {
   }, [])
 
   return (
-    <section className="p-8">
-
-      <div className="grid grid-cols-12 gap-10 py-16 px-4 md:px-4">
-        {/* Left Side: Office Info */}
-        <div className="col-span-12 lg:col-span-6 space-y-6">
+    <section className="bg-gray-100 py-10 px-4 sm:px-6 md:px-8">
+      <div className="mx-auto flex flex-col lg:flex-row gap-10 items-stretch">
+        {/* Left: Image */}
+        <div className="w-full lg:w-1/2">
           <img
             src={CONTACT_US_IMAGE_BANNER_LINK}
-            alt="Event support team in office"
-            className="w-full h-auto rounded-lg object-contain"
+            alt="Contact Banner"
+            className="w-full h-full rounded-xl object-contain"
           />
         </div>
 
-        {/* Right Side: Contact Form */}
-        <div className="col-span-12 lg:col-span-6">
-          {/* Insert your form here */}
-          <div className="max-w-6xl mx-auto">
-            <Formik
-              initialValues={initialValues}
-              validationSchema={ContactFormSchema}
-              onSubmit={handleSubmit}
-              enableReinitialize
-            >
-              {({ isSubmitting }) => (
-                <Form className="space-y-5 bg-white rounded-lg shadow-lg border-2 border-gray-100 p-8">
-                  <h1 className="text-4xl text-center font-bold text-gray-900">
-                    Contact Our Team
-                  </h1>
-                  <p className="text-gray-600">
-                    Whether you're hosting a conference, music festival, or private gathering, our team of seasoned event professionals is here to help you every step of the way — from planning to post-event analytics. Connect with us and turn your event vision into reality.
-                  </p>
-                  <FormikTextField
-                    name="name"
-                    placeholder="Enter your name"
-                    label="Name"
-                    disabled={initialValues.name !== ""}
-                  />
+        {/* Right: Form */}
+        <div className="w-full lg:w-1/2">
+          <Formik
+            initialValues={initialValues}
+            validationSchema={ContactFormSchema}
+            onSubmit={handleSubmit}
+            enableReinitialize
+          >
+            {({ isSubmitting }) => (
+              <Form className="space-y-5 bg-white rounded-lg shadow-lg border border-gray-200 p-6 sm:p-8">
+                <h1 className="text-3xl sm:text-4xl text-center font-bold text-gray-900">
+                  Contact Our Team
+                </h1>
+                <p className="text-gray-600 text-sm sm:text-base">
+                  Whether you're hosting a conference, music festival, or private gathering, our team of seasoned event professionals is here to help every step of the way — from planning to post-event analytics.
+                </p>
 
-                  <FormikTextField
-                    name="email"
-                    label="Email"
-                    placeholder="Enter email address"
-                    disabled={initialValues.email !== ""}
-                  />
+                <FormikTextField
+                  name="name"
+                  label="Name"
+                  placeholder="Enter your name"
+                  disabled={initialValues.name !== ""}
+                />
 
-                  <FormikTextField
-                    name="subject"
-                    placeholder="Enter subject"
-                    label="Subject"
-                  />
+                <FormikTextField
+                  name="email"
+                  label="Email"
+                  placeholder="Enter email address"
+                  disabled={initialValues.email !== ""}
+                />
 
-                  <FormikTextField
-                    name="message"
-                    label="Message"
-                    placeholder="Enter message"
-                    type='textarea'
-                    rows={8}
-                  />
+                <FormikTextField
+                  name="subject"
+                  label="Subject"
+                  placeholder="Enter subject"
+                />
 
-                  <div className="text-end">
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 px-5 rounded-lg transition-colors disabled:opacity-50 cursor-pointer mb-2"
-                    >
-                      {isSubmitting ? "Submitting..." : "Submit"}
-                    </button>
-                  </div>
-                </Form>
-              )}
-            </Formik>
-          </div>
+                <FormikTextField
+                  name="message"
+                  label="Message"
+                  placeholder="Enter message"
+                  type="textarea"
+                  rows={6}
+                />
+
+                <div className="text-end">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-5 rounded-lg transition disabled:opacity-50"
+                  >
+                    {isSubmitting ? "Submitting..." : "Submit"}
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
         </div>
       </div>
-
     </section>
   );
 }

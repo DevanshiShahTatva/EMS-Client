@@ -2,95 +2,97 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-// Constant
-import { API_ROUTES, FAQ_BANNER_LINK } from '@/utils/constant';
-
 // library support
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@/components/ui/accordion";
+
+// custom components
 import { cn } from '@/lib/utils';
-
-// types
-import { IFaqApiResponse, IFaqData } from '../admin/faqs/types';
-
-// Services
-import { apiCall } from '@/utils/services/request';
-
-// Custom component
 import { Skeleton } from '@/components/ui/skeleton';
 
+// types 
+import { IFaqApiResponse, IFaqData } from '../admin/faqs/types';
+
+// constatnt
+import { API_ROUTES, FAQ_BANNER_LINK } from '@/utils/constant';
+
+// service
+import { apiCall } from '@/utils/services/request';
 
 export default function FAQPage() {
   const [loading, setLoading] = useState(false);
-  const [faqData, setFaqData] = useState<IFaqData[]>([])
+  const [faqData, setFaqData] = useState<IFaqData[]>([]);
 
   const fetchFaqsData = useCallback(async () => {
-      setLoading(true);
-      try {
-        const response: IFaqApiResponse = await apiCall({
-          endPoint: API_ROUTES.FAQs,
-          method: 'GET'
-        });
-  
-        if (response && response.success) {
-          const receivedArray = response.data
-          setFaqData(receivedArray)
-        }
-      } catch (err) {
-        console.error('Error fetching chart data', err);
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    try {
+      const response: IFaqApiResponse = await apiCall({
+        endPoint: API_ROUTES.FAQs,
+        method: 'GET'
+      });
+
+      if (response && response.success) {
+        setFaqData(response.data);
       }
-    }, []);
+    } catch (err) {
+      console.error('Error fetching FAQ data', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    fetchFaqsData()
-  },[fetchFaqsData])
+    fetchFaqsData();
+  }, [fetchFaqsData]);
 
   return (
-    <section className="p-8">
+    <section className="bg-gray-100 py-10 px-4 sm:px-6 md:px-8">
+      <div className="mx-auto flex flex-col lg:flex-row gap-10 items-stretch">
+        {/* Left Side: Banner Image */}
+        <div className="w-full lg:w-1/2">
+          <img
+            src={FAQ_BANNER_LINK}
+            alt="FAQ banner"
+            className="w-full h-full rounded-xl object-contain"
+          />
+        </div>
 
-      <div className="grid grid-cols-12 gap-10 py-16 px-4 md:px-4">
-              {/* Left Side: Office Info */}
-              <div className="col-span-12 lg:col-span-6 space-y-6">
-                <img
-                  src={FAQ_BANNER_LINK}
-                  alt="FAq"
-                  className="w-full h-auto rounded-lg object-contain"
-                />
-              </div>
-      
-              {/* Right Side: Contact Form */}
-              <div className="col-span-12 lg:col-span-6">
-                {/* Insert your form here */}
-                  {loading ? <Skeleton className='w-full h-60'/> : <div className="mx-auto bg-white shadow-md rounded-md py-8">
-                    <h1 className="text-4xl font-bold text-center text-gray-800 mb-2">Frequently Asked Questions</h1>
-                    <div className="space-y-4 p-3">
-                          <Accordion type="single" collapsible className="w-full">
-                            {faqData.map((faq, index) => (
-                              <AccordionItem
-                                key={index}
-                                value={`item-${index}`}
-                                className={cn(
-                                  `cursor-pointer px-5 py-2`,
-                                  index !== faqData.length - 1 && 'border-b-2 border-gray-200'
-                                )}
-                              >
-                                <AccordionTrigger className="text-lg text-gray-700 font-semibold">{faq.question}</AccordionTrigger>
-                                <AccordionContent className='text-md'>
-                                  {faq.answer}
-                                </AccordionContent>
-                              </AccordionItem>
-                            ))}
-                          </Accordion>
-                    </div>
-                  </div>}
-              </div>
+        {/* Right Side: FAQs */}
+        <div className="w-full lg:w-1/2">
+          {loading ? (
+            <Skeleton className="w-full max-h-[auto] lg:max-h-[650px] aspect-square rounded-md" />
+          ) : (
+            <div className="bg-white shadow-md rounded-md p-6 sm:p-8">
+              <h1 className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-6">
+                Frequently Asked Questions
+              </h1>
+              <Accordion type="single" collapsible className="w-full space-y-2">
+                {faqData.map((faq, index) => (
+                  <AccordionItem
+                    key={index}
+                    value={`item-${index}`}
+                    className={cn(
+                      "cursor-pointer px-3 py-2",
+                      index !== faqData.length - 1 && "border-b border-gray-200"
+                    )}
+                  >
+                    <AccordionTrigger className="text-base sm:text-lg text-gray-900 font-semibold aria-expanded:text-blue-500">
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-sm sm:text-base text-gray-600">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </div>
+          )}
+        </div>
+      </div>
     </section>
   );
 }

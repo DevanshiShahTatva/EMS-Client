@@ -26,12 +26,13 @@ interface IUser {
     email: string;
 }
 
-function TruncatedCell({ text }: { text: string }) {
+export function TruncatedCell({ text, maxWidth }: { text: string, maxWidth?: string }) {
+    const maxWidthVal = maxWidth ? maxWidth : "200px"
     return (
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <span className="block truncate whitespace-nowrap overflow-hidden max-w-[200px]">
+                    <span className={`block truncate whitespace-nowrap overflow-hidden max-w-[${maxWidthVal}]`}>
                         {text}
                     </span>
                 </TooltipTrigger>
