@@ -32,11 +32,19 @@ const MyEventsPage = () => {
     const [tickeModal, setTicketModal] = useState(false)
     const [ticketSummary, setTicketSuumary] = useState<IBooking | null>(null)
     const [showFeedbackModal, setFeedbackModal] = useState(false);
+    const [feedbackEventId,setFeedbackEventId] = useState("");
     const openDownloadTicketModal = (events: IBooking) => {
         setTicketSuumary(events)
         setTicketModal(true)
     }
-
+    const setFeedbackEvent=(eventId:string)=>{
+        setFeedbackModal(true);
+        setFeedbackEventId(eventId);
+    }
+    const closeFeedbackEvent=()=>{
+        setFeedbackModal(false);
+        setFeedbackEventId("");
+    }
     const closeDownloadTicketModal = () => {
         setTicketSuumary(null)
         setTicketModal(false)
@@ -117,7 +125,7 @@ const MyEventsPage = () => {
         )
     }
 
-    const renderEndedSection = () => {
+    const renderEndedSection = (eventId:string) => {
         return (
             <div>
                 <div className='flex gap-3 items-center'>
@@ -125,7 +133,7 @@ const MyEventsPage = () => {
                         Finished
                     </div>
                     <div className='pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400'>
-                        Hope you enjoyed this Event. Please give your <span className='text-blue-500 cursor-pointer hover:underline' onClick={()=>setFeedbackModal(true)}>Feedback</span> here.
+                        Hope you enjoyed this Event. Please give your <span className='text-blue-500 cursor-pointer hover:underline' onClick={()=>setFeedbackEvent(eventId)}>Feedback</span> here.
                     </div>
                 </div>
             </div>
@@ -148,12 +156,12 @@ const MyEventsPage = () => {
         )
     }
 
-    const renderStatusTittle = (title: string) => {
+    const renderStatusTittle = (title: string,eventId:string) => {
         switch (title) {
             case "upcoming": 
               return renderUpcomingSection()
             case "ended" : 
-              return renderEndedSection()
+              return renderEndedSection(eventId)
             case "ongoing" : 
               return renderOngoingSection()
             default : 
@@ -264,7 +272,7 @@ const MyEventsPage = () => {
                                 </div>
                             </div>
                             
-                            {renderStatusTittle(item.eventStatus)}
+                            {renderStatusTittle(item.eventStatus,item.eventFullResponse.event._id)}
                         </div>
                     )}
                 </div>
@@ -280,11 +288,9 @@ const MyEventsPage = () => {
                 />
                 
                 <FeedbackModal
+                    eventId = {feedbackEventId}
                     isOpen={showFeedbackModal}
-                    onClose={() => setFeedbackModal(false)}
-                    onSubmit={(formData) => {
-                    console.log('Submitted Feedback:', formData)
-                    }}
+                    onClose={() => closeFeedbackEvent()}
                 />
             </div>
             <div className="mt-auto">

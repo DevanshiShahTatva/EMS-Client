@@ -60,7 +60,8 @@ export const API_ROUTES = {
     CONNNTACT_US : "/contact-us",
     UPDATE_CONTACT_US_STATUS : (id: string) => `/contact-us/${id}/status`,
     FAQs : "/faq",
-    TERMS_AND_CONDITIONS : "/terms-and-conditions"
+    TERMS_AND_CONDITIONS : "/terms-and-conditions",
+    FEEDBACK:(id:string)=>`/events/${id}/feedback`
 }
 export const LIGHT_COLORS = [
     '#FFB3BA', // Light Red

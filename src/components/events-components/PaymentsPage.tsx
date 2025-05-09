@@ -51,8 +51,7 @@ const PaymentResultPage = () => {
           setIsSuccess(true)
         } else {
           setIsSuccess(false)
-        }
-      }).catch(() => {
+      }  }).catch(() => {
         setIsSuccess(false)
       })
 
@@ -63,8 +62,7 @@ const PaymentResultPage = () => {
       console.error('Error parsing session data:', err)
       setIsSuccess(false)
     }
-  }, [searchParams])
-
+    }, [searchParams])
   if (isSuccess === null || !ticketDetails) return null
 
   return (
