@@ -8,11 +8,13 @@ import {toast} from "react-toastify"
 
 // Custom Components
 import FormikTextField from '../common/FormikTextField';
+import Breadcrumbs from '../common/BreadCrumbs';
+import TitleSection from '../common/TitleSection';
 
 // Constants & Helpers import
 import { FaqsValidationSchema, InitialFaqsValues } from '@/app/admin/faqs/helper';
 import { apiCall } from '@/utils/services/request';
-import { API_ROUTES, ROUTES } from '@/utils/constant';
+import { API_ROUTES, BREAD_CRUMBS_ITEMS, ROUTES } from '@/utils/constant';
 
 // types
 import { IFAQsFormValues } from '@/app/admin/faqs/types';
@@ -50,9 +52,13 @@ const FAQForm : React.FC = () => {
     <div className="m-10">
 
           <div className="rounded-[12px] bg-white p-6 shadow-lg border-2 border-gray-200">
-              <p className="text-2xl font-bold mb-5">
-                  Create FAQs
-              </p>
+
+             <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.FAQs.CREATE_PAGE} />
+
+             <div className='mb-5'>
+                <TitleSection  title='Create FAQs'/>
+             </div>
+              
               <Formik
                   initialValues={InitialFaqsValues}
                   validationSchema={FaqsValidationSchema}

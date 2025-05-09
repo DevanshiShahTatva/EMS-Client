@@ -15,8 +15,11 @@ export interface IOtpValues {
 export interface IProfileInfoValues {
     userName: string,
     address: string,
+    zipcode: string,
     profileImage: File | null,
-    deleteImage?: string
+    country: string,
+    state: string,
+    city: string,
 };
 
 export interface IUserInfo {
@@ -24,5 +27,9 @@ export interface IUserInfo {
     name: string;
     email: string;
     address: string;
+    zipcode: string;
     profileimage: string | null;
+    country: string;
+    state: string;
+    city: string;
 }

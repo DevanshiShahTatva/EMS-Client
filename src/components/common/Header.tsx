@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import { API_ROUTES, ROUTES, USER_HEADER_ITEMS } from '@/utils/constant';
 
 // Custom helpers
-import { getAuthToken, getUserLogo, setUserLogo, setUserName, getUserName } from '@/utils/helper';
+import { getAuthToken, getUserLogo, setUserLogo, setUserName, getUserName, setUserAddress } from '@/utils/helper';
 
 // Other library
 import Cookie from 'js-cookie'
@@ -78,12 +78,16 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
         "_id": receivedObj._id,
         "name": receivedObj.name,
         "email": receivedObj.email,
+        "country": receivedObj.country,
+        "state": receivedObj.state,
+        "city": receivedObj.city,
         "address": receivedObj.address !== null ? receivedObj.address : "",
         "profileimage": receivedObj.profileimage === null ? "" : receivedObj.profileimage.url
       }
 
       setUserLogo(userInfo.profileimage);
       setUserName(userInfo.name);
+      setUserAddress(userInfo.country, userInfo.state, userInfo.city);
       setLogo(userInfo.profileimage);
       setName(userInfo.name);
     }

@@ -9,6 +9,8 @@ import FilterModal from '@/components/common/FilterModal';
 import ChartCard from '@/components/admin-components/dashboard/ChartCard';
 import Pagination from '@/components/admin-components/Pagination';
 import TableSkeleton from '@/components/common/TableSkeloton';
+import Breadcrumbs from '@/components/common/BreadCrumbs';
+import TitleSection from '@/components/common/TitleSection';
 
 // types import
 import { EventResponse, EventsDataTypes, IApplyFiltersKey } from '@/utils/types';
@@ -26,7 +28,7 @@ import {
 } from "@/components/ui/tooltip"
 
 // constant import
-import { API_ROUTES, ROUTES } from '@/utils/constant';
+import { API_ROUTES, BREAD_CRUMBS_ITEMS, ROUTES } from '@/utils/constant';
 
 
 // helper functions
@@ -239,7 +241,10 @@ function EventsListpage() {
   return (
     <div className="p-8">
       <ChartCard>
-        <p className="text-2xl font-bold">All Events</p>
+
+        <Breadcrumbs  breadcrumbsItems={BREAD_CRUMBS_ITEMS.EVENT.LIST_PAGE}/>
+
+        <TitleSection title='All Events' />
 
         {/* Search Bar & Filters  */}
 

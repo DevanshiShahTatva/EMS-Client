@@ -6,6 +6,8 @@ import React, { useState, useEffect, useCallback } from 'react'
 import ChartCard from '@/components/admin-components/dashboard/ChartCard'
 import QuilEditor from '@/components/admin-components/QuilEditor'
 import Loader from '@/components/common/Loader'
+import TitleSection from '@/components/common/TitleSection'
+import Breadcrumbs from '@/components/common/BreadCrumbs'
 
 // Icons
 import { TrashIcon } from "@heroicons/react/24/outline"
@@ -17,7 +19,7 @@ import { ITermsResponse } from './types'
 import { apiCall } from '@/utils/services/request'
 
 // Constants
-import { API_ROUTES } from '@/utils/constant'
+import { API_ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant'
 
 // library
 import { toast } from 'react-toastify'
@@ -117,10 +119,12 @@ const AdminTCsPage = () => {
             {loader && <Loader />}
 
             <ChartCard>
-                <p className="text-2xl font-bold">Terms And Conditions</p>
+
+                <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.TERMS_AND_CONDITIONS.MAIN_PAGE} />
 
                 {/* Reset button */}
-                <div className='my-5 flex justify-end'>
+                <div className='my-1 flex justify-between items-center'>
+                    <TitleSection title='Terms And Conditions' />
                     <button
                         onClick={deleteTermsContent}
                         className="disabled:bg-red-300 disabled:cursor-not-allowed md:flex gap-1 items-center font-bold cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
@@ -135,7 +139,7 @@ const AdminTCsPage = () => {
                         name="tc"
                         value={content}
                         onChange={(value) => handleChange(value)}
-                        label='Terms and Conditions'
+                        label='Description'
                         errorKey={error}
                         errorMsg={content.length > 20 ? "" : "Enter valid terms content"}
                         placeholder='Enter Terms & Conditions'

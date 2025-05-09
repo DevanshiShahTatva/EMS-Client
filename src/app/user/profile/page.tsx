@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { City, Country, State } from "country-state-city";
 
 // Common constatns & helpers
 import { API_ROUTES } from "@/utils/constant";
@@ -43,6 +44,8 @@ import {
 // API Services
 import { apiCall } from "@/utils/services/request";
 import Footer from "@/components/common/Footer";
+import FormikSelectField from "@/components/common/FormikSelectField";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 const UserProfilePage = () => {
   const [showPassword, setShowPassword] = useState({
@@ -165,13 +168,12 @@ const UserProfilePage = () => {
 
     formData.append("name", values.userName);
     formData.append("address", values.address);
-
+    formData.append("country", values.country);
+    formData.append("state", values.state);
+    formData.append("city", values.city);
+    formData.append("zipcode", values.zipcode);
     if (values.profileImage) {
       formData.append("profileimage", values.profileImage);
-    }
-
-    if (values.deleteImage) {
-      formData.append("deleteImage", "true");
     }
 
     const result = await apiCall({
@@ -205,6 +207,10 @@ const UserProfilePage = () => {
         name: receivedObj.name,
         email: receivedObj.email,
         address: receivedObj.address ? receivedObj.address : "",
+        country: receivedObj.country ? receivedObj.country : "",
+        state: receivedObj.state ? receivedObj.state : "",
+        city: receivedObj.city ? receivedObj.city : "",
+        zipcode: receivedObj.zipcode ? receivedObj.zipcode : "",
         profileimage:
           receivedObj.profileimage !== null
             ? receivedObj.profileimage.url
@@ -214,6 +220,10 @@ const UserProfilePage = () => {
       const initialProfileVal = {
         userName: receivedObj.name,
         address: receivedObj.address,
+        country: receivedObj.country,
+        state: receivedObj.state,
+        city: receivedObj.city,
+        zipcode: receivedObj.zipcode,
         profileImage: null,
       };
 
@@ -302,7 +312,7 @@ const UserProfilePage = () => {
                     validationSchema={ProfileInfoSchema}
                     onSubmit={handlePersonalInfoSubmit}
                   >
-                    {({ isSubmitting }) => (
+                    {({ isSubmitting, values }) => (
                       <Form className="flex gap-8 items-start md:flex-row flex-col">
                         <div className="w-full space-y-5">
                           <FormikTextField
@@ -316,6 +326,59 @@ const UserProfilePage = () => {
                             label="Address"
                             placeholder="Enter your address"
                           />
+
+                          <div className="flex flex-row gap-4">
+                            <FormikSelectField
+                              name="country"
+                              label="Country"
+                              placeholder="Select your country"
+                              options={Country.getAllCountries().map((c) => ({
+                                label: c.name,
+                                value: c.isoCode,
+                              }))}
+                              endIcon={
+                                <ChevronDownIcon className="h-6 w-6 mt-1" />
+                              }
+                            />
+
+                            <FormikSelectField
+                              name="state"
+                              label="State"
+                              placeholder="Select your state"
+                              options={State.getStatesOfCountry(
+                                values.country
+                              ).map((s) => ({
+                                label: s.name,
+                                value: s.isoCode,
+                              }))}
+                              disabled={!values.country}
+                              endIcon={
+                                <ChevronDownIcon className="h-6 w-6 mt-1" />
+                              }
+                            />
+                          </div>
+
+                          <div className="flex flex-row gap-4">
+                            <FormikSelectField
+                              name="city"
+                              label="City"
+                              placeholder="Select your city"
+                              options={City.getCitiesOfState(
+                                values.country,
+                                values.state
+                              ).map((c) => ({ label: c.name, value: c.name }))}
+                              disabled={!values.country || !values.state}
+                              endIcon={
+                                <ChevronDownIcon className="h-6 w-6 mt-1" />
+                              }
+                            />
+
+                            <FormikTextField
+                              name="zipcode"
+                              label="Zip Code"
+                              placeholder="Enter your zipcode"
+                            />
+                          </div>
 
                           <div className="text-end">
                             <button
