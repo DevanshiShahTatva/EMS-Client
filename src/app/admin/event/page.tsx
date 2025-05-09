@@ -240,10 +240,9 @@ function EventsListpage() {
 
   return (
     <div className="p-8">
+      <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.EVENT.LIST_PAGE} />
+
       <ChartCard>
-
-        <Breadcrumbs  breadcrumbsItems={BREAD_CRUMBS_ITEMS.EVENT.LIST_PAGE}/>
-
         <TitleSection title='All Events' />
 
         {/* Search Bar & Filters  */}

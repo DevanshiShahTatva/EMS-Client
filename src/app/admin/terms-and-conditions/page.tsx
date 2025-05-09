@@ -118,9 +118,10 @@ const AdminTCsPage = () => {
 
             {loader && <Loader />}
 
+            <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.TERMS_AND_CONDITIONS.MAIN_PAGE} />
+            
             <ChartCard>
 
-                <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.TERMS_AND_CONDITIONS.MAIN_PAGE} />
 
                 {/* Reset button */}
                 <div className='my-1 flex justify-between items-center'>

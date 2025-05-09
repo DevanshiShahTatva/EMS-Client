@@ -258,9 +258,9 @@ const AdminContactUsPage = () => {
   return (
     <div className='p-8'>
 
+            <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.CONTACT_US.MAIN_PAGE} />
+            
           <ChartCard>
-
-             <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.CONTACT_US.MAIN_PAGE} />
 
              <TitleSection title='All Support Requests' />
 
