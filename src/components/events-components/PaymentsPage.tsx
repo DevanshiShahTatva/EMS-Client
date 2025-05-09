@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { apiCall } from '@/utils/services/request'
 import { API_ROUTES } from '@/utils/constant'
 import { CheckoutTicket } from '@/app/events/types'
-import { fetchPaymentId } from '@/app/events/event-helper'
 
 const PaymentResultPage = () => {
   const router = useRouter()
@@ -17,59 +16,53 @@ const PaymentResultPage = () => {
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null)
 
   useEffect(() => {
-    const processPayment = async () => {
-      const storedTickets = sessionStorage.getItem('tickets');
-      const storedEventTitle = sessionStorage.getItem('eventTitle');
-      const storedEventId = sessionStorage.getItem('eventId');
-      const sessionId = searchParams.get('session_id');
-  
-      if (!storedTickets || !storedEventTitle || !storedEventId || !sessionId) {
-        setIsSuccess(false);
-        return;
-      }
-  
-      try {
-        const paymentId = await fetchPaymentId(sessionId);
-        if (!paymentId) {
-          setIsSuccess(false);
-          return;
-        }
-  
-        const parsedTickets: CheckoutTicket = JSON.parse(storedTickets);
-        setTicketDetails(parsedTickets);
-        setEventTitle(storedEventTitle);
-  
-        const creationDate = new Date().toString().split(' (')[0];
-  
-        const formData = new FormData();
-        formData.append('eventId', storedEventId);
-        formData.append('ticketId', parsedTickets.ticketId);
-        formData.append('seats', parsedTickets.quantity.toString());
-        formData.append('totalAmount', parsedTickets.totalPrice.toString());
-        formData.append('paymentId', paymentId);
-        formData.append('bookingDate', creationDate);
-  
-        const res = await apiCall({
-          endPoint: API_ROUTES.EVENT.PAYMENT,
-          method: 'POST',
-          body: formData,
-          isFormData: true,
-        });
-  
-        setIsSuccess(res.success ?? false);
-      } catch (err) {
-        console.error('Error processing payment:', err);
-        setIsSuccess(false);
-      } finally {
-        sessionStorage.removeItem('tickets');
-        sessionStorage.removeItem('eventTitle');
-        sessionStorage.removeItem('eventId');
-      }
-    };
-  
-    processPayment();
-  }, [searchParams]);
-  
+    const storedTickets = sessionStorage.getItem('tickets')
+    const storedEventTitle = sessionStorage.getItem('eventTitle')
+    const storedEventId = sessionStorage.getItem('eventId')
+    const paymentId = searchParams.get('session_id')
+
+    if (!storedTickets || !storedEventTitle || !storedEventId || !paymentId) {
+      setIsSuccess(false)
+      return
+    }
+
+    try {
+      const parsedTickets: CheckoutTicket = JSON.parse(storedTickets)
+      setTicketDetails(parsedTickets)
+      setEventTitle(storedEventTitle)
+
+      const creationDate = new Date().toString().split(' (')[0]
+
+      const formData = new FormData()
+      formData.append('eventId', storedEventId)
+      formData.append('ticketId', parsedTickets.ticketId)
+      formData.append('seats', parsedTickets.quantity.toString())
+      formData.append('totalAmount', parsedTickets.totalPrice.toString())
+      formData.append('paymentId', paymentId)
+      formData.append('bookingDate', creationDate)
+
+      apiCall({
+        endPoint: API_ROUTES.EVENT.PAYMENT,
+        method: 'POST',
+        body: formData,
+        isFormData: true,
+      }).then(res => {
+        if (res.success) {
+          setIsSuccess(true)
+        } else {
+          setIsSuccess(false)
+      }  }).catch(() => {
+        setIsSuccess(false)
+      })
+
+      sessionStorage.removeItem('tickets')
+      sessionStorage.removeItem('eventTitle')
+      sessionStorage.removeItem('eventId')
+    } catch (err) {
+      console.error('Error parsing session data:', err)
+      setIsSuccess(false)
+    }
+    }, [searchParams])
   if (isSuccess === null || !ticketDetails) return null
 
   return (

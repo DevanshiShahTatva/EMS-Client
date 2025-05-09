@@ -44,7 +44,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ eventId,isOpen, on
       isFormData: true,
       headers:{}
     })
-    if(result.status===200) {
+    if(result.success) {
       setLoder(false)
       toast.success("Feedback submitted successfully.")
       setRating(0);
