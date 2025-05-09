@@ -144,7 +144,12 @@
   height: 200px;
 }
 
-.custom-quill .ql-editor.ql-blank::before {
+.custom-tc-quill .ql-editor {
+  height: 500px;
+}
+
+.custom-quill .ql-editor.ql-blank::before,
+.custom-tc-quill .ql-editor.ql-blank::before {
   color: #9ca3af; /* Tailwind's gray-400 */
   font-style: normal;
   font-size: 1rem; /* Tailwind text-md */
