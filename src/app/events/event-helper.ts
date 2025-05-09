@@ -71,6 +71,11 @@ export const getUserLocation = (userLat: number, userLng: number, targetLat: num
           const state = localStorage.getItem("state") || "";
           const city = localStorage.getItem("city") || "";
           const cityData = City.getCitiesOfState(country, state).find(c => c.name === city);
+          if (!cityData || !cityData?.latitude || !cityData?.longitude) {
+            removeUserLatLong()
+            resolve(false)
+            return
+          }
           const userLat = Number(cityData?.latitude) || 0;
           const userLng = Number(cityData?.longitude) || 0;
           const distance = getUserLocation(userLat, userLng, targetLat, targetLng);
@@ -286,6 +291,8 @@ export const filterEventsByDistance = (events: EventData[], selectedRadius: stri
   return events.filter((event) => {
     if (event.lat && event.lng) {
       const distance = getDistanceInKm(userLat, userLng, event.lat, event.lng);
+      console.log("distance",distance)
+      console.log("radiusKm",radiusKm)
       return distance <= radiusKm;
     }
     return false;
