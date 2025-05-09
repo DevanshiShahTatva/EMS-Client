@@ -16,6 +16,13 @@ export interface IFilterModalProps {
     filterValues? : IApplyFiltersKey
 }
 
+export interface IBreadcrumbItem {
+    label: string;
+    navigateTo : string
+}
+export interface IBreadcrumbsProps {
+    breadcrumbsItems : IBreadcrumbItem[]
+}
 export interface IEventRangeDate {
     from : Date | string
     to : Date | string

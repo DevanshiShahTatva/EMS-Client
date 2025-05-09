@@ -134,6 +134,33 @@ export const FAQ_BANNER_LINK = "/assets/faqBanner.png"
 export const TC_BANNER_LINK = "/assets/tc-banner.jpg"
 
 
+export const BREAD_CRUMBS_ITEMS = {
+    EVENT: {
+        LIST_PAGE: [{ label: "Events", navigateTo: "" }],
+        CREATE_PAGE: [
+            { label: "Events", navigateTo: ROUTES.ADMIN.EVENTS },
+            { label: "Create", navigateTo: "" }
+        ],
+        UPDATE_PAGE: [
+            { label: "Events", navigateTo: ROUTES.ADMIN.EVENTS },
+            { label: "Update", navigateTo: "" }
+        ]
+    },
+    FAQs: {
+        LIST_PAGE: [{ label: "FAQs", navigateTo: "" }],
+        CREATE_PAGE: [
+            { label: "FAQs", navigateTo: ROUTES.ADMIN.FAQs },
+            { label: "Create", navigateTo: "" }
+        ]
+    },
+    CONTACT_US: {
+        MAIN_PAGE: [{ label: "Support Requests", navigateTo: "" }],
+    },
+    TERMS_AND_CONDITIONS: {
+        MAIN_PAGE: [{ label: "Terms & Conditions", navigateTo: "" }],
+    }
+}
+
 export enum ROLE {
     Admin = "admin",
     User = "user",
