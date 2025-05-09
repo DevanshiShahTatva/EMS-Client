@@ -182,9 +182,9 @@ const AdminFaqsPage = () => {
   return (
     <div className='p-8'>
 
-      <ChartCard>
+      <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.FAQs.LIST_PAGE} />
 
-        <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.FAQs.LIST_PAGE} />
+      <ChartCard>
 
         <TitleSection title='All FAQs'/>
 

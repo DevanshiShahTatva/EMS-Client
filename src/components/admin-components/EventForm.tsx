@@ -572,13 +572,17 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
       <div className="m-10">
         {loader && <Loader />}
 
+        <Breadcrumbs breadcrumbsItems={
+          isEditMode ? BREAD_CRUMBS_ITEMS.EVENT.UPDATE_PAGE : BREAD_CRUMBS_ITEMS.EVENT.CREATE_PAGE
+        }
+        />
+
         <div className="rounded-[12px] bg-white p-6 shadow-lg border-2 border-gray-200">
 
-          <Breadcrumbs  breadcrumbsItems={
-            isEditMode ? BREAD_CRUMBS_ITEMS.EVENT.UPDATE_PAGE : BREAD_CRUMBS_ITEMS.EVENT.CREATE_PAGE
-          }/>
 
-          <TitleSection title={isEditMode ? "Update Event" : "Create Event"} />
+            <div className='mb-5'>
+              <TitleSection title={isEditMode ? "Update Event" : "Create Event"} />
+            </div>
 
           <CustomTextField
             label="Title"
