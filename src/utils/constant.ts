@@ -9,6 +9,7 @@ export const ROUTES = {
     USER_EVENTS_DETAILS: "/events/*",
     USER_PROFILE: "/user/profile",
     USER_MY_EVENTS  :"/user/my-events",
+    USER_MY_CALENDER: "/user/my-calender",
     ADMIN: {
         DASHBOARD: "/admin/dashboard",
         EVENTS: "/admin/event",
@@ -61,7 +62,8 @@ export const API_ROUTES = {
     CONNNTACT_US : "/contact-us",
     UPDATE_CONTACT_US_STATUS : (id: string) => `/contact-us/${id}/status`,
     FAQs : "/faq",
-    TERMS_AND_CONDITIONS : "/terms-and-conditions"
+    TERMS_AND_CONDITIONS : "/terms-and-conditions",
+    FEEDBACK:(id:string)=>`/events/${id}/feedback`
 }
 export const LIGHT_COLORS = [
     '#FFB3BA', // Light Red
@@ -134,6 +136,33 @@ export const CONTACT_US_IMAGE_BANNER_LINK = "https://d2r3fkmprkayl1.cloudfront.n
 export const FAQ_BANNER_LINK = "/assets/faqBanner.png"
 export const TC_BANNER_LINK = "/assets/tc-banner.jpg"
 
+
+export const BREAD_CRUMBS_ITEMS = {
+    EVENT: {
+        LIST_PAGE: [{ label: "Events", navigateTo: "" }],
+        CREATE_PAGE: [
+            { label: "Events", navigateTo: ROUTES.ADMIN.EVENTS },
+            { label: "Create", navigateTo: "" }
+        ],
+        UPDATE_PAGE: [
+            { label: "Events", navigateTo: ROUTES.ADMIN.EVENTS },
+            { label: "Update", navigateTo: "" }
+        ]
+    },
+    FAQs: {
+        LIST_PAGE: [{ label: "FAQs", navigateTo: "" }],
+        CREATE_PAGE: [
+            { label: "FAQs", navigateTo: ROUTES.ADMIN.FAQs },
+            { label: "Create", navigateTo: "" }
+        ]
+    },
+    CONTACT_US: {
+        MAIN_PAGE: [{ label: "Support Requests", navigateTo: "" }],
+    },
+    TERMS_AND_CONDITIONS: {
+        MAIN_PAGE: [{ label: "Terms & Conditions", navigateTo: "" }],
+    }
+}
 
 export enum ROLE {
     Admin = "admin",

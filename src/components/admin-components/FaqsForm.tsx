@@ -8,11 +8,13 @@ import {toast} from "react-toastify"
 
 // Custom Components
 import FormikTextField from '../common/FormikTextField';
+import Breadcrumbs from '../common/BreadCrumbs';
+import TitleSection from '../common/TitleSection';
 
 // Constants & Helpers import
 import { FaqsValidationSchema, InitialFaqsValues } from '@/app/admin/faqs/helper';
 import { apiCall } from '@/utils/services/request';
-import { API_ROUTES, ROUTES } from '@/utils/constant';
+import { API_ROUTES, BREAD_CRUMBS_ITEMS, ROUTES } from '@/utils/constant';
 
 // types
 import { IFAQsFormValues } from '@/app/admin/faqs/types';
@@ -47,12 +49,15 @@ const FAQForm : React.FC = () => {
       }
 
   return (
-    <div className="m-10">
+      <div className="m-10">
+          <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.FAQs.CREATE_PAGE} />
 
           <div className="rounded-[12px] bg-white p-6 shadow-lg border-2 border-gray-200">
-              <p className="text-2xl font-bold mb-5">
-                  Create FAQs
-              </p>
+
+              <div className='mb-5'>
+                  <TitleSection title='Create FAQs' />
+              </div>
+
               <Formik
                   initialValues={InitialFaqsValues}
                   validationSchema={FaqsValidationSchema}
@@ -67,9 +72,9 @@ const FAQForm : React.FC = () => {
                                           <div key={index} className='px-5'>
                                               <div className='flex items-center justify-between'>
                                                   <div className='text-xl font-bold'>
-                                                        Qustion-{index+1}
+                                                      Qustion-{index + 1}
                                                   </div>
-                                                  
+
                                                   {index === 0 ? <button
                                                       type="button"
                                                       onClick={() => push({ question: '', answer: '' })}
@@ -99,7 +104,7 @@ const FAQForm : React.FC = () => {
                                                       rows={5}
                                                   />
                                               </div>
-                                              
+
                                           </div>
                                       ))}
                                   </>
@@ -109,7 +114,7 @@ const FAQForm : React.FC = () => {
                           <div className="text-end my-6">
                               <button
                                   disabled={isSubmitting}
-                                 type='submit'
+                                  type='submit'
                                   className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-medium sm:w-max w-full py-3 px-6 rounded-[12px] disabled:opacity-50 transition disabled:cursor-not-allowed cursor-pointer"
                               >
                                   {isSubmitting ? "Submitting..." : "Submit"}

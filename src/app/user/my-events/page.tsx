@@ -41,11 +41,23 @@ const MyEventsPage = () => {
   const [tickeModal, setTicketModal] = useState(false);
   const [ticketSummary, setTicketSuumary] = useState<IBooking | null>(null);
   const [showFeedbackModal, setFeedbackModal] = useState(false);
+  const [feedbackEventId, setFeedbackEventId] = useState("");
   const [showCancelTicketModal, setShowCancelTicketModal] = useState(false);
   const [eventDetails, setEventDetails] = useState<IEventsState | null>(null);
+
   const openDownloadTicketModal = (events: IBooking) => {
     setTicketSuumary(events);
     setTicketModal(true);
+  };
+
+  const setFeedbackEvent = (eventId: string) => {
+    setFeedbackModal(true);
+    setFeedbackEventId(eventId);
+  };
+
+  const closeFeedbackEvent = () => {
+    setFeedbackModal(false);
+    setFeedbackEventId("");
   };
 
   const closeDownloadTicketModal = () => {
@@ -177,7 +189,7 @@ const MyEventsPage = () => {
     );
   };
 
-  const renderEndedSection = () => {
+  const renderEndedSection = (eventId: string) => {
     return (
       <div>
         <div className="flex gap-3 items-center">
@@ -186,7 +198,7 @@ const MyEventsPage = () => {
             Hope you enjoyed this Event. Please give your{" "}
             <span
               className="text-blue-500 cursor-pointer hover:underline"
-              onClick={() => setFeedbackModal(true)}
+              onClick={() => setFeedbackEvent(eventId)}
             >
               Feedback
             </span>{" "}
@@ -215,7 +227,7 @@ const MyEventsPage = () => {
       case "upcoming":
         return renderUpcomingSection(event);
       case "ended":
-        return renderEndedSection();
+        return renderEndedSection(event.id);
       case "ongoing":
         return renderOngoingSection();
       default:
@@ -384,11 +396,9 @@ const MyEventsPage = () => {
           />
 
           <FeedbackModal
+            eventId={feedbackEventId}
             isOpen={showFeedbackModal}
-            onClose={() => setFeedbackModal(false)}
-            onSubmit={(formData) => {
-              console.log("Submitted Feedback:", formData);
-            }}
+            onClose={() => closeFeedbackEvent()}
           />
 
           <CancelTicketModal

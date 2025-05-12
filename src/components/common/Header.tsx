@@ -11,11 +11,11 @@ import { useRouter } from 'next/navigation';
 import { API_ROUTES, ROUTES, USER_HEADER_ITEMS } from '@/utils/constant';
 
 // Custom helpers
-import { getAuthToken, getUserLogo, setUserLogo, setUserName, getUserName } from '@/utils/helper';
+import { getAuthToken, getUserLogo, setUserLogo, setUserName, getUserName, setUserAddress } from '@/utils/helper';
 
 // Other library
 import Cookie from 'js-cookie'
-import { TicketsIcon, UserCircle, LogOut } from 'lucide-react';
+import { TicketsIcon, UserCircle, LogOut, Calendar } from 'lucide-react';
 
 // images path
 import CrossIconPath from "../../../public/assets/CrossIcon.svg"
@@ -64,6 +64,11 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
     router.push(ROUTES.USER_MY_EVENTS)
   }
 
+  const navToCalender = () => {
+    setIsDropdownOpen(false);
+    router.push(ROUTES.USER_MY_CALENDER);
+  }
+
   const fetchUserInfo = async () => {
     const result = await apiCall({
        method: "GET",
@@ -78,12 +83,16 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
         "_id": receivedObj._id,
         "name": receivedObj.name,
         "email": receivedObj.email,
+        "country": receivedObj.country,
+        "state": receivedObj.state,
+        "city": receivedObj.city,
         "address": receivedObj.address !== null ? receivedObj.address : "",
         "profileimage": receivedObj.profileimage === null ? "" : receivedObj.profileimage.url
       }
 
       setUserLogo(userInfo.profileimage);
       setUserName(userInfo.name);
+      setUserAddress(userInfo.country, userInfo.state, userInfo.city);
       setLogo(userInfo.profileimage);
       setName(userInfo.name);
     }
@@ -274,7 +283,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                     </button>
                   </div>
                   {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 top-[43px] bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50 w-[160px]">
+                    <div className="absolute right-0 mt-2 top-[43px] bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50 w-[165px]">
                       {!isAdmiRole && (
                         <>
                           <button onClick={navToProfile} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
@@ -284,6 +293,10 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                           <button onClick={navToMyEvents} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
                             <TicketsIcon className="w-5 h-5 mr-3" />
                             My Events
+                          </button>
+                          <button onClick={navToCalender} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
+                            <Calendar className="w-5 h-5 mr-3" />
+                            My Calender
                           </button>
                         </>
                       )}
