@@ -19,7 +19,7 @@ const DownloadTicketModal: React.FC<ITicketProps> = ({ eventData, isOpen, onClos
   if (eventData === null) return null
 
   const ticketData = {
-    id: "TICKET-123456",
+    id:  eventData._id,
   };
 
   const { toPDF, targetRef } = usePDF({

@@ -19,6 +19,9 @@ export const ROUTES = {
         CREATE_FAQs : "/admin/faqs/create",
         TERMS_AND_CONDITIONS : "/admin/terms-and-conditions"
     },
+    STAFF: {
+        VERIFY_TICKETS : "/verify-tickets",
+    },
     RESET_PASSWORD: "/reset-password"
 }
 
@@ -58,6 +61,9 @@ export const API_ROUTES = {
             RESET_PASSWORD: "/reset_setting_password"
         },
         USER_DETAILS : "/user_details"
+    },
+    STAFF : {
+        VALIDATE_TICKETS : "/ticket/book/validate",
     },
     CONNNTACT_US : "/contact-us",
     UPDATE_CONTACT_US_STATUS : (id: string) => `/contact-us/${id}/status`,
@@ -167,6 +173,7 @@ export const BREAD_CRUMBS_ITEMS = {
 export enum ROLE {
     Admin = "admin",
     User = "user",
+    Staff = "staff"
 }
 
 export const INITIAL_TICKETS_TYPES = [
