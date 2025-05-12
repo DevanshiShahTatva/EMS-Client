@@ -44,6 +44,7 @@ const MyEventsPage = () => {
   const [feedbackEventId, setFeedbackEventId] = useState("");
   const [showCancelTicketModal, setShowCancelTicketModal] = useState(false);
   const [eventDetails, setEventDetails] = useState<IEventsState | null>(null);
+  const [activeTab, setActiveTab] = useState<"booked" | "cancelled">("booked");
 
   const openDownloadTicketModal = (events: IBooking) => {
     setTicketSuumary(events);
@@ -129,6 +130,8 @@ const MyEventsPage = () => {
           eventImage:
             item.event.images.length > 0 ? item.event.images[0].url : "",
           eventFullResponse: item,
+          bookingStatus: item.bookingStatus,
+          cancelledAt: item.cancelledAt,
         };
       });
 
@@ -193,7 +196,9 @@ const MyEventsPage = () => {
     return (
       <div>
         <div className="flex gap-3 items-center">
-          <div>Finished</div>
+          <div className="px-2 py-1 bg-yellow-600 text-white rounded-lg">
+            Finished
+          </div>
           <div className="pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400">
             Hope you enjoyed this Event. Please give your{" "}
             <span
@@ -213,7 +218,9 @@ const MyEventsPage = () => {
     return (
       <div>
         <div className="flex gap-3 items-center">
-          <div>Ongoing</div>
+          <div className="px-2 py-1 bg-green-600 text-white rounded-lg">
+            Ongoing
+          </div>
           <div className="pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400">
             You've secured your spot. Stay tuned for updates and notifications.
           </div>
@@ -223,6 +230,25 @@ const MyEventsPage = () => {
   };
 
   const renderStatusTittle = (event: IEventsState) => {
+    if (event.eventFullResponse.bookingStatus === "cancelled") {
+      return (
+        <div>
+          <div className="flex gap-3 items-center">
+            <div className="px-2 py-1 bg-red-600 text-white rounded-lg">
+              Cancelled
+            </div>
+            <div className="pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400">
+              This booking was cancelled on{" "}
+              {moment(event.eventFullResponse.cancelledAt).format(
+                "DD MMM YYYY"
+              )}
+              .
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     switch (event.eventStatus) {
       case "upcoming":
         return renderUpcomingSection(event);
@@ -267,12 +293,40 @@ const MyEventsPage = () => {
     setSearchQuery(query);
   };
 
+  const filteredEvents = myEvents.filter(
+    (event) => event.bookingStatus === activeTab
+  );
+
   return (
     <div>
       {loading && <Loader />}
       <div className="min-h-[calc(100vh-76px)] flex flex-col">
         <div className="mx-auto p-10 w-full">
           <h1 className="text-3xl font-bold mb-6">My Events</h1>
+
+          {/* Tabs Bar  */}
+          <div className="flex gap-4 mb-8 justify-center">
+            <button
+              onClick={() => setActiveTab("booked")}
+              className={`px-4 py-2 rounded-lg ${
+                activeTab === "booked"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              } transition-colors cursor-pointer`}
+            >
+              My Events
+            </button>
+            <button
+              onClick={() => setActiveTab("cancelled")}
+              className={`px-4 py-2 rounded-lg ${
+                activeTab === "cancelled"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              } transition-colors cursor-pointer`}
+            >
+              Cancelled Events
+            </button>
+          </div>
 
           {/* Search Bar  */}
           <div className="relative flex-grow w-full bg-white mt-3 mb-9">
@@ -288,9 +342,9 @@ const MyEventsPage = () => {
             />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-5">
-            {myEvents.length > 0 &&
-              myEvents.map((item) => (
+          {filteredEvents.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-5">
+              {filteredEvents.map((item) => (
                 <div
                   key={item.id}
                   className="bg-white border border-gray-100 p-5 rounded-xl w-full shadow-lg"
@@ -302,23 +356,24 @@ const MyEventsPage = () => {
                         {formateDate(item.eventBookedOn)}
                       </span>
                     </p>
-                    <TooltipWrapper tooltip="Get QR">
-                      <QrCode
-                        onClick={() =>
-                          openDownloadTicketModal(item.eventFullResponse)
-                        }
-                        className="h-5 w-5 cursor-pointer"
-                      />
-                    </TooltipWrapper>
+                    {item.eventFullResponse.bookingStatus === "booked" && (
+                      <TooltipWrapper tooltip="Get QR">
+                        <QrCode
+                          onClick={() =>
+                            openDownloadTicketModal(item.eventFullResponse)
+                          }
+                          className="h-5 w-5 cursor-pointer"
+                        />
+                      </TooltipWrapper>
+                    )}
                   </div>
 
                   <div className="flex flex-col md:flex-row gap-5 my-5 pb-6 border-b border-b-gray-200">
                     <img
                       alt="not found"
                       src={item.eventImage}
-                      className="rounded-lg  h-60 w-full md:w-[50%] lg:w-[40%] object-cover"
+                      className="rounded-lg h-60 w-full md:w-[50%] lg:w-[40%] object-cover"
                     />
-
                     <div>
                       <p className="text-xl font-bold mb-1">{item.eventName}</p>
                       <p className="text-gray-500 mb-3">{item.eventCatogory}</p>
@@ -368,20 +423,22 @@ const MyEventsPage = () => {
                           category
                         </div>
                       </div>
-
-                      <div className="flex gap-3 items-center my-2">
-                        <IndianRupee className="h-5 w-5" />
-                        <p className="text-gray-800 font-bold">
-                          Total Paid : ₹ {item.eventTicketPrice}
-                        </p>
-                      </div>
                     </div>
                   </div>
 
                   {renderStatusTittle(item)}
                 </div>
               ))}
-          </div>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-500">
+                No {activeTab === "booked" ? "booked" : "cancelled"} events
+                found
+                {searchQuery && ` matching "${searchQuery}"`}.
+              </p>
+            </div>
+          )}
 
           {myEvents.length === 0 && (
             <div className="text-center py-12">
