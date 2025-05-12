@@ -44,7 +44,9 @@ const MyEventsPage = () => {
   const [feedbackEventId, setFeedbackEventId] = useState("");
   const [showCancelTicketModal, setShowCancelTicketModal] = useState(false);
   const [eventDetails, setEventDetails] = useState<IEventsState | null>(null);
-  const [activeTab, setActiveTab] = useState<"booked" | "cancelled">("booked");
+  const [activeTab, setActiveTab] = useState<"upcoming" | "ongoing" | "past">(
+    "upcoming"
+  );
 
   const openDownloadTicketModal = (events: IBooking) => {
     setTicketSuumary(events);
@@ -177,7 +179,9 @@ const MyEventsPage = () => {
     return (
       <div>
         <div className="flex gap-3 items-center">
-          <div>Upcoming</div>
+          <div className="px-2 py-1 bg-green-400 text-white rounded-lg">
+            Upcoming
+          </div>
           <div className="pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400">
             Get ready for your upcoming event. Click here to{" "}
             <span
@@ -229,20 +233,13 @@ const MyEventsPage = () => {
     );
   };
 
-  const renderStatusTittle = (event: IEventsState) => {
+  const renderStatusTitle = (event: IEventsState) => {
     if (event.eventFullResponse.bookingStatus === "cancelled") {
       return (
         <div>
           <div className="flex gap-3 items-center">
-            <div className="px-2 py-1 bg-red-600 text-white rounded-lg">
-              Cancelled
-            </div>
-            <div className="pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400">
-              This booking was cancelled on{" "}
-              {moment(event.eventFullResponse.cancelledAt).format(
-                "DD MMM YYYY"
-              )}
-              .
+            <div className="px-4 py-2 bg-red-400 text-white rounded-lg">
+              Your booking for this event has been cancelled
             </div>
           </div>
         </div>
@@ -252,12 +249,12 @@ const MyEventsPage = () => {
     switch (event.eventStatus) {
       case "upcoming":
         return renderUpcomingSection(event);
-      case "ended":
-        return renderEndedSection(event.id);
       case "ongoing":
         return renderOngoingSection();
+      case "past":
+        return renderEndedSection(event.id);
       default:
-        return;
+        return null;
     }
   };
 
@@ -293,9 +290,13 @@ const MyEventsPage = () => {
     setSearchQuery(query);
   };
 
-  const filteredEvents = myEvents.filter(
-    (event) => event.bookingStatus === activeTab
-  );
+  const filteredEvents = myEvents.filter((event) => {
+    if (event.eventFullResponse.bookingStatus === "cancelled") {
+      // Show cancelled events in their original time category
+      return event.eventStatus === activeTab;
+    }
+    return event.eventStatus === activeTab;
+  });
 
   return (
     <div>
@@ -307,24 +308,34 @@ const MyEventsPage = () => {
           {/* Tabs Bar  */}
           <div className="flex gap-4 mb-8 justify-center">
             <button
-              onClick={() => setActiveTab("booked")}
+              onClick={() => setActiveTab("upcoming")}
               className={`px-4 py-2 rounded-lg ${
-                activeTab === "booked"
+                activeTab === "upcoming"
                   ? "bg-blue-500 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               } transition-colors cursor-pointer`}
             >
-              My Events
+              Upcoming
             </button>
             <button
-              onClick={() => setActiveTab("cancelled")}
+              onClick={() => setActiveTab("ongoing")}
               className={`px-4 py-2 rounded-lg ${
-                activeTab === "cancelled"
+                activeTab === "ongoing"
                   ? "bg-blue-500 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               } transition-colors cursor-pointer`}
             >
-              Cancelled Events
+              Ongoing
+            </button>
+            <button
+              onClick={() => setActiveTab("past")}
+              className={`px-4 py-2 rounded-lg ${
+                activeTab === "past"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              } transition-colors cursor-pointer`}
+            >
+              Past
             </button>
           </div>
 
@@ -426,17 +437,13 @@ const MyEventsPage = () => {
                     </div>
                   </div>
 
-                  {renderStatusTittle(item)}
+                  {renderStatusTitle(item)}
                 </div>
               ))}
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-500">
-                No {activeTab === "booked" ? "booked" : "cancelled"} events
-                found
-                {searchQuery && ` matching "${searchQuery}"`}.
-              </p>
+              <p className="text-gray-500">No bookings found.</p>
             </div>
           )}
 
