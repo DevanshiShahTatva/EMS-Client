@@ -11,7 +11,13 @@ import FeedbackModal from "@/components/events-components/FeedbackModal";
 // Contsant & Helper Imports
 import { apiCall } from "@/utils/services/request";
 import { API_ROUTES } from "@/utils/constant";
-import { formatDateTime, getEventStatus, getTicketTypes } from "./helper";
+import {
+  formatDateTime,
+  getBgColor,
+  getEventAttendStatus,
+  getEventStatus,
+  getTicketTypes,
+} from "./helper";
 
 // Types import
 import { IBooking, IEventBookingResponse, IEventsState } from "./types";
@@ -134,6 +140,7 @@ const MyEventsPage = () => {
           eventFullResponse: item,
           bookingStatus: item.bookingStatus,
           cancelledAt: item.cancelledAt,
+          isAttended: item.isAttended,
         };
       });
 
@@ -196,23 +203,25 @@ const MyEventsPage = () => {
     );
   };
 
-  const renderEndedSection = (eventId: string) => {
+  const renderEndedSection = (event: IEventsState) => {
     return (
       <div>
         <div className="flex gap-3 items-center">
           <div className="px-2 py-1 bg-yellow-600 text-white rounded-lg">
             Finished
           </div>
-          <div className="pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400">
-            Hope you enjoyed this Event. Please give your{" "}
-            <span
-              className="text-blue-500 cursor-pointer hover:underline"
-              onClick={() => setFeedbackEvent(eventId)}
-            >
-              Feedback
-            </span>{" "}
-            here.
-          </div>
+          {event.isAttended && (
+            <div className="pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400">
+              Hope you enjoyed this Event. Please give your{" "}
+              <span
+                className="text-blue-500 cursor-pointer hover:underline"
+                onClick={() => setFeedbackEvent(event.id)}
+              >
+                Feedback
+              </span>{" "}
+              here.
+            </div>
+          )}
         </div>
       </div>
     );
@@ -238,7 +247,7 @@ const MyEventsPage = () => {
       return (
         <div>
           <div className="flex gap-3 items-center">
-            <div className="px-4 py-2 bg-red-400 text-white rounded-lg">
+            <div className="px-4 py-1 bg-red-400 text-white rounded-lg">
               Your booking for this event has been cancelled
             </div>
           </div>
@@ -252,7 +261,7 @@ const MyEventsPage = () => {
       case "ongoing":
         return renderOngoingSection();
       case "past":
-        return renderEndedSection(event.id);
+        return renderEndedSection(event);
       default:
         return null;
     }
@@ -367,15 +376,25 @@ const MyEventsPage = () => {
                         {formateDate(item.eventBookedOn)}
                       </span>
                     </p>
-                    {item.eventFullResponse.bookingStatus === "booked" && (
-                      <TooltipWrapper tooltip="Get QR">
-                        <QrCode
-                          onClick={() =>
-                            openDownloadTicketModal(item.eventFullResponse)
-                          }
-                          className="h-5 w-5 cursor-pointer"
-                        />
-                      </TooltipWrapper>
+                    {item.eventFullResponse.bookingStatus === "booked" &&
+                      item.eventStatus !== "past" && (
+                        <TooltipWrapper tooltip="Get QR">
+                          <QrCode
+                            onClick={() =>
+                              openDownloadTicketModal(item.eventFullResponse)
+                            }
+                            className="h-5 w-5 cursor-pointer"
+                          />
+                        </TooltipWrapper>
+                      )}
+                    {item.eventStatus === "past" && (
+                      <div
+                        className={`px-2 py-1 ${getBgColor(
+                          item.isAttended
+                        )} rounded-lg text-white`}
+                      >
+                        {getEventAttendStatus(item.isAttended)}
+                      </div>
                     )}
                   </div>
 
