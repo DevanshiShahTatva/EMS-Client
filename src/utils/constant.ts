@@ -47,7 +47,8 @@ export const API_ROUTES = {
     },
     EVENT:{
       PAYMENT:`/ticket/book`,
-      MY_EVENTS: "/ticket/book"
+      MY_EVENTS: "/ticket/book",
+      CANCEL_EVENT: "/ticket/book/cancel/"
     },
     USER: {
         PROFILE : {
