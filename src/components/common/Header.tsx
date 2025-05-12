@@ -69,6 +69,11 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
     router.push(ROUTES.USER_MY_CALENDER);
   }
 
+  const navToRewardPoint = () => {
+    setIsDropdownOpen(false);
+    router.push(ROUTES.USER_REWARDED_POINT);
+  }
+
   const fetchUserInfo = async () => {
     const result = await apiCall({
        method: "GET",
@@ -283,7 +288,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                     </button>
                   </div>
                   {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 top-[43px] bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50 w-[165px]">
+                    <div className="absolute right-0 mt-2 top-[43px] bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50 w-[195px]">
                       {!isAdmiRole && (
                         <>
                           <button onClick={navToProfile} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
@@ -297,6 +302,10 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                           <button onClick={navToCalender} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
                             <Calendar className="w-5 h-5 mr-3" />
                             My Calender
+                          </button>
+                          <button onClick={navToRewardPoint} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
+                            <Calendar className="w-5 h-5 mr-3" />
+                            My Reward Point
                           </button>
                         </>
                       )}

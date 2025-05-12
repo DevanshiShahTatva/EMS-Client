@@ -181,6 +181,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                 </div>
 
                 <BookingButton
+                  points={event.userPoints}
                   tickets={event.tickets}
                   eventTitle={event.title}
                   status={hasEventEnded(event.endDateTime)}

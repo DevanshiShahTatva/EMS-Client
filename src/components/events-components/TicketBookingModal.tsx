@@ -20,6 +20,7 @@ interface TicketBookingModalProps {
   }) => void
   eventTitle: string
   tickets: EventTicket[]
+  points: number;
 }
 
 const getAvailableSeats = (total: number, booked: number) => total - booked
@@ -30,6 +31,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   onSuccess,
   eventTitle,
   tickets,
+  points
 }) => {
   const [selectedType, setSelectedType] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(0)
@@ -189,6 +191,12 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
               <span className="text-gray-900 font-medium">Total Amount:</span>
               <span className="text-xl font-semibold text-gray-900">
               ₹{totalPrice.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-gray-900 font-medium">Your points:</span>
+              <span className="text-xl font-semibold text-gray-900">
+              {points}
               </span>
             </div>
             <form action={handleProceedToPayment} className="max-w-md mx-auto">

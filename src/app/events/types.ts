@@ -130,6 +130,7 @@ export interface EventDetails {
   likes: string[]
   isLiked: boolean
   likesCount: number
+  userPoints: number;
 }
 
 
