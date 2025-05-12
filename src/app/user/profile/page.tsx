@@ -328,8 +328,8 @@ const UserProfilePage = () => {
 
                           <FormikTextField
                             name="address"
-                            label="Address"
-                            placeholder="Enter your address"
+                            label="Street Address"
+                            placeholder="Enter your street address"
                           />
 
                           <div className="flex flex-row gap-4">

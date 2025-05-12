@@ -51,7 +51,9 @@ export const getUserLocation = (userLat: number, userLng: number, targetLat: num
   export const isNearbyWithUserLocation = async (
     targetLat: number,
     targetLng: number,
-    radiusInKm: number = 50
+    top3Events: EventDataObjResponse[],
+    currentEvent: EventDataObjResponse,
+    radiusInKm: number = 5
   ): Promise<boolean> => {
     if (typeof window === "undefined" || !navigator.geolocation) {
       return false;
@@ -70,7 +72,8 @@ export const getUserLocation = (userLat: number, userLng: number, targetLat: num
           const longitude = localStorage.getItem("lng") || "";
           if (!latitude || !longitude) {
             removeUserLatLong()
-            resolve(false)
+            const isFeatured = top3Events.some(event => event._id === currentEvent._id);
+            resolve(isFeatured)
             return
           }
           const userLat = Number(latitude) || 0;
