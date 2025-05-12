@@ -70,7 +70,7 @@ export const getUserLocation = (userLat: number, userLng: number, targetLat: num
         () => {
           const latitude = localStorage.getItem("lat") || "";
           const longitude = localStorage.getItem("lng") || "";
-          if (!latitude || !longitude) {
+          if (!latitude || !longitude || latitude === "null" || longitude === "null") {
             removeUserLatLong()
             const isFeatured = top3Events.some(event => event._id === currentEvent._id);
             resolve(isFeatured)
