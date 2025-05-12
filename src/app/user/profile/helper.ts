@@ -94,7 +94,7 @@ export const VerifyOTPSchema = Yup.object({
 
 export const ProfileInfoSchema = Yup.object({
   userName: Yup.string().required("User Name is required"),
-  address: Yup.string().required("Address is required"),
+  address: Yup.string().required("Street Address is required"),
   zipcode: Yup.string()
     .required("Zip Code is required")
     .matches(/^\d{6}$/, "Zip Code must be 6 digits")

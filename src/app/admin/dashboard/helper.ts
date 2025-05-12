@@ -10,7 +10,8 @@ export const DASHBOARD_TITLE = {
     TABLE: "Top 10 Users By Booking",
     HEATMAP: "Bookings by Month and Date",
     LIKE_MODAL_TITLE: "All Events by Likes",
-    REVENUE_MODAL_TITLE: "All Events by Revenue"
+    REVENUE_MODAL_TITLE: "All Events by Revenue",
+    MAP: "All Users on Map"
 }
 
 export const LikeTableColumns = [
