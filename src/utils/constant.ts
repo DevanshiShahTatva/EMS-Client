@@ -41,6 +41,7 @@ export const API_ROUTES = {
         BOOKING_BY_MONTH_DATE: 'dashboard/analytics/bookings-time-trends',
         TOP_REVENUE_BY_EVENTS: 'dashboard/analytics/top-revenue-events',
         POINT_SETTING: 'point-setting',
+        GET_ALL_USERS: 'all_users',
     },
     AUTH: {
         LOGIN: `/login`,
@@ -50,7 +51,8 @@ export const API_ROUTES = {
     },
     EVENT:{
       PAYMENT:`/ticket/book`,
-      MY_EVENTS: "/ticket/book"
+      MY_EVENTS: "/ticket/book",
+      CANCEL_EVENT: "/ticket/book/cancel/"
     },
     USER: {
         PROFILE : {

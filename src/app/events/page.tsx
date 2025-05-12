@@ -90,6 +90,11 @@ const EventsPage: React.FC = () => {
         })
         if(result && result.success && result.data.length > 0) {
            const receivedArrayObj : EventResponse = result.data
+
+           const top3Events = receivedArrayObj
+              .filter(event => getEventStatus(event.startDateTime, event.endDateTime) !== "ended")
+              .sort((a, b) => b.likesCount - a.likesCount)
+              .slice(0, 3);
   
            const modifiedArray : EventData[] = await Promise.all (receivedArrayObj.map(async (item) => {
             return {
@@ -105,7 +110,7 @@ const EventsPage: React.FC = () => {
               priceRange: getTicketPriceRange(item.tickets ),
               isSoldOut: areAllTicketsBooked(item.tickets),
               status:getEventStatus(item.startDateTime,item.endDateTime),
-              isFeatured:await isNearbyWithUserLocation(item.location.lat,item.location.lng),
+              isFeatured:await isNearbyWithUserLocation(item.location.lat,item.location.lng, top3Events, item),
               isLiked:item.isLiked,
               startTime : item.startDateTime,
               endTime : item.endDateTime,
