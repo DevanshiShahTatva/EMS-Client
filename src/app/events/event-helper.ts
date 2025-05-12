@@ -66,8 +66,8 @@ export const getUserLocation = (userLat: number, userLng: number, targetLat: num
           resolve(distance <= radiusInKm);
         },
         () => {
-          const latitude = localStorage.getItem("latitude") || "";
-          const longitude = localStorage.getItem("longitude") || "";
+          const latitude = localStorage.getItem("lat") || "";
+          const longitude = localStorage.getItem("lng") || "";
           if (!latitude || !longitude) {
             removeUserLatLong()
             resolve(false)

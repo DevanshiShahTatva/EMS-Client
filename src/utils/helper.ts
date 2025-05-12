@@ -17,11 +17,6 @@ export const setUserName = (name: string) => {
     localStorage.setItem("name", name);
 }
 
-export const setUserLatiLong = (latitude: string, longitude: string) => {
-    localStorage.setItem("latitude", latitude);
-    localStorage.setItem("longitude", longitude);
-}
-
 export const getUserName = () => {
     const name = localStorage.getItem("name");
     return name;

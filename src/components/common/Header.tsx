@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import { API_ROUTES, ROUTES, USER_HEADER_ITEMS } from '@/utils/constant';
 
 // Custom helpers
-import { getAuthToken, getUserLogo, setUserLogo, setUserName, getUserName, setUserLatiLong } from '@/utils/helper';
+import { getAuthToken, getUserLogo, setUserLogo, setUserName, getUserName } from '@/utils/helper';
 
 // Other library
 import Cookie from 'js-cookie'
@@ -20,6 +20,7 @@ import { TicketsIcon, UserCircle, LogOut, Calendar } from 'lucide-react';
 // images path
 import CrossIconPath from "../../../public/assets/CrossIcon.svg"
 import { apiCall } from '@/utils/services/request';
+import { setUserLatLong } from '@/app/events/event-helper';
 
 
 
@@ -94,7 +95,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
 
       setUserLogo(userInfo.profileimage);
       setUserName(userInfo.name);
-      setUserLatiLong(userInfo.latitude, userInfo.longitude);
+      setUserLatLong(userInfo.latitude, userInfo.longitude);
       setLogo(userInfo.profileimage);
       setName(userInfo.name);
     }
