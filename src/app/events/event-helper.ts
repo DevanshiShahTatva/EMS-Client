@@ -4,7 +4,6 @@ import { LabelValue } from "./types";
 import { durationOptions, STATUS_OPTIONS, TICKETS_OPTIONS } from "@/utils/constant";
 
 import moment from "moment";
-import { City } from "country-state-city";
 
 export const setUserLatLong = (lat: number, lng : number) => {
    localStorage.setItem("lat", `${lat}`)
@@ -52,6 +51,8 @@ export const getUserLocation = (userLat: number, userLng: number, targetLat: num
   export const isNearbyWithUserLocation = async (
     targetLat: number,
     targetLng: number,
+    top3Events: EventDataObjResponse[],
+    currentEvent: EventDataObjResponse,
     radiusInKm: number = 5
   ): Promise<boolean> => {
     if (typeof window === "undefined" || !navigator.geolocation) {
@@ -67,17 +68,16 @@ export const getUserLocation = (userLat: number, userLng: number, targetLat: num
           resolve(distance <= radiusInKm);
         },
         () => {
-          const country = localStorage.getItem("country") || "";
-          const state = localStorage.getItem("state") || "";
-          const city = localStorage.getItem("city") || "";
-          const cityData = City.getCitiesOfState(country, state).find(c => c.name === city);
-          if (!cityData || !cityData?.latitude || !cityData?.longitude) {
+          const latitude = localStorage.getItem("lat") || "";
+          const longitude = localStorage.getItem("lng") || "";
+          if (!latitude || !longitude || latitude === "null" || longitude === "null") {
             removeUserLatLong()
-            resolve(false)
+            const isFeatured = top3Events.some(event => event._id === currentEvent._id);
+            resolve(isFeatured)
             return
           }
-          const userLat = Number(cityData?.latitude) || 0;
-          const userLng = Number(cityData?.longitude) || 0;
+          const userLat = Number(latitude) || 0;
+          const userLng = Number(longitude) || 0;
           const distance = getUserLocation(userLat, userLng, targetLat, targetLng);
           resolve(distance <= radiusInKm);
         }
