@@ -19,7 +19,7 @@ const CancelTicketModal: React.FC<Props> = ({
   if (!isOpen) return null;
 
   // Calculate refund amount (example: 90% refund policy)
-  const refundAmount = eventDetails.eventTicketPrice * 0.9;
+  const refundAmount = eventDetails.eventTicketPrice;
   const totalPaid = eventDetails.eventTicketPrice;
 
   return (

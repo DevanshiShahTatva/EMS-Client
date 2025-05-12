@@ -31,6 +31,7 @@ import {
   QrCode,
 } from "lucide-react";
 import CancelTicketModal from "@/components/events-components/CancelTicketModal";
+import { toast } from "react-toastify";
 
 const MyEventsPage = () => {
   const [myEvents, setMyEvents] = useState<IEventsState[]>([]);
@@ -140,11 +141,21 @@ const MyEventsPage = () => {
   };
 
   const handleCancelTicketSubmit = async () => {
-    const result: IEventBookingResponse = await apiCall({
-      endPoint: API_ROUTES.EVENT.MY_EVENTS,
-      method: "GET",
-      withToken: true,
-    });
+    try {
+      const response = await apiCall({
+        endPoint: API_ROUTES.EVENT.CANCEL_EVENT + eventDetails?.id,
+        method: "PUT",
+        withToken: true,
+      });
+
+      if (response && response.success) {
+        toast.success(response.message);
+        setShowCancelTicketModal(false);
+        fetchMyEvents();
+      }
+    } catch (err) {
+      console.error("Error", err);
+    }
   };
 
   const renderUpcomingSection = (event: IEventsState) => {
