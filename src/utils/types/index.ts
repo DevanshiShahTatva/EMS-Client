@@ -4,7 +4,8 @@ export interface IDeleteModalProps {
     onClose: () => void;
     onConfirm: () => void;
     description?: string;
-    loading?: boolean
+    loading?: boolean;
+    confirmLoading?: boolean
 }
 
 export interface IFilterModalProps {
