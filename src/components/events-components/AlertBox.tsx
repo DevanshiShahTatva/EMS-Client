@@ -43,13 +43,7 @@ const AlertBox = (props: Props) => {
     },
   };
 
-  const {
-    icon: Icon,
-    bgColor,
-    textColor,
-    titleColor,
-    iconColor,
-  } = config[type];
+  const { icon: Icon, bgColor, textColor, iconColor } = config[type];
 
   return (
     <div

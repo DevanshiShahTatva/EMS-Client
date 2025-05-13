@@ -214,7 +214,7 @@ const MyEventsPage = () => {
             here.
           </div>
         ) : (
-          "Finished"
+          "Sorry, You missed this event"
         )}
       </AlertBox>
     );
@@ -296,52 +296,54 @@ const MyEventsPage = () => {
         <div className="mx-auto p-10 w-full">
           <h1 className="text-3xl font-bold mb-6">My Events</h1>
 
-          {/* Tabs Bar  */}
-          <div className="flex gap-4 mb-8 justify-center">
-            <button
-              onClick={() => setActiveTab("upcoming")}
-              className={`px-4 py-2 rounded-lg ${
-                activeTab === "upcoming"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              } transition-colors cursor-pointer`}
-            >
-              Upcoming
-            </button>
-            <button
-              onClick={() => setActiveTab("ongoing")}
-              className={`px-4 py-2 rounded-lg ${
-                activeTab === "ongoing"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              } transition-colors cursor-pointer`}
-            >
-              Ongoing
-            </button>
-            <button
-              onClick={() => setActiveTab("past")}
-              className={`px-4 py-2 rounded-lg ${
-                activeTab === "past"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              } transition-colors cursor-pointer`}
-            >
-              Past
-            </button>
-          </div>
-
-          {/* Search Bar  */}
-          <div className="relative flex-grow w-full bg-white mt-3 mb-9">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <SearchIcon className="h-5 w-5 text-gray-400" />
+          <div className="flex items-center justify-between mt-8 mb-6">
+            {/* Tabs Bar  */}
+            <div className="flex justify-center w-1/3">
+              <button
+                onClick={() => setActiveTab("upcoming")}
+                className={`px-4 py-2 w-1/3 border border-gray-400 rounded-l-lg ${
+                  activeTab === "upcoming"
+                    ? "bg-blue-500 text-white"
+                    : "text-gray-700 bg-white"
+                } transition-colors cursor-pointer`}
+              >
+                Upcoming
+              </button>
+              <button
+                onClick={() => setActiveTab("ongoing")}
+                className={`px-4 py-2 w-1/3 border border-gray-400 border-r-0 border-l-0 ${
+                  activeTab === "ongoing"
+                    ? "bg-blue-500 text-white"
+                    : "text-gray-700 bg-white"
+                } transition-colors cursor-pointer`}
+              >
+                Ongoing
+              </button>
+              <button
+                onClick={() => setActiveTab("past")}
+                className={`px-4 py-2 w-1/3 border border-gray-400 rounded-r-lg ${
+                  activeTab === "past"
+                    ? "bg-blue-500 text-white"
+                    : "text-gray-700 bg-white"
+                } transition-colors cursor-pointer`}
+              >
+                Past
+              </button>
             </div>
-            <input
-              type="text"
-              placeholder="Search booked events..."
-              value={searchQuery}
-              onChange={(e) => handleSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
+
+            {/* Search Bar  */}
+            <div className="relative max-w-1/3 w-full bg-white rounded-lg">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <SearchIcon className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search booked events..."
+                value={searchQuery}
+                onChange={(e) => handleSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
           </div>
 
           {filteredEvents.length > 0 ? (
