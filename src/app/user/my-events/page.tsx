@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 import CancelTicketModal from "@/components/events-components/CancelTicketModal";
 import { toast } from "react-toastify";
+import AlertBox from "@/components/events-components/AlertBox";
 
 const MyEventsPage = () => {
   const [myEvents, setMyEvents] = useState<IEventsState[]>([]);
@@ -184,74 +185,55 @@ const MyEventsPage = () => {
 
   const renderUpcomingSection = (event: IEventsState) => {
     return (
-      <div>
-        <div className="flex gap-3 items-center">
-          <div className="px-2 py-1 bg-green-400 text-white rounded-lg">
-            Upcoming
-          </div>
-          <div className="pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400">
-            Get ready for your upcoming event. Click here to{" "}
-            <span
-              onClick={() => handleCancelTicket(event)}
-              className="text-blue-500 cursor-pointer hover:underline"
-            >
-              Cancel.
-            </span>
-          </div>
+      <AlertBox type="success">
+        <div className="text-green-700">
+          Get ready for your upcoming event. Click here to{" "}
+          <span
+            onClick={() => handleCancelTicket(event)}
+            className="text-blue-500 cursor-pointer hover:underline"
+          >
+            Cancel.
+          </span>
         </div>
-      </div>
+      </AlertBox>
     );
   };
 
   const renderEndedSection = (event: IEventsState) => {
     return (
-      <div>
-        <div className="flex gap-3 items-center">
-          <div className="px-2 py-1 bg-yellow-600 text-white rounded-lg">
-            Finished
+      <AlertBox type="warning">
+        {event.isAttended ? (
+          <div className="text-yellow-700">
+            Hope you enjoyed this Event. Please give your{" "}
+            <span
+              className="text-blue-500 cursor-pointer hover:underline"
+              onClick={() => setFeedbackEvent(event.id)}
+            >
+              Feedback
+            </span>{" "}
+            here.
           </div>
-          {event.isAttended && (
-            <div className="pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400">
-              Hope you enjoyed this Event. Please give your{" "}
-              <span
-                className="text-blue-500 cursor-pointer hover:underline"
-                onClick={() => setFeedbackEvent(event.id)}
-              >
-                Feedback
-              </span>{" "}
-              here.
-            </div>
-          )}
-        </div>
-      </div>
+        ) : (
+          "Finished"
+        )}
+      </AlertBox>
     );
   };
 
   const renderOngoingSection = () => {
     return (
-      <div>
-        <div className="flex gap-3 items-center">
-          <div className="px-2 py-1 bg-green-600 text-white rounded-lg">
-            Ongoing
-          </div>
-          <div className="pl-2 sm:pl-5 text-sm sm:text-xl text-gray-800 border-l border-l-gray-400">
-            You've secured your spot. Stay tuned for updates and notifications.
-          </div>
-        </div>
-      </div>
+      <AlertBox type="info">
+        You've secured your spot. Stay tuned for updates and notifications.
+      </AlertBox>
     );
   };
 
   const renderStatusTitle = (event: IEventsState) => {
     if (event.eventFullResponse.bookingStatus === "cancelled") {
       return (
-        <div>
-          <div className="flex gap-3 items-center">
-            <div className="px-4 py-1 bg-red-400 text-white rounded-lg">
-              Your booking for this event has been cancelled
-            </div>
-          </div>
-        </div>
+        <AlertBox type="error">
+          Your booking for this event has been cancelled
+        </AlertBox>
       );
     }
 
