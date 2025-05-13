@@ -32,4 +32,5 @@ export interface IUserInfo {
     country: string;
     state: string;
     city: string;
+    points: number;
 }

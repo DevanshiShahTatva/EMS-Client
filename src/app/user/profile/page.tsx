@@ -211,6 +211,7 @@ const UserProfilePage = () => {
         _id: receivedObj._id,
         name: receivedObj.name,
         email: receivedObj.email,
+        points: receivedObj.current_points,
         address: receivedObj.address ? receivedObj.address : "",
         country: receivedObj.country ? receivedObj.country : "",
         state: receivedObj.state ? receivedObj.state : "",
@@ -265,6 +266,7 @@ const UserProfilePage = () => {
                     <div className="mx-auto mt-[-100px]">
                       <FormikFileUpload
                         name="profileImage"
+                        points={userInfo.points}
                         defaultImage={userInfo.profileimage || undefined}
                         fetchUserInfo={fetchUserInfo}
                         userName={userInfo.name}

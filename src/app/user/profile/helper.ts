@@ -46,6 +46,7 @@ export const INITIAL_USER_INFO = {
   country: "",
   state: "",
   city: "",
+  points: 0
 };
 
 export const ChangePasswordSchema = Yup.object({

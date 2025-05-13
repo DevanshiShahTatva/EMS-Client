@@ -21,6 +21,7 @@ interface TicketBookingModalProps {
   eventTitle: string
   tickets: EventTicket[]
   points: number;
+  conversionRate: number;
 }
 
 const getAvailableSeats = (total: number, booked: number) => total - booked
@@ -31,10 +32,12 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   onSuccess,
   eventTitle,
   tickets,
-  points
+  points,
+  conversionRate
 }) => {
   const [selectedType, setSelectedType] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(0)
+  const [usedPoints, setUsedPoints] = useState(0);
 
   if (!isOpen) return null
 
@@ -42,6 +45,8 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   const totalPrice = selectedTicketType
     ? selectedTicketType.price * quantity
     : 0
+  const discount = Math.round((usedPoints / conversionRate) * 100);
+  const finalAmount = Math.max(totalPrice * 100 - discount, 0);
 
   const handleTicketSelect = (type: string) => {
     if (selectedType === type) {
@@ -66,18 +71,23 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
       setQuantity(newQuantity)
     }
   }
+
   const handleProceedToPayment = async () => {
     try {
       const res = await axios.post('/api/create-payment-intent', {
-        tickets: {
-          type: selectedType,
-          quantity,
-          totalPrice:selectedTicketType?.price,
-          ticketId:selectedTicketType?._id
-        },
         eventTitle,
+        tickets: {
+          quantity,
+          discount,
+          usedPoints,
+          finalAmount,
+          conversionRate,
+          type: selectedType,
+          ticketId: selectedTicketType?._id,
+          totalPrice: selectedTicketType?.price,
+        },
       })
-      sessionStorage.setItem("tickets",JSON.stringify({type:selectedType,quantity:quantity,totalPrice:totalPrice,ticketId:selectedTicketType?._id}));
+      sessionStorage.setItem("tickets",JSON.stringify({type:selectedType,quantity:quantity,totalPrice:totalPrice,ticketId:selectedTicketType?._id, usedPoints }));
       sessionStorage.setItem("eventTitle",eventTitle);
       window.location.href = res.data.url
     } catch (err) {
@@ -86,7 +96,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center p-4 z-999 overflow-y-auto no-scrollbar">
+    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center p-4 z-99999 overflow-y-auto no-scrollbar">
   <div className="bg-white rounded-lg w-full max-w-lg max-h-full overflow-y-auto no-scrollbar">
     <div className="flex justify-between items-center p-6 border-b">
       <h2 className="text-xl font-semibold text-gray-900">Book Tickets</h2>
@@ -199,6 +209,24 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
               {points}
               </span>
             </div>
+            <div>{conversionRate} points = Rs. 1</div>
+            <div className="flex items-center space-x-3 mt-3 mb-5">
+              <button
+                onClick={() => setUsedPoints(usedPoints - 1)}
+                className="p-1 rounded-full border border-gray-300 hover:bg-gray-100 cursor-pointer"
+                disabled={usedPoints <= 0}
+              >
+                <MinusIcon className="h-4 w-4" />
+              </button>
+              <span className="w-8 text-center">{usedPoints}</span>
+              <button
+                onClick={() => setUsedPoints(usedPoints + 1)}
+                className="p-1 rounded-full border border-gray-300 hover:bg-gray-100 cursor-pointer"
+                disabled={usedPoints >= points}
+              >
+                <PlusIcon className="h-4 w-4" />
+              </button>
+            </div>
             <form action={handleProceedToPayment} className="max-w-md mx-auto">
             <input type="hidden" name="ticket" value={JSON.stringify({type:selectedTicketType?.type,totalPrice:selectedTicketType?.price,quantity:quantity,ticketId:selectedTicketType?._id})}/>
             <input type="hidden" name="eventTitle" value={eventTitle}/>
@@ -211,7 +239,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                   : 'bg-gray-300 cursor-not-allowed'
               }`}
             >
-              Proceed to Payment
+              Pay ₹{(finalAmount / 100).toFixed(2)}
             </button>
             </form>
             

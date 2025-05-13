@@ -14,6 +14,7 @@ interface Props {
   label?: string;
   fetchUserInfo: () => void;
   userName: string;
+  points: number;
 }
 
 const FormikFileUpload: React.FC<Props> = ({
@@ -22,6 +23,7 @@ const FormikFileUpload: React.FC<Props> = ({
   label = "",
   fetchUserInfo,
   userName,
+  points
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
@@ -119,7 +121,7 @@ const FormikFileUpload: React.FC<Props> = ({
       </div>
 
       <p className="text-2xl font-bold text-center">Photo</p>
-
+      <p className="mt-4 text-2xl">{points}</p>
       <button
         onClick={handleImageClick}
         className="w-40 bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold mt-10 px-4 py-2 rounded-4xl cursor-pointer whitespace-nowrap flex justify-center items-center gap-2"

@@ -72,7 +72,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
 
   const navToRewardPoint = () => {
     setIsDropdownOpen(false);
-    router.push(ROUTES.USER_REWARDED_POINT);
+    router.push(ROUTES.USER_REWARDED_HISTORY);
   }
 
   const fetchUserInfo = async () => {

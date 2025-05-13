@@ -10,7 +10,7 @@ export const ROUTES = {
     USER_PROFILE: "/user/profile",
     USER_MY_EVENTS  :"/user/my-events",
     USER_MY_CALENDER: "/user/my-calender",
-    USER_REWARDED_POINT: "/user/reward-point",
+    USER_REWARDED_HISTORY: "/user/reward-history",
     ADMIN: {
         DASHBOARD: "/admin/dashboard",
         EVENTS: "/admin/event",
@@ -61,7 +61,8 @@ export const API_ROUTES = {
             VERIFY_EMAIL : "/verify_setting_email",
             RESET_PASSWORD: "/reset_setting_password"
         },
-        USER_DETAILS : "/user_details"
+        USER_DETAILS : "/user_details",
+        REWARD_HISTORY: "/point-setting/reward-history"
     },
     CONNNTACT_US : "/contact-us",
     UPDATE_CONTACT_US_STATUS : (id: string) => `/contact-us/${id}/status`,
