@@ -207,7 +207,7 @@ const EventsPage: React.FC = () => {
               </button>
             </div>  
           )
-        })}
+        })} 
 
       </div>
 
