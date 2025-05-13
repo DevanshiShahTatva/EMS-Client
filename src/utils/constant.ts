@@ -74,6 +74,7 @@ export const API_ROUTES = {
     FAQs : "/faq",
     TERMS_AND_CONDITIONS : "/terms-and-conditions",
     FEEDBACK:(id:string)=>`/events/${id}/feedback`,
+    GET_FEEDBACK:(id:string)=>`/events/${id}/feedbacks`,
     GET_ALL_TICKET_TYPES: "ticket-types",
 }
 export const LIGHT_COLORS = [

@@ -209,3 +209,17 @@ export interface EventDetails {
   isLiked: boolean
   likesCount: number
 }
+
+export interface FeedbackDetails {
+   _id: string;
+  eventId: string;
+  userId: string;
+  name: string;
+  email: string;
+  rating: number;
+  description: string;
+  isEdited: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
