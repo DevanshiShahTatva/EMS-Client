@@ -119,9 +119,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
 ]
 
 export const ORGANIZER_SIDEBAR_ITEMS = [
-    { id: 1, title: "Dashboard", route: ROUTES.ADMIN.DASHBOARD, icon: "/assets/DashboardIcon.svg" },
-    { id: 2, title: "Events", route: ROUTES.ADMIN.EVENTS, icon: "/assets/EventsIcon.svg" },
-    { id: 3, title: "Scan Tickets", route: ROUTES.ORGANIZER.VERIFY_TICKETS, icon:  "/assets/scannerIcon.svg"},
+    { id: 1, title: "Scan Tickets", route: ROUTES.ORGANIZER.VERIFY_TICKETS, icon:  "/assets/scannerIcon.svg"},
 ]
 
 export const USER_HEADER_ITEMS = [

@@ -20,17 +20,14 @@ import { CheckCircleIcon, XCircleIcon } from 'lucide-react'
 
 // types
 import { ITicketQRData } from '@/utils/types'
-import ChartCard from '@/components/admin-components/dashboard/ChartCard'
-import TitleSection from '@/components/common/TitleSection'
 
 const VerifyTicketPage = () => {
 
   const [loading, setLoading] = useState(false)
-  const [verifyStatus, setVerifyStatus] = useState<"verified" | "pending" | "failed">("pending")
+  const [verifyStatus, setVerifyStatus] = useState<"success" | "pending" | "failed">("pending")
   const [ticketData, setTicketData] = useState<ITicketQRData>({
     id : "", eventName : "",eventTicketCount : 0, eventTicketPrice: 0,
   })
-
 
 
   const verifyTicket = async (values : ITicketQRData) => {
@@ -48,6 +45,8 @@ const VerifyTicketPage = () => {
 
       if (response && response.success) {
         toast.success("Ticket Verified Successully")
+        setVerifyStatus("success")
+        setTicketData(values)
       }
     } catch (err) {
       console.error('Error in validating', err);
@@ -63,14 +62,10 @@ const VerifyTicketPage = () => {
     <div className='p-8'>
       { loading && <Loader />}
 
-<QRCodeScanner getScannedQRValues={(id) => verifyTicket(id)} />
-      <ChartCard>
+      {verifyStatus === "pending" && <QRCodeScanner getScannedQRValues={(values) => verifyTicket(values)} />}
 
-        <TitleSection title='Scan QR Tickets' />
-
-        {/* {verifyStatus === "pending" && <QRCodeScanner getScannedQRValues={(id) => verifyTicket(id)} />} */}
-
-        {/* <div className=" bg-gray-50 flex items-center justify-center p-4">
+      {verifyStatus === "success" &&
+        <div className=" bg-gray-100 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
             <div className="text-center">
               <div className="flex justify-center mb-4">
@@ -81,12 +76,12 @@ const VerifyTicketPage = () => {
                 )}
               </div>
               <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                {isSuccess ? 'Your Ticket Has Been Verified!' : 'Verification failed'}
+                {isSuccess ? 'Ticket Verified Successfully!' : 'Verification failed'}
               </h1>
               <p className="text-gray-600 mb-6">
                 {isSuccess
                   ? 'Your ticket has been successfully verified. Thank you for choosing us— Enjoy the event!'
-                  : 'Unfortunately, your payment could not be processed. Please try again or contact support.'}
+                  : 'Something went wrong, Please Try again after sometime.'}
               </p>
             </div>
 
@@ -111,20 +106,18 @@ const VerifyTicketPage = () => {
 
             <div className="text-center">
               <button
+                onClick={() => setVerifyStatus("pending")}
                 className={`w-full py-3 px-4 rounded-md font-medium ${isSuccess
                   ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
                   : 'bg-red-600 text-white hover:bg-red-700 cursor-pointer'
                   }`}
               >
-                {isSuccess ? 'Back' : 'Try Again / View Events'}
+                {isSuccess ? 'Complete' : 'Try Again'}
               </button>
             </div>
           </div>
-        </div> */}
-
-
-      </ChartCard>
-        
+        </div>
+      }
     </div>
   )
 }

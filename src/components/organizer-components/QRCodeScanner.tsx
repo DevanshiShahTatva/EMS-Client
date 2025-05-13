@@ -39,7 +39,7 @@ const QRCodeScanner : React.FC<IQRCodeScannerPros> = ( { getScannedQRValues }) =
         { facingMode: "environment" },
         {
           fps: 10,
-          qrbox: 700,
+          qrbox: 250,
         },
         (decodedText, result) => {
           try {
@@ -72,19 +72,18 @@ const QRCodeScanner : React.FC<IQRCodeScannerPros> = ( { getScannedQRValues }) =
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto text-center">
+    <div className="p-4">
       <button
         onClick={scanning ? stopScanner : startScanner}
-        className="text-lg font-semibold mb-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        className="text-lg font-semibold mb-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer"
       >
-        {scanning ? "Stop Scanner" : "Start Scanner"}
+        {scanning ? "Stop" : "Scan QR"}
       </button>
 
-      <div id="qr-scanner" ref={scannerRef} className="mx-auto mb-4" />
+      <div id="qr-scanner" ref={scannerRef} className="mx-auto mb-4 max-w-md" />
 
       {ticket && (
-        <div className="mt-4 bg-green-100 p-3 rounded shadow">
-          <p className="text-green-800 font-semibold">✅ Ticket Scanned</p>
+        <div className="mt-4 bg-green-100 p-3 rounded shadow text-center w-full">
           <p className="text-sm text-center">Please wait while validating</p>
         </div>
       )}

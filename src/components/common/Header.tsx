@@ -138,10 +138,10 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
 
   useEffect(() => {
     const token = getAuthToken()
-    if (!isAdmiRole && !isStaffRole && token !== "") {
+    if (!isAdmiRole && token !== "") {
       fetchUserInfo()
     }
-  }, [isAdmiRole, isStaffRole])
+  }, [isAdmiRole])
 
   // Close when clicking outside
   useEffect(() => {
