@@ -19,8 +19,8 @@ export const ROUTES = {
         CREATE_FAQs : "/admin/faqs/create",
         TERMS_AND_CONDITIONS : "/admin/terms-and-conditions"
     },
-    STAFF: {
-        VERIFY_TICKETS : "/verify-tickets",
+    ORGANIZER: {
+        VERIFY_TICKETS : "/organizer/verify-tickets",
     },
     RESET_PASSWORD: "/reset-password"
 }
@@ -117,6 +117,12 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 5, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
 ]
 
+export const ORGANIZER_SIDEBAR_ITEMS = [
+    { id: 1, title: "Dashboard", route: ROUTES.ADMIN.DASHBOARD, icon: "/assets/DashboardIcon.svg" },
+    { id: 2, title: "Events", route: ROUTES.ADMIN.EVENTS, icon: "/assets/EventsIcon.svg" },
+    { id: 3, title: "Scan Tickets", route: ROUTES.ORGANIZER.VERIFY_TICKETS, icon:  "/assets/scannerIcon.svg"},
+]
+
 export const USER_HEADER_ITEMS = [
     { id: 1, title: "Home", route: ROUTES.HOME },
     { id: 2, title: "Browse Events", route: ROUTES.USER_EVENTS},
@@ -141,6 +147,11 @@ export const LOG_IN_IMAGE_BANNER_LINK = "https://img.freepik.com/free-vector/sig
 export const CONTACT_US_IMAGE_BANNER_LINK = "https://d2r3fkmprkayl1.cloudfront.net/Eventtitans-new-img/EventTitans-inner/inner-page-img15.png"
 export const FAQ_BANNER_LINK = "/assets/faqBanner.png"
 export const TC_BANNER_LINK = "/assets/tc-banner.jpg"
+
+export const USER_ROLES = [ 
+    { label: "User", value: "user" }, 
+    { label: "Organizer", value: "organizer"}
+]
 
 
 export const BREAD_CRUMBS_ITEMS = {
@@ -173,7 +184,7 @@ export const BREAD_CRUMBS_ITEMS = {
 export enum ROLE {
     Admin = "admin",
     User = "user",
-    Staff = "staff"
+    Organizer = "organizer"
 }
 
 export const INITIAL_TICKETS_TYPES = [

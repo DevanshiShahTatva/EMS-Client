@@ -8,12 +8,12 @@ import Image from "next/image";
 import CrossIconPath from "../../../public/assets/CrossIcon.svg"
 
 // constant support
-import { ADMIN_SIDEBAR_ITEMS } from "@/utils/constant";
+import { ADMIN_SIDEBAR_ITEMS, ORGANIZER_SIDEBAR_ITEMS, ROLE } from "@/utils/constant";
 
 // types import
 import { ISidebarPageProps } from "@/utils/types";
 
-const Sidebar: React.FC<ISidebarPageProps> = ({ children, isOpen, onClose, activeLink = "" }) => {
+const Sidebar: React.FC<ISidebarPageProps> = ({ children, isOpen, onClose, activeLink = "", role }) => {
 
   return (
     <>
@@ -49,7 +49,30 @@ const Sidebar: React.FC<ISidebarPageProps> = ({ children, isOpen, onClose, activ
                     className="font-bold"
                   />
                 </div>
-                {ADMIN_SIDEBAR_ITEMS.map((item) => (
+                {role === ROLE.Admin && ADMIN_SIDEBAR_ITEMS.map((item) => (
+                  <Link
+                    key={item.id}
+                    href={item.route}
+                    onClick={onClose}
+                    className={`flex items-center rounded-xl px-4 py-3 my-2 font-bold text-gray-700  hover:bg-blue-100 ${
+                      activeLink.includes(item.route) && "bg-blue-100"
+                    }`}
+                  >
+                    <div className="flex gap-1">
+                      <Image
+                        src={item.icon}
+                        alt={item.title}
+                        height={24}
+                        width={24}
+                        className="mr-2"
+                      />
+
+                      <p>{item.title}</p>
+                    </div>
+                  </Link>
+                ))}
+
+                {role === ROLE.Organizer && ORGANIZER_SIDEBAR_ITEMS.map((item) => (
                   <Link
                     key={item.id}
                     href={item.route}

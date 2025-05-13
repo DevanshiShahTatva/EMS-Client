@@ -3,8 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 
+// types
+import { ITicketQRData } from "@/utils/types";
+
 interface IQRCodeScannerPros {
-  getScannedQRValues : (id : string) => void
+  getScannedQRValues : (values : ITicketQRData) => void
 }
 
 const QRCodeScanner : React.FC<IQRCodeScannerPros> = ( { getScannedQRValues }) => {
@@ -36,14 +39,14 @@ const QRCodeScanner : React.FC<IQRCodeScannerPros> = ( { getScannedQRValues }) =
         { facingMode: "environment" },
         {
           fps: 10,
-          qrbox: 250,
+          qrbox: 700,
         },
         (decodedText, result) => {
           try {
             const parsed = JSON.parse(decodedText);
             setTicket(parsed);
             setScanning(false);
-            getScannedQRValues(parsed?.id)
+            getScannedQRValues(parsed)
             // Stop scanning after a successful read
             html5QrCodeRef.current?.stop().catch(() => {});
           } catch (e) {

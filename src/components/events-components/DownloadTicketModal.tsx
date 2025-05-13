@@ -20,6 +20,9 @@ const DownloadTicketModal: React.FC<ITicketProps> = ({ eventData, isOpen, onClos
 
   const ticketData = {
     id:  eventData._id,
+    eventName: eventData.event.title || "",
+    eventTicketCount: eventData.seats,
+    eventTicketPrice: eventData.totalAmount,
   };
 
   const { toPDF, targetRef } = usePDF({

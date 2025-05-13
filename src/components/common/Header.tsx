@@ -158,7 +158,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
         <div className="mx-auto flex flex-wrap py-3 flex-row items-center justify-between px-2 md:px-10">
           <button
             onClick={() => {
-              isAdmiRole
+              isAdmiRole || isStaffRole
               ? toggleSidebar?.()
               : setIsMobileMenuOpen(!isMobileMenuOpen)
             }}
@@ -270,13 +270,13 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                       />
                       :
                       <button className='h-10 w-10 rounded-full bg-indigo-600 text-white font-bold relative cursor-pointer'>
-                        {isStaffRole ? "S" : isAdmiRole ? "A" : name.charAt(0).toUpperCase()}
+                        {isAdmiRole ? "A" : name.charAt(0).toUpperCase()}
                       </button>
                     }
                     <div className='hidden md:block'>
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{isStaffRole ? "Staff" : isAdmiRole ? "Admin" : name}</div>
-                      <div className="text-xs text-gray-500">{isStaffRole ? "Staff" : isAdmiRole ? "Admin" : "User"}</div>
+                      <div className="text-sm font-medium text-gray-900">{ isAdmiRole ? "Admin" : name}</div>
+                      <div className="text-xs text-gray-500">{isStaffRole ? "Organizer" : isAdmiRole ? "Admin" : "User"}</div>
                     </div>
                     </div>
                     <button className="ml-auto focus:outline-none">
