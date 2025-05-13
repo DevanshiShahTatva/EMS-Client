@@ -19,7 +19,8 @@ export const ROUTES = {
         FAQs : "/admin/faqs",
         CREATE_FAQs : "/admin/faqs/create",
         TERMS_AND_CONDITIONS : "/admin/terms-and-conditions",
-        POINT_CONFIGURATION: "/admin/point-configuration"
+        POINT_CONFIGURATION: "/admin/point-configuration",
+        DROPDOWNS : "/admin/dropdowns",
     },
     RESET_PASSWORD: "/reset-password"
 }
@@ -42,6 +43,8 @@ export const API_ROUTES = {
         TOP_REVENUE_BY_EVENTS: 'dashboard/analytics/top-revenue-events',
         POINT_SETTING: 'point-setting',
         GET_ALL_USERS: 'all_users',
+        // TICKET TYPE
+        TICKET_TYPE: "ticket-types",
     },
     AUTH: {
         LOGIN: `/login`,
@@ -68,7 +71,8 @@ export const API_ROUTES = {
     UPDATE_CONTACT_US_STATUS : (id: string) => `/contact-us/${id}/status`,
     FAQs : "/faq",
     TERMS_AND_CONDITIONS : "/terms-and-conditions",
-    FEEDBACK:(id:string)=>`/events/${id}/feedback`
+    FEEDBACK:(id:string)=>`/events/${id}/feedback`,
+    GET_ALL_TICKET_TYPES: "ticket-types",
 }
 export const LIGHT_COLORS = [
     '#FFB3BA', // Light Red
@@ -115,6 +119,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 4, title: "FAQs", route: ROUTES.ADMIN.FAQs, icon:  "/assets/faqs.svg"},
     { id: 5, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
     { id: 6, title: "Point Configuration", route: ROUTES.ADMIN.POINT_CONFIGURATION, icon:  "/assets/terms.svg"},
+    { id: 6, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
 ]
 
 export const USER_HEADER_ITEMS = [
@@ -170,6 +175,9 @@ export const BREAD_CRUMBS_ITEMS = {
     },
     POINT_CONFIGURATION: {
         MAIN_PAGE: [{ label: "Point Configuration", navigateTo: "" }],
+    },
+    DROPDOWN: {
+        MAIN_PAGE: [{ label: "Dropdowns", navigateTo: "" }],
     }
 }
 

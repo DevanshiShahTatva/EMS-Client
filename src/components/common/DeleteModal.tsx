@@ -1,7 +1,7 @@
 "use client";
 
 import { IDeleteModalProps } from "@/utils/types";
-import { XMarkIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Trash2 } from "lucide-react"
 import React from "react";
 
@@ -11,7 +11,8 @@ const DeleteModal: React.FC<IDeleteModalProps> = ({
   onClose,
   onConfirm,
   description = "Are you sure you want to delete it?",
-  loading = false
+  loading = false,
+  confirmLoading = false
 }) => {
   if (!isOpen || loading) return null;
 
@@ -38,9 +39,10 @@ const DeleteModal: React.FC<IDeleteModalProps> = ({
           </button>
           <button
             onClick={onConfirm}
+            disabled={confirmLoading}
             className="w-full cursor-pointer px-4 py-2 rounded-[8px] font-bold bg-red-600 text-white hover:bg-red-700"
           >
-            Delete
+              {confirmLoading ? "Deleting..." : "Delete"}
           </button>
         </div>
         </div>
