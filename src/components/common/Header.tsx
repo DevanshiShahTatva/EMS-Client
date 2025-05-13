@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import { API_ROUTES, ROUTES, USER_HEADER_ITEMS } from '@/utils/constant';
 
 // Custom helpers
-import { getAuthToken, getUserLogo, setUserLogo, setUserName, getUserName, setUserAddress } from '@/utils/helper';
+import { getAuthToken, getUserLogo, setUserLogo, setUserName, getUserName } from '@/utils/helper';
 
 // Other library
 import Cookie from 'js-cookie'
@@ -22,6 +22,7 @@ import CrossIconPath from "../../../public/assets/CrossIcon.svg"
 
 // Services
 import { apiCall } from '@/utils/services/request';
+import { setUserLatLong } from '@/app/events/event-helper';
 
 
 
@@ -90,12 +91,14 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
         "state": receivedObj.state,
         "city": receivedObj.city,
         "address": receivedObj.address !== null ? receivedObj.address : "",
-        "profileimage": receivedObj.profileimage === null ? "" : receivedObj.profileimage.url
+        "profileimage": receivedObj.profileimage === null ? "" : receivedObj.profileimage.url,
+        "latitude": receivedObj.latitude,
+        "longitude": receivedObj.longitude
       }
 
       setUserLogo(userInfo.profileimage);
       setUserName(userInfo.name);
-      setUserAddress(userInfo.country, userInfo.state, userInfo.city);
+      setUserLatLong(userInfo.latitude, userInfo.longitude);
       setLogo(userInfo.profileimage);
       setName(userInfo.name);
     }

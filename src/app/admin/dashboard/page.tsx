@@ -9,6 +9,8 @@ import RevenueByCategory from '@/components/admin-components/dashboard/RevenueBy
 import MostBookedUsersTable from '@/components/admin-components/dashboard/MostBookedUsersTable';
 import MonthDateHeatmap from '@/components/admin-components/dashboard/MonthDateHeatmap';
 import { DASHBOARD_TITLE } from './helper';
+import MapView from '@/components/admin-components/dashboard/MapView';
+import 'leaflet/dist/leaflet.css';
 
 function DashboardPage() {
 
@@ -59,6 +61,12 @@ function DashboardPage() {
             <div className="flex flex-wrap mt-8">
                 <CardWithTitle title={DASHBOARD_TITLE.HEATMAP}>
                     <MonthDateHeatmap />
+                </CardWithTitle>
+            </div>
+
+            <div className="flex flex-wrap mt-8">
+                <CardWithTitle title={DASHBOARD_TITLE.MAP}>
+                    <MapView />
                 </CardWithTitle>
             </div>
         </section >

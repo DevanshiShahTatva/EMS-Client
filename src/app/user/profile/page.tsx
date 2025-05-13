@@ -172,6 +172,11 @@ const UserProfilePage = () => {
     formData.append("state", values.state);
     formData.append("city", values.city);
     formData.append("zipcode", values.zipcode);
+
+    const cityData = City.getCitiesOfState(values.country, values.state).find(c => c.name === values.city);
+    formData.append("latitude", cityData?.latitude || "");
+    formData.append("longitude", cityData?.longitude || "");
+    
     if (values.profileImage) {
       formData.append("profileimage", values.profileImage);
     }
@@ -323,8 +328,8 @@ const UserProfilePage = () => {
 
                           <FormikTextField
                             name="address"
-                            label="Address"
-                            placeholder="Enter your address"
+                            label="Street Address"
+                            placeholder="Enter your street address"
                           />
 
                           <div className="flex flex-row gap-4">

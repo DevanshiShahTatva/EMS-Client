@@ -1,4 +1,7 @@
 export interface IBooking {
+    bookingStatus: string;
+    cancelledAt: Date;
+    isAttended: boolean;
     _id: string;
     user: IUser;
     event: IEvent;
@@ -80,5 +83,8 @@ export interface IEventsState {
     eventTicketPrice: number,
     eventStatus : string,
     eventImage : string,
-    eventFullResponse : IBooking
+    eventFullResponse : IBooking,
+    bookingStatus: string,
+    cancelledAt: Date,
+    isAttended: boolean;
 }
