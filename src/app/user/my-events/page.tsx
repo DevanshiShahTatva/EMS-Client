@@ -289,6 +289,8 @@ const MyEventsPage = () => {
     return event.eventStatus === activeTab;
   });
 
+  console.log("filteredEvents::", filteredEvents);
+
   return (
     <div>
       {loading && <Loader />}
@@ -348,101 +350,115 @@ const MyEventsPage = () => {
 
           {filteredEvents.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-5">
-              {filteredEvents.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-white border border-gray-100 p-5 rounded-xl w-full shadow-lg"
-                >
-                  <div className="pb-2 border-b border-b-gray-200 flex justify-between items-center">
-                    <p className="text-lg">
-                      Tickets booked on :{" "}
-                      <span className="font-bold">
-                        {formateDate(item.eventBookedOn)}
-                      </span>
-                    </p>
-                    {item.eventFullResponse.bookingStatus === "booked" &&
-                      item.eventStatus !== "past" && (
-                        <TooltipWrapper tooltip="Get QR">
-                          <QrCode
-                            onClick={() =>
-                              openDownloadTicketModal(item.eventFullResponse)
-                            }
-                            className="h-5 w-5 cursor-pointer"
-                          />
-                        </TooltipWrapper>
+              {filteredEvents
+                .sort((a, b) => {
+                  const aDate = new Date(
+                    a.eventFullResponse.event.startDateTime
+                  ) as any;
+                  const bDate = new Date(
+                    b.eventFullResponse.event.startDateTime
+                  ) as any;
+                  return aDate - bDate;
+                })
+                .map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-white border border-gray-100 p-5 rounded-xl w-full shadow-lg"
+                  >
+                    <div className="pb-2 border-b border-b-gray-200 flex justify-between items-center">
+                      <p className="text-lg">
+                        Tickets booked on :{" "}
+                        <span className="font-bold">
+                          {formateDate(item.eventBookedOn)}
+                        </span>
+                      </p>
+                      {item.eventFullResponse.bookingStatus === "booked" &&
+                        item.eventStatus !== "past" && (
+                          <TooltipWrapper tooltip="Get QR">
+                            <QrCode
+                              onClick={() =>
+                                openDownloadTicketModal(item.eventFullResponse)
+                              }
+                              className="h-5 w-5 cursor-pointer"
+                            />
+                          </TooltipWrapper>
+                        )}
+                      {item.eventStatus === "past" && (
+                        <div
+                          className={`px-2 py-1 ${getBgColor(
+                            item.isAttended
+                          )} rounded-lg text-white`}
+                        >
+                          {getEventAttendStatus(item.isAttended)}
+                        </div>
                       )}
-                    {item.eventStatus === "past" && (
-                      <div
-                        className={`px-2 py-1 ${getBgColor(
-                          item.isAttended
-                        )} rounded-lg text-white`}
-                      >
-                        {getEventAttendStatus(item.isAttended)}
-                      </div>
-                    )}
-                  </div>
+                    </div>
 
-                  <div className="flex flex-col md:flex-row gap-5 my-5 pb-6 border-b border-b-gray-200">
-                    <img
-                      alt="not found"
-                      src={item.eventImage}
-                      className="rounded-lg h-60 w-full md:w-[50%] lg:w-[40%] object-cover"
-                    />
-                    <div>
-                      <p className="text-xl font-bold mb-1">{item.eventName}</p>
-                      <p className="text-gray-500 mb-3">{item.eventCatogory}</p>
-
-                      <div className="flex gap-3 items-center my-2">
-                        <CalendarDays className="h-[30px] w-[30px]" />
-                        <p className="text-gray-800 text-md">
-                          {item.eventStartTime}{" "}
-                          <span className="font-bold">to</span>{" "}
-                          {item.eventEndTime}
+                    <div className="flex flex-col md:flex-row gap-5 my-5 pb-6 border-b border-b-gray-200">
+                      <img
+                        alt="not found"
+                        src={item.eventImage}
+                        className="rounded-lg h-60 w-full md:w-[50%] lg:w-[40%] object-cover"
+                      />
+                      <div>
+                        <p className="text-xl font-bold mb-1">
+                          {item.eventName}
                         </p>
-                      </div>
-
-                      <div className="flex gap-3 items-center my-2">
-                        <Clock9 className="h-5 w-5" />
-                        <p className="text-gray-800 text-md">
-                          {item.eventDuration}
+                        <p className="text-gray-500 mb-3">
+                          {item.eventCatogory}
                         </p>
-                      </div>
 
-                      <div className="flex gap-3 items-center my-2">
-                        <MapPin className="h-5 w-5" />
-                        <TooltipWrapper tooltip={item.eventLocation}>
-                          <p className="text-gray-800 text-md truncate  max-w-[275px] sm:max-w-[275px]">
-                            {item.eventLocation}
+                        <div className="flex gap-3 items-center my-2">
+                          <CalendarDays className="h-[30px] w-[30px]" />
+                          <p className="text-gray-800 text-md">
+                            {item.eventStartTime}{" "}
+                            <span className="font-bold">to</span>{" "}
+                            {item.eventEndTime}
                           </p>
-                        </TooltipWrapper>
-                      </div>
+                        </div>
 
-                      <div className="flex gap-3 items-center my-2">
-                        <Ticket className="h-5 w-5" />
-                        <div className="text-gray-800 font-bold">
-                          {item.eventTicketCount}{" "}
-                          {item.eventTicketCount === 1 ? "ticket" : "tickets"}{" "}
-                          of
-                          <span className="text-blue-500">
-                            {" "}
-                            &nbsp;
-                            <TooltipWrapper
-                              tooltip={`Cost per ticket : ${
-                                item.eventTicketPrice / item.eventTicketCount
-                              }`}
-                            >
-                              {item.eventTicketType}
-                            </TooltipWrapper>
-                          </span>{" "}
-                          category
+                        <div className="flex gap-3 items-center my-2">
+                          <Clock9 className="h-5 w-5" />
+                          <p className="text-gray-800 text-md">
+                            {item.eventDuration}
+                          </p>
+                        </div>
+
+                        <div className="flex gap-3 items-center my-2">
+                          <MapPin className="h-5 w-5" />
+                          <TooltipWrapper tooltip={item.eventLocation}>
+                            <p className="text-gray-800 text-md truncate  max-w-[275px] sm:max-w-[275px]">
+                              {item.eventLocation}
+                            </p>
+                          </TooltipWrapper>
+                        </div>
+
+                        <div className="flex gap-3 items-center my-2">
+                          <Ticket className="h-5 w-5" />
+                          <div className="text-gray-800 font-bold">
+                            {item.eventTicketCount}{" "}
+                            {item.eventTicketCount === 1 ? "ticket" : "tickets"}{" "}
+                            of
+                            <span className="text-blue-500">
+                              {" "}
+                              &nbsp;
+                              <TooltipWrapper
+                                tooltip={`Cost per ticket : ${
+                                  item.eventTicketPrice / item.eventTicketCount
+                                }`}
+                              >
+                                {item.eventTicketType}
+                              </TooltipWrapper>
+                            </span>{" "}
+                            category
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  {renderStatusTitle(item)}
-                </div>
-              ))}
+                    {renderStatusTitle(item)}
+                  </div>
+                ))}
             </div>
           ) : (
             <div className="text-center py-12">
