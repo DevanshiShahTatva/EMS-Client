@@ -167,6 +167,9 @@ export const BREAD_CRUMBS_ITEMS = {
     },
     TERMS_AND_CONDITIONS: {
         MAIN_PAGE: [{ label: "Terms & Conditions", navigateTo: "" }],
+    },
+    DROPDOWN: {
+        MAIN_PAGE: [{ label: "Dropdowns", navigateTo: "" }],
     }
 }
 

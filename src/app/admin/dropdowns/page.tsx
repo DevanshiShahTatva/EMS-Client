@@ -1,13 +1,14 @@
 import React from 'react'
-import ChartCard from '@/components/admin-components/dashboard/ChartCard'
-import TicketTypeDropdown from '@/components/admin-components/TicketTypeDropdown'
+import Breadcrumbs from '@/components/common/BreadCrumbs';
+import { BREAD_CRUMBS_ITEMS } from '@/utils/constant';
+import TicketTypeDropdown from '@/components/admin-components/TicketTypeDropdown';
 
 function DropdownPage() {
+
     return (
         <div className='p-8'>
-            <ChartCard>
-                <TicketTypeDropdown />
-            </ChartCard>
+            <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.DROPDOWN.MAIN_PAGE} />
+            <TicketTypeDropdown />
         </div>
     )
 }
