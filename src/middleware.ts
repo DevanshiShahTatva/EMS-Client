@@ -4,10 +4,26 @@ import { ROLE, ROUTES } from "./utils/constant";
 
 const adminDefaultRoute = ROUTES.ADMIN.DASHBOARD;
 const userDefaultRoute = ROUTES.USER_EVENTS;
+const organizerDefaultRoute = ROUTES.ORGANIZER.VERIFY_TICKETS;
 
 const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP];
-const adminRoutes = [ROUTES.ADMIN.DASHBOARD, ROUTES.ADMIN.EVENTS, ROUTES.ADMIN.CONTACT_US, ROUTES.ADMIN.FAQs, ROUTES.ADMIN.CREATE_FAQs, ROUTES.ADMIN.TERMS_AND_CONDITIONS];
-const userRoutes = [ROUTES.USER_MY_EVENTS, ROUTES.USER_MY_CALENDER, ROUTES.USER_PROFILE, ROUTES.USER_EVENTS,ROUTES.USER_EVENTS_DETAILS];
+const organizerRoutes = [ROUTES.ORGANIZER.VERIFY_TICKETS];
+
+const adminRoutes = [
+    ROUTES.ADMIN.DASHBOARD,
+    ROUTES.ADMIN.EVENTS,
+    ROUTES.ADMIN.CONTACT_US,
+    ROUTES.ADMIN.FAQs,
+    ROUTES.ADMIN.CREATE_FAQs,
+    ROUTES.ADMIN.TERMS_AND_CONDITIONS,
+    ROUTES.ADMIN.DROPDOWNS
+];
+const userRoutes = [
+    ROUTES.USER_MY_EVENTS,
+    ROUTES.USER_PROFILE,
+    ROUTES.USER_EVENTS,
+    ROUTES.USER_EVENTS_DETAILS
+];
 
 export async function middleware(request: NextRequest) {
     const currentPath = request.nextUrl.pathname;
@@ -33,11 +49,13 @@ export async function middleware(request: NextRequest) {
         const roleRoutes: Record<string, string[]> = {
             [ROLE.Admin]: adminRoutes,
             [ROLE.User]: userRoutes,
+            [ROLE.Organizer] : organizerRoutes
         };
 
         const defaultRoutes: Record<string, string> = {
             [ROLE.Admin]: adminDefaultRoute,
             [ROLE.User]: userDefaultRoute,
+            [ROLE.Organizer]: organizerDefaultRoute,
         };
 
         const allowedRoutes = roleRoutes[userRole] || [];

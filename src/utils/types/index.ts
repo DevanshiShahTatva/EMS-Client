@@ -4,7 +4,8 @@ export interface IDeleteModalProps {
     onClose: () => void;
     onConfirm: () => void;
     description?: string;
-    loading?: boolean
+    loading?: boolean;
+    confirmLoading?: boolean
 }
 
 export interface IFilterModalProps {
@@ -47,10 +48,18 @@ export interface IApplyFiltersKey {
 
 export interface ISidebarPageProps {
   children : React.ReactNode, 
+  role: string
   isOpen?: boolean; 
   onClose?: () => void,
   activeLink? : string
 }
+
+export type ITicketQRData = {
+  id: string;
+  eventName: string;
+  eventTicketCount: number;
+  eventTicketPrice: number;
+};
 
 export type EventStatus = 'ongoing' | 'ended' | 'upcoming';
 export type EventCategory = 'movies' | 'conference' | 'party' | 'music' | 'dance' | 'all';

@@ -111,7 +111,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
       <div className="flex items-center gap-2">
         <span className="text-sm whitespace-nowrap hidden md:block">
-          Show items on one page:
+          per page:
         </span>
         <Select
           options={PAGINATION_OPTIONS}

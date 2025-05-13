@@ -17,7 +17,11 @@ export const ROUTES = {
         CONTACT_US : "/admin/contact-us",
         FAQs : "/admin/faqs",
         CREATE_FAQs : "/admin/faqs/create",
-        TERMS_AND_CONDITIONS : "/admin/terms-and-conditions"
+        TERMS_AND_CONDITIONS : "/admin/terms-and-conditions",
+        DROPDOWNS : "/admin/dropdowns",
+    },
+    ORGANIZER: {
+        VERIFY_TICKETS : "/organizer/verify-tickets",
     },
     RESET_PASSWORD: "/reset-password"
 }
@@ -39,6 +43,8 @@ export const API_ROUTES = {
         BOOKING_BY_MONTH_DATE: 'dashboard/analytics/bookings-time-trends',
         TOP_REVENUE_BY_EVENTS: 'dashboard/analytics/top-revenue-events',
         GET_ALL_USERS: 'all_users',
+        // TICKET TYPE
+        TICKET_TYPE: "ticket-types",
     },
     AUTH: {
         LOGIN: `/login`,
@@ -60,11 +66,15 @@ export const API_ROUTES = {
         },
         USER_DETAILS : "/user_details"
     },
+    STAFF : {
+        VALIDATE_TICKETS : "/ticket/book/validate",
+    },
     CONNNTACT_US : "/contact-us",
     UPDATE_CONTACT_US_STATUS : (id: string) => `/contact-us/${id}/status`,
     FAQs : "/faq",
     TERMS_AND_CONDITIONS : "/terms-and-conditions",
-    FEEDBACK:(id:string)=>`/events/${id}/feedback`
+    FEEDBACK:(id:string)=>`/events/${id}/feedback`,
+    GET_ALL_TICKET_TYPES: "ticket-types",
 }
 export const LIGHT_COLORS = [
     '#FFB3BA', // Light Red
@@ -110,6 +120,11 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 3, title: "Support Requests", route: ROUTES.ADMIN.CONTACT_US, icon:  "/assets/support.svg"},
     { id: 4, title: "FAQs", route: ROUTES.ADMIN.FAQs, icon:  "/assets/faqs.svg"},
     { id: 5, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
+    { id: 6, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
+]
+
+export const ORGANIZER_SIDEBAR_ITEMS = [
+    { id: 1, title: "Scan Tickets", route: ROUTES.ORGANIZER.VERIFY_TICKETS, icon:  "/assets/scannerIcon.svg"},
 ]
 
 export const USER_HEADER_ITEMS = [
@@ -137,6 +152,11 @@ export const CONTACT_US_IMAGE_BANNER_LINK = "https://d2r3fkmprkayl1.cloudfront.n
 export const FAQ_BANNER_LINK = "/assets/faqBanner.png"
 export const TC_BANNER_LINK = "/assets/tc-banner.jpg"
 
+export const USER_ROLES = [ 
+    { label: "User", value: "user" }, 
+    { label: "Organizer", value: "organizer"}
+]
+
 
 export const BREAD_CRUMBS_ITEMS = {
     EVENT: {
@@ -162,12 +182,16 @@ export const BREAD_CRUMBS_ITEMS = {
     },
     TERMS_AND_CONDITIONS: {
         MAIN_PAGE: [{ label: "Terms & Conditions", navigateTo: "" }],
+    },
+    DROPDOWN: {
+        MAIN_PAGE: [{ label: "Dropdowns", navigateTo: "" }],
     }
 }
 
 export enum ROLE {
     Admin = "admin",
     User = "user",
+    Organizer = "organizer"
 }
 
 export const INITIAL_TICKETS_TYPES = [
