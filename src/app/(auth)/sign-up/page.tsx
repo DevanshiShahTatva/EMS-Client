@@ -8,17 +8,18 @@ import { useRouter } from "next/navigation";
 
 // Other library support
 import { Formik, Form, FormikHelpers } from "formik";
+import FormikSelectField from "@/components/common/FormikSelectField";
 import { toast } from "react-toastify";
 
 // Constant imports
-import { ROUTES, API_ROUTES, SIGN_UP_IMAGE_BANNER_LINK } from "@/utils/constant";
+import { ROUTES, API_ROUTES, SIGN_UP_IMAGE_BANNER_LINK, USER_ROLES } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
 import FormikTextField from "@/components/common/FormikTextField";
 import { InitialSignupValues, SignupFormSchema, TITLE } from "./helper";
 
 // Logo image & Icons
 import Logo from "@/components/common/Logo";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, EyeSlashIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 
 // Type support
 import { ISignupFormValues } from "./types";
@@ -90,6 +91,16 @@ const SignUpPage = () => {
                           <EyeIcon className="h-6 w-6 text-gray-500 mt-1" />
                         )}
                       </button>
+                    }
+                  />
+
+                  <FormikSelectField 
+                    label="Role"
+                    name="role"
+                    options={USER_ROLES}
+                    placeholder="Select role"
+                    endIcon={
+                      <ChevronDownIcon className="h-6 w-6 mt-1" />
                     }
                   />
 

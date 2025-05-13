@@ -4,6 +4,11 @@ export const getAuthToken = () => {
     return token
 }
 
+export const getUserRole = () => {
+    const role = localStorage.getItem("role") || sessionStorage.getItem("role") || ""
+    return role
+}
+
 export const getUserLogo = () => {
     const profileImage = localStorage.getItem("profileImage") || ""
     return profileImage

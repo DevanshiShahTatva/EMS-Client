@@ -19,12 +19,14 @@ export const SignupFormSchema = Yup.object().shape({
         .matches(/[a-z]/, "Password must contain at least one lowercase letter")
         .matches(/\d/, "Password must contain at least one number")
         .matches(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one special character"),
+    role: Yup.string().oneOf(["user", "organizer"]).required("Role is required"),
 });
 
 export const InitialSignupValues = {
     name: "",
     email: "",
-    password: ""
+    password: "",
+    role : "user"
 }
 
 export const TITLE = {
