@@ -49,9 +49,9 @@ const FAQForm : React.FC = () => {
       }
 
   return (
-      <div className="m-10">
-          <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.FAQs.CREATE_PAGE} />
+      <div className="mx-8 my-5">
 
+          <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.FAQs.CREATE_PAGE} />
           <div className="rounded-[12px] bg-white p-6 shadow-lg border-2 border-gray-200">
 
               <div className='mb-5'>

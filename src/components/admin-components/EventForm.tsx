@@ -614,7 +614,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
   },[eventType, getCategories,getTicketTypes])
 
     return (
-      <div className="m-10">
+      <div className="mx-8 my-5">
         {loader && <Loader />}
 
         <Breadcrumbs breadcrumbsItems={
