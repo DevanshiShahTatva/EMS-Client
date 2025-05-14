@@ -144,7 +144,7 @@ const EventsPage: React.FC = () => {
     event.title.toLowerCase().includes(searchQuery.toLowerCase())
   )
   .filter((event) =>
-    activeCategory === 'all' ? true : event.category === activeCategory
+    activeCategory === 'all' ? true : event.category?.name === activeCategory
   )
   .sort((a, b) => {
     if (sortOption === 'date-asc') {

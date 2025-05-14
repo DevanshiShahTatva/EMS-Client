@@ -300,7 +300,7 @@ export const filterEventsByDistance = (events: EventData[], selectedRadius: stri
 
 
 export const filterByCatogories = (events: EventData[], catogoeriesArray : string[]) => {
-  return events.filter(event => catogoeriesArray.includes(event.category))
+  return events.filter(event => catogoeriesArray.includes(event.category?.name))
 }
 
 export const filterByDuration = (
