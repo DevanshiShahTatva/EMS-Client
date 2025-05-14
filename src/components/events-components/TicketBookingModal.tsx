@@ -195,15 +195,18 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
               )
             })}
           </div>
-
-          <div className="mt-6 pt-4">
-            <CoinRedeemCard
-              totalUserCoins={points}
-              totalAmount={totalPrice}
-              conversionRate={conversionRate}
-              setUsedPoints={setUsedPoints}
-            />
-             <div className="flex justify-between items-center mt-6 mb-5">
+          <div className="mt-0 pt-4">
+            {points > 0 && (
+              <div className='mt-6'>
+                <CoinRedeemCard
+                  totalUserCoins={points}
+                  totalAmount={totalPrice}
+                  conversionRate={conversionRate}
+                  setUsedPoints={setUsedPoints}
+                />
+              </div>
+            )}
+            <div className="flex justify-between items-center mt-6 mb-5">
               <span className="text-gray-900 font-medium">Total Amount</span>
               <span className="text-xl font-semibold text-gray-900">
               ₹{totalPrice.toFixed(2)}
