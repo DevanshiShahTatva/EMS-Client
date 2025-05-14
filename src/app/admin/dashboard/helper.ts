@@ -8,7 +8,7 @@ export const DASHBOARD_TITLE = {
     LINE_CHART: "Total Revenue Over Time",
     BAR_CHART1: "Top 5 Events by Revenue",
     BAR_CHART2: "Revenue By Category",
-    TABLE: "Top 10 Users By Booking",
+    TABLE: "Top Users By Booking",
     HEATMAP: "Bookings by Month and Date",
     LIKE_MODAL_TITLE: "All Events by Likes",
     CANCELLLED_EVENT_BY_RATIO: "All Events By Cancellation Rate",
