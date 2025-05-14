@@ -68,7 +68,7 @@ export const API_ROUTES = {
     FAQs : "/faq",
     TERMS_AND_CONDITIONS : "/terms-and-conditions",
     FEEDBACK:(id:string)=>`/events/${id}/feedback`,
-    GET_ALL_TICKET_TYPES: "ticket-types",
+    CATEGORY: "/ticket-categories",
 }
 export const LIGHT_COLORS = [
     '#FFB3BA', // Light Red
