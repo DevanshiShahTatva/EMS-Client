@@ -4,7 +4,10 @@ import { usePathname } from 'next/navigation';
 
 // custom componetns
 import Header from '@/components/common/Header';
-import Sidebar from '@/components/admin-components/Sidebar';
+import Sidebar from '@/components/common/Sidebar';
+
+// Constant
+import { ROLE } from '@/utils/constant';
 
 const Layout : React.FC<{children : ReactNode}> = ( { children }) => {
 
@@ -24,7 +27,7 @@ const Layout : React.FC<{children : ReactNode}> = ( { children }) => {
   return (
     <div>
       <Header toggleSidebar={toggleSidebar} isAdmiRole/>
-      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} activeLink={pathname}>
+      <Sidebar role={ROLE.Admin} isOpen={isSidebarOpen} onClose={closeSidebar} activeLink={pathname}>
          <main className='bg-gray-100 min-h-[calc(100vh-82px)]'>
             {children}
          </main>
