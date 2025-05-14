@@ -1,20 +1,19 @@
 "use client";
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import Image from 'next/image';
+import { toast } from 'react-toastify';
+import { Badge } from "@/components/ui/badge";
 import { apiCall } from '@/utils/services/request';
 import ChartCard from './dashboard/ChartCard';
 import TitleSection from '../common/TitleSection';
 import { TLoadingState, IEventCategoryResp, IEventCategory, TCategoryFormValues } from '@/app/admin/dropdowns/types';
 import { API_ROUTES } from '@/utils/constant';
 import Pagination from '@/components/admin-components/Pagination';
-// import DeleteModal from '@/components/common/DeleteModal';
+import DeleteModal from '@/components/common/DeleteModal';
 import TableSkeleton from '@/components/common/TableSkeloton';
 import { MagnifyingGlassIcon, TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
-// import { toast } from 'react-toastify';
 import { getCategoryPaginatedData, getCategorySearchResults, initialCategoryFormValues } from '@/app/admin/dropdowns/helper';
-import Image from 'next/image';
-import { Badge } from "@/components/ui/badge";
 import EventCategoryFormModal from './EventCategoryFormModal';
-import { toast } from 'react-toastify';
 import { getTruthyString } from '@/utils/helper';
 
 function EventCategoryDropdown() {
@@ -27,7 +26,7 @@ function EventCategoryDropdown() {
     const [allCategoriesData, setAllCategoriesData] = useState<IEventCategory[]>([]);
     const [categoriesData, setCategoriesData] = useState<IEventCategory[]>([]);
 
-    // const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
+    const [deleteItemId, setDeleteItemId] = useState<string>("");
 
     const [searchQuery, setSearchQuery] = useState("");
     const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -140,6 +139,37 @@ function EventCategoryDropdown() {
         }
     }, [fetchCategoriesData, closeAddEditModal]);
 
+    const openDeleteModal = useCallback((id: string) => {
+        setDeleteItemId(id);
+    }, []);
+
+    const closeDeleteModal = useCallback(() => {
+        setDeleteItemId("");
+    }, []);
+
+    const deleteCategoryById = useCallback(async () => {
+        if (!deleteItemId) return;
+        setLoadingState('deleteApi', true)
+
+        try {
+            const response = await apiCall({
+                endPoint: `${API_ROUTES.CATEGORY}/${deleteItemId}`,
+                method: 'DELETE',
+            });
+
+            if (response && response.success) {
+                closeDeleteModal();
+                await fetchCategoriesData();
+                toast.success("Category Deleted Successfully");
+                setCurrentPage(1);
+            }
+        } catch (err) {
+            console.error('Error deleting category', err);
+        } finally {
+            setLoadingState('deleteApi', false)
+        }
+    }, [deleteItemId, fetchCategoriesData, closeDeleteModal]);
+
     const handleSubmit = (reqBodyFormData: TCategoryFormValues) => {
         if (reqBodyFormData?.id) {
             // EDIT
@@ -147,7 +177,6 @@ function EventCategoryDropdown() {
             createCategory(reqBodyFormData)
         }
     }
-
     return (
         <div className='pt-8'>
             <ChartCard>
@@ -223,7 +252,7 @@ function EventCategoryDropdown() {
                                                 <PencilSquareIcon className="h-5 w-5" />
                                             </button>
                                             <button
-                                                // onClick={() => openDeleteModal(item._id)}
+                                                onClick={() => openDeleteModal(item._id)}
                                                 className="text-red-500 hover:text-red-700 cursor-pointer"
                                             >
                                                 <TrashIcon className="h-5 w-5" />
@@ -253,6 +282,14 @@ function EventCategoryDropdown() {
                         onItemsPerPageChange={setItemsPerPage}
                     />
                 )}
+
+                {/* DELETE MODAL */}
+                <DeleteModal
+                    isOpen={!!deleteItemId}
+                    onClose={closeDeleteModal}
+                    onConfirm={deleteCategoryById}
+                    confirmLoading={loading.deleteApi}
+                />
 
                 {modalOpen &&
                     <EventCategoryFormModal

@@ -6,7 +6,7 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { TCategoryFormValues } from "@/app/admin/dropdowns/types";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { getTruthyString } from "@/utils/helper";
 import { categoryValidationSchema } from "@/app/admin/dropdowns/helper";
 
