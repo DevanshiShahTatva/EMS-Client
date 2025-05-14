@@ -3,12 +3,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import {
   HeartIcon,
   CalendarIcon,
-  ClockIcon,
   TagIcon,
-  ArrowBigLeftIcon,
-  ArrowBigRightIcon,
-  ArrowLeftIcon,
-  ArrowRightIcon,
   ChevronLeft,
   ChevronRight,
   MapPin,
@@ -18,12 +13,6 @@ import { API_ROUTES, ROUTES } from '@/utils/constant'
 import { apiCall } from '@/utils/services/request'
 import { useRouter } from 'next/navigation'
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { toast } from 'react-toastify'
 interface FeaturedEventProps {
   event: EventData[]
@@ -53,7 +42,7 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
   }, [event.length])
 
 const handleLikeEvent = async (eventId: string) => {
-  let likeCheck = event.findIndex((ev)=>ev.id==eventId);
+  const likeCheck = event.findIndex((ev)=>ev.id==eventId);
   if(!event[likeCheck].isLiked)
     toast.success("Liked an Event!");
    else 
@@ -146,7 +135,7 @@ const handleLikeEvent = async (eventId: string) => {
                   <div className="mt-auto space-y-2 mb-4">
                     <div className="flex items-center text-gray-600">
                       <Square3Stack3DIcon className="h-5 w-5 mr-3" />
-                      <span>{ev.category}</span>
+                      <span>{ev.category?.name}</span>
                     </div>
                     <div className="space-y-3 mb-6">
                       <div className="flex items-center text-gray-600">
