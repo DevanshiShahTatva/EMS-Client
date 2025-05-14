@@ -31,7 +31,7 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
         <div className="flex items-center space-x-2 mb-2">
           <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
             <img
-              src={
+              src={ feedback.image ? feedback.image :
                 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop'
               }
               alt="User name"
@@ -39,7 +39,7 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
             />
           </div>
           <div className="min-w-0">
-            <h4 className="font-medium text-sm truncate">User name</h4>
+            <h4 className="font-medium text-sm truncate">{feedback.name}</h4>
             <div className="flex items-center">
               {[...Array(5)].map((_, index) => (
                 <StarIcon
