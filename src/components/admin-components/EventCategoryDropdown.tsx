@@ -109,7 +109,6 @@ function EventCategoryDropdown() {
         setLoadingState('createApi', true)
 
         try {
-
             const bodyFormData = new FormData()
             bodyFormData.append("name", form.name);
             bodyFormData.append("color", form.color);
@@ -136,6 +135,43 @@ function EventCategoryDropdown() {
             console.error('Error creating category', err);
         } finally {
             setLoadingState('createApi', false)
+        }
+    }, [fetchCategoriesData, closeAddEditModal]);
+
+    const updateCategory = useCallback(async (form: TCategoryFormValues) => {
+        setLoadingState('updateApi', true)
+
+        try {
+            const bodyFormData = new FormData()
+            bodyFormData.append("name", form.name);
+            bodyFormData.append("color", form.color);
+            bodyFormData.append("bgColor", form.bgColor);
+            if (form?.icon?.file) {
+                bodyFormData.append("icon", form?.icon?.file);
+            }
+
+            if (!form?.icon?.previewUrl && !form?.icon?.file && form?.icon?.imageId) {
+                bodyFormData.append("removeIcon", "true");
+            }
+
+            const response = await apiCall({
+                endPoint: `${API_ROUTES.CATEGORY}/${form.id}`,
+                method: 'PUT',
+                body: bodyFormData,
+                isFormData: true,
+                headers: {}
+            });
+
+            if (response && response.success) {
+                closeAddEditModal();
+                await fetchCategoriesData();
+                toast.success("Category Updated Successfully");
+                setCurrentPage(1);
+            }
+        } catch (err) {
+            console.error('Error updating category', err);
+        } finally {
+            setLoadingState('updateApi', false)
         }
     }, [fetchCategoriesData, closeAddEditModal]);
 
@@ -170,11 +206,11 @@ function EventCategoryDropdown() {
         }
     }, [deleteItemId, fetchCategoriesData, closeDeleteModal]);
 
-    const handleSubmit = (reqBodyFormData: TCategoryFormValues) => {
-        if (reqBodyFormData?.id) {
-            // EDIT
+    const handleSubmit = (formValues: TCategoryFormValues) => {
+        if (formValues?.id) {
+            updateCategory(formValues)
         } else {
-            createCategory(reqBodyFormData)
+            createCategory(formValues)
         }
     }
     return (
@@ -297,7 +333,7 @@ function EventCategoryDropdown() {
                         onClose={closeAddEditModal}
                         onSubmit={handleSubmit}
                         formData={formValues}
-                        submitLoading={loading.createApi}
+                        submitLoading={loading.createApi || loading.updateApi}
                     />}
             </ChartCard>
         </div>
