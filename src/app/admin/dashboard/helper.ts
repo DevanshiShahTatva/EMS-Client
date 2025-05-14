@@ -35,4 +35,11 @@ export const RevenueTableColumns = [
     { label: `Total Revenue (${RupeeSymbol})`, key: 'totalRevenue' },
 ]
 
+export const AttendedEventsTableColumns = [
+    { label: 'Event Title', key: 'eventTitle' },
+    { label: 'Attendees', key: 'totalAttendees' },
+    { label: 'Booking', key: 'totalBookedSeats' },
+    { label: 'Percentage', key: 'attendanceRatio' },
+]
+
 export const getCurrentYear = moment().format('YYYY')

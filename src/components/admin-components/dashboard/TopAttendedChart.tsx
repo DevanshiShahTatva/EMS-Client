@@ -12,21 +12,21 @@ import TableModal from './TableModal';
 
 // Constants
 import { API_ROUTES } from '@/utils/constant';
-import { DASHBOARD_TITLE, RevenueTableColumns } from '@/app/admin/dashboard/helper';
+import { AttendedEventsTableColumns, DASHBOARD_TITLE, RevenueTableColumns } from '@/app/admin/dashboard/helper';
 
 // Services
 import { apiCall } from '@/utils/services/request';
 
 // Types
-import { IMostRevenueByEventsData } from '@/app/admin/dashboard/types';
+import { ITopAttendedEventsData } from '@/app/admin/dashboard/types';
 
 const TopAttendedEvents = () => {
 
     const [loading, setLoading] = useState(true);
-    const [data, setData] = useState<IMostRevenueByEventsData[]>([]);
+    const [data, setData] = useState<ITopAttendedEventsData[]>([]);
     const [open, setOpen] = useState(false);
     const [tableLoading, setTableLoading] = useState(true);
-    const [tableData, setTableData] = useState<IMostRevenueByEventsData[]>([]);
+    const [tableData, setTableData] = useState<ITopAttendedEventsData[]>([]);
 
     const fetchData = useCallback(async () => {
         setLoading(true);
@@ -34,7 +34,7 @@ const TopAttendedEvents = () => {
             const endPoint = `${API_ROUTES.ADMIN.ATTENDED_EVENTS_ANALYTICS}?limit=${5}`;
             const response = await apiCall({ endPoint, method: 'GET', withToken: true });
 
-            const resultData = response?.data as IMostRevenueByEventsData[] || []
+            const resultData = response?.data as ITopAttendedEventsData[] || []
             setData(resultData);
         } catch (error) {
             console.error('Error fetching bar chart data:', error);
@@ -48,7 +48,7 @@ const TopAttendedEvents = () => {
         setTableLoading(true);
         try {
             const response = await apiCall({ endPoint: API_ROUTES.ADMIN.ATTENDED_EVENTS_ANALYTICS, method: 'GET' });
-            const resultData = response?.data as IMostRevenueByEventsData[] || []
+            const resultData = response?.data as ITopAttendedEventsData[] || []
             setTableData(resultData);
         } catch (error) {
             console.error('Error fetching detailed table data:', error);
@@ -68,7 +68,25 @@ const TopAttendedEvents = () => {
     }, [fetchData]);
 
     const chartLabels = useMemo(() => data.map((item) => item.eventTitle), [data]);
-    const chartData = useMemo(() => data.map((item) => item.totalRevenue), [data]);
+    const chartDataSet = useMemo(() => {
+        const attended = data.map(item => item.totalAttendees);
+        const booked = data.map(item => item.totalBookedSeats);
+        const remaining = booked.map((b, i) => Math.max(b - attended[i], 0));
+
+        return [
+            {
+                label: 'Attendees',
+                data: attended,
+                backgroundColor: '#90B4ED',
+            },
+            {
+                label: 'Non-Attendees',
+                data: remaining,
+                backgroundColor: '#FF8C94',
+            },
+        ];
+    }, [data]);
+
 
     return (
         <div>
@@ -89,19 +107,8 @@ const TopAttendedEvents = () => {
                 ) : (
                     <div className="min-h-[250px] h-[400px] md:h-[360px] w-full flex items-center justify-center">
                             <StackedBarChart
-                                labels={['Jan', 'Feb', 'Mar', 'Apr', "May"]}
-                                datasets={[
-                                    {
-                                        label: 'Attended',
-                                        data: [10, 20, 15, 18, 25],
-                                        backgroundColor: '#90B4ED',
-                                    },
-                                    {
-                                        label: 'Booked',
-                                        data: [5, 10, 5, 2, 12], // This would be Booked - Attended
-                                        backgroundColor: '#FF8C94',
-                                    },
-                                ]}
+                                labels={chartLabels}
+                                datasets={chartDataSet}
                             />
                     </div>
                 )}
@@ -109,11 +116,11 @@ const TopAttendedEvents = () => {
             <TableModal
                 open={open}
                 onClose={() => setOpen(false)}
-                columns={RevenueTableColumns}
+                columns={AttendedEventsTableColumns}
                 data={tableData}
                 loading={tableLoading}
                 title={DASHBOARD_TITLE.ATTENDE_EVENTS_MODAL_TITLE}
-                pagesize={10}
+                pagesize={5}
             />
         </div>
     );
