@@ -145,6 +145,7 @@ export type EventDataObjResponse = {
     createdAt: string;
     updatedAt: string;
     isLiked:boolean;
+    numberOfPoint: number;
     likesCount:number;
     __v?: number;
 };

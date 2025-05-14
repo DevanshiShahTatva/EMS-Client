@@ -10,6 +10,7 @@ export const ROUTES = {
     USER_PROFILE: "/user/profile",
     USER_MY_EVENTS  :"/user/my-events",
     USER_MY_CALENDER: "/user/my-calender",
+    USER_REWARDED_HISTORY: "/user/reward-history",
     ADMIN: {
         DASHBOARD: "/admin/dashboard",
         EVENTS: "/admin/event",
@@ -18,6 +19,7 @@ export const ROUTES = {
         FAQs : "/admin/faqs",
         CREATE_FAQs : "/admin/faqs/create",
         TERMS_AND_CONDITIONS : "/admin/terms-and-conditions",
+        POINT_CONFIGURATION: "/admin/point-configuration",
         DROPDOWNS : "/admin/dropdowns",
     },
     ORGANIZER: {
@@ -43,6 +45,7 @@ export const API_ROUTES = {
         TOP_USERS_HIGHEST_BOOKING: 'dashboard/analytics/repeat-customers',
         BOOKING_BY_MONTH_DATE: 'dashboard/analytics/bookings-time-trends',
         TOP_REVENUE_BY_EVENTS: 'dashboard/analytics/top-revenue-events',
+        POINT_SETTING: 'point-setting',
         GET_ALL_USERS: 'all_users',
         // TICKET TYPE
         TICKET_TYPE: "ticket-types",
@@ -67,7 +70,8 @@ export const API_ROUTES = {
             VERIFY_EMAIL : "/verify_setting_email",
             RESET_PASSWORD: "/reset_setting_password"
         },
-        USER_DETAILS : "/user_details"
+        USER_DETAILS : "/user_details",
+        REWARD_HISTORY: "/point-setting/reward-history"
     },
     STAFF : {
         VALIDATE_TICKETS : "/ticket/book/validate",
@@ -123,6 +127,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 3, title: "Support Requests", route: ROUTES.ADMIN.CONTACT_US, icon:  "/assets/support.svg"},
     { id: 4, title: "FAQs", route: ROUTES.ADMIN.FAQs, icon:  "/assets/faqs.svg"},
     { id: 5, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
+    { id: 6, title: "Point Configuration", route: ROUTES.ADMIN.POINT_CONFIGURATION, icon:  "/assets/terms.svg"},
     { id: 6, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
 ]
 
@@ -186,6 +191,9 @@ export const BREAD_CRUMBS_ITEMS = {
     },
     TERMS_AND_CONDITIONS: {
         MAIN_PAGE: [{ label: "Terms & Conditions", navigateTo: "" }],
+    },
+    POINT_CONFIGURATION: {
+        MAIN_PAGE: [{ label: "Point Configuration", navigateTo: "" }],
     },
     DROPDOWN: {
         MAIN_PAGE: [{ label: "Dropdowns", navigateTo: "" }],
