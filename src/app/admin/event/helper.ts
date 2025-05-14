@@ -66,7 +66,7 @@ export const InitialEventFormDataValues: IEventFormData = {
     start_time: null,
     end_time: null,
     duration: "",
-    category: null,
+    category: "",
     ticket_type: [
         {
             type: "",
@@ -162,7 +162,7 @@ export const sortEvents = (
 };
 
 export const filterByCatogories = (events: EventsDataTypes[], catogoeriesArray : string[]) => {
-  return events.filter(event => catogoeriesArray.includes(event.category))
+  return events.filter(event => catogoeriesArray.includes(event.category?.name))
 }
 
 export const filterByDuration = (
@@ -283,7 +283,7 @@ export const filterBySearch = (
     const lowerKeyword = keyword.toString().toLowerCase();
     return events.filter(event =>
       event.title.toLowerCase().includes(lowerKeyword) ||
-      event.category.toLowerCase().includes(lowerKeyword) ||
+      event.category?.name.toLowerCase().includes(lowerKeyword) ||
       event.startTime.toLowerCase().includes(lowerKeyword) ||
       event.location.toLowerCase().includes(lowerKeyword) ||
       event.price.toString().toLowerCase().includes(lowerKeyword) ||

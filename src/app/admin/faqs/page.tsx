@@ -180,13 +180,13 @@ const AdminFaqsPage = () => {
 
 
   return (
-    <div className='p-8'>
+    <div className='px-8 py-5'>
 
-      <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.FAQs.LIST_PAGE} />
+        <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.FAQs.LIST_PAGE} />
 
       <ChartCard>
 
-        <TitleSection title='All FAQs'/>
+      <TitleSection title='All FAQs'/>
 
         {/* Search Bar & Delete All  */}
         <div className="flex justify-between items-center gap-2 space-x-2 w-full my-5">

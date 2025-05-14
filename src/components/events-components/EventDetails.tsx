@@ -5,20 +5,17 @@ import {
   CalendarIcon,
   ClockIcon,
   MapPinIcon,
-  TagIcon,Map
+  TagIcon
 } from 'lucide-react'
 import ImageCarousel from '@/components/events-components/ImageCarousel'
 import EventDescription from '@/components/events-components/EventDescription'
 import SimilarEvents from '@/components/events-components/SimilarEvents'
 import { EventDataObjResponse, EventDetails } from '@/app/events/types'
-import { getTicketPriceRange, onwardPriceRange } from '@/app/admin/event/helper'
+import { onwardPriceRange } from '@/app/admin/event/helper'
 import {
-  areAllTicketsBooked,
   getAllTicketStatus,
-  getEventStatus,
   getSimilarEvents,
   hasEventEnded,
-  isNearbyWithUserLocation,
   openMapDirection,
 } from '@/app/events/event-helper'
 import { apiCall } from '@/utils/services/request'
@@ -84,7 +81,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
             Event not found
           </h2>
           <p className="text-gray-600 mb-4">
-            The event you're looking for doesn't exist or has been removed.
+            {`The event you're looking for doesn't exist or has been removed.`}
           </p>
           <button
             onClick={() => navigateToHome()}
@@ -167,7 +164,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                 </div>
                 <div className="flex items-center text-gray-600">
                   <TagIcon className="h-5 w-5 mr-2 text-gray-400" />
-                  <span>{event.category}</span>
+                  <span>{event.category?.name}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between bg-white pt-4 border-t-2 border-gray-200 w-full">
@@ -181,8 +178,10 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                 </div>
 
                 <BookingButton
+                  points={event.userPoints}
                   tickets={event.tickets}
                   eventTitle={event.title}
+                  conversionRate={event.conversionRate}
                   status={hasEventEnded(event.endDateTime)}
                 />
               </div>

@@ -27,17 +27,17 @@ const Breadcrumbs: React.FC<IBreadcrumbsProps> = ({ breadcrumbsItems }) => {
   };
 
   return (
-    <nav className="flex items-center space-x-1 px-3 py-5 text-xl my-5 shadow-lg border-1 border-gray-100 bg-white rounded-lg" aria-label="Breadcrumb">
+    <nav className="flex items-center space-x-1 text-md mb-2" aria-label="Breadcrumb">
       <div
         onClick={navToAdminDashboard}
-        className="flex items-center space-x-1 p-1  rounded cursor-pointer"
+        className="flex items-center space-x-1 p-1  rounded cursor-pointer text-gray-500 hover:underline font-semibold"
       >
-        <Home size={22} />
+        Home
       </div>
 
       {breadcrumbsItems.map((item, index) => (
         <div key={index} className="flex items-center space-x-1">
-          <ChevronRight size={22} className="text-gray-900 font-bold" />
+          <ChevronRight size={16} className="text-gray-900 font-bold" />
           <div
             onClick={() => handleClick(item.navigateTo)}
             className={`p-1 rounded font-semibold cursor-pointer ${

@@ -4,10 +4,10 @@ import { ROLE, ROUTES } from "./utils/constant";
 
 const adminDefaultRoute = ROUTES.ADMIN.DASHBOARD;
 const userDefaultRoute = ROUTES.USER_EVENTS;
-const organizerDefaultRoute = ROUTES.ORGANIZER.VERIFY_TICKETS;
+const organizerDefaultRoute = ROUTES.ORGANIZER.DASHBOARD;
 
 const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP];
-const organizerRoutes = [ROUTES.ORGANIZER.VERIFY_TICKETS];
+const organizerRoutes = [ROUTES.ORGANIZER.VERIFY_TICKETS, ROUTES.ORGANIZER.DASHBOARD];
 
 const adminRoutes = [
     ROUTES.ADMIN.DASHBOARD,
@@ -16,13 +16,15 @@ const adminRoutes = [
     ROUTES.ADMIN.FAQs,
     ROUTES.ADMIN.CREATE_FAQs,
     ROUTES.ADMIN.TERMS_AND_CONDITIONS,
-    ROUTES.ADMIN.DROPDOWNS
+    ROUTES.ADMIN.DROPDOWNS,
+    ROUTES.ADMIN.POINT_CONFIGURATION
 ];
 const userRoutes = [
     ROUTES.USER_MY_EVENTS,
     ROUTES.USER_PROFILE,
     ROUTES.USER_EVENTS,
-    ROUTES.USER_EVENTS_DETAILS
+    ROUTES.USER_EVENTS_DETAILS,
+    ROUTES.USER_REWARDED_HISTORY
 ];
 
 export async function middleware(request: NextRequest) {

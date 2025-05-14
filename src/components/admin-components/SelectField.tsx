@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from 'react';
 import Select from 'react-select';
 import { ISelectFieldsProps } from '@/app/admin/event/types';
-
+import Image from 'next/image';
 
 
 
@@ -56,15 +57,47 @@ const CustomSelectField: React.FC<ISelectFieldsProps> = ({
         ...base,
         fontSize: "1rem", // Tailwind's text-md
         fontFamily: "'DM Sans', 'DM Sans Fallback', sans-serif",
-        color: "#9ca3af", // Tailwind's gray-400
+        color: "#9ca3af",
+      }),
+      singleValue: (base: any) => ({
+        ...base,
+        display: 'flex',
+        alignItems: 'center',
       }),
     };
 
     const optionsData = options.map((item) => ({
-      label: `${item.icon} ${item.label}`,
-      value: item.value,
-      icon: item.icon,
+      label: item.name,
+      value: item._id,
+      icon: item.icon?.url || "",
+      color: item?.color,
+      bgColor: item?.bgColor,
     }));
+
+  const formatOptionLabel = ({ label, icon }: { label: string; icon?: string, color: string, bgColor: string }) => (
+    <div className="flex items-center gap-2"
+    // style={{ backgroundColor: bgColor, color: color }}
+    >
+      {icon && (
+        <Image
+          src={icon}
+          alt={label}
+          width={16}
+          height={16}
+          className="object-contain"
+        />
+      )}
+      <span>{label}</span>
+    </div>
+  );
+
+  // Format the current value to match the options structure
+  const formattedValue = optionsData.find(option => option.value === value);
+
+  const handleChange = (selectedOption: any) => {
+    onChange(selectedOption ? selectedOption.value : null);
+  };
+
   return (
     <div className="mb-4">
       <label htmlFor={name} className="block text-sm font-bold text-gray-700 mb-1">
@@ -72,12 +105,14 @@ const CustomSelectField: React.FC<ISelectFieldsProps> = ({
       </label>
 
       <Select
-        value={value}
-        onChange={onChange}
+        value={formattedValue}
+        onChange={handleChange}
         options={optionsData}
         placeholder={placeholder}
         styles={customStyles}
+        formatOptionLabel={formatOptionLabel}
         isClearable
+        isDisabled={disabled || readOnly}
       />
       {errorKey && <p className="text-red-500 text-sm mt-1">{errorMsg}</p>}
     </div>

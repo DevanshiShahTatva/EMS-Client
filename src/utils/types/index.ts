@@ -1,3 +1,4 @@
+import { IEventCategory, ITicketType } from "@/app/admin/dropdowns/types";
 import { LucideIcon } from "lucide-react";
 export interface IDeleteModalProps {
     isOpen: boolean;
@@ -97,7 +98,7 @@ export interface EventsDataTypes {
     id: string
     img: string;
     title: string;
-    category: string;
+    category: IEventCategory;
     startTime: string;
     endTime: string;
     duration: string;
@@ -117,7 +118,7 @@ export type EventLocation = {
 
 export type EventTicket = {
     _id: string;
-    type: string;
+    type: ITicketType;
     price: number;
     totalSeats: number,
     totalBookedSeats: number,
@@ -134,7 +135,7 @@ export type EventDataObjResponse = {
     _id: string;
     title: string;
     description: string;
-    category: string;
+    category:  IEventCategory;
     duration: string;
     startDateTime: string; // ISO string
     endDateTime: string;   // ISO string
@@ -144,6 +145,7 @@ export type EventDataObjResponse = {
     createdAt: string;
     updatedAt: string;
     isLiked:boolean;
+    numberOfPoint: number;
     likesCount:number;
     __v?: number;
 };

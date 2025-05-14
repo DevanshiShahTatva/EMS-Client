@@ -11,7 +11,7 @@ export interface LabelValue {
 }
 
 
-import { LucideIcon } from "lucide-react";
+import { IEventCategory, ITicketType } from "../admin/dropdowns/types";
 export type EventStatus = 'ongoing' | 'ended' | 'upcoming';
 export type EventCategory = 'Music' | 'all' | 'Film & Media' | 'Food & Drink' | 'Sports' | 'Art & Culture' | 'Business' | 'Wellness' | 'Education' | 'Gaming';
 export type SortOption = 'none' | 'date-asc' | 'date-desc' | 'title-asc' | 'title-desc';
@@ -22,7 +22,7 @@ export interface EventData {
     image: string;
     date: string;
     priceRange: string;
-    category: EventCategory | string;
+    category: IEventCategory;
     isSoldOut: boolean;
     isLiked: boolean;
     status: EventStatus;
@@ -36,20 +36,6 @@ export interface EventData {
     lat? : number,
     lng?: number
 }
-  export interface Category {
-    id: string;
-    name: string;
-    icon: LucideIcon;
-  }
-  export interface Ticket {
-    type: string;
-    price: number;
-    totalSeats: number;
-    totalBookedSeats: number;
-    description: string;
-    _id: string;
-  }
-
   
 export type EventLocation = {
   address: string;
@@ -59,7 +45,7 @@ export type EventLocation = {
 
 export type EventTicket = {
   _id: string;
-  type: string;
+  type: ITicketType;
   price: number;
   totalSeats: number,
   totalBookedSeats: number,
@@ -71,6 +57,7 @@ export type CheckoutTicket = {
   quantity:number;
   type:string;
   ticketId:string;
+  usedPoints: number;
 }
 
 export type EventImage = {
@@ -83,7 +70,7 @@ export type EventDataObjResponse = {
   _id: string;
   title: string;
   description: string;
-  category: string;
+  category: IEventCategory;
   duration: string;
   startDateTime: string; // ISO string
   endDateTime: string;   // ISO string
@@ -100,7 +87,7 @@ export type EventDataObjResponse = {
 export type EventResponse = EventDataObjResponse[];
 
 export interface Ticket {
-  type: string
+  type: ITicketType
   price: number
   totalSeats: number
   totalBookedSeats: number
@@ -122,7 +109,7 @@ export interface EventDetails {
   startDateTime: string
   endDateTime: string
   duration: string
-  category: string
+  category: IEventCategory
   tickets: Ticket[]
   images: EventImage[]
   createdAt: string
@@ -131,6 +118,8 @@ export interface EventDetails {
   likes: string[]
   isLiked: boolean
   likesCount: number
+  userPoints: number;
+  conversionRate: number;
 }
 
 
@@ -141,27 +130,12 @@ export interface EventData {
   image: string;
   date: string;
   priceRange: string;
-  category: EventCategory | string;
+  category: IEventCategory;
   isSoldOut: boolean;
   isLiked: boolean;
   status: EventStatus;
   isFeatured: boolean;
 }
-  export interface Category {
-    id: string;
-    name: string;
-    icon: LucideIcon;
-  }
-  export interface Ticket {
-    type: string;
-    price: number;
-    totalSeats: number;
-    totalBookedSeats: number;
-    description: string;
-    _id: string;
-  }
-
-  
 export interface EventsDataTypes {
   id: string
   img: string;
@@ -176,36 +150,8 @@ export interface EventsDataTypes {
 }
 
 
-export interface Ticket {
-  type: string
-  price: number
-  totalSeats: number
-  totalBookedSeats: number
-  description: string
-  _id: string
-}
-
 export interface Location {
   address: string
   lat: number
   lng: number
-}
-
-export interface EventDetails {
-  _id: string
-  title: string
-  description: string 
-  location: Location
-  startDateTime: string
-  endDateTime: string
-  duration: string
-  category: string
-  tickets: Ticket[]
-  images: EventImage[]
-  createdAt: string
-  updatedAt: string
-  __v: number
-  likes: string[]
-  isLiked: boolean
-  likesCount: number
 }
