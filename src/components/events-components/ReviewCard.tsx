@@ -11,7 +11,6 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
   const [isExpanded, setIsExpanded] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const maxLength = 100
-  console.log("These are feedbacks",feedback.profileimage);
   const needsExpansion = feedback.description.length > maxLength
   const displayText =
     needsExpansion && !isExpanded
