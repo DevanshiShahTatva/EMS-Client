@@ -9,6 +9,7 @@ import {
 import { EventTicket } from "@/app/events/types";
 import axios from 'axios'
 import { getTicketStatus } from '@/app/events/event-helper';
+import CoinRedeemCard from './CoinReedem';
 
 interface TicketBookingModalProps {
   isOpen: boolean
@@ -197,37 +198,27 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
           </div>
 
           <div className="mt-6 pt-4">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-gray-900 font-medium">Total Amount:</span>
+            <CoinRedeemCard
+              totalUserCoins={points}
+              totalAmount={totalPrice}
+              conversionRate={conversionRate}
+              setUsedPoints={setUsedPoints}
+            />
+             <div className="flex justify-between items-center mt-6 mb-5">
+              <span className="text-gray-900 font-medium">Total Amount</span>
               <span className="text-xl font-semibold text-gray-900">
               ₹{totalPrice.toFixed(2)}
               </span>
             </div>
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-gray-900 font-medium">Your points:</span>
-              <span className="text-xl font-semibold text-gray-900">
-              {points}
-              </span>
-            </div>
-            <div>{conversionRate} points = Rs. 1</div>
-            <div className="flex items-center space-x-3 mt-3 mb-5">
-              <button
-                onClick={() => setUsedPoints(usedPoints - 1)}
-                className="p-1 rounded-full border border-gray-300 hover:bg-gray-100 cursor-pointer"
-                disabled={usedPoints <= 0}
-              >
-                <MinusIcon className="h-4 w-4" />
-              </button>
-              <span className="w-8 text-center">{usedPoints}</span>
-              <button
-                onClick={() => setUsedPoints(usedPoints + 1)}
-                className="p-1 rounded-full border border-gray-300 hover:bg-gray-100 cursor-pointer"
-                disabled={usedPoints >= points}
-              >
-                <PlusIcon className="h-4 w-4" />
-              </button>
-            </div>
-            <form action={handleProceedToPayment} className="max-w-md mx-auto">
+            {usedPoints > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-900 font-medium">Total Discount</span>
+                <span className="text-xl font-semibold text-gray-900">
+                  - ₹{(usedPoints / conversionRate).toFixed(2)}
+                </span>
+              </div>
+            )}
+            <form action={handleProceedToPayment} className="max-w-md mx-auto mt-5">
             <input type="hidden" name="ticket" value={JSON.stringify({type:selectedTicketType?.type,totalPrice:selectedTicketType?.price,quantity:quantity,ticketId:selectedTicketType?._id})}/>
             <input type="hidden" name="eventTitle" value={eventTitle}/>
             <button

@@ -33,4 +33,6 @@ export interface IUserInfo {
     state: string;
     city: string;
     points: number;
+    currentBadge: string;
+    lifetimeEarnedPoints: number;
 }

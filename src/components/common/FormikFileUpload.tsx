@@ -7,6 +7,7 @@ import { API_ROUTES } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import BadgeProgress from "./BadgeProgress";
 
 interface Props {
   name: string;
@@ -15,6 +16,7 @@ interface Props {
   fetchUserInfo: () => void;
   userName: string;
   points: number;
+  currentBadge: string;
 }
 
 const FormikFileUpload: React.FC<Props> = ({
@@ -23,7 +25,8 @@ const FormikFileUpload: React.FC<Props> = ({
   label = "",
   fetchUserInfo,
   userName,
-  points
+  points,
+  currentBadge
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
@@ -121,7 +124,6 @@ const FormikFileUpload: React.FC<Props> = ({
       </div>
 
       <p className="text-2xl font-bold text-center">Photo</p>
-      <p className="mt-4 text-2xl">{points}</p>
       <button
         onClick={handleImageClick}
         className="w-40 bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold mt-10 px-4 py-2 rounded-4xl cursor-pointer whitespace-nowrap flex justify-center items-center gap-2"

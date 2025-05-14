@@ -1,10 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { City, Country, State } from "country-state-city";
 
 // Common constatns & helpers
-import { API_ROUTES } from "@/utils/constant";
 import { setUserLogo } from "@/utils/helper";
 
 // Helper Function imports
@@ -46,8 +46,11 @@ import { apiCall } from "@/utils/services/request";
 import Footer from "@/components/common/Footer";
 import FormikSelectField from "@/components/common/FormikSelectField";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { API_ROUTES, ROUTES } from "@/utils/constant";
 
 const UserProfilePage = () => {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState({
     oldPassword: false,
     newPassword: false,
@@ -212,6 +215,8 @@ const UserProfilePage = () => {
         name: receivedObj.name,
         email: receivedObj.email,
         points: receivedObj.current_points,
+        currentBadge: receivedObj.current_badge,
+        lifetimeEarnedPoints: receivedObj.total_earned_points,
         address: receivedObj.address ? receivedObj.address : "",
         country: receivedObj.country ? receivedObj.country : "",
         state: receivedObj.state ? receivedObj.state : "",
@@ -247,6 +252,19 @@ const UserProfilePage = () => {
     fetchUserInfo();
   }, []);
 
+  const getIconColor = () => {
+    const badgeColors: Record<string, string> = {
+      Bronze: "#cd7f32",
+      Silver: "#c0c0c0",
+      Gold: "#ffd700",
+    };
+    return badgeColors[userInfo.currentBadge];
+  };
+
+  const navToRewardPoint = () => {
+    router.push(ROUTES.USER_REWARDED_HISTORY);
+  }
+
   return (
     <div>
       <div className="mx-auto p-10 flex flex-row gap-10">
@@ -267,6 +285,7 @@ const UserProfilePage = () => {
                       <FormikFileUpload
                         name="profileImage"
                         points={userInfo.points}
+                        currentBadge={userInfo.currentBadge}
                         defaultImage={userInfo.profileimage || undefined}
                         fetchUserInfo={fetchUserInfo}
                         userName={userInfo.name}
@@ -295,6 +314,8 @@ const UserProfilePage = () => {
                       <div className="mx-auto mt-[-100px]">
                         <FormikFileUpload
                           name="profileImage"
+                          points={userInfo.points}
+                          currentBadge={userInfo.currentBadge}
                           defaultImage={userInfo.profileimage || undefined}
                           fetchUserInfo={fetchUserInfo}
                           userName={userInfo.name}
@@ -305,6 +326,49 @@ const UserProfilePage = () => {
                 </Form>
               )}
             </Formik>
+          </div>
+          <div className="rounded-3xl bg-white shadow-lg p-8">
+            {loading ? (
+              <Skeleton className="h-30 w-full aspect-square" />
+            ) : (
+              <>
+                <p className="text-2xl font-bold mb-8">Your total points rewarded</p>
+                <div className="flex items-center justify-between">
+                  <div
+                    onClick={()=>navToRewardPoint()}
+                    className="flex flex-col items-center cursor-pointer"
+                  >
+                    <svg width="74" height="83" viewBox="0 0 74 83" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8 5.51974H66C70.1421 5.51974 73.5 8.87761 73.5 13.0197V61.5637C73.5 64.6142 71.6524 67.3608 68.8269 68.5106L39.8269 80.3114C38.0144 81.0489 35.9856 81.0489 34.1731 80.3114L5.17315 68.5106C2.34763 67.3608 0.5 64.6142 0.5 61.5637V13.0197C0.5 8.87761 3.85786 5.51974 8 5.51974Z" fill="#FBFBFB" stroke="#009BE2" />
+                      <path d="M31.8879 43.5585L9.88132 7.05084L23.5042 6.95096L41.6971 37.6834L31.8879 43.5585Z" fill="#009BE2" stroke="white" />
+                      <path d="M42.1121 43.5585L64.1074 7.06954L50.6505 7.25359L32.3063 37.6855L42.1121 43.5585Z" fill="#009BE2" stroke="white" />
+                      <ellipse cx="35.6266" cy="45.915" rx="14.137" ry="14.0917" fill={getIconColor()} />
+                      <path fillRule="evenodd" clipRule="evenodd" d="M35.8376 50.6541L30.3806 53.6122L31.5167 47.5248L27.008 43.2656L33.1671 42.4615L35.8376 36.8711L38.5082 42.4615L44.6673 43.2656L40.1586 47.5248L41.2947 53.6122L35.8376 50.6541Z" fill="white" />
+                    </svg>
+                  </div>
+                  <div className="flex gap-[90px] mr-[50px]">
+                    <div className="flex flex-col items-center">
+                      <div className="text-blue-600 text-3xl font-bold">{userInfo.points}</div>
+                      <div className="text-sm text-gray-500 mt-1 text-center">
+                        Current Point Balance
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="text-black text-3xl font-bold">{userInfo.lifetimeEarnedPoints}</div>
+                      <div className="text-sm text-gray-500 mt-1 text-center">
+                        Points earned lifetime
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="text-black text-3xl font-bold">{userInfo.lifetimeEarnedPoints - userInfo.points}</div>
+                      <div className="text-sm text-gray-500 mt-1 text-center">
+                        Used points
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
           {/* Personal Info Tab Start */}
           <div className="rounded-3xl bg-white shadow-lg p-8">

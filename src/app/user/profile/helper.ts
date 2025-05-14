@@ -46,7 +46,9 @@ export const INITIAL_USER_INFO = {
   country: "",
   state: "",
   city: "",
-  points: 0
+  points: 0,
+  currentBadge: "",
+  lifetimeEarnedPoints: 0
 };
 
 export const ChangePasswordSchema = Yup.object({

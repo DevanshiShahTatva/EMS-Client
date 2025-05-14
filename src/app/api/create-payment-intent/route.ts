@@ -19,7 +19,7 @@ export async function POST(req: Request) {
             currency: 'inr',
             product_data: {
               name: `${eventTitle} - ${type}`,
-              description: `Used ${usedPoints} points (₹${discount / 100} discount)`,
+              description: usedPoints > 0 ? `Used ${usedPoints} points (₹${discount / 100} discount)`: undefined,
             },
             unit_amount: discountedUnitAmount
           },
