@@ -239,7 +239,7 @@ function EventsListpage() {
   };
 
   return (
-    <div className="p-8">
+    <div className="px-8 py-5">
       <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.EVENT.LIST_PAGE} />
 
       <ChartCard>

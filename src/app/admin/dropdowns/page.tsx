@@ -7,7 +7,7 @@ import EventCategoryDropdown from '@/components/admin-components/EventCategoryDr
 function DropdownPage() {
 
     return (
-        <div className='p-8'>
+        <div className='px-8 py-5'>
             <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.DROPDOWN.MAIN_PAGE} />
             <TicketTypeDropdown />
             <EventCategoryDropdown />

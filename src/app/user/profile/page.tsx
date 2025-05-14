@@ -27,10 +27,13 @@ import { toast } from "react-toastify";
 // Custom components
 import FormikTextField from "@/components/common/FormikTextField";
 import FormikFileUpload from "@/components/common/FormikFileUpload";
+import FormikSelectField from "@/components/common/FormikSelectField";
+import Footer from "@/components/common/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Icons
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 // Types
 import {
@@ -43,9 +46,8 @@ import {
 
 // API Services
 import { apiCall } from "@/utils/services/request";
-import Footer from "@/components/common/Footer";
-import FormikSelectField from "@/components/common/FormikSelectField";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+
+// Constant
 import { API_ROUTES, ROUTES } from "@/utils/constant";
 
 const UserProfilePage = () => {
@@ -401,12 +403,13 @@ const UserProfilePage = () => {
                               name="country"
                               label="Country"
                               placeholder="Select your country"
+                              searchable
                               options={Country.getAllCountries().map((c) => ({
                                 label: c.name,
                                 value: c.isoCode,
                               }))}
                               endIcon={
-                                <ChevronDownIcon className="h-6 w-6 mt-1" />
+                                <ChevronDownIcon className="h-5 w-5 mt-0.5" />
                               }
                             />
 
@@ -414,6 +417,7 @@ const UserProfilePage = () => {
                               name="state"
                               label="State"
                               placeholder="Select your state"
+                              searchable
                               options={State.getStatesOfCountry(
                                 values.country
                               ).map((s) => ({
@@ -422,7 +426,7 @@ const UserProfilePage = () => {
                               }))}
                               disabled={!values.country}
                               endIcon={
-                                <ChevronDownIcon className="h-6 w-6 mt-1" />
+                                <ChevronDownIcon className="h-5 w-5 mt-0.5" />
                               }
                             />
                           </div>
@@ -432,13 +436,14 @@ const UserProfilePage = () => {
                               name="city"
                               label="City"
                               placeholder="Select your city"
+                              searchable
                               options={City.getCitiesOfState(
                                 values.country,
                                 values.state
                               ).map((c) => ({ label: c.name, value: c.name }))}
                               disabled={!values.country || !values.state}
                               endIcon={
-                                <ChevronDownIcon className="h-6 w-6 mt-1" />
+                                <ChevronDownIcon className="h-5 w-5 mt-0.5" />
                               }
                             />
 
