@@ -378,7 +378,7 @@ function EventsListpage() {
                         )}
                       </td>
                       <td className="p-3">{event.title}</td>
-                      <td className="p-3">{event.category}</td>
+                      <td className="p-3">{event.category?.name}</td>
                       <td className="p-3">
                         {moment(event.startTime).format("DD MMM YYYY, h:mm A")}
                       </td>
