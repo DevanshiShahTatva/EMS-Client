@@ -11,6 +11,7 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
   const [isExpanded, setIsExpanded] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const maxLength = 100
+  console.log("These are feedbacks",feedback.profileimage);
   const needsExpansion = feedback.description.length > maxLength
   const displayText =
     needsExpansion && !isExpanded
@@ -31,9 +32,7 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
         <div className="flex items-center space-x-2 mb-2">
           <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
             <img
-              src={ feedback.image ? feedback.image :
-                'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop'
-              }
+              src={feedback.profileimage}
               alt="User name"
               className="w-full h-full object-cover"
             />

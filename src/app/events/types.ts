@@ -183,6 +183,6 @@ export interface FeedbackDetails {
   isEdited: boolean;
   createdAt: string;
   updatedAt: string;
-  image:string;
+  profileimage:string;
   __v: number;
 }
