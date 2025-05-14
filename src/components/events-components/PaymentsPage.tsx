@@ -40,6 +40,7 @@ const PaymentResultPage = () => {
       formData.append('totalAmount', parsedTickets.totalPrice.toString())
       formData.append('paymentId', paymentId)
       formData.append('bookingDate', creationDate)
+      parsedTickets?.usedPoints > 0 && formData.append('usedPoints', parsedTickets.usedPoints.toString())
 
       apiCall({
         endPoint: API_ROUTES.EVENT.PAYMENT,

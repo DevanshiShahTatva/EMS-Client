@@ -100,7 +100,7 @@ const SignUpPage = () => {
                     options={USER_ROLES}
                     placeholder="Select role"
                     endIcon={
-                      <ChevronDownIcon className="h-6 w-6 mt-1" />
+                      <ChevronDownIcon className="h-5 w-5 mt-0.5" />
                     }
                   />
 

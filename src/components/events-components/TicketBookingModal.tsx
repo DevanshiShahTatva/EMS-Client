@@ -9,6 +9,7 @@ import {
 import { EventTicket } from "@/app/events/types";
 import axios from 'axios'
 import { getTicketStatus } from '@/app/events/event-helper';
+import CoinRedeemCard from './CoinReedem';
 
 interface TicketBookingModalProps {
   isOpen: boolean
@@ -20,6 +21,8 @@ interface TicketBookingModalProps {
   }) => void
   eventTitle: string
   tickets: EventTicket[]
+  points: number;
+  conversionRate: number;
 }
 
 const getAvailableSeats = (total: number, booked: number) => total - booked
@@ -27,19 +30,23 @@ const getAvailableSeats = (total: number, booked: number) => total - booked
 const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   isOpen,
   onClose,
-  onSuccess,
   eventTitle,
   tickets,
+  points,
+  conversionRate
 }) => {
   const [selectedType, setSelectedType] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(0)
+  const [usedPoints, setUsedPoints] = useState(0);
 
   if (!isOpen) return null
 
-  const selectedTicketType = tickets.find((t) => t.type === selectedType)
+  const selectedTicketType = tickets.find((t) => t.type?._id === selectedType)
   const totalPrice = selectedTicketType
     ? selectedTicketType.price * quantity
     : 0
+  const discount = Math.round((usedPoints / conversionRate) * 100);
+  const finalAmount = Math.max(totalPrice * 100 - discount, 0);
 
   const handleTicketSelect = (type: string) => {
     if (selectedType === type) {
@@ -64,18 +71,23 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
       setQuantity(newQuantity)
     }
   }
+
   const handleProceedToPayment = async () => {
     try {
       const res = await axios.post('/api/create-payment-intent', {
-        tickets: {
-          type: selectedType,
-          quantity,
-          totalPrice:selectedTicketType?.price,
-          ticketId:selectedTicketType?._id
-        },
         eventTitle,
+        tickets: {
+          quantity,
+          discount,
+          usedPoints,
+          finalAmount,
+          conversionRate,
+          type: selectedType,
+          ticketId: selectedTicketType?._id,
+          totalPrice: selectedTicketType?.price,
+        },
       })
-      sessionStorage.setItem("tickets",JSON.stringify({type:selectedType,quantity:quantity,totalPrice:totalPrice,ticketId:selectedTicketType?._id}));
+      sessionStorage.setItem("tickets",JSON.stringify({type:selectedType,quantity:quantity,totalPrice:totalPrice,ticketId:selectedTicketType?._id, usedPoints }));
       sessionStorage.setItem("eventTitle",eventTitle);
       window.location.href = res.data.url
     } catch (err) {
@@ -84,7 +96,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center p-4 z-999 overflow-y-auto no-scrollbar">
+    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center p-4 z-99999 overflow-y-auto no-scrollbar">
   <div className="bg-white rounded-lg w-full max-w-lg max-h-full overflow-y-auto no-scrollbar">
     <div className="flex justify-between items-center p-6 border-b">
       <h2 className="text-xl font-semibold text-gray-900">Book Tickets</h2>
@@ -106,11 +118,11 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                 ticket.totalSeats,
                 ticket.totalBookedSeats
               )
-              const isSelected = selectedType === ticket.type
+              const isSelected = selectedType === ticket.type?._id
               const { status,color } = getTicketStatus(ticket);
               return (
                 <div
-                  key={ticket.type}
+                  key={ticket.type?._id}
                   className={`p-4 rounded-lg border-2 transition-colors cursor-pointer ${
                     isSelected
                       ? 'border-blue-600 bg-blue-50'
@@ -120,7 +132,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h4 className="font-medium text-gray-900">
-                        {ticket.type}
+                        {ticket.type?.name}
                       </h4>
                       <p className="text-sm text-gray-500">
                         {ticket.description}
@@ -159,7 +171,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                       </div>
                     ) : (
                       <button
-                        onClick={() => handleTicketSelect(ticket.type)}
+                        onClick={() => handleTicketSelect(ticket.type?._id)}
                         className={`px-4 py-2 text-sm font-medium rounded-md ${
                           available === 0
                             ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
@@ -183,15 +195,32 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
               )
             })}
           </div>
-
-          <div className="mt-6 pt-4">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-gray-900 font-medium">Total Amount:</span>
+          <div className="mt-0 pt-4">
+            {points > 0 && (
+              <div className='mt-6'>
+                <CoinRedeemCard
+                  totalUserCoins={points}
+                  totalAmount={totalPrice}
+                  conversionRate={conversionRate}
+                  setUsedPoints={setUsedPoints}
+                />
+              </div>
+            )}
+            <div className="flex justify-between items-center mt-6 mb-5">
+              <span className="text-gray-900 font-medium">Total Amount</span>
               <span className="text-xl font-semibold text-gray-900">
               ₹{totalPrice.toFixed(2)}
               </span>
             </div>
-            <form action={handleProceedToPayment} className="max-w-md mx-auto">
+            {usedPoints > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-900 font-medium">Total Discount</span>
+                <span className="text-xl font-semibold text-gray-900">
+                  - ₹{(usedPoints / conversionRate).toFixed(2)}
+                </span>
+              </div>
+            )}
+            <form action={handleProceedToPayment} className="max-w-md mx-auto mt-5">
             <input type="hidden" name="ticket" value={JSON.stringify({type:selectedTicketType?.type,totalPrice:selectedTicketType?.price,quantity:quantity,ticketId:selectedTicketType?._id})}/>
             <input type="hidden" name="eventTitle" value={eventTitle}/>
             <button
@@ -203,7 +232,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                   : 'bg-gray-300 cursor-not-allowed'
               }`}
             >
-              Proceed to Payment
+              Pay ₹{(finalAmount / 100).toFixed(2)}
             </button>
             </form>
             

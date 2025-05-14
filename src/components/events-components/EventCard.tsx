@@ -84,7 +84,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         <div className="mt-auto space-y-2">
           <div className="flex items-center text-sm text-gray-500">
             <Square3Stack3DIcon className="h-4 w-4 mr-2" />
-            <span className='font-bold'>{event.category}</span>
+            <span className='font-bold'>{event.category?.name}</span>
           </div>
           <div className="flex items-center text-sm text-gray-500">
             <MapPin className="h-4 w-4 mr-2" />

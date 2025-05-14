@@ -1,79 +1,123 @@
 "use client";
-import React from "react";
-import { Field, ErrorMessage, useField } from "formik";
+
+import React, { useState, useRef, useEffect } from "react";
+import { useField, ErrorMessage } from "formik";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
+
+interface Option {
+  label: string;
+  value: string | number;
+}
 
 interface FormikSelectFieldProps {
   name: string;
   label?: string;
-  type?: string;
+  options: Option[];
   placeholder?: string;
-  maxLength?: number;
-  endIcon?: React.ReactNode;
-  readOnly?: boolean;
   disabled?: boolean;
-  rows?: number;
-  options: { label: string; value: string | number }[];
+  endIcon?: React.ReactNode;
+  searchable? : boolean
 }
 
 const FormikSelectField: React.FC<FormikSelectFieldProps> = ({
   name,
-  label = "",
-  type = "text",
-  placeholder = "",
-  maxLength,
-  endIcon,
-  readOnly = false,
-  disabled = false,
-  rows,
+  label,
   options,
+  placeholder = "Select an option",
+  disabled = false,
+  endIcon,
+  searchable = false
 }) => {
-  const [field, meta] = useField(name);
-  const hasError = meta.touched && meta.error;
+  const [field, , helpers] = useField(name);
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const selected = options.find((opt) => opt.value === field.value);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filteredOptions = options.filter((opt) =>
+    String(opt.value).toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="w-full">
+    <div className="w-full" ref={wrapperRef}>
       {label && (
-        <label
-          htmlFor={name}
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
+        <label className="block text-sm font-medium text-gray-700 mb-1">
           {label}
         </label>
       )}
       <div className="relative">
-        <Field
-          {...field}
-          as="select"
-          type={type}
-          name={name}
-          id={name}
-          rows={rows}
-          placeholder={placeholder}
-          className={`w-full px-4 py-2 border disabled:bg-gray-100 disabled:text-gray-500
-                    ${
-                      hasError
-                        ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                        : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    } 
-                      rounded-lg focus:outline-none focus:ring-1 appearance-none
-                    outline-none transition-all no-spinner [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
-          maxLength={maxLength}
-          readOnly={readOnly}
+        <button
+          type="button"
           disabled={disabled}
+          className={`w-full px-4 py-2 border rounded-lg text-left bg-white focus:outline-none ${
+            disabled
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : isOpen
+              ? "border-blue-500"
+              : "border-gray-300 hover:border-blue-400"
+          }`}
+          onClick={() => {
+            if (!disabled) {
+              setIsOpen((prev) => !prev);
+              setSearch(""); // reset search each open
+            }
+          }}
         >
-          <option value="">{placeholder}</option>
-          {options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </Field>
-        {endIcon && (
-          <div className="absolute right-3 top-[55%] transform -translate-y-[60%]">
-            {endIcon}
+          <span className={`${!selected ? "text-gray-400" : ""}`}>
+            {selected ? selected.label : placeholder}
+          </span>
+          {endIcon ? (
+            <div className="absolute right-3 top-2.5 text-gray-500">{endIcon}</div>
+          ) : (
+            <ChevronDownIcon className="w-4 h-4 absolute right-3 top-2.5 text-gray-400" />
+          )}
+        </button>
+
+        {isOpen && (
+          <div className="absolute mt-0.5 z-10 w-full bg-white border border-gray-200 rounded-lg shadow-md max-h-64 overflow-auto">
+            {searchable && <div className="p-2 border-b border-gray-100 sticky top-0 bg-white z-10">
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search"
+                className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            }
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((opt) => (
+                <div
+                  key={opt.value}
+                  className={`px-4 py-2 text-sm cursor-pointer hover:bg-blue-100 ${
+                    field.value === opt.value ? "bg-blue-50 font-medium" : ""
+                  }`}
+                  onClick={() => {
+                    helpers.setValue(opt.value);
+                    setIsOpen(false);
+                  }}
+                >
+                  {opt.label}
+                </div>
+              ))
+            ) : (
+              <div className="px-4 py-2 text-sm text-gray-400">No results</div>
+            )}
           </div>
         )}
       </div>
+
       <ErrorMessage
         name={name}
         component="div"
@@ -84,3 +128,4 @@ const FormikSelectField: React.FC<FormikSelectFieldProps> = ({
 };
 
 export default FormikSelectField;
+
