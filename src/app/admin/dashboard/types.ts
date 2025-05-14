@@ -65,6 +65,14 @@ export interface IMostRevenueByEventsData {
   category?: string;
 }
 
+export interface ITopAttendedEventsData {
+  totalAttendees: number;
+  totalBookedSeats: number;
+  attendanceRatio: string; // e.g., "16.67%"
+  eventId: string;
+  eventTitle: string;
+}
+
 export type TFilterType = "monthly" | "yearly" | "overall";
 
 export interface IFilter {
