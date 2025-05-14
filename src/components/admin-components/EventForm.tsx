@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 
 // Custom Compoents
 import Loader from '@/components/common/Loader';
@@ -28,6 +28,7 @@ import { ALLOWED_FILE_FORMATS, API_ROUTES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYP
 // helper functions
 import { apiCall } from '@/utils/services/request';
 import { InitialEventFormDataErrorTypes, InitialEventFormDataValues } from '../../app/admin/event/helper';
+import { IEventCategory, ITicketType, ITicketTypesResp, IEventCategoryResp } from '@/app/admin/dropdowns/types';
 
 const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
 
@@ -55,6 +56,10 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
   const [existingImages, setExistingImages] = useState<(EventImage | File)[]>([])
   const [loader, setLoder] = useState(false)
 
+  // CATEGORY AND TICKET TYPE
+  const [categoriesOptions, setCategoriesOptions] = useState<IEventCategory[]>([])
+  const [ticketTypeOptions, setTicketTypeOptions] = useState<ITicketType[]>([])
+  
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   const handleRefClick = () => {
@@ -365,7 +370,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
 
   const handleAllValidations = () => {
 
-    let errorFields = {
+    const errorFields = {
       title: false,
       description: false,
       location: false,
@@ -440,13 +445,17 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
     formData.append("location[lat]", formValues.location.lat.toString());
     formData.append("location[lng]", formValues.location.long.toString());
     
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     formValues.start_time && formData.append("startDateTime", formValues.start_time.toString());
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     formValues.end_time && formData.append("endDateTime", formValues.end_time.toString());
     formData.append("duration", formValues.duration);
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     formValues.category && formData.append("category", formValues.category.value);
     
     // Append ticket_type array items
     tickets.forEach((ticket, index) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       isEditMode && ticket._id === ticket.id && formData.append(`tickets[${index}][_id]`, ticket.id);
       formData.append(`tickets[${index}][type]`, ticket.type);
       formData.append(`tickets[${index}][price]`, ticket.price);
@@ -455,15 +464,18 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
     });
     
     // Append files
+   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
    {!isEditMode && images.forEach((file) => {
       formData.append("images", file); // assuming `file` is a File object
     })}
 
 
     // update exisitng iamges (edit mode)
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     {isEditMode && existingImageIdsArray.length > 0 &&  formData.append("existingImages", JSON.stringify(existingImageIdsArray));}
 
     // update new images (edit mode)
+   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
    {isEditMode && updatedImagesArray.forEach((file) => {
     formData.append("images", file); // assuming `file` is a File object
   })}
@@ -508,7 +520,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
        const ticketsArray = receivedObj.tickets.map(item => {
         return {
           id: item._id,
-          type: item.type, 
+          type: item.type?._id, 
           price: item.price.toString(), 
           maxQty: item.totalSeats - item.totalBookedSeats, 
           description: item.description,
@@ -541,7 +553,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
          start_time: new Date(receivedObj.startDateTime),
          end_time: new Date(receivedObj.endDateTime),
          duration: receivedObj.duration,
-         category: catogoryValue(receivedObj.category),
+         category: catogoryValue(receivedObj.category?.name),
          ticket_type: [
            {
              type: "",
@@ -561,12 +573,45 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
        
      }
    };
+  const getCategories = useCallback(async () => {
+    try {
+      const response: IEventCategoryResp = await apiCall({
+        endPoint: API_ROUTES.CATEGORY,
+        method: 'GET',
+      });
+
+      if (response && response.success) {
+        const receivedArray = response.data || [];
+        setCategoriesOptions(receivedArray)
+      }
+    } catch (err) {
+      console.error('Error fetching ticket types', err);
+    }
+  }, []);
+
+  const getTicketTypes = useCallback(async () => {
+    try {
+      const response: ITicketTypesResp = await apiCall({
+        endPoint: API_ROUTES.ADMIN.TICKET_TYPE,
+        method: 'GET',
+      });
+
+      if (response && response.success) {
+        const receivedArray = response.data || [];
+        setTicketTypeOptions(receivedArray)
+      }
+    } catch (err) {
+      console.error('Error fetching ticket types', err);
+    }
+  }, []);
 
   useEffect(() => {
+    getCategories()
+    getTicketTypes()
      if(eventType !== "create") {
         fetchEventWithId()
      }
-  },[eventType])
+  },[eventType, getCategories,getTicketTypes])
 
     return (
       <div className="m-10">
@@ -675,7 +720,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                   value={formValues.category}
                   onChange={(option) => handleCatogoryField(option)}
                   placeholder="Select category"
-                  options={CATOGORIES_ITEMS}
+                  options={categoriesOptions}
                   errorKey={formValuesError.category}
                   errorMsg="Enter valid event category"
                 />
