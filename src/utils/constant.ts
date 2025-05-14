@@ -22,6 +22,7 @@ export const ROUTES = {
     },
     ORGANIZER: {
         VERIFY_TICKETS : "/organizer/verify-tickets",
+        DASHBOARD : "/organizer/dashboard"
     },
     RESET_PASSWORD: "/reset-password"
 }
@@ -45,7 +46,8 @@ export const API_ROUTES = {
         GET_ALL_USERS: 'all_users',
         // TICKET TYPE
         TICKET_TYPE: "ticket-types",
-        CANCELLED_EVENT_RATIO: "dashboard/analytics/cancellation-ratio"
+        CANCELLED_EVENT_RATIO: "dashboard/analytics/cancellation-ratio",
+        ATTENDED_EVENTS_ANALYTICS : "/dashboard/analytics/top-attended-events"
     },
     AUTH: {
         LOGIN: `/login`,
@@ -125,7 +127,8 @@ export const ADMIN_SIDEBAR_ITEMS = [
 ]
 
 export const ORGANIZER_SIDEBAR_ITEMS = [
-    { id: 1, title: "Scan Tickets", route: ROUTES.ORGANIZER.VERIFY_TICKETS, icon:  "/assets/scannerIcon.svg"},
+    { id: 1, title: "Dashboard", route: ROUTES.ORGANIZER.DASHBOARD, icon: "/assets/DashboardIcon.svg" },
+    { id: 2, title: "Scan Tickets", route: ROUTES.ORGANIZER.VERIFY_TICKETS, icon:  "/assets/scannerIcon.svg"},
 ]
 
 export const USER_HEADER_ITEMS = [

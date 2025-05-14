@@ -13,7 +13,9 @@ export const DASHBOARD_TITLE = {
     LIKE_MODAL_TITLE: "All Events by Likes",
     CANCELLLED_EVENT_BY_RATIO: "All Events By Cancellation Rate",
     REVENUE_MODAL_TITLE: "All Events by Revenue",
-    MAP: "All Users on Map"
+    MAP: "All Users on Map",
+    TOP_ATTENDED_EVENTS : "Top Attended Events",
+    ATTENDE_EVENTS_MODAL_TITLE : "All Attended Events"
 }
 
 export const LikeTableColumns = [
@@ -31,6 +33,13 @@ export const CancelledEventTicketTableColumns = [
 export const RevenueTableColumns = [
     { label: 'Event Title', key: 'eventTitle' },
     { label: `Total Revenue (${RupeeSymbol})`, key: 'totalRevenue' },
+]
+
+export const AttendedEventsTableColumns = [
+    { label: 'Event Title', key: 'eventTitle' },
+    { label: 'Attendees', key: 'totalAttendees' },
+    { label: 'Booking', key: 'totalBookedSeats' },
+    { label: 'Percentage', key: 'attendanceRatio' },
 ]
 
 export const getCurrentYear = moment().format('YYYY')

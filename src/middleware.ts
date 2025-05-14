@@ -4,10 +4,10 @@ import { ROLE, ROUTES } from "./utils/constant";
 
 const adminDefaultRoute = ROUTES.ADMIN.DASHBOARD;
 const userDefaultRoute = ROUTES.USER_EVENTS;
-const organizerDefaultRoute = ROUTES.ORGANIZER.VERIFY_TICKETS;
+const organizerDefaultRoute = ROUTES.ORGANIZER.DASHBOARD;
 
 const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP];
-const organizerRoutes = [ROUTES.ORGANIZER.VERIFY_TICKETS];
+const organizerRoutes = [ROUTES.ORGANIZER.VERIFY_TICKETS, ROUTES.ORGANIZER.DASHBOARD];
 
 const adminRoutes = [
     ROUTES.ADMIN.DASHBOARD,
