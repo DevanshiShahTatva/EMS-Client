@@ -26,7 +26,7 @@ export interface IEventFormData {
     start_time: Date | null;
     end_time: Date | null;
     duration: string;
-    category: IOptionType | null;
+    category: string;
     ticket_type: ITicketType[];
     images: File[];
     points: string;
@@ -132,8 +132,8 @@ export interface ISelectFieldsProps {
   name: string;
   errorKey : boolean;
   options :  any[];
-  value: IOptionType | null;
-  onChange: (option: IOptionType | null) => void;
+  value: string;
+  onChange: (option: string) => void;
   placeholder?: string;
   errorMsg?: string;
   required?: boolean;

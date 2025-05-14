@@ -30,7 +30,6 @@ const getAvailableSeats = (total: number, booked: number) => total - booked
 const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   isOpen,
   onClose,
-  onSuccess,
   eventTitle,
   tickets,
   points,
@@ -42,7 +41,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
 
   if (!isOpen) return null
 
-  const selectedTicketType = tickets.find((t) => t.type === selectedType)
+  const selectedTicketType = tickets.find((t) => t.type?._id === selectedType)
   const totalPrice = selectedTicketType
     ? selectedTicketType.price * quantity
     : 0
@@ -119,11 +118,11 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                 ticket.totalSeats,
                 ticket.totalBookedSeats
               )
-              const isSelected = selectedType === ticket.type
+              const isSelected = selectedType === ticket.type?._id
               const { status,color } = getTicketStatus(ticket);
               return (
                 <div
-                  key={ticket.type}
+                  key={ticket.type?._id}
                   className={`p-4 rounded-lg border-2 transition-colors cursor-pointer ${
                     isSelected
                       ? 'border-blue-600 bg-blue-50'
@@ -133,7 +132,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h4 className="font-medium text-gray-900">
-                        {ticket.type}
+                        {ticket.type?.name}
                       </h4>
                       <p className="text-sm text-gray-500">
                         {ticket.description}
@@ -172,7 +171,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                       </div>
                     ) : (
                       <button
-                        onClick={() => handleTicketSelect(ticket.type)}
+                        onClick={() => handleTicketSelect(ticket.type?._id)}
                         className={`px-4 py-2 text-sm font-medium rounded-md ${
                           available === 0
                             ? 'bg-gray-200 text-gray-500 cursor-not-allowed'

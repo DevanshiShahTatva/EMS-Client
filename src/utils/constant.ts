@@ -22,6 +22,10 @@ export const ROUTES = {
         POINT_CONFIGURATION: "/admin/point-configuration",
         DROPDOWNS : "/admin/dropdowns",
     },
+    ORGANIZER: {
+        VERIFY_TICKETS : "/organizer/verify-tickets",
+        DASHBOARD : "/organizer/dashboard"
+    },
     RESET_PASSWORD: "/reset-password"
 }
 
@@ -45,6 +49,8 @@ export const API_ROUTES = {
         GET_ALL_USERS: 'all_users',
         // TICKET TYPE
         TICKET_TYPE: "ticket-types",
+        CANCELLED_EVENT_RATIO: "dashboard/analytics/cancellation-ratio",
+        ATTENDED_EVENTS_ANALYTICS : "/dashboard/analytics/top-attended-events"
     },
     AUTH: {
         LOGIN: `/login`,
@@ -67,12 +73,15 @@ export const API_ROUTES = {
         USER_DETAILS : "/user_details",
         REWARD_HISTORY: "/point-setting/reward-history"
     },
+    STAFF : {
+        VALIDATE_TICKETS : "/ticket/book/validate",
+    },
     CONNNTACT_US : "/contact-us",
     UPDATE_CONTACT_US_STATUS : (id: string) => `/contact-us/${id}/status`,
     FAQs : "/faq",
     TERMS_AND_CONDITIONS : "/terms-and-conditions",
     FEEDBACK:(id:string)=>`/events/${id}/feedback`,
-    GET_ALL_TICKET_TYPES: "ticket-types",
+    CATEGORY: "/ticket-categories",
 }
 export const LIGHT_COLORS = [
     '#FFB3BA', // Light Red
@@ -122,6 +131,11 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 6, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
 ]
 
+export const ORGANIZER_SIDEBAR_ITEMS = [
+    { id: 1, title: "Dashboard", route: ROUTES.ORGANIZER.DASHBOARD, icon: "/assets/DashboardIcon.svg" },
+    { id: 2, title: "Scan Tickets", route: ROUTES.ORGANIZER.VERIFY_TICKETS, icon:  "/assets/scannerIcon.svg"},
+]
+
 export const USER_HEADER_ITEMS = [
     { id: 1, title: "Home", route: ROUTES.HOME },
     { id: 2, title: "Browse Events", route: ROUTES.USER_EVENTS},
@@ -146,6 +160,11 @@ export const LOG_IN_IMAGE_BANNER_LINK = "https://img.freepik.com/free-vector/sig
 export const CONTACT_US_IMAGE_BANNER_LINK = "https://d2r3fkmprkayl1.cloudfront.net/Eventtitans-new-img/EventTitans-inner/inner-page-img15.png"
 export const FAQ_BANNER_LINK = "/assets/faqBanner.png"
 export const TC_BANNER_LINK = "/assets/tc-banner.jpg"
+
+export const USER_ROLES = [ 
+    { label: "User", value: "user" }, 
+    { label: "Organizer", value: "organizer"}
+]
 
 
 export const BREAD_CRUMBS_ITEMS = {
@@ -184,6 +203,7 @@ export const BREAD_CRUMBS_ITEMS = {
 export enum ROLE {
     Admin = "admin",
     User = "user",
+    Organizer = "organizer"
 }
 
 export const INITIAL_TICKETS_TYPES = [

@@ -4,8 +4,10 @@ import { ROLE, ROUTES } from "./utils/constant";
 
 const adminDefaultRoute = ROUTES.ADMIN.DASHBOARD;
 const userDefaultRoute = ROUTES.USER_EVENTS;
+const organizerDefaultRoute = ROUTES.ORGANIZER.DASHBOARD;
 
 const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP];
+const organizerRoutes = [ROUTES.ORGANIZER.VERIFY_TICKETS, ROUTES.ORGANIZER.DASHBOARD];
 
 const adminRoutes = [
     ROUTES.ADMIN.DASHBOARD,
@@ -49,11 +51,13 @@ export async function middleware(request: NextRequest) {
         const roleRoutes: Record<string, string[]> = {
             [ROLE.Admin]: adminRoutes,
             [ROLE.User]: userRoutes,
+            [ROLE.Organizer] : organizerRoutes
         };
 
         const defaultRoutes: Record<string, string> = {
             [ROLE.Admin]: adminDefaultRoute,
             [ROLE.User]: userDefaultRoute,
+            [ROLE.Organizer]: organizerDefaultRoute,
         };
 
         const allowedRoutes = roleRoutes[userRole] || [];

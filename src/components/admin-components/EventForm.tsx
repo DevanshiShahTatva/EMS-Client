@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 
 // Custom Compoents
 import Loader from '@/components/common/Loader';
@@ -14,7 +14,7 @@ import TitleSection from '../common/TitleSection';
 
 // types import
 import { EventDataObjResponse, EventImage } from '@/utils/types';
-import { IEventFormData, IEventFormDataErrorTypes, IEventFormProps, ILocationField, IOptionType, ITicket } from '../../app/admin/event/types';
+import { IEventFormData, IEventFormDataErrorTypes, IEventFormProps, ILocationField, ITicket } from '../../app/admin/event/types';
 
 // library support 
 import moment from 'moment';
@@ -23,11 +23,13 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
 // constant import
-import { ALLOWED_FILE_FORMATS, API_ROUTES, CATOGORIES_ITEMS, INITIAL_TICKETS_TYPES, MAX_FILE_SIZE_MB, ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant';
+import { ALLOWED_FILE_FORMATS, API_ROUTES, MAX_FILE_SIZE_MB, ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant';
 
 // helper functions
 import { apiCall } from '@/utils/services/request';
 import { InitialEventFormDataErrorTypes, InitialEventFormDataValues } from '../../app/admin/event/helper';
+import { IEventCategory, ITicketType, ITicketTypesResp, IEventCategoryResp } from '@/app/admin/dropdowns/types';
+import SelectField from '../common/SelectField';
 
 const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
 
@@ -37,7 +39,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
   const [formValues, setFormValues] = useState<IEventFormData>(InitialEventFormDataValues)
   const [formValuesError, setFormValuesError] = useState<IEventFormDataErrorTypes>(InitialEventFormDataErrorTypes)
 
-  const [tickets, setTickets] = useState<ITicket[]>(INITIAL_TICKETS_TYPES);
+  const [tickets, setTickets] = useState<ITicket[]>([]);
   const [addRowVisible, setAddRowVisible] = useState(false)
 
   const [newTicket, setNewTicket] = useState<Omit<ITicket, "id">>({
@@ -55,6 +57,10 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
   const [existingImages, setExistingImages] = useState<(EventImage | File)[]>([])
   const [loader, setLoder] = useState(false)
 
+  // CATEGORY AND TICKET TYPE
+  const [categoriesOptions, setCategoriesOptions] = useState<IEventCategory[]>([])
+  const [ticketTypeOptions, setTicketTypeOptions] = useState<ITicketType[]>([])
+  
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   const handleRefClick = () => {
@@ -339,8 +345,8 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
     }));
   }
 
-  const handleCatogoryField = (value : IOptionType | null) => {
-    if(value === null) {
+  const handleCatogoryField = (value : string) => {
+    if(!value) {
       setFormValuesError((prevState) => ({
           ...prevState,
           "category": true,
@@ -383,7 +389,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
 
   const handleAllValidations = () => {
 
-    let errorFields = {
+    const errorFields = {
       title: false,
       points: false,
       description: false,
@@ -463,13 +469,17 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
     formData.append("location[lat]", formValues.location.lat.toString());
     formData.append("location[lng]", formValues.location.long.toString());
     
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     formValues.start_time && formData.append("startDateTime", formValues.start_time.toString());
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     formValues.end_time && formData.append("endDateTime", formValues.end_time.toString());
     formData.append("duration", formValues.duration);
-    formValues.category && formData.append("category", formValues.category.value);
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    formValues.category && formData.append("category", formValues.category);
     
     // Append ticket_type array items
     tickets.forEach((ticket, index) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       isEditMode && ticket._id === ticket.id && formData.append(`tickets[${index}][_id]`, ticket.id);
       formData.append(`tickets[${index}][type]`, ticket.type);
       formData.append(`tickets[${index}][price]`, ticket.price);
@@ -478,15 +488,18 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
     });
     
     // Append files
+   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
    {!isEditMode && images.forEach((file) => {
       formData.append("images", file); // assuming `file` is a File object
     })}
 
 
     // update exisitng iamges (edit mode)
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     {isEditMode && existingImageIdsArray.length > 0 &&  formData.append("existingImages", JSON.stringify(existingImageIdsArray));}
 
     // update new images (edit mode)
+   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
    {isEditMode && updatedImagesArray.forEach((file) => {
     formData.append("images", file); // assuming `file` is a File object
   })}
@@ -531,25 +544,13 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
        const ticketsArray = receivedObj.tickets.map(item => {
         return {
           id: item._id,
-          type: item.type, 
+          type: item.type?._id, 
           price: item.price.toString(), 
           maxQty: item.totalSeats - item.totalBookedSeats, 
           description: item.description,
           _id: item._id
         }
        })
-
-       const catogoryValue = (catogoryVal: string) => {
-         let optVal = null;
-         const findItem = CATOGORIES_ITEMS.find(
-           (item) => item.value === catogoryVal
-         );
-         if (findItem) {
-           optVal = findItem;
-         }
-
-         return optVal;
-       };
 
        const existingImagesArr = receivedObj.images.length > 0 ? receivedObj.images : []
        
@@ -565,7 +566,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
          start_time: new Date(receivedObj.startDateTime),
          end_time: new Date(receivedObj.endDateTime),
          duration: receivedObj.duration,
-         category: catogoryValue(receivedObj.category),
+         category: receivedObj.category?._id,
          ticket_type: [
            {
              type: "",
@@ -585,12 +586,57 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
        
      }
    };
+  const getCategories = useCallback(async () => {
+    try {
+      const response: IEventCategoryResp = await apiCall({
+        endPoint: API_ROUTES.CATEGORY,
+        method: 'GET',
+      });
+
+      if (response && response.success) {
+        const receivedArray = response.data || [];
+        setCategoriesOptions(receivedArray)
+      }
+    } catch (err) {
+      console.error('Error fetching ticket types', err);
+    }
+  }, []);
+
+  const getTicketTypes = useCallback(async () => {
+    try {
+      const response: ITicketTypesResp = await apiCall({
+        endPoint: API_ROUTES.ADMIN.TICKET_TYPE,
+        method: 'GET',
+      });
+
+      if (response && response.success) {
+        const receivedArray = response.data || [];
+        setTicketTypeOptions(receivedArray)
+      }
+    } catch (err) {
+      console.error('Error fetching ticket types', err);
+    }
+  }, []);
 
   useEffect(() => {
+    getCategories()
+    getTicketTypes()
      if(eventType !== "create") {
         fetchEventWithId()
      }
-  },[eventType])
+  }, [eventType, getCategories, getTicketTypes])
+
+  const formattedTicketTypes = useMemo(() => {
+    return ticketTypeOptions.map(item => ({
+      value: item._id,
+      label: item.name,
+      disabled: !item.isActive
+    }));
+  }, [ticketTypeOptions]);
+
+  const getTicketType = useCallback((itemId: string) => {
+    return ticketTypeOptions.find(item => item._id == itemId)?.name || "";
+  }, [ticketTypeOptions]); 
 
     return (
       <div className="m-10">
@@ -711,9 +757,9 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                   label="Catogory"
                   name={"category"}
                   value={formValues.category}
-                  onChange={(option) => handleCatogoryField(option)}
+                  onChange={(value) => handleCatogoryField(value)}
                   placeholder="Select category"
-                  options={CATOGORIES_ITEMS}
+                  options={categoriesOptions}
                   errorKey={formValuesError.category}
                   errorMsg="Enter valid event category"
                 />
@@ -749,12 +795,10 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                     ticket.isEditing ? (
                       <tr key={ticket.id}>
                         <td className="border px-2 py-1">
-                          <input
+                          <SelectField
+                            items={formattedTicketTypes}
                             value={editCache[ticket.id]?.type || ""}
-                            onChange={(e) =>
-                              handleUpdate(ticket.id, "type", e.target.value)
-                            }
-                            className="w-full border px-2 py-1 rounded"
+                            onChange={(value) => handleUpdate(ticket.id, "type", value)}
                           />
                         </td>
                         <td className="border px-2 py-1">
@@ -806,7 +850,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                       </tr>
                     ) : (
                       <tr key={ticket.id}>
-                        <td className="border px-4 py-2">{ticket.type}</td>
+                        <td className="border px-4 py-2">{getTicketType(ticket.type)}</td>
                         <td className="border px-4 py-2">{ticket.price}</td>
                         <td className="border px-4 py-2">{ticket.maxQty}</td>
                         <td className="border px-4 py-2">
@@ -834,13 +878,11 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                   {addRowVisible && (
                     <tr className="bg-white">
                       <td className="border px-2 py-1">
-                        <input
-                          className="w-full border rounded px-2 py-1"
-                          placeholder="Type"
+                        <SelectField
+                          placeholder="Select"
+                          items={formattedTicketTypes}
                           value={newTicket.type}
-                          onChange={(e) =>
-                            setNewTicket({ ...newTicket, type: e.target.value })
-                          }
+                          onChange={(value) => setNewTicket({ ...newTicket, type: value })}
                         />
                       </td>
                       <td className="border px-2 py-1">

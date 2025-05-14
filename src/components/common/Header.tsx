@@ -19,6 +19,8 @@ import { TicketsIcon, UserCircle, LogOut, Calendar } from 'lucide-react';
 
 // images path
 import CrossIconPath from "../../../public/assets/CrossIcon.svg"
+
+// Services
 import { apiCall } from '@/utils/services/request';
 import { setUserLatLong } from '@/app/events/event-helper';
 
@@ -28,9 +30,10 @@ interface HeaderPageProps {
   toggleSidebar?: () => void,
   isAdmiRole?: boolean
   activeLink? : string
+  isStaffRole? : boolean
 }
 
-const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, activeLink = "" }) => {
+const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, isStaffRole = false, activeLink = "" }) => {
 
   const [authToken, setAuthToken] = useState("")
   const [logo, setLogo] = useState("")
@@ -163,7 +166,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
         <div className="mx-auto flex flex-wrap py-3 flex-row items-center justify-between px-2 md:px-10">
           <button
             onClick={() => {
-              isAdmiRole
+              isAdmiRole || isStaffRole
               ? toggleSidebar?.()
               : setIsMobileMenuOpen(!isMobileMenuOpen)
             }}
@@ -216,7 +219,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
             </Link>
           </div>
 
-          {!isAdmiRole &&
+          {!isAdmiRole && !isStaffRole &&
             <>
               <nav className="hidden md:flex gap-6 text-gray-700">
                 {USER_HEADER_ITEMS.map(item =>
@@ -280,8 +283,8 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                     }
                     <div className='hidden md:block'>
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{isAdmiRole ? "Admin" : name}</div>
-                      <div className="text-xs text-gray-500">{isAdmiRole ? "Admin" : "User"}</div>
+                      <div className="text-sm font-medium text-gray-900">{ isAdmiRole ? "Admin" : name}</div>
+                      <div className="text-xs text-gray-500">{isStaffRole ? "Organizer" : isAdmiRole ? "Admin" : "User"}</div>
                     </div>
                     </div>
                     <button className="ml-auto focus:outline-none">
@@ -292,7 +295,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                   </div>
                   {isDropdownOpen && (
                     <div className="absolute right-0 mt-2 top-[43px] bg-white rounded-[8px] shadow-lg border border-gray-200 py-2 z-50 w-[195px]">
-                      {!isAdmiRole && (
+                      {!isAdmiRole && !isStaffRole && (
                         <>
                           <button onClick={navToProfile} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
                             <UserCircle className="w-5 h-5 mr-3" />
