@@ -12,6 +12,7 @@ import MostBookedUsersTable from '@/components/admin-components/dashboard/MostBo
 import MonthDateHeatmap from '@/components/admin-components/dashboard/MonthDateHeatmap';
 import MapView from '@/components/admin-components/dashboard/MapView';
 import TopAttendedEvents from '@/components/admin-components/dashboard/TopAttendedChart';
+import TopCancelledTicketsByEvent from "@/components/admin-components/dashboard/TopCancelledTicketsByEvent";
 
 // Helper Functions
 import { DASHBOARD_TITLE } from './helper';
@@ -21,7 +22,6 @@ import 'leaflet/dist/leaflet.css';
 
 
 function DashboardPage() {
-
     return (
         <section className="text-gray-400 p-8">
             <StatCards />
@@ -39,30 +39,33 @@ function DashboardPage() {
                 </div>
             </div>
 
-
-
-            <div className="flex flex-wrap -m-4 mt-4">
-                <div className="lg:w-1/2 w-full p-4 h-full">
-                    <CardWithTitle title={DASHBOARD_TITLE.BAR_CHART2}>
-                        <RevenueByCategory />
-                    </CardWithTitle>
-                </div>
-                <div className="lg:w-1/2 w-full p-4 h-full">
-                    <CardWithTitle title={DASHBOARD_TITLE.DOUGHNUT_CHART}>
-                        <BookingByTicketType />
-                    </CardWithTitle>
-                </div>
-            </div>
-            
             <div className="flex flex-wrap -m-4 mt-4">
                 <div className="lg:w-1/2 w-full p-4 h-full">
                     <div className="bg-white rounded-lg shadow-lg w-full">
-                        cancellation ration
+                        <CardWithTitle title={DASHBOARD_TITLE.BAR_CHART2}>
+                            <RevenueByCategory />
+                        </CardWithTitle>
                     </div>
                 </div>
                 <div className="lg:w-1/2 w-full p-4 h-full">
                     <div className="bg-white rounded-lg shadow-lg w-full">
-                         <TopAttendedEvents />
+                        <CardWithTitle title={DASHBOARD_TITLE.DOUGHNUT_CHART}>
+                            <BookingByTicketType />
+                        </CardWithTitle>
+                    </div>
+
+                </div>
+            </div>
+
+            <div className="flex flex-wrap -m-4 mt-4">
+                <div className="lg:w-1/2 w-full p-4 h-full">
+                    <div className="bg-white rounded-lg shadow-lg w-full">
+                        <TopCancelledTicketsByEvent />
+                    </div>
+                </div>
+                <div className="lg:w-1/2 w-full p-4 h-full">
+                    <div className="bg-white rounded-lg shadow-lg w-full">
+                        <TopAttendedEvents />
                     </div>
                 </div>
             </div>
@@ -90,8 +93,8 @@ function DashboardPage() {
                     <MapView />
                 </CardWithTitle>
             </div>
-        </section >
-    )
+        </section>
+    );
 }
 
-export default DashboardPage
+export default DashboardPage;
