@@ -42,6 +42,7 @@ export const API_ROUTES = {
         GET_ALL_USERS: 'all_users',
         // TICKET TYPE
         TICKET_TYPE: "ticket-types",
+        CANCELLED_EVENT_RATIO: "dashboard/analytics/cancellation-ratio"
     },
     AUTH: {
         LOGIN: `/login`,
