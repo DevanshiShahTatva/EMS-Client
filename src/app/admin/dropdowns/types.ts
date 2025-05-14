@@ -8,10 +8,6 @@ export interface ITicketType {
     __v: number
 }
 
-export interface ITicketTypeItem {
-    name: "",
-    description: "",
-}
 export interface ITicketTypesResp {
     "success": boolean,
     "data": ITicketType[],
