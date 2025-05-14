@@ -65,6 +65,10 @@ export interface IMostRevenueByEventsData {
   category?: string;
 }
 
+export interface ITopAttendedEventsData {
+  
+}
+
 export type TFilterType = "monthly" | "yearly" | "overall";
 
 export interface IFilter {

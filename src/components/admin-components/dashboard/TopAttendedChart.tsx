@@ -3,7 +3,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 // Cistom Components
-import BarChart from '../charts/BarChart';
+// import BarChart from '../charts/BarChart';
+import StackedBarChart from '../charts/StackedBarCharts';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { CardTitle } from './ChartCard';
@@ -30,8 +31,8 @@ const TopAttendedEvents = () => {
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
-            const endPoint = `${API_ROUTES.ADMIN.TOP_REVENUE_BY_EVENTS}?limit=${5}`;
-            const response = await apiCall({ endPoint, method: 'GET' });
+            const endPoint = `${API_ROUTES.ADMIN.ATTENDED_EVENTS_ANALYTICS}?limit=${5}`;
+            const response = await apiCall({ endPoint, method: 'GET', withToken: true });
 
             const resultData = response?.data as IMostRevenueByEventsData[] || []
             setData(resultData);
@@ -46,7 +47,7 @@ const TopAttendedEvents = () => {
     const fetchTableData = useCallback(async () => {
         setTableLoading(true);
         try {
-            const response = await apiCall({ endPoint: API_ROUTES.ADMIN.TOP_REVENUE_BY_EVENTS, method: 'GET' });
+            const response = await apiCall({ endPoint: API_ROUTES.ADMIN.ATTENDED_EVENTS_ANALYTICS, method: 'GET' });
             const resultData = response?.data as IMostRevenueByEventsData[] || []
             setTableData(resultData);
         } catch (error) {
@@ -87,19 +88,33 @@ const TopAttendedEvents = () => {
                     <Skeleton className="h-90 w-full rounded-md" />
                 ) : (
                     <div className="min-h-[250px] h-[400px] md:h-[360px] w-full flex items-center justify-center">
-                        <BarChart data={chartData} labels={chartLabels} />
+                            <StackedBarChart
+                                labels={['Jan', 'Feb', 'Mar', 'Apr', "May"]}
+                                datasets={[
+                                    {
+                                        label: 'Attended',
+                                        data: [10, 20, 15, 18, 25],
+                                        backgroundColor: '#90B4ED',
+                                    },
+                                    {
+                                        label: 'Booked',
+                                        data: [5, 10, 5, 2, 12], // This would be Booked - Attended
+                                        backgroundColor: '#FF8C94',
+                                    },
+                                ]}
+                            />
                     </div>
                 )}
             </div>
-            {/* <TableModal
+            <TableModal
                 open={open}
                 onClose={() => setOpen(false)}
                 columns={RevenueTableColumns}
                 data={tableData}
                 loading={tableLoading}
-                title={DASHBOARD_TITLE.REVENUE_MODAL_TITLE}
+                title={DASHBOARD_TITLE.ATTENDE_EVENTS_MODAL_TITLE}
                 pagesize={10}
-            /> */}
+            />
         </div>
     );
 };

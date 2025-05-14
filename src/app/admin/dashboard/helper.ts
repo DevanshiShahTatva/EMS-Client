@@ -14,7 +14,8 @@ export const DASHBOARD_TITLE = {
     CANCELLLED_EVENT_BY_RATIO: "All Events By Cancellation Rate",
     REVENUE_MODAL_TITLE: "All Events by Revenue",
     MAP: "All Users on Map",
-    TOP_ATTENDED_EVENTS : "Top Attended Events"
+    TOP_ATTENDED_EVENTS : "Top Attended Events",
+    ATTENDE_EVENTS_MODAL_TITLE : "All Attended Events"
 }
 
 export const LikeTableColumns = [
