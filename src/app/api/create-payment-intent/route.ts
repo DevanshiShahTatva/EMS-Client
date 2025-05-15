@@ -11,7 +11,6 @@ export async function POST(req: Request) {
     const { type, totalPrice, quantity, usedPoints = 0, finalAmount, discount = 0 } = tickets;
 
     const discountedUnitAmount = Math.round((finalAmount / quantity));
-    console.log("tuckets",tickets,type)
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
