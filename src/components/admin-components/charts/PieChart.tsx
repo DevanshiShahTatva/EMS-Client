@@ -20,6 +20,7 @@ const PieChart: React.FC<IPieChartProps> = ({
   data,
   showCustomLabels = false,
   customLabelPrefix,
+  isUserBadge = false
 }) => {
   const chartData = useMemo(
     () => ({
@@ -50,10 +51,16 @@ const PieChart: React.FC<IPieChartProps> = ({
             label: (context) => {
               const label = context.label || "";
               const value = context.formattedValue || 0;
-              const likesText = value === "1" ? "Like" : "Likes";
-              return `${label}: ${value} ${
-                customLabelPrefix ? customLabelPrefix : likesText
-              }`;
+              if (isUserBadge) {
+                const value = parseFloat(context.formattedValue) || 0;
+                const data = context.chart.data.datasets[0].data as number[];
+                const total = data.reduce((acc, val) => acc + val, 0);
+                const percentage = total ? ((value / total) * 100).toFixed(2) : "0";
+                return `${label}: ${value} (${percentage}%)`;
+              } else {
+                const likesText = value === "1" ? "Like" : "Likes";
+                return `${label}: ${value} ${customLabelPrefix ? customLabelPrefix : likesText }`;
+              }
             },
           },
         },

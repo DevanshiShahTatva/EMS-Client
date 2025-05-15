@@ -45,6 +45,7 @@ export const API_ROUTES = {
         TOP_USERS_HIGHEST_BOOKING: 'dashboard/analytics/repeat-customers',
         BOOKING_BY_MONTH_DATE: 'dashboard/analytics/bookings-time-trends',
         TOP_REVENUE_BY_EVENTS: 'dashboard/analytics/top-revenue-events',
+        USER_BADGE_INFO: 'dashboard/analytics/user-badge-info',
         POINT_SETTING: 'point-setting',
         GET_ALL_USERS: 'all_users',
         // TICKET TYPE

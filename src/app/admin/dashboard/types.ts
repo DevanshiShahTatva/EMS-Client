@@ -24,6 +24,7 @@ export interface IPieChartProps {
   data: number[];
   showCustomLabels?: boolean;
   customLabelPrefix?: string;
+  isUserBadge?: boolean;
 }
 
 export interface IStatResponse {
@@ -113,3 +114,9 @@ export type TOutputData = {
     y: number;
   }[];
 }[];
+
+
+export interface IBadgeCountData {
+  badge: string;
+  count: number;
+}
