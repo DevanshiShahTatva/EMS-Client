@@ -73,20 +73,22 @@ const QRCodeScanner : React.FC<IQRCodeScannerPros> = ( { getScannedQRValues }) =
 
   return (
     <div className="p-4">
-      <button
-        onClick={scanning ? stopScanner : startScanner}
-        className="text-lg font-semibold mb-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer"
-      >
-        {scanning ? "Stop" : "Scan QR"}
-      </button>
+      {!scanning &&
+        <img
+          src="/assets/QRCode_Image.png"
+          alt="Ticket QR Code"
+          className="w-full h-[315px] object-contain"
+        />
+      }
 
       <div id="qr-scanner" ref={scannerRef} className="mx-auto mb-4 max-w-md" />
 
-      {ticket && (
-        <div className="mt-4 bg-green-100 p-3 rounded shadow text-center w-full">
-          <p className="text-sm text-center">Please wait while validating</p>
-        </div>
-      )}
+      <button
+        onClick={scanning ? stopScanner : startScanner}
+        className="text-lg font-semibold mt-5 mb-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer"
+      >
+        {scanning ? "Stop" : "Scan"}
+      </button>
 
       {error && <p className="text-red-500 mt-2">{error}</p>}
     </div>

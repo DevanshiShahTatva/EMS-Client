@@ -3,6 +3,7 @@ import moment from "moment"
 
 export const DASHBOARD_TITLE = {
     PIE_CHART: "Top 5 Liked Events",
+    USER_BADGE_PIE_CHART: "User badge details",
     CANCELLED_TICKET: "Top 5 Events By Cancellation Rate",
     DOUGHNUT_CHART: "Bookings by Ticket Type",
     LINE_CHART: "Total Revenue Over Time",

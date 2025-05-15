@@ -10,8 +10,8 @@ import {
 import ImageCarousel from '@/components/events-components/ImageCarousel'
 import EventDescription from '@/components/events-components/EventDescription'
 import SimilarEvents from '@/components/events-components/SimilarEvents'
-import { EventDataObjResponse, EventDetails } from '@/app/events/types'
-import { onwardPriceRange } from '@/app/admin/event/helper'
+import { EventDataObjResponse, EventDetails, FeedbackDetails } from '@/app/events/types'
+import { getTicketPriceRange, onwardPriceRange } from '@/app/admin/event/helper'
 import {
   getAllTicketStatus,
   getSimilarEvents,
@@ -24,12 +24,14 @@ import { useRouter } from 'next/navigation'
 import Loader from '../common/Loader'
 import BookingButton from './BookingButton'
 import GoogleMap from './GoogleMap'
+import ReviewsSection from './ReviewSection'
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
   const [event, setEventDetail] = useState<EventDetails>()
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
+  const [feedbackData, setFeedbackData] = useState<FeedbackDetails[]>([])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -64,11 +66,21 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
     }
     setLoading(false)
   }
-
+  const getEventFeedback=async()=>{
+    const result = await apiCall({
+      endPoint:`${API_ROUTES.GET_FEEDBACK(eventId)}`,
+      method:'GET'
+    })
+    if(result?.success && result.data){
+      setFeedbackData(result.data)
+    }
+    setLoading(false)
+  }
   useEffect(() => {
     if (eventId) {
-      fetchEvents()
-      getEventDetail()
+      fetchEvents();
+      getEventDetail();
+      getEventFeedback();
     }
   }, [eventId])
 
@@ -205,6 +217,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
             locationName={event.location.address}
           />
         </div>
+        { feedbackData?.length!==0 && <ReviewsSection feedbacks={feedbackData}/> }
         { similarEvents?.length!==0 && <SimilarEvents events={similarEvents} />}
       </main>
     </div>
