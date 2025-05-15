@@ -11,10 +11,12 @@ import CustomSelectField from './SelectField';
 import CustomDateTimePicker from './DateTimePicker';
 import Breadcrumbs from '../common/BreadCrumbs';
 import TitleSection from '../common/TitleSection';
+import SelectField from '../common/SelectField';
 
 // types import
 import { EventDataObjResponse, EventImage } from '@/utils/types';
 import { IEventFormData, IEventFormDataErrorTypes, IEventFormProps, ILocationField, ITicket } from '../../app/admin/event/types';
+import { IEventCategory, ITicketType, ITicketTypesResp, IEventCategoryResp } from '@/app/admin/dropdowns/types';
 
 // library support 
 import moment from 'moment';
@@ -28,8 +30,6 @@ import { ALLOWED_FILE_FORMATS, API_ROUTES, MAX_FILE_SIZE_MB, ROUTES, BREAD_CRUMB
 // helper functions
 import { apiCall } from '@/utils/services/request';
 import { InitialEventFormDataErrorTypes, InitialEventFormDataValues } from '../../app/admin/event/helper';
-import { IEventCategory, ITicketType, ITicketTypesResp, IEventCategoryResp } from '@/app/admin/dropdowns/types';
-import SelectField from '../common/SelectField';
 
 const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
 
@@ -228,6 +228,24 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
     }));
   }
 
+  const handlePointChange = (value: string) => {
+    if (value.trim() === "") {
+      setFormValuesError((prevState) => ({
+        ...prevState,
+        "points": true,
+      }));
+    } else {
+      setFormValuesError((prevState) => ({
+        ...prevState,
+        "points": false,
+      }));
+    }
+    setFormValues((prevState) => ({
+      ...prevState,
+      "points": value,
+    }));
+  }
+
   const handleDescriptionChange = (value : string) => {
     if(value.length !== 11 ) {
       setFormValuesError((prevState) => ({
@@ -373,6 +391,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
 
     const errorFields = {
       title: false,
+      points: false,
       description: false,
       location: false,
       start_time: false,
@@ -383,10 +402,13 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
       images: false,
     };
 
-    const { title, description, location, start_time, end_time, category, duration} = formValues
+    const { title, description, points, location, start_time, end_time, category, duration} = formValues
      
     if (title.trim() === "") {
       errorFields.title = true;
+    }
+    if (points.trim() === "") {
+      errorFields.points = true;
     }
     if (description.length === 11 || description.length < 20) {
       errorFields.description = true;
@@ -441,6 +463,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
 
     formData.append("title", formValues.title);
     formData.append("description", formValues.description);
+    formData.append("numberOfPoint", formValues.points.toString());
     
     formData.append("location[address]", formValues.location.address);
     formData.append("location[lat]", formValues.location.lat.toString());
@@ -534,6 +557,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
        const modifiedObj = {
          title: receivedObj.title,
          description: receivedObj.description,
+         points: receivedObj.numberOfPoint.toString(),
          location: {
            address: receivedObj.location.address,
            lat: receivedObj.location.lat,
@@ -615,7 +639,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
   }, [ticketTypeOptions]); 
 
     return (
-      <div className="m-10">
+      <div className="mx-8 my-5">
         {loader && <Loader />}
 
         <Breadcrumbs breadcrumbsItems={
@@ -671,6 +695,20 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
             errorMsg="Enter valid event location"
           />
 
+          <CustomTextField
+            label="Points"
+            name={"points"}
+            value={formValues.points}
+            type="text"
+            onChange={(e) => handlePointChange(e.target.value)}
+            placeholder="Enter event points"
+            errorKey={formValuesError.points}
+            errorMsg={
+              formValues.points === ""
+                ? "Enter event points"
+                : ""
+            }
+          />
           <div className="grid grid-cols-1 md:grid-cols-12 md:gap-3 gap-0">
             <div className="md:col-span-6 col-span-12">
               <CustomDateTimePicker

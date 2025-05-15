@@ -29,6 +29,7 @@ export interface IEventFormData {
     category: string;
     ticket_type: ITicketType[];
     images: File[];
+    points: string;
 };
 
 export interface IEventFormDataErrorTypes {
@@ -41,6 +42,7 @@ export interface IEventFormDataErrorTypes {
     category: boolean;
     ticket_type: boolean;
     images: boolean;
+    points: boolean;
 };
 
 export interface ILocationField {

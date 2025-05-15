@@ -57,6 +57,7 @@ export type CheckoutTicket = {
   quantity:number;
   type:string;
   ticketId:string;
+  usedPoints: number;
 }
 
 export type EventImage = {
@@ -79,6 +80,7 @@ export type EventDataObjResponse = {
   createdAt: string;
   updatedAt: string;
   __v?: number;
+  numberOfPoint: number;
   isLiked:boolean;
   likesCount:number;
 };
@@ -117,6 +119,8 @@ export interface EventDetails {
   likes: string[]
   isLiked: boolean
   likesCount: number
+  userPoints: number;
+  conversionRate: number;
 }
 
 

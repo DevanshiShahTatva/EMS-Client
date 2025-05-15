@@ -24,6 +24,7 @@ import { ITicketQRData } from '@/utils/types'
 const VerifyTicketPage = () => {
 
   const [loading, setLoading] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
   const [verifyStatus, setVerifyStatus] = useState<"success" | "pending" | "failed">("pending")
   const [ticketData, setTicketData] = useState<ITicketQRData>({
     id : "", eventName : "",eventTicketCount : 0, eventTicketPrice: 0,
@@ -47,6 +48,7 @@ const VerifyTicketPage = () => {
         toast.success("Ticket Verified Successully")
         setVerifyStatus("success")
         setTicketData(values)
+        setIsSuccess(true)
       }
     } catch (err) {
       console.error('Error in validating', err);
@@ -54,8 +56,6 @@ const VerifyTicketPage = () => {
       setLoading(false);
     }
   }
-
-  const isSuccess = true
 
 
   return (
