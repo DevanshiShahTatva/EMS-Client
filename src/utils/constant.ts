@@ -128,7 +128,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 4, title: "FAQs", route: ROUTES.ADMIN.FAQs, icon:  "/assets/faqs.svg"},
     { id: 5, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
     { id: 6, title: "Point Configuration", route: ROUTES.ADMIN.POINT_CONFIGURATION, icon:  "/assets/terms.svg"},
-    { id: 6, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
+    { id: 7, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
 ]
 
 export const ORGANIZER_SIDEBAR_ITEMS = [
