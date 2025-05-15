@@ -80,6 +80,7 @@ export type EventDataObjResponse = {
   createdAt: string;
   updatedAt: string;
   __v?: number;
+  numberOfPoint: number;
   isLiked:boolean;
   likesCount:number;
 };

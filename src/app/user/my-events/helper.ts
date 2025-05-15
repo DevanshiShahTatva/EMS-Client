@@ -9,7 +9,7 @@ export const getTicketTypes = (array: ITicket[], ticketId: string) => {
   let ticketTypes = "";
   const findTicketType = array.find((ticket) => ticket._id === ticketId);
   if (findTicketType) {
-    ticketTypes = findTicketType.type;
+    ticketTypes = findTicketType.type?.name;
   }
 
   return ticketTypes;

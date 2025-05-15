@@ -11,10 +11,12 @@ import CustomSelectField from './SelectField';
 import CustomDateTimePicker from './DateTimePicker';
 import Breadcrumbs from '../common/BreadCrumbs';
 import TitleSection from '../common/TitleSection';
+import SelectField from '../common/SelectField';
 
 // types import
 import { EventDataObjResponse, EventImage } from '@/utils/types';
 import { IEventFormData, IEventFormDataErrorTypes, IEventFormProps, ILocationField, ITicket } from '../../app/admin/event/types';
+import { IEventCategory, ITicketType, ITicketTypesResp, IEventCategoryResp } from '@/app/admin/dropdowns/types';
 
 // library support 
 import moment from 'moment';
@@ -28,8 +30,6 @@ import { ALLOWED_FILE_FORMATS, API_ROUTES, MAX_FILE_SIZE_MB, ROUTES, BREAD_CRUMB
 // helper functions
 import { apiCall } from '@/utils/services/request';
 import { InitialEventFormDataErrorTypes, InitialEventFormDataValues } from '../../app/admin/event/helper';
-import { IEventCategory, ITicketType, ITicketTypesResp, IEventCategoryResp } from '@/app/admin/dropdowns/types';
-import SelectField from '../common/SelectField';
 
 const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
 
@@ -557,7 +557,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
        const modifiedObj = {
          title: receivedObj.title,
          description: receivedObj.description,
-         points: receivedObj.numberOfPoint,
+         points: receivedObj.numberOfPoint.toString(),
          location: {
            address: receivedObj.location.address,
            lat: receivedObj.location.lat,
@@ -627,12 +627,29 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
   }, [eventType, getCategories, getTicketTypes])
 
   const formattedTicketTypes = useMemo(() => {
-    return ticketTypeOptions.map(item => ({
-      value: item._id,
-      label: item.name,
-      disabled: !item.isActive
-    }));
-  }, [ticketTypeOptions]);
+    const selectedTypeIds = tickets.map(t => t.type);
+    return ticketTypeOptions
+      .filter(item => !selectedTypeIds.includes(item._id))
+      .map(item => ({
+        value: item._id,
+        label: item.name,
+        disabled: !item.isActive
+      }));
+  }, [ticketTypeOptions, tickets]);
+
+  const formattedTicketTypesEdit = useCallback((currentTypeId?: string) => {
+    const otherSelectedTypeIds = tickets
+      .filter(t => t.type !== currentTypeId)
+      .map(t => t.type);
+
+    return ticketTypeOptions
+      .filter(item => !otherSelectedTypeIds.includes(item._id))
+      .map(item => ({
+        value: item._id,
+        label: item.name,
+        disabled: !item.isActive
+      }));
+  }, [tickets, ticketTypeOptions]);
 
   const getTicketType = useCallback((itemId: string) => {
     return ticketTypeOptions.find(item => item._id == itemId)?.name || "";
@@ -796,7 +813,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                       <tr key={ticket.id}>
                         <td className="border px-2 py-1">
                           <SelectField
-                            items={formattedTicketTypes}
+                            items={formattedTicketTypesEdit(editCache[ticket.id]?.type)}
                             value={editCache[ticket.id]?.type || ""}
                             onChange={(value) => handleUpdate(ticket.id, "type", value)}
                           />
