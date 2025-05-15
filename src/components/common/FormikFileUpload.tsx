@@ -7,7 +7,6 @@ import { API_ROUTES } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
 import { toast } from "react-toastify";
 import Image from "next/image";
-import BadgeProgress from "./BadgeProgress";
 
 interface Props {
   name: string;

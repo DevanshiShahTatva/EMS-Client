@@ -76,6 +76,7 @@ export const InitialEventFormDataValues: IEventFormData = {
         },
     ],
     images: [],
+    points: ""
 }
 
 export const InitialEventFormDataErrorTypes = {
@@ -88,6 +89,7 @@ export const InitialEventFormDataErrorTypes = {
     category: false,
     ticket_type: false,
     images: false,
+    points : false
 };
 
 export const sortEvents = (
