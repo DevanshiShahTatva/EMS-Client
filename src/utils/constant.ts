@@ -19,7 +19,7 @@ export const ROUTES = {
         FAQs : "/admin/faqs",
         CREATE_FAQs : "/admin/faqs/create",
         TERMS_AND_CONDITIONS : "/admin/terms-and-conditions",
-        POINT_CONFIGURATION: "/admin/point-configuration",
+        ADMIN_CONFIGURATION: "/admin/admin-configuration",
         DROPDOWNS : "/admin/dropdowns",
     },
     ORGANIZER: {
@@ -127,7 +127,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 3, title: "Support Requests", route: ROUTES.ADMIN.CONTACT_US, icon:  "/assets/support.svg"},
     { id: 4, title: "FAQs", route: ROUTES.ADMIN.FAQs, icon:  "/assets/faqs.svg"},
     { id: 5, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
-    { id: 6, title: "Point Configuration", route: ROUTES.ADMIN.POINT_CONFIGURATION, icon:  "/assets/terms.svg"},
+    { id: 6, title: "Admin Config", route: ROUTES.ADMIN.ADMIN_CONFIGURATION, icon:  "/assets/terms.svg"},
     { id: 7, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
 ]
 
@@ -192,8 +192,8 @@ export const BREAD_CRUMBS_ITEMS = {
     TERMS_AND_CONDITIONS: {
         MAIN_PAGE: [{ label: "Terms & Conditions", navigateTo: "" }],
     },
-    POINT_CONFIGURATION: {
-        MAIN_PAGE: [{ label: "Point Configuration", navigateTo: "" }],
+    ADMIN_CONFIGURATION: {
+        MAIN_PAGE: [{ label: "Admin Configuration", navigateTo: "" }],
     },
     DROPDOWN: {
         MAIN_PAGE: [{ label: "Dropdowns", navigateTo: "" }],
@@ -341,3 +341,5 @@ export const CATEGORIES: Category[] = [
         icon: Medal,
     },
 ]
+
+export const MAX_CHARGE_VALUE = 18;
