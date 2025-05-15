@@ -229,21 +229,23 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
   }
 
   const handlePointChange = (value: string) => {
-    if (value.trim() === "") {
-      setFormValuesError((prevState) => ({
+    if (/^\d*$/.test(value)) {
+      if (value.trim() === "") {
+        setFormValuesError((prevState) => ({
+          ...prevState,
+          "points": true,
+        }));
+      } else {
+        setFormValuesError((prevState) => ({
+          ...prevState,
+          "points": false,
+        }));
+      }
+      setFormValues((prevState) => ({
         ...prevState,
-        "points": true,
-      }));
-    } else {
-      setFormValuesError((prevState) => ({
-        ...prevState,
-        "points": false,
+        "points": value,
       }));
     }
-    setFormValues((prevState) => ({
-      ...prevState,
-      "points": value,
-    }));
   }
 
   const handleDescriptionChange = (value : string) => {
