@@ -156,3 +156,37 @@ export interface Location {
   lat: number
   lng: number
 }
+
+export interface EventDetails {
+  _id: string
+  title: string
+  description: string 
+  location: Location
+  startDateTime: string
+  endDateTime: string
+  duration: string
+  category: IEventCategory
+  tickets: Ticket[]
+  images: EventImage[]
+  createdAt: string
+  updatedAt: string
+  __v: number
+  likes: string[]
+  isLiked: boolean
+  likesCount: number
+}
+
+export interface FeedbackDetails {
+   _id: string;
+  eventId: string;
+  userId: string;
+  name: string;
+  email: string;
+  rating: number;
+  description: string;
+  isEdited: boolean;
+  createdAt: string;
+  updatedAt: string;
+  profileimage:string;
+  __v: number;
+}

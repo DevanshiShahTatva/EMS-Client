@@ -1,3 +1,5 @@
+import { IEventCategory, ITicketType } from "@/app/admin/dropdowns/types";
+
 export interface IBooking {
     bookingStatus: string;
     cancelledAt: Date;
@@ -28,7 +30,7 @@ export interface IEvent {
     startDateTime: string;
     endDateTime: string;
     duration: string;
-    category: string;
+    category: IEventCategory;
     tickets: ITicket[];
     images: IEventImage[];
     likes: number;
@@ -48,7 +50,7 @@ export interface IEventLocation {
 
 export interface ITicket {
     _id: string;
-    type: string;
+    type: ITicketType;
     price: number;
     totalSeats: number;
     totalBookedSeats: number;

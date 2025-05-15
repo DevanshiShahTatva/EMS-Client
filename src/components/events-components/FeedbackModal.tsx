@@ -1,61 +1,74 @@
 'use client'
 
-import React, { ChangeEvent, useState } from 'react'
+import React, { useState } from 'react'
 import { XIcon, StarIcon } from 'lucide-react'
 import { API_ROUTES } from '@/utils/constant'
 import { apiCall } from '@/utils/services/request'
 import { toast } from 'react-toastify'
 import Loader from '../common/Loader'
+import { motion, AnimatePresence } from 'framer-motion'
+
 interface FeedbackModalProps {
-    eventId:string
-    isOpen: boolean
-    onClose: () => void
-  }
-  
-  interface ValidationErrors {
-    rating?: string
-  }
-export const FeedbackModal: React.FC<FeedbackModalProps> = ({ eventId,isOpen, onClose }) => {
-    const [rating, setRating] = useState(0)
-    const [description, setDescription] = useState('')
-    const [errors, setErrors] = useState<ValidationErrors>({})
-    const [loader, setLoder] = useState(false)
+  eventId: string
+  isOpen: boolean
+  onClose: () => void
+}
+
+interface ValidationErrors {
+  rating?: string
+}
+
+const emojiMap = {
+  1: { emoji: '/Enraged_Face.png', text: 'Mad' },
+  2: { emoji: '/Unamused_Face.png', text: 'Sad' },
+  3: { emoji: '/Smiling_Face.png', text: 'Okay Event' },
+  4: { emoji: '/Grinning_Face.png', text: 'Good' },
+  5: { emoji: '/Great_Face.png', text: 'Great' },
+}
+
+
+export const FeedbackModal: React.FC<FeedbackModalProps> = ({ eventId, isOpen, onClose }) => {
+  const [rating, setRating] = useState(0)
+  const [description, setDescription] = useState('')
+  const [errors, setErrors] = useState<ValidationErrors>({})
+  const [loader, setLoder] = useState(false)
+
   const validate = () => {
     const newErrors: any = {}
-    if (eventId==="") newErrors.eventId = 'Event Id is required'
+    if (eventId === '') newErrors.eventId = 'Event Id is required'
     if (rating < 1) newErrors.rating = 'Rating is required'
     return newErrors
   }
 
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     const validationErrors = validate()
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
       return
     }
     const feedbackData = {
-      "rating":rating.toString(),
-      "description":description
+      rating: rating.toString(),
+      description: description,
     }
+    setLoder(true)
     const result = await apiCall({
-      endPoint : API_ROUTES.FEEDBACK(eventId),
-      method: "POST",
+      endPoint: API_ROUTES.FEEDBACK(eventId),
+      method: 'POST',
       body: feedbackData,
       isFormData: true,
-      headers:{}
+      headers: {},
     })
-    if(result.success) {
-      setLoder(false)
-      toast.success("Feedback submitted successfully.")
-      setRating(0);
-      setDescription("");
+    setLoder(false)
+    if (result.success) {
+      toast.success('Feedback submitted successfully.')
+      setRating(0)
+      setDescription('')
       onClose()
     } else {
-      toast.error("Some error has occured. Please try again later.")
-      setLoder(false);
-      setRating(0);
-      setDescription("");
-      onClose();
+      toast.error('Some error has occurred. Please try again later.')
+      setRating(0)
+      setDescription('')
+      onClose()
     }
   }
 
@@ -72,8 +85,25 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ eventId,isOpen, on
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Submit Feedback</h2>
 
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Rating</label>
+          <div className="flex flex-col items-center">
+            {rating > 0 && (
+              <AnimatePresence>
+                <motion.div
+                  key={rating}
+                   initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                      duration: 0.4,
+                      scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+                  }}
+                  className="text-2xl"
+                >
+                  <img src={emojiMap[rating as keyof typeof emojiMap].emoji} alt="emotiicon" width={72} height={72}/>
+                </motion.div>
+              </AnimatePresence>
+            )}
+
+            <label className="block text-sm font-medium text-gray-700 mt-2">Rating</label>
             <div className="flex space-x-1 mt-1">
               {[1, 2, 3, 4, 5].map(star => (
                 <StarIcon
@@ -83,6 +113,17 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ eventId,isOpen, on
                 />
               ))}
             </div>
+            {rating > 0 && (
+              <motion.p
+                key={`text-${rating}`}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: 'spring', bounce: 0.5 }}
+                className="text-base mt-2 text-gray-700"
+              >
+                {emojiMap[rating as keyof typeof emojiMap].text}
+              </motion.p>
+            )}
             {errors.rating && <p className="text-sm text-red-500 mt-1">{errors.rating}</p>}
           </div>
 
