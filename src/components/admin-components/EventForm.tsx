@@ -11,10 +11,12 @@ import CustomSelectField from './SelectField';
 import CustomDateTimePicker from './DateTimePicker';
 import Breadcrumbs from '../common/BreadCrumbs';
 import TitleSection from '../common/TitleSection';
+import SelectField from '../common/SelectField';
 
 // types import
 import { EventDataObjResponse, EventImage } from '@/utils/types';
 import { IEventFormData, IEventFormDataErrorTypes, IEventFormProps, ILocationField, ITicket } from '../../app/admin/event/types';
+import { IEventCategory, ITicketType, ITicketTypesResp, IEventCategoryResp } from '@/app/admin/dropdowns/types';
 
 // library support 
 import moment from 'moment';
@@ -28,8 +30,6 @@ import { ALLOWED_FILE_FORMATS, API_ROUTES, MAX_FILE_SIZE_MB, ROUTES, BREAD_CRUMB
 // helper functions
 import { apiCall } from '@/utils/services/request';
 import { InitialEventFormDataErrorTypes, InitialEventFormDataValues } from '../../app/admin/event/helper';
-import { IEventCategory, ITicketType, ITicketTypesResp, IEventCategoryResp } from '@/app/admin/dropdowns/types';
-import SelectField from '../common/SelectField';
 
 const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
 
@@ -557,7 +557,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
        const modifiedObj = {
          title: receivedObj.title,
          description: receivedObj.description,
-         points: receivedObj.numberOfPoint,
+         points: receivedObj.numberOfPoint.toString(),
          location: {
            address: receivedObj.location.address,
            lat: receivedObj.location.lat,
