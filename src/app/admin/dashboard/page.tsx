@@ -13,6 +13,7 @@ import MonthDateHeatmap from '@/components/admin-components/dashboard/MonthDateH
 import MapView from '@/components/admin-components/dashboard/MapView';
 import TopAttendedEvents from '@/components/admin-components/dashboard/TopAttendedChart';
 import TopCancelledTicketsByEvent from "@/components/admin-components/dashboard/TopCancelledTicketsByEvent";
+import UserBadgeChart from "@/components/admin-components/dashboard/UserBadgeChart";
 
 // Helper Functions
 import { DASHBOARD_TITLE } from './helper';
@@ -66,6 +67,14 @@ function DashboardPage() {
                 <div className="lg:w-1/2 w-full p-4 h-full">
                     <div className="bg-white rounded-lg shadow-lg w-full">
                         <TopAttendedEvents />
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex flex-wrap mt-8">
+                <div className="lg:w-1/2 w-full p-4 h-full">
+                    <div className="bg-white rounded-lg shadow-lg w-full">
+                        <UserBadgeChart />
                     </div>
                 </div>
             </div>
