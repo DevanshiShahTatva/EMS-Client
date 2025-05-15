@@ -6,16 +6,28 @@ import { Html5Qrcode } from "html5-qrcode";
 // types
 import { ITicketQRData } from "@/utils/types";
 
+// custom components
+import { Skeleton } from "../ui/skeleton";
+
 interface IQRCodeScannerPros {
   getScannedQRValues : (values : ITicketQRData) => void
 }
 
 const QRCodeScanner : React.FC<IQRCodeScannerPros> = ( { getScannedQRValues }) => {
   const [scanning, setScanning] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [ticket, setTicket] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<HTMLDivElement>(null);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
+
+  const getResponsiveQRBoxSize = () => {
+    const screenWidth = window.innerWidth;
+    if (screenWidth < 400) return 150;
+    if (screenWidth < 640) return 180;
+    if (screenWidth < 915) return 200;
+    return 240;
+  };
 
   useEffect(() => {
     return () => {
@@ -32,6 +44,8 @@ const QRCodeScanner : React.FC<IQRCodeScannerPros> = ( { getScannedQRValues }) =
     setError(null);
     setTicket(null);
 
+    setLoading(true)
+
     try {
       html5QrCodeRef.current = new Html5Qrcode(qrRegionId);
 
@@ -39,7 +53,7 @@ const QRCodeScanner : React.FC<IQRCodeScannerPros> = ( { getScannedQRValues }) =
         { facingMode: "environment" },
         {
           fps: 10,
-          qrbox: 250,
+          qrbox: getResponsiveQRBoxSize(),
         },
         (decodedText, result) => {
           try {
@@ -57,6 +71,8 @@ const QRCodeScanner : React.FC<IQRCodeScannerPros> = ( { getScannedQRValues }) =
           console.warn("Scanning error:", scanError);
         }
       );
+
+      setLoading(false)
     } catch (err) {
       console.error("Camera error:", err);
       setError("Failed to access the camera. Please allow camera permissions.");
@@ -72,7 +88,7 @@ const QRCodeScanner : React.FC<IQRCodeScannerPros> = ( { getScannedQRValues }) =
   };
 
   return (
-    <div className="p-4">
+    <div className="p-0 md:p-4 h-full">
       {!scanning &&
         <img
           src="/assets/QRCode_Image.png"
@@ -80,6 +96,8 @@ const QRCodeScanner : React.FC<IQRCodeScannerPros> = ( { getScannedQRValues }) =
           className="w-full h-[315px] object-contain"
         />
       }
+
+      {loading && <Skeleton className="w-full aspect-square h-[315px]" />}
 
       <div id="qr-scanner" ref={scannerRef} className="mx-auto mb-4 max-w-md" />
 
