@@ -25,7 +25,8 @@ const userRoutes = [
     ROUTES.USER_EVENTS,
     ROUTES.USER_MY_CALENDER,
     ROUTES.USER_EVENTS_DETAILS,
-    ROUTES.USER_REWARDED_HISTORY
+    ROUTES.USER_REWARDED_HISTORY,
+    ROUTES.USER_MY_CALENDER,
 ];
 
 export async function middleware(request: NextRequest) {

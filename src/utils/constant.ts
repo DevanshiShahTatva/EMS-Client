@@ -199,6 +199,9 @@ export const BREAD_CRUMBS_ITEMS = {
     },
     DROPDOWN: {
         MAIN_PAGE: [{ label: "Dropdowns", navigateTo: "" }],
+    },
+    ORGANIZER : {
+        SCAN_TICKET_ITEMS : [{ label: "Scan QR", navigateTo: "" }]
     }
 }
 
