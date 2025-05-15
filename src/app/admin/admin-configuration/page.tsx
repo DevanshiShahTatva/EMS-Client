@@ -27,8 +27,20 @@ const PointConfiguration = () => {
         setPoints(res.conversionRate);
       }
     };
+
     fetchPointInfo();
+    fetchChargeInfo();
   }, []);
+
+  const fetchChargeInfo = async () => {
+    const res = await apiCall({
+      method: "GET",
+      endPoint: API_ROUTES.ADMIN.CANCEL_CHARGE,
+    });
+    if (res.success) {
+      setCharge(res.data.charge);
+    }
+  };
 
   const updatePoints = async () => {
     const res = await apiCall({
@@ -44,13 +56,26 @@ const PointConfiguration = () => {
     }
   };
 
-  const updateCharge = () => {
+  const updateCharge = async () => {
     if (Number(charge) < 0) {
       toast.error("charge should be 0 or more than 0");
     }
 
     if (Number(charge) > MAX_CHARGE_VALUE) {
       toast.error(`charge should not be more than ${MAX_CHARGE_VALUE}`);
+    }
+
+    const res = await apiCall({
+      method: "PUT",
+      body: {
+        charge: charge,
+      },
+      endPoint: API_ROUTES.ADMIN.CANCEL_CHARGE,
+    });
+
+    if (res.success) {
+      toast.success(res.message);
+      fetchChargeInfo();
     }
   };
 

@@ -46,6 +46,7 @@ export const API_ROUTES = {
         BOOKING_BY_MONTH_DATE: 'dashboard/analytics/bookings-time-trends',
         TOP_REVENUE_BY_EVENTS: 'dashboard/analytics/top-revenue-events',
         POINT_SETTING: 'point-setting',
+        CANCEL_CHARGE: "/admin/setting/cancel-charge",
         GET_ALL_USERS: 'all_users',
         // TICKET TYPE
         TICKET_TYPE: "ticket-types",
