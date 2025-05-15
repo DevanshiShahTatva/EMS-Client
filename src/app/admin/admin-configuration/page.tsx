@@ -98,8 +98,13 @@ const PointConfiguration = () => {
                 value={points}
                 errorKey={!points}
                 placeholder="Enter points"
-                onChange={(e) => setPoints(e.target.value)}
+                onChange={(e) => {
+                  if (/^\d*$/.test(e.target.value)) {
+                    setPoints(e.target.value);
+                  }
+                }}
               />
+              <p className="mb-4">Points</p>
               <button
                 disabled={!points}
                 onClick={updatePoints}

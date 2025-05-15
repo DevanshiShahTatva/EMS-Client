@@ -45,6 +45,7 @@ export const API_ROUTES = {
         TOP_USERS_HIGHEST_BOOKING: 'dashboard/analytics/repeat-customers',
         BOOKING_BY_MONTH_DATE: 'dashboard/analytics/bookings-time-trends',
         TOP_REVENUE_BY_EVENTS: 'dashboard/analytics/top-revenue-events',
+        USER_BADGE_INFO: 'dashboard/analytics/user-badge-info',
         POINT_SETTING: 'point-setting',
         CANCEL_CHARGE: "/admin/setting/cancel-charge",
         GET_ALL_USERS: 'all_users',
@@ -129,8 +130,8 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 3, title: "Support Requests", route: ROUTES.ADMIN.CONTACT_US, icon:  "/assets/support.svg"},
     { id: 4, title: "FAQs", route: ROUTES.ADMIN.FAQs, icon:  "/assets/faqs.svg"},
     { id: 5, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
-    { id: 6, title: "Admin Config", route: ROUTES.ADMIN.ADMIN_CONFIGURATION, icon:  "/assets/terms.svg"},
-    { id: 7, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
+    { id: 7, title: "Admin Config", route: ROUTES.ADMIN.ADMIN_CONFIGURATION, icon:  "/assets/terms.svg"},
+    { id: 8, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
 ]
 
 export const ORGANIZER_SIDEBAR_ITEMS = [
@@ -199,6 +200,9 @@ export const BREAD_CRUMBS_ITEMS = {
     },
     DROPDOWN: {
         MAIN_PAGE: [{ label: "Dropdowns", navigateTo: "" }],
+    },
+    ORGANIZER : {
+        SCAN_TICKET_ITEMS : [{ label: "Scan QR", navigateTo: "" }]
     }
 }
 
