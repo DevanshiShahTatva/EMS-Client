@@ -1,6 +1,8 @@
 import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { toast } from "react-toastify";
-import { getAuthToken } from '../helper';
+import { getAuthToken, Logout } from '../helper';
+import { useRouter } from 'next/navigation';
+import { ROUTES } from '../constant';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
@@ -37,6 +39,12 @@ api.interceptors.response.use(
         // Handle unauthorized error (401)
         if (error.response?.status === 401) {
             console.warn("Unauthorized - maybe redirect to login");
+            if (typeof window !== 'undefined') {
+                // Remove auth token
+                Logout();
+                const router = useRouter()
+                router.push(ROUTES.LOGIN)
+            }
         }
 
         if (error.response?.status === 404) {
