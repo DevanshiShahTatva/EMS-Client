@@ -47,6 +47,7 @@ export const API_ROUTES = {
         TOP_REVENUE_BY_EVENTS: 'dashboard/analytics/top-revenue-events',
         USER_BADGE_INFO: 'dashboard/analytics/user-badge-info',
         POINT_SETTING: 'point-setting',
+        CANCEL_CHARGE: "/admin/setting/cancel-charge",
         GET_ALL_USERS: 'all_users',
         // TICKET TYPE
         TICKET_TYPE: "ticket-types",
