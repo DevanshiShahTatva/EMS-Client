@@ -627,12 +627,29 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
   }, [eventType, getCategories, getTicketTypes])
 
   const formattedTicketTypes = useMemo(() => {
-    return ticketTypeOptions.map(item => ({
-      value: item._id,
-      label: item.name,
-      disabled: !item.isActive
-    }));
-  }, [ticketTypeOptions]);
+    const selectedTypeIds = tickets.map(t => t.type);
+    return ticketTypeOptions
+      .filter(item => !selectedTypeIds.includes(item._id))
+      .map(item => ({
+        value: item._id,
+        label: item.name,
+        disabled: !item.isActive
+      }));
+  }, [ticketTypeOptions, tickets]);
+
+  const formattedTicketTypesEdit = useCallback((currentTypeId?: string) => {
+    const otherSelectedTypeIds = tickets
+      .filter(t => t.type !== currentTypeId)
+      .map(t => t.type);
+
+    return ticketTypeOptions
+      .filter(item => !otherSelectedTypeIds.includes(item._id))
+      .map(item => ({
+        value: item._id,
+        label: item.name,
+        disabled: !item.isActive
+      }));
+  }, [tickets, ticketTypeOptions]);
 
   const getTicketType = useCallback((itemId: string) => {
     return ticketTypeOptions.find(item => item._id == itemId)?.name || "";
@@ -796,7 +813,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
                       <tr key={ticket.id}>
                         <td className="border px-2 py-1">
                           <SelectField
-                            items={formattedTicketTypes}
+                            items={formattedTicketTypesEdit(editCache[ticket.id]?.type)}
                             value={editCache[ticket.id]?.type || ""}
                             onChange={(value) => handleUpdate(ticket.id, "type", value)}
                           />
