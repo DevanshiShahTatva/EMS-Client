@@ -31,7 +31,6 @@ import {
   CalendarDays,
   Clock9,
   MapPin,
-  IndianRupee,
   Ticket,
   SearchIcon,
   QrCode,
@@ -100,7 +99,7 @@ const MyEventsPage = () => {
     });
 
     if (result?.success) {
-      let data = result.data.toSorted((a, b) => {
+      const data = result.data.toSorted((a, b) => {
         const aStatus = getEventsStatus(
           a.event.startDateTime,
           a.event.endDateTime
@@ -117,14 +116,14 @@ const MyEventsPage = () => {
           );
         }
       });
-      let eventsArray = data.map((item) => {
+      const eventsArray = data.map((item) => {
         return {
           id: item._id,
           eventBookedOn: moment(item.bookingDate).format(
             "DD MMM YYYY, [at] hh:mm:ss A"
           ),
           eventName: item.event?.title || "",
-          eventCatogory: item.event?.category || "",
+          eventCatogory: item.event?.category?.name || "",
           eventStartTime: formatDateTime(item.event?.startDateTime || "") || "",
           eventEndTime: formatDateTime(item.event?.endDateTime || "") || "",
           eventDuration: item.event?.duration || "",
@@ -223,7 +222,7 @@ const MyEventsPage = () => {
   const renderOngoingSection = () => {
     return (
       <AlertBox type="info">
-        You've secured your spot. Stay tuned for updates and notifications.
+        {`You've secured your spot. Stay tuned for updates and notifications.`}
       </AlertBox>
     );
   };
@@ -289,8 +288,6 @@ const MyEventsPage = () => {
     return event.eventStatus === activeTab;
   });
 
-  console.log("filteredEvents::", filteredEvents);
-
   return (
     <div>
       {loading && <Loader />}
@@ -354,9 +351,11 @@ const MyEventsPage = () => {
                 .sort((a, b) => {
                   const aDate = new Date(
                     a.eventFullResponse.event.startDateTime
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   ) as any;
                   const bDate = new Date(
                     b.eventFullResponse.event.startDateTime
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   ) as any;
                   return aDate - bDate;
                 })
