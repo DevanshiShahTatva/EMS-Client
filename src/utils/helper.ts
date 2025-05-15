@@ -1,3 +1,4 @@
+import Cookie from 'js-cookie'
 
 export const getAuthToken = () => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token") || ""
@@ -14,7 +15,7 @@ export const getUserLogo = () => {
     return profileImage
 }
 
-export const setUserLogo = (imgUrl : string) => {
+export const setUserLogo = (imgUrl: string) => {
     return localStorage.setItem("profileImage", imgUrl)
 }
 
@@ -60,3 +61,9 @@ export const getTruthyNumber = (value: number | string | undefined | null): numb
 };
 
 export const RupeeSymbol = "₹"
+
+export const Logout = () => {
+    localStorage.clear()
+    sessionStorage.clear()
+    Cookie.remove("authToken")
+}
