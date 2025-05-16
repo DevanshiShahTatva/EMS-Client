@@ -186,6 +186,11 @@ const MyEventsPage = () => {
   };
 
   const renderUpcomingSection = (event: IEventsState) => {
+
+    if(event.isAttended) {
+      return renderOngoingSection()
+    } 
+    
     return (
       <AlertBox type="success">
         <div className="text-green-700">
