@@ -547,7 +547,7 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
         return {
           id: item._id,
           type: item.type?._id, 
-          price: item.price.toString(), 
+          price: item.price?.toString(), 
           maxQty: item.totalSeats - item.totalBookedSeats, 
           description: item.description,
           _id: item._id

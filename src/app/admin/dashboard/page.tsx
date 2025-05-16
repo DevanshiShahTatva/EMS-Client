@@ -72,7 +72,7 @@ function DashboardPage() {
             </div>
 
             <div className="flex flex-wrap mt-8">
-                <div className="lg:w-1/2 w-full p-4 h-full">
+                <div className="lg:w-1/2 w-full h-full">
                     <div className="bg-white rounded-lg shadow-lg w-full">
                         <UserBadgeChart />
                     </div>

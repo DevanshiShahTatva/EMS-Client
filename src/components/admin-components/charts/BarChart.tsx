@@ -18,9 +18,20 @@ import { IBarChartProps } from '@/app/admin/dashboard/types';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title);
 
+// Helper function to wrap long labels
+const wrapLabel = (label: string, maxLength: number) => {
+    if (label.length <= maxLength) return label;
+    return `${label.substring(0, maxLength)}...`;
+};
+
 export default function BarChart({ data, labels }: IBarChartProps) {
+    // Process labels to handle long text
+    const processedLabels = useMemo(() => {
+        return labels.map(label => wrapLabel(label, 10));
+    }, [labels]);
+
     const chartData = useMemo(() => ({
-        labels,
+        labels: processedLabels,
         datasets: [
             {
                 label: 'Revenue',
@@ -29,7 +40,7 @@ export default function BarChart({ data, labels }: IBarChartProps) {
                 barThickness: 20,
             },
         ],
-    }), [data, labels]);
+    }), [data, processedLabels, labels.length]);
 
     const options: ChartOptions<'bar'> = useMemo(() => ({
         responsive: true,
@@ -42,8 +53,12 @@ export default function BarChart({ data, labels }: IBarChartProps) {
                 callbacks: {
                     label: function (context) {
                         const value = context.formattedValue;
-                        return `Revenue: ${RupeeSymbol} ${value}`; // ← Append any string here
+                        return `${RupeeSymbol} ${value}`;
                     },
+                    // Use the original label as the tooltip title
+                    title: function(context) {
+                        return labels[context[0].dataIndex];
+                    }
                 },
             },
         },
@@ -55,7 +70,6 @@ export default function BarChart({ data, labels }: IBarChartProps) {
                     color: '#6B7280',
                     count: 6
                 },
-               
             },
             x: {
                 categoryPercentage: 0.6,
@@ -68,7 +82,7 @@ export default function BarChart({ data, labels }: IBarChartProps) {
                 },
             },
         },
-    }), []);
+    }), [labels]);
 
     return (
         <Bar data={chartData} options={options} />

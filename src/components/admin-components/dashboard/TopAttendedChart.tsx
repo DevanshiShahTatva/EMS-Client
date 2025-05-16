@@ -12,7 +12,7 @@ import TableModal from './TableModal';
 
 // Constants
 import { API_ROUTES } from '@/utils/constant';
-import { AttendedEventsTableColumns, DASHBOARD_TITLE, RevenueTableColumns } from '@/app/admin/dashboard/helper';
+import { AttendedEventsTableColumns, DASHBOARD_TITLE } from '@/app/admin/dashboard/helper';
 
 // Services
 import { apiCall } from '@/utils/services/request';
