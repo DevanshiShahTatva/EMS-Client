@@ -1,9 +1,9 @@
 
-import MyReviewPage from '@/components/events-components/MyReviewsPage'
+import ReviewsPage from '@/components/events-components/MyReviewsPage'
 
 const MyReviewsPage = () => {
   return (
-        <MyReviewPage/>
+        <ReviewsPage/>
   )
 }
 

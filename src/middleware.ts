@@ -24,7 +24,8 @@ const userRoutes = [
     ROUTES.USER_PROFILE,
     ROUTES.USER_EVENTS,
     ROUTES.USER_EVENTS_DETAILS,
-    ROUTES.USER_REWARDED_HISTORY
+    ROUTES.USER_REWARDED_HISTORY,
+    ROUTES.USER_REVIEW_HISTORY
 ];
 
 export async function middleware(request: NextRequest) {

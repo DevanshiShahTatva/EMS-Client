@@ -18,15 +18,20 @@ interface Feedback {
   eventId: string
 }
 
-const MyReviewsPage = () => {
+const ReviewsPage = () => {
   const [reviews, setReviews] = useState<Feedback[]>([])
   const [expandedReview, setExpandedReview] = useState<string | null>(null)
 
   const fetchReviews = async () => {
-    const res = await apiCall({ endPoint: API_ROUTES.USER_FEEDBACK, method: "GET" })
-    if (res.success) {
-      setReviews(res.data)
-    }
+  const result = await apiCall({
+        endPoint : API_ROUTES.USER_FEEDBACK,
+        method : "GET", 
+      })
+      if(result && result.success && result.data.length > 0) {
+        setReviews(result)
+      } else {
+          setReviews([])
+      }
   }
 
   useEffect(() => {
@@ -114,4 +119,4 @@ const MyReviewsPage = () => {
   )
 }
 
-export default MyReviewsPage
+export default ReviewsPage
