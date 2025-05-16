@@ -115,7 +115,7 @@ const PointConfiguration = () => {
             </div>
           </div>
           <div>
-            <p className="text-lg font-bold">Cancel Charge</p>
+            <p className="text-lg font-bold">Admin Charge</p>
             <p className="mb-3 text-sm text-gray-600">
               Note: Please add tax here in below in percentage only max by{" "}
               {MAX_CHARGE_VALUE}%.

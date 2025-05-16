@@ -1,12 +1,15 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { XIcon } from "lucide-react";
+import { apiCall } from "@/utils/services/request";
+import { API_ROUTES } from "@/utils/constant";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: () => void;
+  isSubmitting: boolean;
   eventDetails: any; // Add event details prop
 }
 
@@ -14,12 +17,33 @@ const CancelTicketModal: React.FC<Props> = ({
   isOpen,
   onClose,
   onSubmit,
+  isSubmitting,
   eventDetails,
 }) => {
   if (!isOpen) return null;
 
-  // Calculate refund amount (example: 90% refund policy)
-  const refundAmount = eventDetails.eventTicketPrice;
+  const [charge, setCharge] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchChargeInfo = async () => {
+      const res = await apiCall({
+        method: "GET",
+        endPoint: API_ROUTES.ADMIN.CANCEL_CHARGE,
+      });
+      if (res.success) {
+        setCharge(res.data.charge);
+      }
+    };
+
+    fetchChargeInfo();
+  }, []);
+
+  const taxCharge = useMemo(
+    () => (charge / 100) * eventDetails.eventTicketPrice,
+    [charge]
+  );
+
+  const refundAmount = eventDetails.eventTicketPrice - taxCharge;
   const totalPaid = eventDetails.eventTicketPrice;
 
   return (
@@ -74,6 +98,12 @@ const CancelTicketModal: React.FC<Props> = ({
                 <span className="text-red-900 font-medium">₹{totalPaid}</span>
               </div>
               <div className="flex justify-between">
+                <span className="text-red-700">Tax:</span>
+                <span className="text-red-900 font-medium">
+                  ₹{taxCharge.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between">
                 <span className="text-red-700">Refund Amount:</span>
                 <span className="text-red-900 font-medium">
                   ₹{refundAmount.toFixed(2)}
@@ -97,15 +127,16 @@ const CancelTicketModal: React.FC<Props> = ({
         <div className="mt-6 flex justify-end space-x-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer"
           >
             Go Back
           </button>
           <button
             onClick={onSubmit}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            disabled={isSubmitting}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer disabled:bg-red-400"
           >
-            Confirm Cancellation
+            {isSubmitting ? "Cancelling" : "Confirm Cancellation"}
           </button>
         </div>
       </div>
