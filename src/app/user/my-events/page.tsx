@@ -50,6 +50,7 @@ const MyEventsPage = () => {
   const [feedbackEventId, setFeedbackEventId] = useState("");
   const [showCancelTicketModal, setShowCancelTicketModal] = useState(false);
   const [eventDetails, setEventDetails] = useState<IEventsState | null>(null);
+  const [isTicketCancelling, setIsTicektCancelling] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"upcoming" | "ongoing" | "past">(
     "upcoming"
   );
@@ -165,6 +166,7 @@ const MyEventsPage = () => {
   };
 
   const handleCancelTicketSubmit = async () => {
+    setIsTicektCancelling(true);
     try {
       const response = await apiCall({
         endPoint: API_ROUTES.EVENT.CANCEL_EVENT + eventDetails?.id,
@@ -173,6 +175,7 @@ const MyEventsPage = () => {
       });
 
       if (response && response.success) {
+        setIsTicektCancelling(false);
         toast.success(response.message);
         setShowCancelTicketModal(false);
         fetchMyEvents();
@@ -351,11 +354,11 @@ const MyEventsPage = () => {
                 .sort((a, b) => {
                   const aDate = new Date(
                     a.eventFullResponse.event.startDateTime
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   ) as any;
                   const bDate = new Date(
                     b.eventFullResponse.event.startDateTime
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   ) as any;
                   return aDate - bDate;
                 })
@@ -465,12 +468,6 @@ const MyEventsPage = () => {
             </div>
           )}
 
-          {myEvents.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No bookings found.</p>
-            </div>
-          )}
-
           <DownloadTicketModal
             isOpen={tickeModal}
             eventData={ticketSummary}
@@ -483,12 +480,15 @@ const MyEventsPage = () => {
             onClose={() => closeFeedbackEvent()}
           />
 
-          <CancelTicketModal
-            isOpen={showCancelTicketModal}
-            onClose={() => handleCloseCancelTicketModal()}
-            onSubmit={() => handleCancelTicketSubmit()}
-            eventDetails={eventDetails as IEventsState}
-          />
+          {showCancelTicketModal && (
+            <CancelTicketModal
+              isOpen={showCancelTicketModal}
+              onClose={() => handleCloseCancelTicketModal()}
+              onSubmit={() => handleCancelTicketSubmit()}
+              eventDetails={eventDetails as IEventsState}
+              isSubmitting={isTicketCancelling}
+            />
+          )}
         </div>
         <div className="mt-auto">
           <Footer />
