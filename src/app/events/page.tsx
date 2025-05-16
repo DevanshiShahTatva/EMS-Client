@@ -231,7 +231,7 @@ const EventsPage: React.FC = () => {
 
       </div>
 
-      {(featuredEvent && searchQuery==="") && (
+      {(featuredEvent.length>0 && searchQuery==="") && (
         <div className="mb-8 mt-6">
           <h2 className="text-xl font-semibold mb-4">Featured Event</h2>
           <FeaturedEvent event={featuredEvent} />

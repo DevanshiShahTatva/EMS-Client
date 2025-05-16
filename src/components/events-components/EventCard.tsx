@@ -15,6 +15,7 @@ import {
 
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
 import he from 'he'
+import CategoryChip from './CategoryChip'
 
 interface EventCardProps {
   event: EventData
@@ -83,8 +84,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         <div className="text-gray-600 text-sm line-clamp-2 mb-4" dangerouslySetInnerHTML={{__html:decodedHTML}}/>
         <div className="mt-auto space-y-2">
           <div className="flex items-center text-sm text-gray-500">
-            <Square3Stack3DIcon className="h-4 w-4 mr-2" />
-            <span className='font-bold'>{event.category?.name}</span>
+              <CategoryChip _id={event.category._id} name={event.category.name} isActive={event.category.isActive} color={event.category.color} bgColor={event.category.bgColor} icon={event.category.icon} createdAt={event.category.createdAt} updatedAt={event.category.updatedAt} __v={event.category.__v} />
           </div>
           <div className="flex items-center text-sm text-gray-500">
             <MapPin className="h-4 w-4 mr-2" />

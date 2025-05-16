@@ -55,7 +55,7 @@ export type EventTicket = {
 export type CheckoutTicket = {
   totalPrice:number;
   quantity:number;
-  type:string;
+  type:ITicketType;
   ticketId:string;
   usedPoints: number;
 }
@@ -188,5 +188,23 @@ export interface FeedbackDetails {
   createdAt: string;
   updatedAt: string;
   profileimage:string;
+  eventImage:string;
+  eventTitle:string;
   __v: number;
+}
+export interface CategoryIcon {
+  url: string
+  imageId: string
+}
+
+export interface CustomEventCategory {
+  _id: string
+  name: string
+  isActive: boolean
+  color: string
+  bgColor: string
+  icon: CategoryIcon
+  createdAt: string
+  updatedAt: string
+  __v: number
 }

@@ -82,12 +82,12 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
           usedPoints,
           finalAmount,
           conversionRate,
-          type: selectedType,
+          type: selectedTicketType?.type,
           ticketId: selectedTicketType?._id,
           totalPrice: selectedTicketType?.price,
         },
       })
-      sessionStorage.setItem("tickets",JSON.stringify({type:selectedType,quantity:quantity,totalPrice:totalPrice,ticketId:selectedTicketType?._id, usedPoints }));
+      sessionStorage.setItem("tickets",JSON.stringify({type:selectedTicketType?.type,quantity:quantity,totalPrice:totalPrice,ticketId:selectedTicketType?._id, usedPoints }));
       sessionStorage.setItem("eventTitle",eventTitle);
       window.location.href = res.data.url
     } catch (err) {
@@ -132,7 +132,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h4 className="font-medium text-gray-900">
-                        {ticket.type?.name}
+                        {ticket.type.name}
                       </h4>
                       <p className="text-sm text-gray-500">
                         {ticket.description}
