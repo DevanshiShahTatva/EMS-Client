@@ -1,0 +1,57 @@
+.terms-and-conditions ol [data-list="ordered"] {
+  list-style-type: decimal;
+  margin-left: 2.5rem;
+  padding-left: 0;
+}
+
+.terms-and-conditions ul {
+  list-style: none;
+  margin-left: 1.5rem;
+  padding-left: 0;
+}
+
+.terms-and-conditions ul li::before {
+  content: '. ';
+  color: #6b7280; /* Optional: gray tone */
+  margin-right: 0.5rem;
+  font-weight: bold;
+}
+
+.terms-and-conditions li {
+  margin-bottom: 0.25rem;
+}
+
+.terms-and-conditions s,
+.terms-and-conditions del,
+.terms-and-conditions span[style*="line-through"] {
+  text-decoration: line-through;
+}
+
+.terms-and-conditions em {
+  font-style: italic;
+}
+
+.terms-and-conditions strong {
+  font-weight: bold;
+}
+
+.terms-and-conditions a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.terms-and-conditions blockquote {
+  border-left: 4px solid #d1d5db;
+  padding-left: 1rem;
+  color: #6b7280;
+  font-style: italic;
+  margin: 1rem 0;
+}
+
+
+.terms-and-conditions ol [data-list="bullet"]::before {
+  content: '• ';
+  margin-right: 0.5rem;
+  margin-left: 1.5rem;
+}
+

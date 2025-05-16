@@ -47,7 +47,7 @@ const AlertBox = (props: Props) => {
 
   return (
     <div
-      className={`flex items-center gap-2 p-4 mb-4 0 bg-${bgColor} rounded-lg w-full`}
+      className={`flex items-center gap-2 p-4 0 bg-${bgColor} rounded-lg w-full`}
     >
       <Icon className={`h-6 w-6 flex-shrink-0`} color={iconColor} />
       <div className={`text-${textColor}`}>{children}</div>

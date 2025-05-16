@@ -307,7 +307,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                           </button>
                           <button onClick={navToMyEvents} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
                             <TicketsIcon className="w-5 h-5 mr-3" />
-                            My Events
+                            My Bookings
                           </button>
                           <button onClick={navToCalender} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
                             <Calendar className="w-5 h-5 mr-3" />

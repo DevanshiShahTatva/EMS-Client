@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 // Custom components
 import { FilterOptions } from '@/components/events-components/FilterOptions'
@@ -14,9 +14,10 @@ import { getTicketPriceRange } from '../admin/event/helper'
 import { areAllTicketsBooked, convertFiltersToArray, getEventStatus, isNearbyWithUserLocation, removeFilterFromObject, getFilteredEventsData, getMaxTicketPrice } from './event-helper'
 
 // Types support
-import { EventData, EventCategory, SortOption, EventResponse } from "./types";
+import { EventData, SortOption, EventResponse } from "./types";
 import { IApplyFiltersKey } from '@/utils/types'
 import { LabelValue } from './types'
+import { IEventCategoryResp } from '../admin/dropdowns/types'
 
 // Api services
 import { apiCall } from '@/utils/services/request';
@@ -34,14 +35,13 @@ const EventsPage: React.FC = () => {
   const [events, setEvents] = useState<EventData[]>([])
   const [allEvents, setAllEvents] = useState<EventData[]>([])
   const [searchQuery, setSearchQuery] = useState('')
-  const [activeCategory, setActiveCategory] = useState<EventCategory>('all')
   const [sortOption, setSortOption] = useState<SortOption>('none')
   const [loading, setLoading] = useState<boolean>(true)
   
   const [filterModal, setFilterModal] = useState<boolean>(false)
   const [appliedFilters, setAppliedFilters] = useState<IApplyFiltersKey>({})
   const [appliedFiltersArray, setAppliedFiltersArray] = useState<LabelValue[]>([])
-
+  const [categoriesOptions, setCategoriesOptions] = useState<{ id: string, label: string, value: string }[]>([])
 
   const openFilterModal = () => setFilterModal(true)
 
@@ -136,15 +136,35 @@ const EventsPage: React.FC = () => {
            setLoading(false)
         }
   }
+
+  const getCategories = useCallback(async () => {
+    try {
+      const response: IEventCategoryResp = await apiCall({
+        endPoint: API_ROUTES.CATEGORY,
+        method: 'GET',
+      });
+
+      if (response && response.success) {
+        const receivedArray = response.data || [];
+        const result = receivedArray?.map((item) => ({
+          id: item?._id,
+          label: item?.name,
+          value: item?.name
+        }));
+        setCategoriesOptions(result)
+      }
+    } catch (err) {
+      console.error('Error fetching ticket types', err);
+    }
+  }, []);
+
   useEffect(()=>{
+    getCategories()
     fetchEvents(); 
   },[])
   const filteredEvents = events
   .filter((event) =>
     event.title.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-  .filter((event) =>
-    activeCategory === 'all' ? true : event.category?.name === activeCategory
   )
   .sort((a, b) => {
     if (sortOption === 'date-asc') {
@@ -229,6 +249,7 @@ const EventsPage: React.FC = () => {
         maxTicketPrice={getMaxTicketPrice(allEvents)}
         isUserRole={true}
         filterValues={appliedFilters}
+        categoriesOptions={categoriesOptions}
       />
     </div>
   )
