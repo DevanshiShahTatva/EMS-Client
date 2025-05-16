@@ -481,6 +481,21 @@ const MyEventsPage = () => {
             eventId={feedbackEventId}
             isOpen={showFeedbackModal}
             onClose={() => closeFeedbackEvent()}
+            isEditFlag={false}
+            feedback={{
+                 _id: '',
+                eventId: '',
+                userId: '',
+                name: '',
+                email: '',
+                rating: 0,
+                description: '',
+                isEdited: false,
+                createdAt: '',
+                updatedAt: '',
+                profileimage: '',
+                __v: 0
+            }}
           />
 
           <CancelTicketModal

@@ -4,8 +4,10 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   PencilIcon,
+  CircleUserRound,
 } from 'lucide-react'
 import EditReviewModal from './EditReviewModal'
+import Image from "next/image"
 import { FeedbackDetails } from '@/app/events/types'
 const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) => {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -35,6 +37,20 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
               alt="User name"
               className="w-full h-full object-cover"
             />
+            {
+              feedback.profileimage ? 
+              <Image
+                src={feedback.profileimage}
+                alt="User"
+                width={48}
+                height={48}
+                className="w-full h-full object-cover"
+              /> : 
+                (<CircleUserRound width={48}
+                height={48}
+                className="rounded-full"
+                />)
+            }
           </div>
           <div className="min-w-0">
             <h4 className="font-medium text-sm truncate">{feedback.name}</h4>

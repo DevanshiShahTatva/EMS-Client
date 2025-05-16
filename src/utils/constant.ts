@@ -86,6 +86,7 @@ export const API_ROUTES = {
     FEEDBACK:(id:string)=>`/events/${id}/feedback`,
     GET_FEEDBACK:(id:string)=>`/events/${id}/feedbacks`,
     USER_FEEDBACK:"/feedbacks",
+    PUT_FEEDBACK:(id:string|null)=>`/feedbacks/${id}`,
     CATEGORY: "/ticket-categories",
 }
 export const LIGHT_COLORS = [
