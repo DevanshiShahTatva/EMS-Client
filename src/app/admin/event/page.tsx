@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image';
 
 // Custom Compoents
@@ -14,6 +14,7 @@ import TitleSection from '@/components/common/TitleSection';
 
 // types import
 import { EventResponse, EventsDataTypes, IApplyFiltersKey } from '@/utils/types';
+import { IEventCategoryResp } from '../dropdowns/types';
 
 // library support 
 import { useRouter } from 'next/navigation';
@@ -53,6 +54,7 @@ function EventsListpage() {
   const [sortByKey, setSortByKey] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
   const [appliedFiltersCount, setAppliedFiltersCount] = useState(0)
+  const [categoriesOptions, setCategoriesOptions] = useState<{ id: string, label: string, value: string }[]>([])
 
 
   const totalItems = eventsData.length;
@@ -202,8 +204,29 @@ function EventsListpage() {
       console.log("ERROR_AT_EVENT_DELETE", err)
     }
   }
+  const getCategories = useCallback(async () => {
+    try {
+      const response: IEventCategoryResp = await apiCall({
+        endPoint: API_ROUTES.CATEGORY,
+        method: 'GET',
+      });
+
+      if (response && response.success) {
+        const receivedArray = response.data || [];
+        const result = receivedArray?.map((item) => ({
+          id: item?._id,
+          label: item?.name,
+          value: item?.name
+        }));
+        setCategoriesOptions(result)
+      }
+    } catch (err) {
+      console.error('Error fetching ticket types', err);
+    }
+  }, []);
 
   useEffect(() => {
+    getCategories()
     fetchEvents()
   }, [])
 
@@ -373,7 +396,7 @@ function EventsListpage() {
                             alt="avatar"
                             width={40}
                             height={40}
-                            className="w-10 h-10 rounded-full"
+                            className="w-10 h-10 rounded-full object-cover"
                           />
                         )}
                       </td>
@@ -386,7 +409,7 @@ function EventsListpage() {
                       <td className="p-3 max-w-40">
                         <TooltipProvider>
                           <Tooltip>
-                            <TooltipTrigger className="truncate max-w-40">
+                            <TooltipTrigger className="truncate max-w-[90%]">
                               {event.location}
                             </TooltipTrigger>
                             <TooltipContent>
@@ -463,6 +486,7 @@ function EventsListpage() {
         onClose={closeFilterModal}
         applyFilters={submitFilters}
         maxTicketPrice={getMaxTicketPrice(allEventsData)}
+        categoriesOptions={categoriesOptions}
       />
     </div>
   );
