@@ -494,6 +494,8 @@ const MyEventsPage = () => {
                 createdAt: '',
                 updatedAt: '',
                 profileimage: '',
+                eventImage:'',
+                eventTitle:'',
                 __v: 0
             }}
           />

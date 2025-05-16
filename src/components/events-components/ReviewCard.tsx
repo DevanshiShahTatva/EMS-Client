@@ -21,15 +21,6 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
   return (
     <>
       <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 h-full relative">
-      
-        <button
-          onClick={() => setIsEditModalOpen(true)}
-          className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded-full transition-colors"
-          aria-label="Edit review"
-        >
-          <PencilIcon className="w-3.5 h-3.5 text-gray-400 hover:text-gray-600" />
-        </button>
-      
         <div className="flex items-center space-x-2 mb-2">
           <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
             <img
@@ -96,7 +87,8 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
                 hour: "2-digit",
                 minute: "2-digit",
                 hour12: true,
-        })}</div>
+        })} {feedback.isEdited ? "(Edited)" :""}
+        </div>
       </div>
       
       {isEditModalOpen && (

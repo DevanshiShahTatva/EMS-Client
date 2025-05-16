@@ -16,51 +16,53 @@ import { toast } from "react-toastify"
 const ReviewsPage = () => {
   const [reviews, setReviews] = useState<FeedbackDetails[]>([])
   const [expandedReview, setExpandedReview] = useState<string | null>(null)
-  const [loading,setLoading] = useState<Boolean>(false);
+  const [loading, setLoading] = useState<Boolean>(false);
   const [showEditModal, setEditModal] = useState(false);
-  const [editReview,setEditReview] = useState<FeedbackDetails>();
-  const [deleteReviewId,setDeleteReviewId] = useState<string>("");
-  const [deleteModal,setDeleteModal] = useState(false);
-  const setReview=(review:FeedbackDetails)=>{
+  const [editReview, setEditReview] = useState<FeedbackDetails>();
+  const [deleteReviewId, setDeleteReviewId] = useState<string>("");
+  const [deleteModal, setDeleteModal] = useState(false);
+  const setReview = (review: FeedbackDetails) => {
     setEditReview(review);
     setEditModal(true);
   }
-  const deleteReview=(reviewId:string)=>{
+  const deleteReview = (reviewId: string) => {
     setDeleteReviewId(reviewId);
     setDeleteModal(true);
   }
   const closeEditModal = () => {
-      setEditModal(false);
-      setEditReview({
-                 _id: '',
-                eventId: '',
-                userId: '',
-                name: '',
-                email: '',
-                rating: 0,
-                description: '',
-                isEdited: false,
-                createdAt: '',
-                updatedAt: '',
-                profileimage: '',
-                __v: 0
-            });
+    setEditModal(false);
+    setEditReview({
+      _id: '',
+      eventId: '',
+      userId: '',
+      name: '',
+      email: '',
+      rating: 0,
+      description: '',
+      isEdited: false,
+      createdAt: '',
+      updatedAt: '',
+      profileimage: '',
+      eventImage: '',
+      eventTitle: '',
+      __v: 0
+    });
   };
-  const closeDeleteModal =()=>{
+  const closeDeleteModal = () => {
     setDeleteModal(false);
     setDeleteReviewId("");
   }
   const router = useRouter();
   const fetchReviews = async () => {
-  const result = await apiCall({
-        endPoint : API_ROUTES.USER_FEEDBACK,
-        method : "GET", 
-      })
-      if(result && result.success && result.data.length > 0) {
-        setReviews(result.data)
-      } else {
-          setReviews([])
-      }
+    const result = await apiCall({
+      endPoint: API_ROUTES.USER_FEEDBACK,
+      method: "GET",
+    })
+    if (result && result.success && result.data.length > 0) {
+      setReviews(result.data)
+    } else {
+      setReviews([])
+    }
   }
 
   useEffect(() => {
@@ -73,22 +75,22 @@ const ReviewsPage = () => {
 
   const handleDelete = async (id: string) => {
     const result = await apiCall({
-        endPoint : API_ROUTES.PUT_FEEDBACK(id),
-        method : "DELETE", 
-      })
-      if(result && result.success) {
-        toast.success("Deleted feedback successfully!");
-        closeDeleteModal()  
-        fetchReviews();
-      } else {
-        toast.error("Unable to delete, Please try again");
-        closeDeleteModal();
-      }
+      endPoint: API_ROUTES.PUT_FEEDBACK(id),
+      method: "DELETE",
+    })
+    if (result && result.success) {
+      toast.success("Deleted feedback successfully!");
+      closeDeleteModal()
+      fetchReviews();
+    } else {
+      toast.error("Unable to delete, Please try again");
+      closeDeleteModal();
+    }
   }
- const navigateToHome = () => {
+  const navigateToHome = () => {
     router.push('/events')
   }
-  
+
 
 
   if (!reviews) {
@@ -119,26 +121,51 @@ const ReviewsPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {reviews.map((review) => (
           <div key={review._id} className="bg-white shadow-md rounded-xl p-5 relative">
+
+            <div className="mb-4 flex items-center gap-4">
+              {review.eventImage ? (
+                <Image
+                  src={review.eventImage}
+                  alt="Event"
+                  width={56}
+                  height={56}
+                  className="rounded-md object-cover w-14 h-14"
+                />
+              ) : (
+                <div className="w-14 h-14 bg-gray-200 rounded-md" />
+              )}
+              <p className="text-lg font-semibold text-gray-800">{review.eventTitle}</p>
+            </div>
+
             <div className="flex items-center gap-4 mb-3">
-              {
-                review.profileimage ? 
-                  <Image
+              {review.profileimage ? (
+                <Image
                   src={review.profileimage}
                   alt="User"
                   width={48}
                   height={48}
                   className="rounded-full"
-                  /> : 
-                  (<CircleUserRound width={48}
-                  height={48}
-                  className="rounded-full"
-                  />)
-              }
-              <div>
-                <p className="font-medium text-gray-900">{review.name}</p>
+                />
+              ) : (
+                <CircleUserRound width={48} height={48} className="rounded-full" />
+              )}
+                <div className="flex-1">
+                <div className="flex items-center">
+                  <p className="font-medium text-gray-900">{review.name}</p>
+                  <div className="ml-auto flex items-center gap-2">
+                    <button className="text-blue-500 hover:text-blue-700" onClick={() => setReview(review)}>
+                      <EditIcon className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => deleteReview(review._id)} className="text-red-500 hover:text-red-700">
+                      <Trash2Icon className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
                 <p className="text-sm text-gray-500">
-                  {format(new Date(review.createdAt), "MMM d, yyyy - h:mm a")}
+                {format(new Date(review.createdAt), "MMM d, yyyy - h:mm a")} {review.isEdited ? "(Edited)" :""}
                 </p>
+              </div>
+              <div>
               </div>
             </div>
 
@@ -172,37 +199,25 @@ const ReviewsPage = () => {
                 )}
               </button>
             )}
-
-            <div className="absolute top-4 right-4 flex gap-3">
-              <button className="text-blue-500 hover:text-blue-700" onClick={()=>setReview(review)}>
-                <EditIcon className="w-5 h-5" />
-              </button>
-              <button
-                onClick={()=>deleteReview(review._id)}
-                className="text-red-500 hover:text-red-700"
-              >
-                <Trash2Icon className="w-5 h-5" />
-              </button>
-            </div>
           </div>
-          
         ))}
       </div>
-          {editReview && <FeedbackModal
-              eventId={editReview.eventId}
-              isOpen={showEditModal}
-              onClose={() => closeEditModal()}
-              isEditFlag={true}
-              feedback={editReview}
-            />}
-            { deleteReviewId &&
-            <DeleteModal
-                  isOpen={deleteModal}
-                  onClose={()=>closeDeleteModal()}
-                  onConfirm={()=>handleDelete(deleteReviewId)}
-                  description='Are you sure you want to delete feedback?'
-            />
-            }
+
+      {editReview && <FeedbackModal
+        eventId={editReview.eventId}
+        isOpen={showEditModal}
+        onClose={() => closeEditModal()}
+        isEditFlag={true}
+        feedback={editReview}
+      />}
+      {deleteReviewId &&
+        <DeleteModal
+          isOpen={deleteModal}
+          onClose={() => closeDeleteModal()}
+          onConfirm={() => handleDelete(deleteReviewId)}
+          description='Are you sure you want to delete feedback?'
+        />
+      }
     </div>
   )
 }
