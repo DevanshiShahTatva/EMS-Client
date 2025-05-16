@@ -16,6 +16,7 @@ export interface IFilterModalProps {
     maxTicketPrice?: number
     isUserRole? : boolean
     filterValues? : IApplyFiltersKey
+    categoriesOptions?: { id: string, label: string, value: string }[]
 }
 
 export interface IBreadcrumbItem {
@@ -74,7 +75,7 @@ export interface EventData {
     date: string;
     time: string;
     priceRange: string;
-    category: EventCategory;
+    category: IEventCategory;
     isSoldOut: boolean;
     isLiked: boolean;
     status: EventStatus;
