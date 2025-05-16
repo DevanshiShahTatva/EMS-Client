@@ -110,7 +110,7 @@ const RewardHistory = () => {
   };
 
   return (
-    <div>
+    <div className='min-h-[calc(100vh-76px)] flex flex-col'>
       <div className="p-3 md:p-10">
         <ChartCard>
           <TitleSection title='Reward Point History' />
@@ -176,7 +176,7 @@ const RewardHistory = () => {
                   ) : (
                     <tr>
                       <td colSpan={10} className="text-center">
-                        <p className="my-3 font-bold">No result found</p>
+                        <p className="my-3 font-bold">No data found</p>
                       </td>
                     </tr>
                   )}
@@ -197,7 +197,9 @@ const RewardHistory = () => {
           )}
         </ChartCard>
       </div>
-      <Footer />
+      <div className="mt-auto">
+        <Footer />
+      </div>
     </div>
   );
 }

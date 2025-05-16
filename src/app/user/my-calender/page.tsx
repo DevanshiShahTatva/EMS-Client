@@ -10,16 +10,17 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { EventClickArg, EventInput } from '@fullcalendar/core';
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import moment from 'moment';
-
+import Image from 'next/image';
 import { apiCall } from '@/utils/services/request';
 import Loader from '@/components/common/Loader';
 import Footer from '@/components/common/Footer';
-import { eventStyles } from "./helper";
 import { API_ROUTES, ROUTES } from '@/utils/constant';
 import CalenderDropdown from './CalenderDropdown';
+import TooltipWrapper from '@/components/common/TooltipWrapper';
 
 type ExtendedEventInput = EventInput & {
   address?: string;
+  iconUrl?: string
 }
 
 export default function MyCalendar() {
@@ -31,6 +32,7 @@ export default function MyCalendar() {
   const [title, setTitle] = useState("");
   const [selectedEvent, setSelectedEvent] = useState<ExtendedEventInput | null>(null);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const calendarRef = useRef<any>(null);
 
   useEffect(() => {
@@ -42,14 +44,18 @@ export default function MyCalendar() {
       });
       if (response?.success) {
         const formateData = response.data.map((obj: EventInput) => {
-          const styleObj = eventStyles[obj.event?.category];
           return ({
-            ...styleObj,
             id: obj.event._id,
             title: obj.event.title,
             address: obj.event.location.address,
             start: new Date(obj.event.startDateTime),
             end: new Date(obj.event.endDateTime),
+            backgroundColor: obj?.event?.category?.bgColor || "#e6e9ed",
+            borderColor: obj?.event?.category?.color || "#424242",
+            textColor: obj?.event?.category?.color || "#424242",
+            extendedProps: {
+              iconUrl: obj?.event?.category?.icon?.url
+            }
           });
         });
         setEvents(formateData);
@@ -94,9 +100,23 @@ export default function MyCalendar() {
   const renderEventContent = (eventInfo: EventInput) => {
     const title = eventInfo.event.title;
     const startTime = moment(eventInfo.event.start).format('h:mm A');
+    const iconUrl = eventInfo.event.extendedProps?.iconUrl;
     return (
       <div className="flex justify-between items-center px-[7px] py-[4px] rounded-md text-xs font-medium w-full">
-        <span className="font-bold truncate max-w-[70%]">{title}</span>
+        <div className="flex items-center gap-2">
+          {iconUrl && (
+            <Image
+              src={iconUrl}
+              alt="icon"
+              height={16}
+              width={16}
+              className="object-contain"
+            />
+          )}
+          <TooltipWrapper tooltip={title}>
+            <span className="font-bold truncate max-w-[70%]">{title}</span>
+          </TooltipWrapper>
+        </div>
         <span>{startTime}</span>
       </div>
     );
