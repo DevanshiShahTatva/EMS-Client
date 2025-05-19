@@ -10,6 +10,7 @@ import TableModal from './TableModal';
 import { CardTitle } from './ChartCard';
 import { DASHBOARD_TITLE, LikeTableColumns } from '@/app/admin/dashboard/helper';
 import { ITopEventsChartData } from '@/app/admin/dashboard/types';
+import ChartFallbackUI from './ChartFallbackUI';
 
 const TopEventsChart = () => {
 
@@ -88,11 +89,12 @@ const TopEventsChart = () => {
                             </div>
 
                         </>
-                    ) : (
-                        <>
-                            <PieChart labels={chartLabels} data={chartData} showCustomLabels />
-                        </>
-                    )}
+                    ) : chartData.length ?
+                        (
+                            <>
+                                <PieChart labels={chartLabels} data={chartData} showCustomLabels />
+                            </>
+                        ) : <ChartFallbackUI handleRefresh={fetchChartData} />}
                 </div>
             </div>
             <TableModal

@@ -16,6 +16,7 @@ import {
   ITopTicketCancelledChartData,
   ITopTicketCancelledTableData,
 } from "@/app/admin/dashboard/types";
+import ChartFallbackUI from "./ChartFallbackUI";
 
 const TopCancelledTicketsByEvent = () => {
   const [chartLabels, setChartLabels] = useState<string[]>([]);
@@ -107,7 +108,7 @@ const TopCancelledTicketsByEvent = () => {
               <ChartLegendSkeleton />
             </div>
           </>
-        ) : (
+        ) : chartData.length ? (
           <>
             <PieChart
               labels={chartLabels}
@@ -116,7 +117,7 @@ const TopCancelledTicketsByEvent = () => {
               customLabelPrefix="%"
             />
           </>
-        )}
+        ) : <ChartFallbackUI handleRefresh={fetchChartData} />}
       </div>
       <TableModal
         open={open}

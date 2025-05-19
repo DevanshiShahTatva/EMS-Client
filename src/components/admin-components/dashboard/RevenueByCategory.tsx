@@ -7,6 +7,7 @@ import DateRangeFilter from '@/components/admin-components/dashboard/DateRangeFi
 import { API_ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
 import { IFilter, IRevenueByCategoryData } from '@/app/admin/dashboard/types';
+import ChartFallbackUI from './ChartFallbackUI';
 
 const RevenueByCategory = () => {
     const [filter, setFilter] = useState<IFilter>({ type: 'overall', value: 'overall' });
@@ -41,22 +42,24 @@ const RevenueByCategory = () => {
     return (
         <div className='min-h-[450px] mt-6 flex items-center justify-center'>
             <div className='w-full'>
-                <div className="mb-6">
-                    <DateRangeFilter
-                        onChange={setFilter}
-                        allowedTypes={['overall', 'monthly', 'yearly']}
-                        initialType={filter.type}
-                        initialValue={filter.value}
-                    />
-                </div>
+                {chartData.length ?
+                    <div className="mb-6">
+                        <DateRangeFilter
+                            onChange={setFilter}
+                            allowedTypes={['overall', 'monthly', 'yearly']}
+                            initialType={filter.type}
+                            initialValue={filter.value}
+                        />
+                    </div> : <></>
+                }
 
                 {loading ? (
                     <Skeleton className="h-75 w-full rounded-md" />
-                ) : (
+                ) : chartData.length ? (
                     <div className="min-h-[250px] h-[400px] md:h-[300px] w-full flex items-center justify-center">
                         <BarChart data={chartData} labels={chartLabels} />
                     </div>
-                )}
+                ) : <ChartFallbackUI handleRefresh={fetchData} />}
             </div>
         </div>
     );
