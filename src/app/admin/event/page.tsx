@@ -6,6 +6,7 @@ import Image from 'next/image';
 // Custom Compoents
 import DeleteDialog from '@/components/common/DeleteModal';
 import FilterModal from '@/components/common/FilterModal';
+import CustomButton from '@/components/common/CustomButton';
 import ChartCard from '@/components/admin-components/dashboard/ChartCard';
 import Pagination from '@/components/admin-components/Pagination';
 import TableSkeleton from '@/components/common/TableSkeloton';
@@ -320,13 +321,13 @@ function EventsListpage() {
 
           {/* Filters Button */}
           <div className="relative inline-block sm:block  md:hidden">
-            <button
+            <CustomButton
               onClick={openFilterModal}
-              className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
+              className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white"
             >
               <FunnelIcon className="w-5 h-5 font-bold mr-2" />
               Filters
-            </button>
+            </CustomButton>
 
             {appliedFiltersCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-slate-200 text-green-800 text-sm font-bold px-1.5 py-0.5 rounded-full">
@@ -336,13 +337,14 @@ function EventsListpage() {
           </div>
 
           {/* Add Event Button */}
-          <button
+          <CustomButton
             onClick={navToCreateEventPage}
-            className="md:w-40 md:hidden w-auto sm:flex gap-1 items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+            variant='primary'
+            startIcon={<PlusIcon className="w-5 h-5 font-bold" />}
+            className="md:w-40 md:hidden w-auto sm:flex gap-1 items-center"
           >
-            <PlusIcon className="w-5 h-5 font-bold" />
             <p className="hidden md:block">Add Event</p>
-          </button>
+          </CustomButton>
         </div>
 
         {/* Data Table  */}

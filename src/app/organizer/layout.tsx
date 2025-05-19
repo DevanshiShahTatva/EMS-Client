@@ -1,37 +1,18 @@
 "use client";
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode } from 'react'
 
-import { usePathname } from 'next/navigation';
-
-// Custom components
-import Header from '@/components/common/Header';
-import Sidebar from '@/components/common/Sidebar';
+// custom componetns
+import CommonUserLayout from '@/components/common/CommonUserLayout';
 
 // Constant
 import { ROLE } from '@/utils/constant';
 
 const Layout : React.FC<{children : ReactNode}> = ( { children }) => {
-
-  const pathname = usePathname();
-
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(prev => !prev)
-  }
-
-  const closeSidebar = () => {
-    setIsSidebarOpen(false)
-  }
-
   return (
     <div>
-      <Header toggleSidebar={toggleSidebar} isStaffRole />
-      <Sidebar role={ROLE.Organizer} isOpen={isSidebarOpen} onClose={closeSidebar} activeLink={pathname}>
-        <main className='bg-gray-100 min-h-[calc(100vh-82px)]'>
+      <CommonUserLayout role={ROLE.Organizer}>
           {children}
-        </main>
-      </Sidebar>
+      </CommonUserLayout>
     </div>
   );
 }

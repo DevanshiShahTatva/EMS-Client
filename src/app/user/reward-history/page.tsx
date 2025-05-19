@@ -12,7 +12,6 @@ import TitleSection from "@/components/common/TitleSection";
 import { apiCall } from "@/utils/services/request";
 import { filterBySearch, getPaginatedData, sortData } from "./helper";
 import { API_ROUTES } from "@/utils/constant";
-import Footer from "@/components/common/Footer";
 
 export interface IHistory {
   description: string;
@@ -196,9 +195,6 @@ const RewardHistory = () => {
             />
           )}
         </ChartCard>
-      </div>
-      <div className="mt-auto">
-        <Footer />
       </div>
     </div>
   );

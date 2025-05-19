@@ -25,7 +25,6 @@ import { IBooking, IEventBookingResponse, IEventsState, SortOption } from "./typ
 
 // Library imports
 import moment from "moment";
-import Footer from "@/components/common/Footer";
 
 // Icons imports
 import {
@@ -485,9 +484,6 @@ const MyEventsPage = () => {
             />
           )}
         </div>
-        </div>
-        <div className="mt-auto">
-          <Footer />
         </div>
       </div>
     </div>

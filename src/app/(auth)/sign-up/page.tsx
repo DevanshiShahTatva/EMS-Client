@@ -6,19 +6,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+// Custom Components
+import CustomButton from "@/components/common/CustomButton";
+import FormikSelectField from "@/components/common/FormikSelectField";
+import FormikTextField from "@/components/common/FormikTextField";
+import Logo from "@/components/common/Logo";
+
 // Other library support
 import { Formik, Form, FormikHelpers } from "formik";
-import FormikSelectField from "@/components/common/FormikSelectField";
 import { toast } from "react-toastify";
 
 // Constant imports
 import { ROUTES, API_ROUTES, SIGN_UP_IMAGE_BANNER_LINK, USER_ROLES } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
-import FormikTextField from "@/components/common/FormikTextField";
 import { InitialSignupValues, SignupFormSchema, TITLE } from "./helper";
 
 // Logo image & Icons
-import Logo from "@/components/common/Logo";
 import { EyeIcon, EyeSlashIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 
 // Type support
@@ -104,12 +107,13 @@ const SignUpPage = () => {
                     }
                   />
 
-                  <button
+                  <CustomButton
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 cursor-pointer">
+                    variant="primary"
+                    className="w-full py-3 rounded-lg transition-colors disabled:opacity-50">
                     {isSubmitting ? "Creating Account..." : "Create Account"}
-                  </button>
+                  </CustomButton>
 
                   <p className="text-center text-sm text-gray-500 mt-4">
                     Already have an account?{" "}
