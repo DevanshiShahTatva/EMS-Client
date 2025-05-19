@@ -28,7 +28,6 @@ import { toast } from "react-toastify";
 import FormikTextField from "@/components/common/FormikTextField";
 import FormikFileUpload from "@/components/common/FormikFileUpload";
 import FormikSelectField from "@/components/common/FormikSelectField";
-import Footer from "@/components/common/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Icons
@@ -688,9 +687,6 @@ const UserProfilePage = () => {
           </div>
           {/* Password Update Tab End */}
         </div>
-      </div>
-      <div className="mt-auto">
-        <Footer />
       </div>
     </div>
   );

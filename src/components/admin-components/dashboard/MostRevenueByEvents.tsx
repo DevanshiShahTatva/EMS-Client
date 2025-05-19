@@ -10,6 +10,7 @@ import TableModal from './TableModal';
 import { CardTitle } from './ChartCard';
 import { DASHBOARD_TITLE, RevenueTableColumns } from '@/app/admin/dashboard/helper';
 import { IMostRevenueByEventsData } from '@/app/admin/dashboard/types';
+import ChartFallbackUI from './ChartFallbackUI';
 
 const MostRevenueByEvents = () => {
 
@@ -65,6 +66,7 @@ const MostRevenueByEvents = () => {
         <div>
             <CardTitle
                 title={DASHBOARD_TITLE.BAR_CHART1}
+                tooltip={DASHBOARD_TITLE.BAR_CHART1_TOOLTIP}
                 right={
                     <Button
                         variant="link"
@@ -74,14 +76,15 @@ const MostRevenueByEvents = () => {
                         View Details
                     </Button>
                 } />
-            <div className="p-6">
+            <div className="p-6 min-h-[450px] flex items-center justify-center">
                 {loading ? (
                     <Skeleton className="h-90 w-full rounded-md" />
-                ) : (
-                    <div className="min-h-[250px] h-[400px] md:h-[360px] w-full flex items-center justify-center">
-                        <BarChart data={chartData} labels={chartLabels} />
-                    </div>
-                )}
+                ) : chartData.length ?
+                    (
+                        <div className="min-h-[250px] h-[400px] md:h-[360px] w-full flex items-center justify-center">
+                            <BarChart data={chartData} labels={chartLabels} />
+                        </div>
+                    ) : <ChartFallbackUI handleRefresh={fetchData} />}
             </div>
             <TableModal
                 open={open}

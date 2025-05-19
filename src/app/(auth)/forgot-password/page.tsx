@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 // Custom Components
 import Logo from "@/components/common/Logo"; 
 import FormikTextField from "@/components/common/FormikTextField";
+import CustomButton from "@/components/common/CustomButton";
 
 // Constants Imports
 import { API_ROUTES, LOG_IN_IMAGE_BANNER_LINK, ROUTES } from "@/utils/constant";
@@ -71,13 +72,14 @@ function ForgotPasswordPage() {
                 <Form className="space-y-5">
                   <FormikTextField name="email" placeholder="Enter your email" label="Email" type="email" />
 
-                  <button
+                  <CustomButton
                     type="submit"
+                    variant="primary"
                     disabled={isSubmitting}
-                    className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+                    className="w-full py-3 transition-colors disabled:opacity-50 "
                   >
                     {isSubmitting ? "Sending OTP..." : "Send OTP"}
-                  </button>
+                  </CustomButton>
 
                   <p className="text-center text-sm text-gray-500 mt-4">
                     Remember your password?{" "}

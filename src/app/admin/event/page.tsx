@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image';
 
 // Custom Compoents
 import DeleteDialog from '@/components/common/DeleteModal';
 import FilterModal from '@/components/common/FilterModal';
+import CustomButton from '@/components/common/CustomButton';
 import ChartCard from '@/components/admin-components/dashboard/ChartCard';
 import Pagination from '@/components/admin-components/Pagination';
 import TableSkeleton from '@/components/common/TableSkeloton';
@@ -14,6 +15,7 @@ import TitleSection from '@/components/common/TitleSection';
 
 // types import
 import { EventResponse, EventsDataTypes, IApplyFiltersKey } from '@/utils/types';
+import { IEventCategoryResp } from '../dropdowns/types';
 
 // library support 
 import { useRouter } from 'next/navigation';
@@ -53,6 +55,7 @@ function EventsListpage() {
   const [sortByKey, setSortByKey] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
   const [appliedFiltersCount, setAppliedFiltersCount] = useState(0)
+  const [categoriesOptions, setCategoriesOptions] = useState<{ id: string, label: string, value: string }[]>([])
 
 
   const totalItems = eventsData.length;
@@ -202,8 +205,29 @@ function EventsListpage() {
       console.log("ERROR_AT_EVENT_DELETE", err)
     }
   }
+  const getCategories = useCallback(async () => {
+    try {
+      const response: IEventCategoryResp = await apiCall({
+        endPoint: API_ROUTES.CATEGORY,
+        method: 'GET',
+      });
+
+      if (response && response.success) {
+        const receivedArray = response.data || [];
+        const result = receivedArray?.map((item) => ({
+          id: item?._id,
+          label: item?.name,
+          value: item?.name
+        }));
+        setCategoriesOptions(result)
+      }
+    } catch (err) {
+      console.error('Error fetching ticket types', err);
+    }
+  }, []);
 
   useEffect(() => {
+    getCategories()
     fetchEvents()
   }, [])
 
@@ -297,13 +321,13 @@ function EventsListpage() {
 
           {/* Filters Button */}
           <div className="relative inline-block sm:block  md:hidden">
-            <button
+            <CustomButton
               onClick={openFilterModal}
-              className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
+              className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white"
             >
               <FunnelIcon className="w-5 h-5 font-bold mr-2" />
               Filters
-            </button>
+            </CustomButton>
 
             {appliedFiltersCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-slate-200 text-green-800 text-sm font-bold px-1.5 py-0.5 rounded-full">
@@ -313,13 +337,14 @@ function EventsListpage() {
           </div>
 
           {/* Add Event Button */}
-          <button
+          <CustomButton
             onClick={navToCreateEventPage}
-            className="md:w-40 md:hidden w-auto sm:flex gap-1 items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+            variant='primary'
+            startIcon={<PlusIcon className="w-5 h-5 font-bold" />}
+            className="md:w-40 md:hidden w-auto sm:flex gap-1 items-center"
           >
-            <PlusIcon className="w-5 h-5 font-bold" />
             <p className="hidden md:block">Add Event</p>
-          </button>
+          </CustomButton>
         </div>
 
         {/* Data Table  */}
@@ -373,7 +398,7 @@ function EventsListpage() {
                             alt="avatar"
                             width={40}
                             height={40}
-                            className="w-10 h-10 rounded-full"
+                            className="w-10 h-10 rounded-full object-cover"
                           />
                         )}
                       </td>
@@ -386,7 +411,7 @@ function EventsListpage() {
                       <td className="p-3 max-w-40">
                         <TooltipProvider>
                           <Tooltip>
-                            <TooltipTrigger className="truncate max-w-40">
+                            <TooltipTrigger className="truncate max-w-[90%]">
                               {event.location}
                             </TooltipTrigger>
                             <TooltipContent>
@@ -463,6 +488,7 @@ function EventsListpage() {
         onClose={closeFilterModal}
         applyFilters={submitFilters}
         maxTicketPrice={getMaxTicketPrice(allEventsData)}
+        categoriesOptions={categoriesOptions}
       />
     </div>
   );

@@ -12,6 +12,7 @@ import {
   BREAD_CRUMBS_ITEMS,
   MAX_CHARGE_VALUE,
 } from "@/utils/constant";
+import CustomButton from "@/components/common/CustomButton";
 
 const PointConfiguration = () => {
   const [points, setPoints] = useState("");
@@ -80,7 +81,7 @@ const PointConfiguration = () => {
   };
 
   return (
-    <div className="p-8">
+    <div className="px-8 py-5">
       <Breadcrumbs
         breadcrumbsItems={BREAD_CRUMBS_ITEMS.ADMIN_CONFIGURATION.MAIN_PAGE}
       />
@@ -105,17 +106,18 @@ const PointConfiguration = () => {
                 }}
               />
               <p className="mb-4">Points</p>
-              <button
+              <CustomButton
                 disabled={!points}
                 onClick={updatePoints}
-                className="px-4 py-3 rounded-md bg-black text-white text-sm mb-4 cursor-pointer"
+                variant="primary"
+                className="px-4 py-3 mb-4 text-white text-sm"
               >
                 Update
-              </button>
+              </CustomButton>
             </div>
           </div>
           <div>
-            <p className="text-lg font-bold">Cancel Charge</p>
+            <p className="text-lg font-bold">Admin Charge</p>
             <p className="mb-3 text-sm text-gray-600">
               Note: Please add tax here in below in percentage only max by{" "}
               {MAX_CHARGE_VALUE}%.
@@ -134,13 +136,14 @@ const PointConfiguration = () => {
                 />
                 <p className="mb-4">%</p>
               </div>
-              <button
+              <CustomButton
                 disabled={!charge}
                 onClick={updateCharge}
-                className="px-4 py-3 rounded-md bg-black text-white text-sm mb-4 cursor-pointer"
+                variant="primary"
+                className="px-4 py-3 text-white text-sm mb-4 cursor-pointer"
               >
                 Update
-              </button>
+              </CustomButton>
             </div>
           </div>
         </div>

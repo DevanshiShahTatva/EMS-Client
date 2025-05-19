@@ -26,6 +26,7 @@ const userRoutes = [
     ROUTES.USER_MY_CALENDER,
     ROUTES.USER_EVENTS_DETAILS,
     ROUTES.USER_REWARDED_HISTORY,
+    ROUTES.USER_REVIEW_HISTORY,
     ROUTES.USER_MY_CALENDER,
 ];
 
@@ -83,8 +84,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
-        "/login",
-        "/sign-up",
         "/events",
         "/admin/:path*",
         "/user/:path*",

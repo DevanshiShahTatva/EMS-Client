@@ -1,17 +1,20 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { XIcon, StarIcon } from 'lucide-react'
 import { API_ROUTES } from '@/utils/constant'
 import { apiCall } from '@/utils/services/request'
 import { toast } from 'react-toastify'
 import Loader from '../common/Loader'
 import { motion, AnimatePresence } from 'framer-motion'
+import { FeedbackDetails } from '@/app/events/types'
 
 interface FeedbackModalProps {
   eventId: string
   isOpen: boolean
   onClose: () => void
+  isEditFlag:boolean
+  feedback:FeedbackDetails
 }
 
 interface ValidationErrors {
@@ -27,7 +30,7 @@ const emojiMap = {
 }
 
 
-export const FeedbackModal: React.FC<FeedbackModalProps> = ({ eventId, isOpen, onClose }) => {
+export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isEditFlag,eventId, isOpen, onClose,feedback }) => {
   const [rating, setRating] = useState(0)
   const [description, setDescription] = useState('')
   const [errors, setErrors] = useState<ValidationErrors>({})
@@ -52,18 +55,18 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ eventId, isOpen, o
     }
     setLoder(true)
     const result = await apiCall({
-      endPoint: API_ROUTES.FEEDBACK(eventId),
-      method: 'POST',
+      endPoint: isEditFlag ? API_ROUTES.PUT_FEEDBACK(feedback._id) :API_ROUTES.FEEDBACK(eventId),
+      method: isEditFlag ? 'PUT':'POST',
       body: feedbackData,
       isFormData: true,
       headers: {},
     })
     setLoder(false)
     if (result.success) {
-      toast.success('Feedback submitted successfully.')
       setRating(0)
       setDescription('')
-      onClose()
+      onClose();
+      isEditFlag ? toast.success('Feedback updated successfully.'):toast.success('Feedback submitted successfully.')
     } else {
       toast.error('Some error has occurred. Please try again later.')
       setRating(0)
@@ -71,18 +74,26 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ eventId, isOpen, o
       onClose()
     }
   }
-
+  const checkUpdate=()=>{
+    if(isEditFlag && feedback){
+      setRating(feedback.rating)
+      setDescription(feedback.description)
+    }
+  }
+  useEffect(()=>{
+    checkUpdate();
+  },[])
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 bg-opacity-30 flex items-center justify-center p-4">
       {loader && <Loader />}
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative ">
         <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-800">
           <XIcon className="h-5 w-5" />
         </button>
 
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Submit Feedback</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">{isEditFlag ? "Update Feedback" : "Submit Feedback"}</h2>
 
         <div className="space-y-4">
           <div className="flex flex-col items-center">
@@ -140,7 +151,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ eventId, isOpen, o
 
         <div className="mt-6 flex justify-end space-x-3">
           <button
-            onClick={onClose}
+            onClick={()=>{onClose()}}
             className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
           >
             Cancel
@@ -149,7 +160,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ eventId, isOpen, o
             onClick={handleSubmit}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-            Submit
+          {isEditFlag ? "Update":"Submit"}
           </button>
         </div>
       </div>

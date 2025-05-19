@@ -8,6 +8,7 @@ import QuilEditor from '@/components/admin-components/QuilEditor'
 import Loader from '@/components/common/Loader'
 import TitleSection from '@/components/common/TitleSection'
 import Breadcrumbs from '@/components/common/BreadCrumbs'
+import CustomButton from '@/components/common/CustomButton'
 
 // Icons
 import { TrashIcon } from "@heroicons/react/24/outline"
@@ -126,13 +127,15 @@ const AdminTCsPage = () => {
                 {/* Reset button */}
                 <div className='my-1 flex justify-between items-center'>
                     <TitleSection title='Terms And Conditions' />
-                    <button
+                    <CustomButton
                         onClick={deleteTermsContent}
-                        className="disabled:bg-red-300 disabled:cursor-not-allowed md:flex gap-1 items-center font-bold cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
+                        variant='delete'
+                        startIcon={<TrashIcon className="w-5 h-5 font-bold" />}
+                        className="disabled:bg-red-300 disabled:cursor-not-allowed md:flex gap-1 items-center cursor-pointer"
                     >
-                        <TrashIcon className="w-5 h-5 font-bold" />
+                        
                         <p className="hidden md:block">Reset</p>
-                    </button>
+                    </CustomButton>
                 </div>
 
                 <div>
@@ -148,12 +151,13 @@ const AdminTCsPage = () => {
                 </div>
 
                 <div className='flex justify-end'>
-                    <button
+                    <CustomButton
                         onClick={updateTermsContent}
-                        className="disabled:bg-blue-300 disabled:cursor-not-allowed md:flex gap-1 items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                        variant='primary'
+                        className="disabled:bg-blue-300 disabled:cursor-not-allowed md:flex gap-1 items-center cursor-pointer"
                     >
                         <p className="hidden md:block">Save</p>
-                    </button>
+                    </CustomButton>
                 </div>
 
             </ChartCard>

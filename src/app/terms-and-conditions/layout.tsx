@@ -1,23 +1,21 @@
 "use client"
 import React, { ReactNode } from 'react'
 
-import { usePathname } from 'next/navigation';
-
 // custom componetns
-import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
+import CommonUserLayout from '@/components/common/CommonUserLayout';
+
+// constant
+import { ROLE } from '@/utils/constant';
 
 const Layout : React.FC<{children : ReactNode}> = ( { children }) => {
 
-    const path = usePathname()
-
   return (
       <div>
-          <Header activeLink={path} />
-          <main className='bg-gray-100'>
+          <CommonUserLayout role={ROLE.User}>
               {children}
-          </main>
-          <Footer />
+              <Footer />
+          </CommonUserLayout>
       </div>
   );
 }

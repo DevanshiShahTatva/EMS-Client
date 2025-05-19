@@ -11,6 +11,7 @@ export const ROUTES = {
     USER_MY_EVENTS  :"/user/my-events",
     USER_MY_CALENDER: "/user/my-calender",
     USER_REWARDED_HISTORY: "/user/reward-history",
+    USER_REVIEW_HISTORY: "/user/my-reviews",
     ADMIN: {
         DASHBOARD: "/admin/dashboard",
         EVENTS: "/admin/event",
@@ -85,6 +86,8 @@ export const API_ROUTES = {
     TERMS_AND_CONDITIONS : "/terms-and-conditions",
     FEEDBACK:(id:string)=>`/events/${id}/feedback`,
     GET_FEEDBACK:(id:string)=>`/events/${id}/feedbacks`,
+    USER_FEEDBACK:"/feedbacks",
+    PUT_FEEDBACK:(id:string|null)=>`/feedbacks/${id}`,
     CATEGORY: "/ticket-categories",
 }
 export const LIGHT_COLORS = [
@@ -133,6 +136,13 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 5, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
     { id: 7, title: "Admin Config", route: ROUTES.ADMIN.ADMIN_CONFIGURATION, icon:  "/assets/terms.svg"},
     { id: 8, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
+]
+
+export const USER_SIDEBAR_ITEMS = [
+    { id: 1, title: "Home", route: ROUTES.HOME, icon: "/assets/DashboardIcon.svg" },
+    { id: 2, title: "Browse Events", route: ROUTES.USER_EVENTS, icon: "/assets/EventsIcon.svg" },
+    { id: 3, title: "Contact Us", route: ROUTES.CONTACT_US, icon:  "/assets/support.svg"},
+    { id: 4, title: "FAQs", route: ROUTES.FAQs, icon:  "/assets/faqs.svg"},
 ]
 
 export const ORGANIZER_SIDEBAR_ITEMS = [

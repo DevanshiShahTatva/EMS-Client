@@ -1,7 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { toast } from "react-toastify";
 import { getAuthToken, Logout } from '../helper';
-import { useRouter } from 'next/navigation';
 import { ROUTES } from '../constant';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
@@ -42,8 +41,7 @@ api.interceptors.response.use(
             if (typeof window !== 'undefined') {
                 // Remove auth token
                 Logout();
-                const router = useRouter()
-                router.push(ROUTES.LOGIN)
+                window.location.href = ROUTES.LOGIN;
             }
         }
 

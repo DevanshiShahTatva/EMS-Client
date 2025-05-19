@@ -19,7 +19,7 @@ import "rc-slider/assets/index.css";
 import { IApplyFiltersKey, IFilterModalProps } from "@/utils/types";
 
 // constanst imports
-import { durationOptions, CATOGORIES_ITEMS_ARRAY, TICKETS_OPTIONS, STATUS_OPTIONS, LOCATION_OPTIONS  } from "@/utils/constant";
+import { durationOptions, TICKETS_OPTIONS, STATUS_OPTIONS, LOCATION_OPTIONS  } from "@/utils/constant";
 
 const FilterModal: React.FC<IFilterModalProps> = ({
   isOpen,
@@ -27,7 +27,8 @@ const FilterModal: React.FC<IFilterModalProps> = ({
   applyFilters,
   maxTicketPrice = 100,
   isUserRole = false,
-  filterValues
+  filterValues,
+  categoriesOptions = []
 }) => {
 
   const MIN = 0;
@@ -112,14 +113,14 @@ const FilterModal: React.FC<IFilterModalProps> = ({
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedCatogory(CATOGORIES_ITEMS_ARRAY.map((item) => item.value))
+      setSelectedCatogory(categoriesOptions.map((item) => item.value))
     } else {
       setSelectedCatogory([])
     }
   }
-  const isAllSelected = selectedCatogory.length === CATOGORIES_ITEMS_ARRAY.length
+  const isAllSelected = selectedCatogory.length === categoriesOptions.length
 
-  const visibleCategories = showAll ? CATOGORIES_ITEMS_ARRAY : CATOGORIES_ITEMS_ARRAY.slice(0, 3)
+  const visibleCategories = showAll ? categoriesOptions : categoriesOptions.slice(0, 3)
   
   const clearAllFilters = () => {
     const emptyDate = {
@@ -364,7 +365,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
               ))}
 
               {/* Toggle Link */}
-              {CATOGORIES_ITEMS_ARRAY.length > 3 && (
+              {categoriesOptions.length > 3 && (
                 <button
                   type="button"
                   onClick={() => setShowAll((prev) => !prev)}

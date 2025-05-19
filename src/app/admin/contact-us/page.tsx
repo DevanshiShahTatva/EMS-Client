@@ -10,6 +10,7 @@ import ContactModal from '@/components/admin-components/ViewContactInfo'
 import TableSkeleton from '@/components/common/TableSkeloton'
 import Breadcrumbs from '@/components/common/BreadCrumbs'
 import TitleSection from '@/components/common/TitleSection'
+import CustomButton from '@/components/common/CustomButton'
 
 // Icons
 import { MagnifyingGlassIcon, TrashIcon, EyeIcon, EnvelopeIcon } from "@heroicons/react/24/outline"
@@ -280,14 +281,15 @@ const AdminContactUsPage = () => {
                       />
                   </div>
 
-                  <button
+                  <CustomButton
                       onClick={openDeleteModal}
                       disabled={selectedIds.length === 0}
-                      className="disabled:bg-red-300 disabled:cursor-not-allowed md:flex gap-1 items-center font-bold cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
+                      variant='delete'
+                      startIcon={<TrashIcon className="w-5 h-5 font-bold" />}
+                      className="disabled:bg-red-300 disabled:cursor-not-allowed cursor-pointer md:flex gap-1 items-center"
                   >
-                      <TrashIcon className="w-5 h-5 font-bold" />
                       <p className="hidden md:block">Delete</p>
-                  </button>
+                  </CustomButton>
               </div>
 
               {/* TABLE  */}
