@@ -87,6 +87,7 @@ const TopCancelledTicketsByEvent = () => {
     <div>
       <CardTitle
         title={DASHBOARD_TITLE.CANCELLED_TICKET}
+        tooltip={DASHBOARD_TITLE.CANCELLED_TICKET_TOOLTIP}
         right={
           <Button
             variant="link"

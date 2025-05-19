@@ -65,6 +65,7 @@ const MostRevenueByEvents = () => {
         <div>
             <CardTitle
                 title={DASHBOARD_TITLE.BAR_CHART1}
+                tooltip={DASHBOARD_TITLE.BAR_CHART1_TOOLTIP}
                 right={
                     <Button
                         variant="link"

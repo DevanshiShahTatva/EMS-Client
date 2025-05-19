@@ -92,6 +92,7 @@ const TopAttendedEvents = () => {
         <div>
             <CardTitle
                 title={DASHBOARD_TITLE.TOP_ATTENDED_EVENTS}
+                tooltip={DASHBOARD_TITLE.TOP_ATTENDED_EVENTS_TOOLTIP}
                 right={
                     <Button
                         variant="link"
@@ -106,10 +107,10 @@ const TopAttendedEvents = () => {
                     <Skeleton className="h-90 w-full rounded-md" />
                 ) : (
                     <div className="min-h-[250px] h-[400px] md:h-[360px] w-full flex items-center justify-center">
-                            <StackedBarChart
-                                labels={chartLabels}
-                                datasets={chartDataSet}
-                            />
+                        <StackedBarChart
+                            labels={chartLabels}
+                            datasets={chartDataSet}
+                        />
                     </div>
                 )}
             </div>

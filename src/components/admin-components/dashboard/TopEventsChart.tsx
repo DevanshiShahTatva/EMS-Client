@@ -68,6 +68,7 @@ const TopEventsChart = () => {
 
             <CardTitle
                 title={DASHBOARD_TITLE.PIE_CHART}
+                tooltip={DASHBOARD_TITLE.PIE_CHART_TOOLTIP}
                 right={<Button
                     variant="link"
                     className="underline text-primary p-0 h-7 cursor-pointer"

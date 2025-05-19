@@ -40,7 +40,7 @@ const UserBadgeChart = () => {
 
   return (
     <div>
-      <CardTitle title={DASHBOARD_TITLE.USER_BADGE_PIE_CHART} />
+      <CardTitle title={DASHBOARD_TITLE.USER_BADGE_PIE_CHART} tooltip={DASHBOARD_TITLE.USER_BADGE_PIE_CHART_TOOLTIP} />
       <div className='p-6'>
         {loading ? (
           <div className="w-full flex justify-center items-center flex-col">
@@ -50,7 +50,7 @@ const UserBadgeChart = () => {
         ) : (
           <PieChart
             isUserBadge
-            showCustomLabels 
+            showCustomLabels
             data={chartData}
             labels={chartLabels}
           />

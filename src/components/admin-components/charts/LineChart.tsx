@@ -54,7 +54,7 @@ const LineChart: React.FC<ILineChartProps> = ({ data, labels }) => {
                 suggestedMin: 0,
                 suggestedMax: Math.max(...data) * 1.1, // 10% above the highest value
                 ticks: {
-                    callback: (value) => formatNumberShort(Number(value)),
+                    callback: (value) => `${RupeeSymbol} ${formatNumberShort(Number(value))}`,
                     color: '#6B7280',
                     count: 6,
                 },

@@ -56,7 +56,7 @@ export default function BarChart({ data, labels }: IBarChartProps) {
                         return `${RupeeSymbol} ${value}`;
                     },
                     // Use the original label as the tooltip title
-                    title: function(context) {
+                    title: function (context) {
                         return labels[context[0].dataIndex];
                     }
                 },
@@ -66,7 +66,7 @@ export default function BarChart({ data, labels }: IBarChartProps) {
             y: {
                 beginAtZero: true,
                 ticks: {
-                    callback: (value) => formatNumberShort(Number(value)),
+                    callback: (value) => `${RupeeSymbol} ${formatNumberShort(Number(value))}`,
                     color: '#6B7280',
                     count: 6
                 },
@@ -78,7 +78,7 @@ export default function BarChart({ data, labels }: IBarChartProps) {
                     color: '#6B7280',
                 },
                 grid: {
-                    display: false, 
+                    display: false,
                 },
             },
         },

@@ -43,14 +43,14 @@ function DashboardPage() {
             <div className="flex flex-wrap -m-4 mt-4">
                 <div className="lg:w-1/2 w-full p-4 h-full">
                     <div className="bg-white rounded-lg shadow-lg w-full">
-                        <CardWithTitle title={DASHBOARD_TITLE.BAR_CHART2}>
+                        <CardWithTitle title={DASHBOARD_TITLE.BAR_CHART2} tooltip={DASHBOARD_TITLE.BAR_CHART2_TOOLTIP}>
                             <RevenueByCategory />
                         </CardWithTitle>
                     </div>
                 </div>
                 <div className="lg:w-1/2 w-full p-4 h-full">
                     <div className="bg-white rounded-lg shadow-lg w-full">
-                        <CardWithTitle title={DASHBOARD_TITLE.DOUGHNUT_CHART}>
+                        <CardWithTitle title={DASHBOARD_TITLE.DOUGHNUT_CHART} tooltip={DASHBOARD_TITLE.DOUGHNUT_CHART_TOOLTIP}>
                             <BookingByTicketType />
                         </CardWithTitle>
                     </div>
@@ -80,25 +80,25 @@ function DashboardPage() {
             </div>
 
             <div className="flex flex-wrap mt-8">
-                <CardWithTitle title={DASHBOARD_TITLE.TABLE}>
+                <CardWithTitle title={DASHBOARD_TITLE.TABLE} tooltip={DASHBOARD_TITLE.TABLE_TOOLTIP}>
                     <MostBookedUsersTable />
                 </CardWithTitle>
             </div>
 
             <div className="flex flex-wrap mt-8">
-                <CardWithTitle title={DASHBOARD_TITLE.LINE_CHART}>
+                <CardWithTitle title={DASHBOARD_TITLE.LINE_CHART} tooltip={DASHBOARD_TITLE.LINE_CHART_TOOLTIP}>
                     <TotalRevenueOverTime />
                 </CardWithTitle>
             </div>
 
             <div className="flex flex-wrap mt-8">
-                <CardWithTitle title={DASHBOARD_TITLE.HEATMAP}>
+                <CardWithTitle title={DASHBOARD_TITLE.HEATMAP} tooltip={DASHBOARD_TITLE.HEATMAP_TOOLTIP}>
                     <MonthDateHeatmap />
                 </CardWithTitle>
             </div>
 
             <div className="flex flex-wrap mt-8">
-                <CardWithTitle title={DASHBOARD_TITLE.MAP}>
+                <CardWithTitle title={DASHBOARD_TITLE.MAP} tooltip={DASHBOARD_TITLE.MAP_TOOLTIP}>
                     <MapView />
                 </CardWithTitle>
             </div>
