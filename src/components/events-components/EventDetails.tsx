@@ -25,7 +25,6 @@ import Loader from '../common/Loader'
 import BookingButton from './BookingButton'
 import GoogleMap from './GoogleMap'
 import ReviewsSection from './ReviewSection'
-import CategoryChip from './CategoryChip'
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
@@ -74,7 +73,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
     })
     if(result?.success && result.data){
       setFeedbackData(result.data)
-    } 
+    }
     setLoading(false)
   }
   useEffect(() => {
@@ -130,56 +129,61 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
       <main className="mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
           <div className="lg:col-span-2 lg:mb-0">
-            <div
+            <div 
               className="bg-white shadow rounded-lg overflow-hidden"
               style={{ height: '380px' }}
             >
               <ImageCarousel images={event.images} />
             </div>
           </div>
-          <div className="lg:col-span-1">
-            <div className="bg-white shadow rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                {event.title}
-              </h2>
-              <div className="space-y-3 pb-4">
-                <div className="flex items-top text-gray-600">
-                  <CalendarIcon className="h-5 w-5 mr-2 text-gray-400" />
-                  <span>
-                    {new Date(event.startDateTime).toLocaleDateString(
-                      'en-US',
-                      {
+            <div className="lg:col-span-1 h-full">
+              <div className="bg-white shadow rounded-lg p-6 h-full flex flex-col justify-between min-h-[380px]">
+                {/* Top section */}
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                    {event.title}
+                  </h2>
+                  <div className="space-y-3 pb-4">
+                    <div className="flex items-top text-gray-600">
+                      <CalendarIcon className="h-5 w-5 mr-2 text-gray-400" />
+                      <span>
+                        {new Date(event.startDateTime).toLocaleDateString(
+                          'en-US',
+                        {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',
                       }
-                    )} - {new Date(event.endDateTime).toLocaleDateString(
-                      'en-US',
-                      {
+                      )} - {new Date(event.endDateTime).toLocaleDateString(
+                        'en-US',
+                        {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',
                       }
-                    )} 
-                  </span>
-                </div>
-                <div className="flex items-center text-gray-600">
-                  <ClockIcon className="h-5 w-5 mr-2 text-gray-400" />
-                  <span>
-                    Duration - ({event.duration})
-                  </span>
-                </div>
-                <div className="flex items-top text-gray-600">
-                  <MapPinIcon className="h-5 w-5 mr-2 text-gray-400 shrink-0" />
-                  <span >{event.location.address}</span>
-                </div>
-                <div className="flex items-center text-gray-600">
-                  <CategoryChip _id={event.category._id} name={event.category.name} isActive={event.category.isActive} color={event.category.color} bgColor={event.category.bgColor} icon={event.category.icon} createdAt={event.category.createdAt} updatedAt={event.category.updatedAt} __v={event.category.__v} />
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <ClockIcon className="h-5 w-5 mr-2 text-gray-400" />
+                    <span>
+                      Duration - ({event.duration})
+                      </span>
+                  </div>
+                  <div className="flex items-top text-gray-600">
+                    <MapPinIcon className="h-5 w-5 mr-2 text-gray-400 shrink-0" />
+                    <span >{event.location.address}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <TagIcon className="h-5 w-5 mr-2 text-gray-400" />
+                    <span>{event.category?.name}</span>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between bg-white pt-4 border-t-2 border-gray-200 w-full">
+              {/* Bottom section */}
+              <div className="flex items-center justify-between bg-white pt-4 border-t-2 border-gray-200">
                 <div className="flex flex-col">
                   <span className="font-semibold text-md mb-1">
                     {onwardPriceRange(event.tickets)}

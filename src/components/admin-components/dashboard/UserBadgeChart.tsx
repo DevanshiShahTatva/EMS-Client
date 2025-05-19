@@ -10,6 +10,7 @@ import { apiCall } from '@/utils/services/request';
 import { API_ROUTES } from '@/utils/constant';
 import { IBadgeCountData } from '@/app/admin/dashboard/types';
 import { DASHBOARD_TITLE } from '@/app/admin/dashboard/helper';
+import ChartFallbackUI from './ChartFallbackUI';
 
 const UserBadgeChart = () => {
 
@@ -18,6 +19,7 @@ const UserBadgeChart = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchChartData = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await apiCall({ endPoint: `${API_ROUTES.ADMIN.USER_BADGE_INFO}`, method: 'GET' });
       const result = response?.data as IBadgeCountData[] || [];
@@ -40,21 +42,21 @@ const UserBadgeChart = () => {
 
   return (
     <div>
-      <CardTitle title={DASHBOARD_TITLE.USER_BADGE_PIE_CHART} />
-      <div className='p-6'>
+      <CardTitle title={DASHBOARD_TITLE.USER_BADGE_PIE_CHART} tooltip={DASHBOARD_TITLE.USER_BADGE_PIE_CHART_TOOLTIP} />
+      <div className='p-6 min-h-[450px] flex items-center justify-center flex-col'>
         {loading ? (
           <div className="w-full flex justify-center items-center flex-col">
             <Skeleton className="sm:w-40 md:w-50 lg:w-62.5 aspect-square rounded-full" />
             <ChartLegendSkeleton />
           </div>
-        ) : (
+        ) : chartData?.length ? (
           <PieChart
             isUserBadge
-            showCustomLabels 
+            showCustomLabels
             data={chartData}
             labels={chartLabels}
           />
-        )}
+        ) : <ChartFallbackUI handleRefresh={fetchChartData} />}
       </div>
     </div>
   );
