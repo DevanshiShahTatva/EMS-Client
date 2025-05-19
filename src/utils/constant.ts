@@ -37,6 +37,7 @@ export const API_ROUTES = {
         DELETE_EVENT: (id: string) => `/events/${id}`,
         SHOW_EVENT: (id: string) => `/events/${id}`,
         UPDATE_EVENT: (id: string) => `/events/${id}`,
+        AI_GENERATE_DESCRIPTION: "events/generate/event-description",
         // DASHBOARD
         DASHBOARD_OVERVIEW: 'dashboard/analytics/dashboard-overview',
         TOP_LIKED_EVENTS: 'dashboard/analytics/top-liked-events',
@@ -53,7 +54,7 @@ export const API_ROUTES = {
         // TICKET TYPE
         TICKET_TYPE: "ticket-types",
         CANCELLED_EVENT_RATIO: "dashboard/analytics/cancellation-ratio",
-        ATTENDED_EVENTS_ANALYTICS : "/dashboard/analytics/top-attended-events"
+        ATTENDED_EVENTS_ANALYTICS : "/dashboard/analytics/top-attended-events",
     },
     AUTH: {
         LOGIN: `/login`,
