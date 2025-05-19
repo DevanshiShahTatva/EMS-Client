@@ -125,6 +125,9 @@ export interface IQuilEditorProps {
   placeholder?: string;
   errorMsg?: string;
   required?: boolean;
+  handleGenerateDescription?: () => void;
+  isDescriptionGenerating?: boolean;
+  iSGenerateButtonDisabled?: boolean;
 };
 
 export interface ISelectFieldsProps {

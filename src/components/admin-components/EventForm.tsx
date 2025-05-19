@@ -23,6 +23,7 @@ import moment from 'moment';
 import { PencilSquareIcon , TrashIcon, CheckIcon, XMarkIcon} from "@heroicons/react/24/outline"
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import { marked } from "marked";
 
 // constant import
 import { ALLOWED_FILE_FORMATS, API_ROUTES, MAX_FILE_SIZE_MB, ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant';
@@ -40,7 +41,8 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
   const [formValuesError, setFormValuesError] = useState<IEventFormDataErrorTypes>(InitialEventFormDataErrorTypes)
 
   const [tickets, setTickets] = useState<ITicket[]>([]);
-  const [addRowVisible, setAddRowVisible] = useState(false)
+  const [addRowVisible, setAddRowVisible] = useState(false);
+  const [isGeneratingDescription, setIsGeneratingDescription] = useState<boolean>(false);
 
   const [newTicket, setNewTicket] = useState<Omit<ITicket, "id">>({
     type: "",
@@ -657,6 +659,54 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
     return ticketTypeOptions.find(item => item._id == itemId)?.name || "";
   }, [ticketTypeOptions]); 
 
+  const handleGenerateDescription = useCallback(async () => {
+    try {
+      setIsGeneratingDescription(true);
+
+      const body = {
+        title: formValues.title,
+        start_time: moment(formValues.start_time).format(
+            "DD MMM YYYY, [at] hh:mm:ss A"
+          ),
+        end_time: moment(formValues.end_time).format(
+            "DD MMM YYYY, [at] hh:mm:ss A"
+          ),
+        location: formValues.location.address
+      }
+
+      const res = await apiCall({
+        method: "POST",
+        endPoint: API_ROUTES.ADMIN.AI_GENERATE_DESCRIPTION,
+        body: body,
+      });
+
+      if (res.success) {
+        const markdown = res.data.replace(/\\n/g, "\n");
+
+        const html = marked(markdown);
+
+        handleDescriptionChange(html as string);
+        setIsGeneratingDescription(false);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong!");
+      setIsGeneratingDescription(false);
+    }
+  }, [formValues]);
+
+  const handleCheckButtonDisabled = useCallback(() => {
+    let value = true;
+
+    value =
+      formValues.title == "" &&
+      formValues.start_time == null &&
+      formValues.end_time == null &&
+      formValues.location.address == "";
+
+    return value;
+  }, [formValues]);
+
     return (
       <div className="mx-8 my-5">
         {loader && <Loader />}
@@ -685,22 +735,6 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
               formValues.title === ""
                 ? "Enter valid event title"
                 : "Event title must be between 5 and 100 characters"
-            }
-          />
-
-          <QuilEditor
-            label="Description"
-            name={"description"}
-            value={formValues.description}
-            onChange={(value) => handleDescriptionChange(value)}
-            placeholder="Describe your event"
-            errorKey={formValuesError.description}
-            errorMsg={
-              formValues.description.length < 11
-                ? "Enter valid event description"
-                : formValues.description.length < 20
-                ? "Event description must be at least 20 characters long"
-                : ""
             }
           />
 
@@ -785,6 +819,25 @@ const EventForm : React.FC<IEventFormProps> = ( { eventType }) => {
               </div>
             </div>
           </div>
+
+          <QuilEditor
+            label="Description"
+            name={"description"}
+            value={formValues.description}
+            onChange={(value) => handleDescriptionChange(value)}
+            handleGenerateDescription={handleGenerateDescription}
+            isDescriptionGenerating={isGeneratingDescription}
+            iSGenerateButtonDisabled={handleCheckButtonDisabled()}
+            placeholder="Describe your event"
+            errorKey={formValuesError.description}
+            errorMsg={
+              formValues.description.length < 11
+                ? "Enter valid event description"
+                : formValues.description.length < 20
+                ? "Event description must be at least 20 characters long"
+                : ""
+            }
+          />
 
           <div className="mb-4">
             <label
