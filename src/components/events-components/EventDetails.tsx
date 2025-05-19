@@ -127,29 +127,29 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
         </div>
       </header>
       <main className="mx-auto py-6 px-4 sm:px-6 lg:px-8">
-      <div className="lg:grid lg:grid-cols-3 lg:gap-8">
+        <div className="lg:grid lg:grid-cols-3 lg:gap-8">
           <div className="lg:col-span-2 lg:mb-0">
             <div 
-            className="bg-white shadow rounded-lg overflow-hidden"
-            style={{ height: '380px' }}
+              className="bg-white shadow rounded-lg overflow-hidden"
+              style={{ height: '380px' }}
             >
               <ImageCarousel images={event.images} />
             </div>
           </div>
-          <div className="lg:col-span-1 h-full">
-            <div className="bg-white shadow rounded-lg p-6 h-full flex flex-col justify-between min-h-[380px]">
-              {/* Top section */}
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  {event.title}
-                </h2>
-                <div className="space-y-3 pb-4">
-                  <div className="flex items-top text-gray-600">
-                    <CalendarIcon className="h-5 w-5 mr-2 text-gray-400" />
-                    <span>
-                      {new Date(event.startDateTime).toLocaleDateString(
-                        'en-US',
-                       {
+            <div className="lg:col-span-1 h-full">
+              <div className="bg-white shadow rounded-lg p-6 h-full flex flex-col justify-between min-h-[380px]">
+                {/* Top section */}
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                    {event.title}
+                  </h2>
+                  <div className="space-y-3 pb-4">
+                    <div className="flex items-top text-gray-600">
+                      <CalendarIcon className="h-5 w-5 mr-2 text-gray-400" />
+                      <span>
+                        {new Date(event.startDateTime).toLocaleDateString(
+                          'en-US',
+                        {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
@@ -190,7 +190,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                   </span>
                   <span className={`${color} text-md`}>
                     {status}
-                    </span>
+                  </span>
                 </div>
 
                 <BookingButton
