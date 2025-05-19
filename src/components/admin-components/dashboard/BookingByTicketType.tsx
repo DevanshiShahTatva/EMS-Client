@@ -46,14 +46,16 @@ const BookingByTicketType: React.FC = () => {
 
     return (
         <>
-            <div className='mt-12'>
-            {loading ?
-                <div className="w-full flex justify-center items-center flex-col">
-                    <Skeleton className="sm:w-40 md:w-50 lg:w-62.5 aspect-square rounded-full" />
-                    <ChartLegendSkeleton />
-                </div> :
-                <DoughnutChart data={data} labels={labels} showCustomLabels />
-            }
+            <div className='min-h-[450px] mt-6 flex items-center justify-center'>
+                <div>
+                    {loading ?
+                        <div className="w-full flex justify-center items-center flex-col">
+                            <Skeleton className="sm:w-40 md:w-50 lg:w-62.5 aspect-square rounded-full" />
+                            <ChartLegendSkeleton />
+                        </div> :
+                        <DoughnutChart data={data} labels={labels} showCustomLabels />
+                    }
+                </div>
             </div>
         </>
     );

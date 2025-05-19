@@ -78,21 +78,22 @@ const TopEventsChart = () => {
                 </Button>
                 } />
 
-            <div className='p-6'>
+            <div className='p-6 min-h-[450px] flex items-center justify-center'>
+                <div>
+                    {loading ? (
+                        <>
+                            <div className="w-full flex justify-center items-center flex-col">
+                                <Skeleton className="sm:w-40 md:w-50 lg:w-62.5 aspect-square rounded-full" />
+                                <ChartLegendSkeleton />
+                            </div>
 
-                {loading ? (
-                    <>
-                        <div className="w-full flex justify-center items-center flex-col">
-                            <Skeleton className="sm:w-40 md:w-50 lg:w-62.5 aspect-square rounded-full" />
-                            <ChartLegendSkeleton />
-                        </div>
-
-                    </>
-                ) : (
-                    <>
-                        <PieChart labels={chartLabels} data={chartData} showCustomLabels />
-                    </>
-                )}
+                        </>
+                    ) : (
+                        <>
+                            <PieChart labels={chartLabels} data={chartData} showCustomLabels />
+                        </>
+                    )}
+                </div>
             </div>
             <TableModal
                 open={open}

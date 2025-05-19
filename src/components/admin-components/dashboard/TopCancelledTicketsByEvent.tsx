@@ -99,7 +99,7 @@ const TopCancelledTicketsByEvent = () => {
         }
       />
 
-      <div className="p-6">
+      <div className="p-6 min-h-[450px] flex items-center justify-center flex-col">
         {loading ? (
           <>
             <div className="w-full flex justify-center items-center flex-col">

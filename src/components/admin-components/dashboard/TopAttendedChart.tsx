@@ -102,7 +102,7 @@ const TopAttendedEvents = () => {
                         View Details
                     </Button>
                 } />
-            <div className="p-6">
+            <div className="p-6 min-h-[450px] flex items-center justify-center">
                 {loading ? (
                     <Skeleton className="h-90 w-full rounded-md" />
                 ) : (

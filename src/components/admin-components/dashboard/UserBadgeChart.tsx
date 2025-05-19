@@ -41,7 +41,7 @@ const UserBadgeChart = () => {
   return (
     <div>
       <CardTitle title={DASHBOARD_TITLE.USER_BADGE_PIE_CHART} tooltip={DASHBOARD_TITLE.USER_BADGE_PIE_CHART_TOOLTIP} />
-      <div className='p-6'>
+      <div className='p-6 min-h-[450px] flex items-center justify-center flex-col'>
         {loading ? (
           <div className="w-full flex justify-center items-center flex-col">
             <Skeleton className="sm:w-40 md:w-50 lg:w-62.5 aspect-square rounded-full" />
