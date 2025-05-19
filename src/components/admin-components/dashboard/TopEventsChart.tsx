@@ -10,6 +10,7 @@ import TableModal from './TableModal';
 import { CardTitle } from './ChartCard';
 import { DASHBOARD_TITLE, LikeTableColumns } from '@/app/admin/dashboard/helper';
 import { ITopEventsChartData } from '@/app/admin/dashboard/types';
+import ChartFallbackUI from './ChartFallbackUI';
 
 const TopEventsChart = () => {
 
@@ -68,6 +69,7 @@ const TopEventsChart = () => {
 
             <CardTitle
                 title={DASHBOARD_TITLE.PIE_CHART}
+                tooltip={DASHBOARD_TITLE.PIE_CHART_TOOLTIP}
                 right={<Button
                     variant="link"
                     className="underline text-primary p-0 h-7 cursor-pointer"
@@ -77,21 +79,23 @@ const TopEventsChart = () => {
                 </Button>
                 } />
 
-            <div className='p-6'>
+            <div className='p-6 min-h-[450px] flex items-center justify-center'>
+                <div>
+                    {loading ? (
+                        <>
+                            <div className="w-full flex justify-center items-center flex-col">
+                                <Skeleton className="sm:w-40 md:w-50 lg:w-62.5 aspect-square rounded-full" />
+                                <ChartLegendSkeleton />
+                            </div>
 
-                {loading ? (
-                    <>
-                        <div className="w-full flex justify-center items-center flex-col">
-                            <Skeleton className="sm:w-40 md:w-50 lg:w-62.5 aspect-square rounded-full" />
-                            <ChartLegendSkeleton />
-                        </div>
-
-                    </>
-                ) : (
-                    <>
-                        <PieChart labels={chartLabels} data={chartData} showCustomLabels />
-                    </>
-                )}
+                        </>
+                    ) : chartData.length ?
+                        (
+                            <>
+                                <PieChart labels={chartLabels} data={chartData} showCustomLabels />
+                            </>
+                        ) : <ChartFallbackUI handleRefresh={fetchChartData} />}
+                </div>
             </div>
             <TableModal
                 open={open}

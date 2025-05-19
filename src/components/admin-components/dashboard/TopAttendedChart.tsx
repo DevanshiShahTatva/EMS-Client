@@ -18,6 +18,7 @@ import { apiCall } from '@/utils/services/request';
 
 // Types
 import { ITopAttendedEventsData } from '@/app/admin/dashboard/types';
+import ChartFallbackUI from './ChartFallbackUI';
 
 const TopAttendedEvents = () => {
 
@@ -86,11 +87,11 @@ const TopAttendedEvents = () => {
         ];
     }, [data]);
 
-
     return (
         <div>
             <CardTitle
                 title={DASHBOARD_TITLE.TOP_ATTENDED_EVENTS}
+                tooltip={DASHBOARD_TITLE.TOP_ATTENDED_EVENTS_TOOLTIP}
                 right={
                     <Button
                         variant="link"
@@ -100,17 +101,17 @@ const TopAttendedEvents = () => {
                         View Details
                     </Button>
                 } />
-            <div className="p-6">
+            <div className="p-6 min-h-[450px] flex items-center justify-center">
                 {loading ? (
                     <Skeleton className="h-90 w-full rounded-md" />
-                ) : (
+                ) : chartDataSet[0]?.data?.length && chartDataSet[1]?.data?.length ? (
                     <div className="min-h-[250px] h-[400px] md:h-[360px] w-full flex items-center justify-center">
-                            <StackedBarChart
-                                labels={chartLabels}
-                                datasets={chartDataSet}
-                            />
+                        <StackedBarChart
+                            labels={chartLabels}
+                            datasets={chartDataSet}
+                        />
                     </div>
-                )}
+                ) : <ChartFallbackUI handleRefresh={fetchData} />}
             </div>
             <TableModal
                 open={open}

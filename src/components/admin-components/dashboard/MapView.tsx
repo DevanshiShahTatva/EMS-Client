@@ -77,6 +77,7 @@ const MapView = () => {
   if (!L) return <div>Loading map...</div>;
 
   return (
+    <div className="mt-6">
     <MapContainer
       center={[20, 0]}
       zoom={2}
@@ -95,6 +96,7 @@ const MapView = () => {
         </Marker>
       ))}
     </MapContainer>
+    </div>
   );
 };
 
