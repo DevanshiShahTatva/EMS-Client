@@ -90,3 +90,5 @@ export interface IEventsState {
     cancelledAt: Date,
     isAttended: boolean;
 }
+
+export type SortOption = 'none' | 'date-asc' | 'date-desc' | 'title-asc' | 'title-desc';

@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Constant imports
-import { ROUTES, TC_BANNER_LINK } from '@/utils/constant';
+import { ROUTES } from '@/utils/constant';
 
 // types
 import { ITermsResponse } from '../admin/terms-and-conditions/types';
@@ -21,6 +21,9 @@ import { API_ROUTES } from '@/utils/constant'
 
 // library
 import he from 'he';
+
+// CSS
+import "../termsContent.css"
 
 const TermsAndConditions = () => {
 
@@ -56,24 +59,13 @@ const TermsAndConditions = () => {
     <div>
 
       <section className="bg-gray-100 py-10 px-4 sm:px-6 md:px-8">
-        <div className="mx-auto flex flex-col lg:flex-row gap-10 items-stretch">
-          {/* Left Side: Banner Image */}
-          <div className="w-full h-[100%] lg:w-1/2">
-            <img
-              src={TC_BANNER_LINK}
-              alt="Terms Conditions banner"
-              className="w-full h-full rounded-xl object-contain"
-            />
-          </div>
-
-          {/* Right Side: Tcs */}
-          <div className="w-full lg:w-1/2 h-full">
+        <div className="mx-auto h-full flex justify-center ">
             {loader ?
               <Skeleton className='max-h-[auto] lg:max-h-[650px] w-full aspect-square' /> :
-              <div className="mx-auto bg-white p-6 rounded-lg shadow-lg">
+              <div className=" bg-white p-6 w-full rounded-lg shadow-lg">
                 <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Terms & Conditions</h1>
 
-                <div className='max-h-[auto] lg:max-h-[500px] overflow-auto scrollbar-none' dangerouslySetInnerHTML={{ __html: decodedHTML }} />
+                <div className='terms-and-conditions' dangerouslySetInnerHTML={{ __html: decodedHTML }} />
 
                 <div className="text-lg text-gray-700 mt-6">
                   <p>
@@ -82,12 +74,8 @@ const TermsAndConditions = () => {
                 </div>
               </div>
             }
-          </div>
         </div>
       </section>
-
-      
-
     </div>
   );
 }

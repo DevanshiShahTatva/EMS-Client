@@ -25,6 +25,7 @@ import Loader from '../common/Loader'
 import BookingButton from './BookingButton'
 import GoogleMap from './GoogleMap'
 import ReviewsSection from './ReviewSection'
+import CategoryChip from './CategoryChip'
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
@@ -73,7 +74,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
     })
     if(result?.success && result.data){
       setFeedbackData(result.data)
-    }
+    } 
     setLoading(false)
   }
   useEffect(() => {
@@ -175,8 +176,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                   <span >{event.location.address}</span>
                 </div>
                 <div className="flex items-center text-gray-600">
-                  <TagIcon className="h-5 w-5 mr-2 text-gray-400" />
-                  <span>{event.category?.name}</span>
+                  <CategoryChip _id={event.category._id} name={event.category.name} isActive={event.category.isActive} color={event.category.color} bgColor={event.category.bgColor} icon={event.category.icon} createdAt={event.category.createdAt} updatedAt={event.category.updatedAt} __v={event.category.__v} />
                 </div>
               </div>
               <div className="flex items-center justify-between bg-white pt-4 border-t-2 border-gray-200 w-full">

@@ -67,7 +67,7 @@ function Footer() {
                                 <Link href={ROUTES.USER_EVENTS} className="text-gray-300 hover:underline">Browse Events</Link>
                                 {authToken !== "" && (
                                     <>
-                                        <Link href={ROUTES.USER_MY_EVENTS} className="text-gray-300 hover:underline">My Events</Link>
+                                        <Link href={ROUTES.USER_MY_EVENTS} className="text-gray-300 hover:underline">My Bookings</Link>
                                         <Link href={ROUTES.USER_PROFILE} className="text-gray-300 hover:underline">Profile</Link>
                                         <Link href="#" onClick={handleLogout} className="text-gray-300 hover:underline">Logout</Link>
                                     </>
