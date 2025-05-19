@@ -14,6 +14,7 @@ import { apiCall } from '@/utils/services/request'
 import { useRouter } from 'next/navigation'
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
 import { toast } from 'react-toastify'
+import CategoryChip from './CategoryChip'
 interface FeaturedEventProps {
   event: EventData[]
 }
@@ -134,8 +135,7 @@ const handleLikeEvent = async (eventId: string) => {
                     />
                   <div className="mt-auto space-y-2 mb-4">
                     <div className="flex items-center text-gray-600">
-                      <Square3Stack3DIcon className="h-5 w-5 mr-3" />
-                      <span>{ev.category?.name}</span>
+                        <CategoryChip _id={ev.category._id} name={ev.category.name} isActive={ev.category.isActive} color={ev.category.color} bgColor={ev.category.bgColor} icon={ev.category.icon} createdAt={ev.category.createdAt} updatedAt={ev.category.updatedAt} __v={ev.category.__v} />
                     </div>
                     <div className="space-y-3 mb-6">
                       <div className="flex items-center text-gray-600">

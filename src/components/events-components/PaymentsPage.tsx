@@ -20,7 +20,6 @@ const PaymentResultPage = () => {
     const storedEventTitle = sessionStorage.getItem('eventTitle')
     const storedEventId = sessionStorage.getItem('eventId')
     const paymentId = searchParams.get('session_id')
-
     if (!storedTickets || !storedEventTitle || !storedEventId || !paymentId) {
       setIsSuccess(false)
       return
@@ -95,7 +94,7 @@ const PaymentResultPage = () => {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Ticket Type</span>
-              <span className="font-medium text-gray-900">{ticketDetails.type}</span>
+              <span className="font-medium text-gray-900">{ticketDetails.type.name}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Quantity</span>

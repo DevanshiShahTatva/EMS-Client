@@ -4,8 +4,10 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   PencilIcon,
+  CircleUserRound,
 } from 'lucide-react'
 import EditReviewModal from './EditReviewModal'
+import Image from "next/image"
 import { FeedbackDetails } from '@/app/events/types'
 const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) => {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -19,15 +21,6 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
   return (
     <>
       <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 h-full relative">
-      
-        <button
-          onClick={() => setIsEditModalOpen(true)}
-          className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded-full transition-colors"
-          aria-label="Edit review"
-        >
-          <PencilIcon className="w-3.5 h-3.5 text-gray-400 hover:text-gray-600" />
-        </button>
-      
         <div className="flex items-center space-x-2 mb-2">
           <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
             <img
@@ -35,6 +28,20 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
               alt="User name"
               className="w-full h-full object-cover"
             />
+            {
+              feedback.profileimage ? 
+              <Image
+                src={feedback.profileimage}
+                alt="User"
+                width={48}
+                height={48}
+                className="w-full h-full object-cover"
+              /> : 
+                (<CircleUserRound width={48}
+                height={48}
+                className="rounded-full"
+                />)
+            }
           </div>
           <div className="min-w-0">
             <h4 className="font-medium text-sm truncate">{feedback.name}</h4>
@@ -80,7 +87,8 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
                 hour: "2-digit",
                 minute: "2-digit",
                 hour12: true,
-        })}</div>
+        })} {feedback.isEdited ? "(Edited)" :""}
+        </div>
       </div>
       
       {isEditModalOpen && (

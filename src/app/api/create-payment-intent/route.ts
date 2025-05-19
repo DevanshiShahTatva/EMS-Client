@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!,{
+   apiVersion: '2025-03-31.basil'
+})
 
 
 export async function POST(req: Request) {
@@ -9,8 +11,13 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { tickets, eventTitle } = body;
     const { type, totalPrice, quantity, usedPoints = 0, finalAmount, discount = 0 } = tickets;
-
-    const discountedUnitAmount = Math.round((finalAmount / quantity));
+    const discountedUnitAmount = Math.round((finalAmount) / quantity);
+    if (discountedUnitAmount < 50) {
+      return NextResponse.json(
+        { error: 'Amount too low. Minimum charge is ₹0.50' },
+        { status: 400 }
+      );
+    }
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -18,7 +25,7 @@ export async function POST(req: Request) {
           price_data: {
             currency: 'inr',
             product_data: {
-              name: `${eventTitle} - ${tickets.type}`,
+              name: `${eventTitle} - ${type.name}`,
               description: usedPoints > 0 ? `Used ${usedPoints} points (₹${discount / 100} discount)` : undefined,
             },
             unit_amount: discountedUnitAmount,

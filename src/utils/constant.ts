@@ -11,6 +11,7 @@ export const ROUTES = {
     USER_MY_EVENTS  :"/user/my-events",
     USER_MY_CALENDER: "/user/my-calender",
     USER_REWARDED_HISTORY: "/user/reward-history",
+    USER_REVIEW_HISTORY: "/user/my-reviews",
     ADMIN: {
         DASHBOARD: "/admin/dashboard",
         EVENTS: "/admin/event",
@@ -84,6 +85,8 @@ export const API_ROUTES = {
     TERMS_AND_CONDITIONS : "/terms-and-conditions",
     FEEDBACK:(id:string)=>`/events/${id}/feedback`,
     GET_FEEDBACK:(id:string)=>`/events/${id}/feedbacks`,
+    USER_FEEDBACK:"/feedbacks",
+    PUT_FEEDBACK:(id:string|null)=>`/feedbacks/${id}`,
     CATEGORY: "/ticket-categories",
 }
 export const LIGHT_COLORS = [
