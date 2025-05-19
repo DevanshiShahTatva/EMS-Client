@@ -15,7 +15,7 @@ import { getAuthToken, getUserLogo, setUserLogo, setUserName, getUserName } from
 
 // Other library
 import Cookie from 'js-cookie'
-import { TicketsIcon, UserCircle, LogOut, Calendar, HandCoins, Star } from 'lucide-react';
+import { TicketsIcon, UserCircle, LogOut, Calendar, HandCoins, Star, Menu } from 'lucide-react';
 
 // Services
 import { apiCall } from '@/utils/services/request';
@@ -25,12 +25,13 @@ import { setUserLatLong } from '@/app/events/event-helper';
 
 interface HeaderPageProps {
   toggleSidebar: () => void,
+  collapseSidebar: () => void,
   isAdmiRole?: boolean
   activeLink? : string
   isStaffRole? : boolean
 }
 
-const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, isStaffRole = false, activeLink = "" }) => {
+const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, isStaffRole = false, activeLink = "", collapseSidebar }) => {
 
   const [authToken, setAuthToken] = useState("")
   const [logo, setLogo] = useState("")
@@ -201,7 +202,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
               </svg>
             )}
           </button>
-          <div className="flex gap-2">
+          <div className="flex gap-4 items-center">
             <Link
               className="flex title-font font-medium items-center text-gray-900 md:mb-0"
               href={ROUTES.HOME}
@@ -214,6 +215,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                 height={60}
               />
             </Link>
+            {(isAdmiRole || isStaffRole) && <Menu onClick={collapseSidebar} className='hidden md:block h-6 w-6 mt-2 cursor-pointer'/>}
           </div>
 
           {!isAdmiRole && !isStaffRole &&

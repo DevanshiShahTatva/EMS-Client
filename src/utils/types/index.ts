@@ -51,7 +51,8 @@ export interface IApplyFiltersKey {
 export interface ISidebarPageProps {
   children : React.ReactNode, 
   role: string
-  isOpen?: boolean; 
+  isOpen?: boolean;
+  isCollase?: boolean; 
   onClose?: () => void,
   activeLink? : string
 }
