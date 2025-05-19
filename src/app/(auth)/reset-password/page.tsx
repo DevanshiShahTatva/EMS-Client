@@ -19,6 +19,7 @@ import { ResetPassSchema, InitialResetPassValues } from "./helper";
 // Custom Components
 import FormikTextField from "@/components/common/FormikTextField";
 import Logo from "@/components/common/Logo";
+import CustomButton from "@/components/common/CustomButton";
 
 // Types
 import { IResetPassValues } from "./types";
@@ -137,15 +138,16 @@ const ResetPasswordPage = () => {
                       }
                     />
 
-                    <button
+                    <CustomButton
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+                      variant="primary"
+                      className="w-full py-3 transition-colors disabled:opacity-50"
                     >
                       {isSubmitting
                         ? "Resetting Password..."
                         : "Reset Password"}
-                    </button>
+                    </CustomButton>
 
                     <p className="text-center text-sm text-gray-500 mt-4">
                       Remembered your password?{" "}

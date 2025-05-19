@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import AddEditTicketTypeModal from '@/components/admin-components/AddEditTicketTypeModal';
 import { ITicketType, ITicketTypeFormValues, ITicketTypesResp } from '@/app/admin/dropdowns/types';
 import { getPaginatedData, getSearchResults, initialTicketTypeFormValues } from '@/app/admin/dropdowns/helper';
+import CustomButton from '../common/CustomButton';
 
 function TicketTypeDropdown() {
     const [loading, setLoading] = useState(true);
@@ -189,13 +190,14 @@ function TicketTypeDropdown() {
                         />
                     </div>
 
-                    <button
+                    <CustomButton
                         onClick={openAddModal}
-                        className="md:flex gap-1 items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                        variant='primary'
+                        startIcon={<PlusIcon className="w-5 h-5 font-bold" />}
+                        className="md:flex gap-1 items-center"
                     >
-                        <PlusIcon className="w-5 h-5 font-bold" />
                         <p className="hidden md:block">Add</p>
-                    </button>
+                    </CustomButton>
                 </div>
 
                 {/* Data Table */}

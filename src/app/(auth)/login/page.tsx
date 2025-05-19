@@ -6,6 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+// Custom Components
+import CustomButton from "@/components/common/CustomButton";
+import FormikTextField from "@/components/common/FormikTextField";
+import Logo from "@/components/common/Logo";
+
 // Other library support
 import { Formik, Form, FormikHelpers } from "formik";
 import { toast } from "react-toastify";
@@ -14,13 +19,11 @@ import { toast } from "react-toastify";
 import { ROUTES, API_ROUTES, LOG_IN_IMAGE_BANNER_LINK } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
 import { InitialLogInValues, LogInFormSchema } from "./helper";
-import FormikTextField from "@/components/common/FormikTextField";
 
 // types support
 import { ILogInFormValues } from "./types";
 
 // Logo & Icons
-import Logo from "@/components/common/Logo";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 // Other library support
@@ -123,12 +126,13 @@ const LogInPage = () => {
                     </Link>
                   </div>
 
-                  <button
+                  <CustomButton
                     type="submit"
+                    variant="primary"
                     disabled={isSubmitting}
-                    className="w-full cursor-pointer bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50">
+                    className="w-full py-3 transition-colors disabled:opacity-50">
                     {isSubmitting ? "Logging In..." : "Log In"}
-                  </button>
+                  </CustomButton>
 
                   <p className="text-center text-sm text-gray-500 mt-4">
                     Don’t have an account?{" "}

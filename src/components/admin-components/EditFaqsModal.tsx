@@ -8,6 +8,7 @@ import { Formik, Form, FormikHelpers } from 'formik';
 
 // Custom Components
 import FormikTextField from '../common/FormikTextField';
+import CustomButton from "../common/CustomButton";
 
 // types support
 import { IEditFaqsModalProps, IFAQsItem } from "@/app/admin/faqs/types";
@@ -74,20 +75,21 @@ const EditFaqModal: React.FC<IEditFaqsModalProps> = ({
 
                               {/* Buttons */}
                               <div className="flex justify-center gap-3 p-6">
-                                  <button
-                                      onClick={onClose}
-                                      className="w-full cursor-pointer px-4 py-2 rounded-[8px] font-bold border border-gray-500 text-gray-700 hover:bg-gray-100"
-                                  >
-                                      Cancel
-                                  </button>
-                                  <button
-                                      type="submit"
-                                      className="w-full cursor-pointer px-4 py-2 rounded-[8px] font-bold bg-blue-500 text-white hover:bg-blue-600"
-                                  >
-                                      Update
-                                  </button>
+                                <CustomButton
+                                   variant="outlined"
+                                   className="w-full rounded-[8px]"
+                                   onClick={onClose}
+                                 >
+                                    Cancel
+                                </CustomButton>
+                                <CustomButton
+                                   variant="primary"
+                                   className="w-full"
+                                   type="submit"
+                                 >
+                                    Update
+                                </CustomButton>
                               </div>
-
                           </div>
                       </Form>
                   )}

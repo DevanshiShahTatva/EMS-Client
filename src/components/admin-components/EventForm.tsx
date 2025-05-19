@@ -9,6 +9,7 @@ import QuilEditor from './QuilEditor';
 import AddressAutocomplete from './AddressAutoComplete.web';
 import CustomSelectField from './SelectField';
 import CustomDateTimePicker from './DateTimePicker';
+import CustomButton from '../common/CustomButton';
 import Breadcrumbs from '../common/BreadCrumbs';
 import TitleSection from '../common/TitleSection';
 import SelectField from '../common/SelectField';
@@ -1000,12 +1001,13 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
         />
 
         <div className="text-end my-6">
-          <button
+          <CustomButton
             onClick={handleSubmit}
-            className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-medium sm:w-max w-full py-3 px-6 rounded-[12px] hover:opacity-90 transition disabled:cursor-not-allowed cursor-pointer"
+            variant='primary'
+            className="sm:w-max w-full py-3 px-6 rounded-[12px] hover:opacity-90 transition disabled:cursor-not-allowed cursor-pointer"
           >
             {isEditMode ? "Update" : "Create"} Event
-          </button>
+          </CustomButton>
         </div>
       </div>
     </div>

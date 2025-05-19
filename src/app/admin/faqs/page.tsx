@@ -13,6 +13,7 @@ import TableSkeleton from '@/components/common/TableSkeloton';
 import EditFaqModal from '@/components/admin-components/EditFaqsModal';
 import Breadcrumbs from '@/components/common/BreadCrumbs';
 import TitleSection from '@/components/common/TitleSection';
+import CustomButton from '@/components/common/CustomButton';
 
 // Icons
 import { MagnifyingGlassIcon, TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline"
@@ -204,13 +205,14 @@ const AdminFaqsPage = () => {
             />
           </div>
 
-          <button
+          <CustomButton
+            variant='primary'
             onClick={navToFAQCreationPage}
-            className="md:flex gap-1 items-center font-bold cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+            className='md:flex gap-1 items-center'
+            startIcon={<PlusIcon className="w-5 h-5 font-bold" />}
           >
-            <PlusIcon className="w-5 h-5 font-bold" />
-            <p className="hidden md:block">Add</p>
-          </button>
+              <p className="hidden md:block">Add</p>
+          </CustomButton>
         </div>
 
         {/* Data Table  */}

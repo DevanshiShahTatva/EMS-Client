@@ -10,6 +10,7 @@ import {toast} from "react-toastify"
 import FormikTextField from '../common/FormikTextField';
 import Breadcrumbs from '../common/BreadCrumbs';
 import TitleSection from '../common/TitleSection';
+import CustomButton from '../common/CustomButton';
 
 // Constants & Helpers import
 import { FaqsValidationSchema, InitialFaqsValues } from '@/app/admin/faqs/helper';
@@ -112,13 +113,14 @@ const FAQForm : React.FC = () => {
                           </FieldArray>
 
                           <div className="text-end my-6">
-                              <button
+                              <CustomButton
                                   disabled={isSubmitting}
                                   type='submit'
-                                  className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-medium sm:w-max w-full py-3 px-6 rounded-[12px] disabled:opacity-50 transition disabled:cursor-not-allowed cursor-pointer"
+                                  variant='primary'
+                                  className="sm:w-max rounded-[12px] w-full py-3 px-6 disabled:opacity-50 transition disabled:cursor-not-allowed"
                               >
-                                  {isSubmitting ? "Submitting..." : "Submit"}
-                              </button>
+                                {isSubmitting ? "Submitting..." : "Submit"}
+                            </CustomButton>
                           </div>
                       </Form>
                   )}
