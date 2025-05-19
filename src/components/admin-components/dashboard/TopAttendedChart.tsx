@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 // Cistom Components
-// import BarChart from '../charts/BarChart';
 import StackedBarChart from '../charts/StackedBarCharts';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,7 @@ import TableModal from './TableModal';
 
 // Constants
 import { API_ROUTES } from '@/utils/constant';
-import { AttendedEventsTableColumns, DASHBOARD_TITLE, RevenueTableColumns } from '@/app/admin/dashboard/helper';
+import { AttendedEventsTableColumns, DASHBOARD_TITLE } from '@/app/admin/dashboard/helper';
 
 // Services
 import { apiCall } from '@/utils/services/request';
