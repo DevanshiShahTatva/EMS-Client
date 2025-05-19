@@ -137,6 +137,13 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 8, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
 ]
 
+export const USER_SIDEBAR_ITEMS = [
+    { id: 1, title: "Home", route: ROUTES.HOME, icon: "/assets/DashboardIcon.svg" },
+    { id: 2, title: "Browse Events", route: ROUTES.USER_EVENTS, icon: "/assets/EventsIcon.svg" },
+    { id: 3, title: "Contact Us", route: ROUTES.CONTACT_US, icon:  "/assets/support.svg"},
+    { id: 4, title: "FAQs", route: ROUTES.FAQs, icon:  "/assets/faqs.svg"},
+]
+
 export const ORGANIZER_SIDEBAR_ITEMS = [
     { id: 1, title: "Dashboard", route: ROUTES.ORGANIZER.DASHBOARD, icon: "/assets/DashboardIcon.svg" },
     { id: 2, title: "Scan Tickets", route: ROUTES.ORGANIZER.VERIFY_TICKETS, icon:  "/assets/scannerIcon.svg"},

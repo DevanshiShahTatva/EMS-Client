@@ -17,9 +17,6 @@ import { getAuthToken, getUserLogo, setUserLogo, setUserName, getUserName } from
 import Cookie from 'js-cookie'
 import { TicketsIcon, UserCircle, LogOut, Calendar, HandCoins, Star } from 'lucide-react';
 
-// images path
-import CrossIconPath from "../../../public/assets/CrossIcon.svg"
-
 // Services
 import { apiCall } from '@/utils/services/request';
 import { setUserLatLong } from '@/app/events/event-helper';
@@ -27,7 +24,7 @@ import { setUserLatLong } from '@/app/events/event-helper';
 
 
 interface HeaderPageProps {
-  toggleSidebar?: () => void,
+  toggleSidebar: () => void,
   isAdmiRole?: boolean
   activeLink? : string
   isStaffRole? : boolean
@@ -169,11 +166,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
       <header className="text-gray-600 body-font border-b border-b-gray-200">
         <div className="mx-auto flex flex-wrap py-3 flex-row items-center justify-between px-2 md:px-10">
           <button
-            onClick={() => {
-              isAdmiRole || isStaffRole
-              ? toggleSidebar?.()
-              : setIsMobileMenuOpen(!isMobileMenuOpen)
-            }}
+            onClick={toggleSidebar}
             className="md:hidden text-gray-700 focus:outline-none"
           >
             {isMobileMenuOpen ? (
@@ -233,35 +226,6 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                 )
                 }
               </nav>
-              {/* Mobile Navigation */}
-              {isMobileMenuOpen && (
-              <div className={`fixed z-40 top-0 left-0 w-full h-full bg-white shadow-md md:hidden transition-transform duration-300 ease-in-out transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`${isMobileMenuOpen ? "block" : "hidden"
-                    } md:hidden flex justify-end p-6`}
-                >
-                  <Image
-                    src={CrossIconPath}
-                    alt="cross-icon"
-                    width={40}
-                    height={40}
-                    className="font-bold"
-                  />
-                </div>
-                <div className='flex flex-col items-center gap-6 p-6'>
-                  {USER_HEADER_ITEMS.map(item => (
-                    <Link
-                      key={item.id}
-                      href={item.route}
-                      className={`font-bold text-lg text-gray-500 ${activeLink.includes(item.route) && "text-blue-500"}`}
-                    >
-                      {item.title}
-                    </Link>
-                  ))}
-                </div>
-                </div>
-              )}
             </>
           }
           <div className="flex gap-4 items-center">

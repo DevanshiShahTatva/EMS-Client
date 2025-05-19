@@ -13,7 +13,6 @@ import moment from 'moment';
 import Image from 'next/image';
 import { apiCall } from '@/utils/services/request';
 import Loader from '@/components/common/Loader';
-import Footer from '@/components/common/Footer';
 import { API_ROUTES, ROUTES } from '@/utils/constant';
 import CalenderDropdown from './CalenderDropdown';
 import TooltipWrapper from '@/components/common/TooltipWrapper';
@@ -186,9 +185,6 @@ export default function MyCalendar() {
             </div>
           </div>
         )}
-      </div>
-      <div className="mt-auto">
-        <Footer />
       </div>
     </div>
   );
