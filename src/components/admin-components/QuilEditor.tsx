@@ -3,6 +3,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
 import { IQuilEditorProps } from "@/app/admin/event/types";
+import CommonAIButton from "../common/CommonAIButton";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
@@ -22,11 +23,7 @@ const QuilEditor: React.FC<IQuilEditorProps> = ({
   return (
     <div className="mb-4">
       <div
-        className={
-          handleGenerateDescription
-            ? "flex flex-row justify-between items-end mb-2"
-            : ""
-        }
+        className="flex flex-row justify-between items-end"
       >
         <label
           htmlFor={name}
@@ -34,26 +31,28 @@ const QuilEditor: React.FC<IQuilEditorProps> = ({
         >
           {label} {required && <span className="text-red-500">*</span>}
         </label>
-        {handleGenerateDescription && (
-          <button
-            className="px-4 py-2 bg-amber-300 rounded-lg text-white cursor-pointer disabled:bg-amber-200"
-            onClick={() => handleGenerateDescription()}
-            disabled={isDescriptionGenerating || iSGenerateButtonDisabled}
-          >
-            {isDescriptionGenerating ? "Generating.." : "Generate By AI"}
-          </button>
-        )}
       </div>
 
-      <ReactQuill
-        theme="snow"
-        placeholder={placeholder}
-        className={name === "tc" ? "custom-tc-quill" : "custom-quill"}
-        value={value}
-        onChange={onChange}
-      />
+      <div className="flex flex-col w-full items-end">
+        <div className="w-full">
+          <ReactQuill
+            theme="snow"
+            placeholder={placeholder}
+            className={name === "tc" ? "custom-tc-quill" : "custom-quill"}
+            value={value}
+            onChange={onChange}
+          />
 
-      {errorKey && <p className="text-red-500 text-sm mt-1">{errorMsg}</p>}
+          {errorKey && <p className="text-red-500 text-sm mt-1">{errorMsg}</p>}
+        </div>
+        {handleGenerateDescription && (
+          <CommonAIButton
+            handleButtonClick={() => handleGenerateDescription()}
+            isDisabled={iSGenerateButtonDisabled}
+            isSubmitting={isDescriptionGenerating}
+          />
+        )}
+      </div>
     </div>
   );
 };
