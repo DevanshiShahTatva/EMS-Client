@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation'
 import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
 import { toast } from 'react-toastify'
 import CategoryChip from './CategoryChip'
+import CustomButton from '../common/CustomButton'
 interface FeaturedEventProps {
   event: EventData[]
 }
@@ -130,7 +131,7 @@ const handleLikeEvent = async (eventId: string) => {
                       </span>
                     </div>
                     <div
-                      className="text-gray-600 mb-6"
+                      className="text-gray-600 line-clamp-6 mb-6"
                       dangerouslySetInnerHTML={{ __html: ev.description }}
                     />
                   <div className="mt-auto space-y-2 mb-4">
@@ -153,17 +154,23 @@ const handleLikeEvent = async (eventId: string) => {
                       </div>
                   </div>
                     <div className="mt-auto">
-                      <button
-                        disabled={ev.isSoldOut}
-                        onClick={()=>navigateToEventDetails(ev.id)}
-                        className={`py-3 px-6 rounded-md font-medium cursor-pointer ${
-                          ev.isSoldOut
-                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            : 'bg-blue-600 text-white hover:bg-blue-700'
-                        }`}
-                      >
-                        {ev.isSoldOut ? 'Sold Out' : 'View Details'}
-                      </button>
+                      {ev.isSoldOut ?
+                        <CustomButton
+                          variant='disabled'
+                          disabled
+                          className='font-medium py-3 px-6'
+                        >
+                          Sold out
+                        </CustomButton>
+                        :
+                        <CustomButton
+                          variant='primary'
+                          className='font-medium py-3 px-6'
+                          onClick={() => navigateToEventDetails(ev.id)}
+                        >
+                          View details
+                        </CustomButton>
+                      }
                     </div>
                   </div>
                 </div>

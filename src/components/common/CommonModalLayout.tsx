@@ -5,6 +5,7 @@ import React from "react";
 // library support
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import CustomButton from "./CustomButton";
+import clsx from "clsx";
 
 // types support
 type TModalFooterActions = {
@@ -32,7 +33,7 @@ const ModalLayout: React.FC<ICustomModalProps> = ({
 
     const gridCols =
         footerActions.length === 1 ? "grid-cols-1" : "grid-cols-2";
-    const contentMaxHeigh = maxHeight ? maxHeight : "max-h-96";
+    const contentMaxHeigh = maxHeight ? `max-h-[${maxHeight}]` : "max-h-96";
 
   return (
     <div className="fixed inset-0 z-45 flex items-center justify-center bg-black/60 bg-opacity-40 px-8 md:px-0">
@@ -44,7 +45,7 @@ const ModalLayout: React.FC<ICustomModalProps> = ({
         </div>
         {/* Title Section End */}
 
-        <div className={`${contentMaxHeigh} overflow-auto scrollbar-none ${footerActions.length > 0 ? "border-b-1" : "border-none"} px-6 py-0 border-b-gray-300`}>
+        <div className={clsx(`${contentMaxHeigh} overflow-auto scrollbar-none ${footerActions.length > 0 ? "border-b-1" : "border-none"} px-6 py-0 border-b-gray-300`)}>
           {/* Content UI Start */}
             {children}
           {/* Content UI End*/}

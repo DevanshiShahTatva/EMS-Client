@@ -202,8 +202,8 @@ const FilterModal: React.FC<IFilterModalProps> = ({
     <CommonModalLayout
       modalTitle="Filters"
       footerActions={[
-        { label: "Clear all", onClick: () => clearAllFilters(), variant: "outlined" },
-        { label: "Apply Filters", onClick: () => submitFilters(), variant: "primary" }
+        { label: "Reset", onClick: () => clearAllFilters(), variant: "outlined" },
+        { label: "Apply", onClick: () => submitFilters(), variant: "primary" }
       ]}
       onClose={onClose}
     >

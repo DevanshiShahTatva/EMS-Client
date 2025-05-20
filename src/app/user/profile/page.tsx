@@ -28,6 +28,7 @@ import { toast } from "react-toastify";
 import FormikTextField from "@/components/common/FormikTextField";
 import FormikFileUpload from "@/components/common/FormikFileUpload";
 import FormikSelectField from "@/components/common/FormikSelectField";
+import CustomButton from "@/components/common/CustomButton";
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Icons
@@ -454,13 +455,14 @@ const UserProfilePage = () => {
                           </div>
 
                           <div className="text-end">
-                            <button
-                              type="submit"
-                              disabled={isSubmitting}
-                              className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 px-5 rounded-lg transition-colors disabled:opacity-50 cursor-pointer mb-2"
-                            >
-                              {isSubmitting ? "Updating..." : "Update"}
-                            </button>
+                              <CustomButton
+                                type="submit"
+                                variant={isSubmitting ? "disabled" : "primary"}
+                                disabled={isSubmitting}
+                                className="py-3 px-5 mb-2"
+                              >
+                                {isSubmitting ? "Updating..." : "Update"}
+                              </CustomButton>
                           </div>
                         </div>
                       </Form>
@@ -499,20 +501,24 @@ const UserProfilePage = () => {
                       className="block w-full rounded-md px-4 py-2 text-md text-gray-500 placeholder-gray-400 border transition-all border-gray-300 focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring-1 disabled:bg-gray-100 cursor-not-allowed"
                     />
                   </div>
-                  {!changeEmail ? (
-                    <button
-                      onClick={openChangeEmail}
-                      className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold mt-1 px-4 py-2 rounded-md cursor-pointer whitespace-nowrap"
-                    >
-                      Change Email
-                    </button>
-                  ) : (
-                    <button
+                    {!changeEmail ? (
+                      <CustomButton
+                        type="submit"
+                        variant={"primary"}
+                        onClick={openChangeEmail}
+                        className="mt-3 mb-2 whitespace-nowrap"
+                      >
+                        Change Email
+                      </CustomButton>
+                    ) : (
+
+                    <CustomButton
                       onClick={cancelButtonClick}
-                      className="border-[#4F46E5] text-[#4F46E5] border-1 font-semibold mt-1 px-4 py-2 rounded-md cursor-pointer"
+                      variant="outlined"
+                      className="mt-1 font-medium"
                     >
                       Cancel
-                    </button>
+                    </CustomButton>
                   )}
                 </div>
 
@@ -535,13 +541,14 @@ const UserProfilePage = () => {
 
                         {newEmail === "" && (
                           <div className="text-start">
-                            <button
-                              type="submit"
-                              disabled={isSubmitting}
-                              className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 px-5 rounded-lg transition-colors disabled:opacity-50 cursor-pointer mb-2"
-                            >
-                              {isSubmitting ? "Verifying..." : "Verify Email"}
-                            </button>
+                              <CustomButton
+                                type="submit"
+                                variant={isSubmitting ? "disabled" : "primary"}
+                                disabled={isSubmitting}
+                                className="py-3 px-5 mt-3 mb-2"
+                              >
+                                {isSubmitting ? "Verifying..." : "Verify Email"}
+                              </CustomButton>
                           </div>
                         )}
                       </Form>
@@ -571,13 +578,14 @@ const UserProfilePage = () => {
                         </div>
 
                         <div className="text-start">
-                          <button
+                          <CustomButton
                             type="submit"
+                            variant={isSubmitting ? "disabled" : "primary"}
                             disabled={isSubmitting}
-                            className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 px-5 rounded-lg transition-colors disabled:opacity-50 cursor-pointer mb-2"
+                            className="py-3 px-5 mt-3 mb-2"
                           >
-                            {isSubmitting ? "Saving..." : "Save"}
-                          </button>
+                            {isSubmitting ? "Saving..." : "Save Changes"}
+                          </CustomButton>
                         </div>
                       </Form>
                     )}
@@ -671,13 +679,14 @@ const UserProfilePage = () => {
                       />
 
                       <div className="text-end">
-                        <button
-                          type="submit"
-                          disabled={isSubmitting}
-                          className="bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold py-3 px-5 rounded-lg transition-colors disabled:opacity-50 cursor-pointer mt-3 mb-2"
-                        >
-                          {isSubmitting ? "Saving..." : "Save Changes"}
-                        </button>
+                          <CustomButton
+                            type="submit"
+                            variant={isSubmitting ? "disabled" : "primary"}
+                            disabled={isSubmitting}
+                            className="py-3 px-5 mt-3 mb-2"
+                          >
+                            {isSubmitting ? "Saving..." : "Save Changes"}
+                          </CustomButton>
                       </div>
                     </Form>
                   )}
