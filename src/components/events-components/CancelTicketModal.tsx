@@ -44,7 +44,7 @@ const CancelTicketModal: React.FC<Props> = ({
     [charge]
   );
 
-  const refundAmount = eventDetails.eventTicketPrice - taxCharge;
+  const refundAmount =  Math.trunc(eventDetails.eventTicketPrice - taxCharge);
   const totalPaid = eventDetails.eventTicketPrice;
 
   return (
