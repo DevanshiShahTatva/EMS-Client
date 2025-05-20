@@ -165,19 +165,17 @@ const AdminTCsPage = () => {
                             onClick={deleteTermsContent}
                             variant='delete'
                             startIcon={<Trash2 className="w-5 h-5 font-bold" />}
-                            className="disabled:bg-red-300 disabled:cursor-not-allowed md:flex gap-1 items-center cursor-pointer"
+                            className="disabled:bg-red-300 disabled:cursor-not-allowed md:flex gap-2 items-center cursor-pointer"
                         >
-
                             <p className="hidden md:block">Reset</p>
                         </CustomButton>
                         <CustomButton
                             onClick={handleOpenModal}
                             variant='primary'
                             startIcon={<Sparkles className="w-5 h-5 font-bold" />}
-                            className="disabled:bg-red-300 disabled:cursor-not-allowed md:flex gap-1 items-center cursor-pointer"
+                            className="flex items-center gap-2 px-2 py-1 cursor-pointer text-white rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 shadow-lg hover:shadow-xl transition-shadow duration-300 disabled:from-purple-400 disabled:to-indigo-400"
                         >
-
-                            <p className="hidden md:block">Ask AI</p>
+                            Ask AI
                         </CustomButton>
                     </div>
                 </div>
@@ -206,7 +204,7 @@ const AdminTCsPage = () => {
 
             </ChartCard>
             {openModal &&
-                <TermsTagModal onClose={handleCloseModal} onSave={handleGenerateDescription} loading={isGenerating}/>}
+                <TermsTagModal onClose={handleCloseModal} onSave={handleGenerateDescription} loading={isGenerating} />}
         </div>
     )
 }
