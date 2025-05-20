@@ -10,6 +10,7 @@ export interface IBooking {
     ticket: string;
     seats: number;
     totalAmount: number;
+    discount: number;
     paymentId: string;
     bookingDate: string;
     __v: number;
@@ -83,6 +84,7 @@ export interface IEventsState {
     eventTicketCount : number,
     eventTicketType : string,
     eventTicketPrice: number,
+    eventTicketDiscount: number,
     eventStatus : string,
     eventImage : string,
     eventFullResponse : IBooking,
