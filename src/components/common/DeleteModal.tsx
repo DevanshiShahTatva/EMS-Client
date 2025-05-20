@@ -4,6 +4,7 @@ import { IDeleteModalProps } from "@/utils/types";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Trash2 } from "lucide-react"
 import React from "react";
+import CustomButton from "./CustomButton";
 
 
 const DeleteModal: React.FC<IDeleteModalProps> = ({
@@ -31,19 +32,21 @@ const DeleteModal: React.FC<IDeleteModalProps> = ({
 
          {/* Buttons */}
         <div className="flex justify-center gap-3 space-x-2">
-          <button
+          <CustomButton
+            variant="outlined"
             onClick={onClose}
-            className="w-full cursor-pointer px-4 py-2 rounded-[8px] font-bold border border-gray-300 text-gray-700 hover:bg-gray-100"
+            className="w-full"
           >
             Cancel
-          </button>
-          <button
+          </CustomButton>
+          <CustomButton
             onClick={onConfirm}
             disabled={confirmLoading}
-            className="w-full cursor-pointer px-4 py-2 rounded-[8px] font-bold bg-red-600 text-white hover:bg-red-700"
+            variant="delete"
+            className="w-full"
           >
               {confirmLoading ? "Deleting..." : "Delete"}
-          </button>
+          </CustomButton>
         </div>
         </div>
       </div>

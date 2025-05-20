@@ -8,6 +8,7 @@ import QRCodeScanner from '@/components/organizer-components/QRCodeScanner'
 import Loader from '@/components/common/Loader'
 import ChartCard from '@/components/admin-components/dashboard/ChartCard'
 import Breadcrumbs from '@/components/common/BreadCrumbs'
+import CustomButton from '@/components/common/CustomButton'
 
 // Library
 import { toast } from 'react-toastify'
@@ -143,12 +144,13 @@ const VerifyTicketPage = () => {
             {renderTicketsData()}
 
             <div className="text-center">
-              <button
+              <CustomButton
                 onClick={handleCloseModal}
-                className="w-full py-3 px-4 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
+                variant='primary'
+                className="w-full py-3 px-4"
               >
                 Complete
-              </button>
+              </CustomButton>
             </div>
           </div>
         </div>
@@ -173,12 +175,13 @@ const VerifyTicketPage = () => {
             {renderTicketsData()}
 
             <div className="text-center">
-              <button
+              <CustomButton
                 onClick={handleCloseModal}
-                className="w-full py-3 px-4 rounded-md font-medium bg-red-600 text-white hover:bg-red-700 cursor-pointer"
+                variant='delete'
+                className="w-full py-3 px-4"
               >
                 Try Again
-              </button>
+              </CustomButton>
             </div>
           </div>
         </div>

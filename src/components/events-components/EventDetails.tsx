@@ -25,6 +25,7 @@ import Loader from '../common/Loader'
 import BookingButton from './BookingButton'
 import GoogleMap from './GoogleMap'
 import ReviewsSection from './ReviewSection'
+import CustomButton from '../common/CustomButton'
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
@@ -95,13 +96,14 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
           <p className="text-gray-600 mb-4">
             {`The event you're looking for doesn't exist or has been removed.`}
           </p>
-          <button
+          <CustomButton
+            variant='primary'
+            startIcon={<ArrowLeftIcon className="mr-2 h-4 w-4" />}
             onClick={() => navigateToHome()}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+            className='inline-flex items-center font-medium'
           >
-            <ArrowLeftIcon className="mr-2 h-4 w-4" />
-            Back to Events
-          </button>
+               Back to Events
+          </CustomButton>
         </div>
       </div>
     )

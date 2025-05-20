@@ -140,7 +140,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
 
 export const USER_SIDEBAR_ITEMS = [
     { id: 1, title: "Home", route: ROUTES.HOME, icon: "/assets/DashboardIcon.svg" },
-    { id: 2, title: "Browse Events", route: ROUTES.USER_EVENTS, icon: "/assets/EventsIcon.svg" },
+    { id: 2, title: "Events", route: ROUTES.USER_EVENTS, icon: "/assets/EventsIcon.svg" },
     { id: 3, title: "Contact Us", route: ROUTES.CONTACT_US, icon:  "/assets/support.svg"},
     { id: 4, title: "FAQs", route: ROUTES.FAQs, icon:  "/assets/faqs.svg"},
 ]
@@ -152,7 +152,7 @@ export const ORGANIZER_SIDEBAR_ITEMS = [
 
 export const USER_HEADER_ITEMS = [
     { id: 1, title: "Home", route: ROUTES.HOME },
-    { id: 2, title: "Browse Events", route: ROUTES.USER_EVENTS},
+    { id: 2, title: "Events", route: ROUTES.USER_EVENTS},
     { id: 3, title: "Contact Us", route: ROUTES.CONTACT_US },
     { id: 4, title: "FAQs", route: ROUTES.FAQs},
 ]

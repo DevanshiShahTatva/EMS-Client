@@ -8,6 +8,7 @@ import { ITicketQRData } from "@/utils/types";
 
 // custom components
 import { Skeleton } from "../ui/skeleton";
+import CustomButton from "../common/CustomButton";
 
 interface IQRCodeScannerPros {
   getScannedQRValues : (values : ITicketQRData) => void
@@ -101,12 +102,13 @@ const QRCodeScanner : React.FC<IQRCodeScannerPros> = ( { getScannedQRValues }) =
 
       <div id="qr-scanner" ref={scannerRef} className="mx-auto mb-4 max-w-md" />
 
-      <button
+      <CustomButton
+        variant="primary"
         onClick={scanning ? stopScanner : startScanner}
-        className="text-lg font-semibold mt-5 mb-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer"
+        className="text-lg mt-5 mb-4"
       >
         {scanning ? "Stop" : "Scan"}
-      </button>
+      </CustomButton>
 
       {error && <p className="text-red-500 mt-2">{error}</p>}
     </div>

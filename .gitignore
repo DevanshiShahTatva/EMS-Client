@@ -45,3 +45,7 @@ next-env.d.ts
 .netlify
 
 .npmrc
+
+
+# ignore package-lock.json
+package-lock.json

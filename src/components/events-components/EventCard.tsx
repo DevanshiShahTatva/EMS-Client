@@ -13,9 +13,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
 import he from 'he'
 import CategoryChip from './CategoryChip'
+import CustomButton from '../common/CustomButton'
 
 interface EventCardProps {
   event: EventData
@@ -112,13 +112,24 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         </div>
       </div>
       <div className="px-4 pb-4">
-        <button
-          disabled={event.isSoldOut}
-          className={`w-full py-2 px-4 rounded-md font-medium ${event.isSoldOut ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'}`}
-          onClick={()=>navigateToEventDetails(event.id)}
-        >
-          {event.isSoldOut ? 'Sold Out' : 'View Details'}
-        </button>
+        {event.isSoldOut ? 
+          <CustomButton
+             variant='disabled'
+             disabled
+             className='w-full font-medium'
+          >
+             Sold out
+          </CustomButton>
+          :
+          <CustomButton
+             variant='primary'
+             className='w-full font-medium'
+             onClick={()=>navigateToEventDetails(event.id)}
+          >
+             View details
+          </CustomButton>
+      
+        }
       </div>
     </div>
   )
