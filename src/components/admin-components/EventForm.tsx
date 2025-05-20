@@ -12,7 +12,6 @@ import CustomDateTimePicker from './DateTimePicker';
 import CustomButton from '../common/CustomButton';
 import Breadcrumbs from '../common/BreadCrumbs';
 import TitleSection from '../common/TitleSection';
-import SelectField from '../common/SelectField';
 import ImageUploadGrid from './ImageUploadSection';
 
 // types import
@@ -32,7 +31,7 @@ import { ALLOWED_FILE_FORMATS, API_ROUTES, MAX_FILE_SIZE_MB, ROUTES, BREAD_CRUMB
 
 // helper functions
 import { apiCall } from '@/utils/services/request';
-import { InitialEventFormDataErrorTypes, InitialEventFormDataValues } from '../../app/admin/event/helper';
+import { InitialEventFormDataErrorTypes, InitialEventFormDataValues, handleFreeTicketType } from '../../app/admin/event/helper';
 
 const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
 
@@ -46,10 +45,12 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
   const [addRowVisible, setAddRowVisible] = useState(false);
   const [isGeneratingDescription, setIsGeneratingDescription] = useState<boolean>(false);
 
+  const [ticketErrorMsg, setTicketErrorMsg] = useState("")
+
   const [newTicket, setNewTicket] = useState<Omit<ITicket, "id">>({
     type: "",
     price: "",
-    maxQty: 0,
+    maxQty: "",
     description: "",
     _id: "",
   });
@@ -146,15 +147,79 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
     setExistingImages((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const ticketAddValidation = () => {
+    const { type, price, maxQty, description } = newTicket;
+
+    const label = formattedTicketTypes.find(item => item.value === newTicket.type)?.label.toLowerCase();
+
+    // Basic blank field validation
+    if (
+      !type.trim() ||
+      !price.trim() ||
+      !maxQty.toString().trim() ||
+      !description.trim()
+    ) {
+      setTicketErrorMsg("All fields are required.");
+      return;
+    }
+
+    // Price must be > 50 if type is not Free
+    if (label && label.toLowerCase() !== "free" && Number(price) <= 50) {
+      setTicketErrorMsg("Price must be greater than ₹50 for required ticket types.");
+      return;
+    }
+
+    // Qty must be > 0
+    if (Number(maxQty) <= 0) {
+      setTicketErrorMsg("Quantity must be greater than 0");
+      return;
+    }
+
+    setTicketErrorMsg(""); // Clear error
+    handleAdd();
+  }
+
+  const ticketEditValidation = (ticketValues: Partial<ITicket>) => {
+    const { type, price, maxQty, description } = ticketValues;
+
+    const label = formattedTicketTypes.find(item => item.value === type)?.label.toLowerCase();
+
+    // Strict blank field validation
+    if (
+      !type?.toString().trim() ||
+      !price?.toString().trim() ||
+      !maxQty?.toString().trim() ||
+      !description?.toString().trim()
+    ) {
+      setTicketErrorMsg("All fields are required.");
+      return false;
+    }
+
+    // Price must be > 50 if type is not Free
+    if (label !== "free" && Number(price) <= 50) {
+      setTicketErrorMsg("Price must be greater than ₹50 for required ticket types.");
+      return false;
+    }
+
+    // Qty must be > 0
+    if (Number(maxQty) <= 0) {
+      setTicketErrorMsg("Quantity must be greater than 0");
+      return;
+    }
+
+    setTicketErrorMsg(""); // Clear error
+    return true;
+  }
+
   const handleAdd = () => {
-    if (!newTicket.type || newTicket.maxQty <= 0) return;
     const newItem: ITicket = {
       ...newTicket,
       id: Date.now().toString(),
     };
     setTickets([...tickets, newItem]);
-    setNewTicket({ type: "", price: "", maxQty: 0, description: "", _id: "" });
+    setNewTicket({ type: "", price: "", maxQty: "", description: "", _id: "" });
     setAddRowVisible(false)
+    setTicketErrorMsg("")
   };
 
   const handleEdit = (id: string) => {
@@ -171,6 +236,10 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
 
   const handleSave = (id: string) => {
     const updated = editCache[id];
+    const validate = ticketEditValidation(updated)
+
+    if(!validate) return;
+ 
     setTickets((prev) =>
       prev.map((t) =>
         t.id === id ? { ...t, ...updated, isEditing: false } : t
@@ -190,6 +259,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
     const newCache = { ...editCache };
     delete newCache[id];
     setEditCache(newCache);
+    setTicketErrorMsg("")
   };
 
   const handleUpdate = (id: string, key: keyof ITicket, value: string | number) => {
@@ -549,7 +619,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
           id: item._id,
           type: item.type?._id,
           price: item.price.toString(),
-          maxQty: item.totalSeats - item.totalBookedSeats,
+          maxQty: `${item.totalSeats - item.totalBookedSeats}`,
           description: item.description,
           _id: item._id
         }
@@ -814,6 +884,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
                 options={categoriesOptions}
                 errorKey={formValuesError.category}
                 errorMsg="Enter valid event category"
+                height='3rem'
               />
             </div>
           </div>
@@ -866,28 +937,50 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
                   ticket.isEditing ? (
                     <tr key={ticket.id}>
                       <td className="border px-2 py-1">
-                        <SelectField
-                          items={formattedTicketTypesEdit(editCache[ticket.id]?.type)}
+                        <CustomSelectField
+                          placeholder='Select'
+                          errorKey={false}
+                          name='select'
+                          options={formattedTicketTypesEdit(editCache[ticket.id]?.type)}
                           value={editCache[ticket.id]?.type || ""}
-                          onChange={(value) => handleUpdate(ticket.id, "type", value)}
+                          // onChange={(value) => handleUpdate(ticket.id, "type", value)}
+                          onChange={(value) => {
+                            // If selected type is 'Free', set price = "0"
+                            const label = formattedTicketTypesEdit(value).find(item => item.value === value)?.label.toLowerCase();
+                            handleUpdate(ticket.id, "type", value);
+                            if (label === "free") {
+                              handleUpdate(ticket.id, "price", "0");
+                            } else if (editCache[ticket.id]?.price === "0") {
+                              // reset price to empty if previously 0 and type changed
+                              handleUpdate(ticket.id, "price", "");
+                            }
+                          }}
                         />
                       </td>
                       <td className="border px-2 py-1">
                         <input
                           value={editCache[ticket.id]?.price || ""}
-                          onChange={(e) =>
-                            handleUpdate(ticket.id, "price", e.target.value)
-                          }
+                          disabled={handleFreeTicketType(formattedTicketTypes, editCache[ticket.id]?.type || "")}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^\d*$/.test(value)) {
+                              handleUpdate(ticket.id, "price", value);
+                            }
+                          }}
                           className="w-full border px-2 py-1 rounded"
+                          placeholder='Price'
                         />
                       </td>
                       <td className="border px-2 py-1">
                         <input
-                          type="number"
-                          value={editCache[ticket.id]?.maxQty || 0}
-                          onChange={(e) =>
-                            handleUpdate(ticket.id, "maxQty", +e.target.value)
-                          }
+                          placeholder='Qty'
+                          value={editCache[ticket.id]?.maxQty}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^\d*$/.test(value)) {
+                              handleUpdate(ticket.id, "maxQty", value);
+                            }
+                          }}
                           className="w-full border px-2 py-1 rounded"
                         />
                       </td>
@@ -902,6 +995,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
                             )
                           }
                           className="w-full border px-2 py-1 rounded"
+                          placeholder='Description'
                         />
                       </td>
                       <td className="border text-center px-2 py-1 space-x-2">
@@ -949,43 +1043,54 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
                 {addRowVisible && (
                   <tr className="bg-white">
                     <td className="border px-2 py-1">
-                      <SelectField
-                        placeholder="Select"
-                        items={formattedTicketTypes}
+                      <CustomSelectField
+                        placeholder='Select'
+                        errorKey={false}
+                        name='select'
+                        options={formattedTicketTypes}
                         value={newTicket.type}
-                        onChange={(value) => setNewTicket({ ...newTicket, type: value })}
+                        onChange={(value) => {
+                          const label = formattedTicketTypes.find(item => item.value === value)?.label.toLowerCase();
+                          setNewTicket({ ...newTicket, type: value, price : label === "free" ? "0" : "" })
+                        }}
                       />
                     </td>
                     <td className="border px-2 py-1">
                       <input
-                        className="w-full border rounded px-2 py-1"
+                        className="w-full border rounded px-2 py-1 h-9 "
                         placeholder="Price"
+                        disabled={handleFreeTicketType(formattedTicketTypes, newTicket.type)}
                         value={newTicket.price}
-                        onChange={(e) =>
-                          setNewTicket({
-                            ...newTicket,
-                            price: e.target.value,
-                          })
-                        }
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^\d*$/.test(value)) {
+                            setNewTicket({
+                              ...newTicket,
+                              price: value,
+                            });
+                          }
+                        }}
                       />
                     </td>
                     <td className="border px-2 py-1">
                       <input
-                        type="number"
-                        className="w-full border rounded px-2 py-1"
+                        className="w-full border rounded px-2 py-1 h-9 "
                         placeholder="Qty"
                         value={newTicket.maxQty}
-                        onChange={(e) =>
-                          setNewTicket({
-                            ...newTicket,
-                            maxQty: +e.target.value,
-                          })
-                        }
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^\d*$/.test(value)) {
+                            setNewTicket({
+                              ...newTicket,
+                              maxQty: value,
+                            });
+                          }
+                        }}
                       />
                     </td>
                     <td className="border px-2 py-1">
                       <input
-                        className="w-full border rounded px-2 py-1"
+                        className="w-full border rounded px-2 py-1 h-9 "
                         placeholder="Description"
                         value={newTicket.description}
                         onChange={(e) =>
@@ -998,7 +1103,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
                     </td>
                     <td className="border px-4 py-2 text-center md:space-x-2">
                       <button
-                        onClick={handleAdd}
+                        onClick={ticketAddValidation}
                         className="bg-blue-600 cursor-pointer text-white px-3 py-1 rounded hover:bg-blue-700"
                       >
                         Add
@@ -1009,12 +1114,13 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
                           const emptyRow = {
                             type: "",
                             price: "",
-                            maxQty: 0,
+                            maxQty: "",
                             description: "",
                             _id: ""
                           }
                           setNewTicket(emptyRow)
                           setAddRowVisible(false)
+                          setTicketErrorMsg("")
                         }}
                       >
                         Delete
@@ -1039,6 +1145,12 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
           {formValuesError.ticket_type && (
             <p className="text-red-500 text-sm mt-1">
               At least one ticket is required
+            </p>
+          )}
+
+          {ticketErrorMsg !== "" && (
+            <p className="text-red-500 text-sm mt-1">
+              {ticketErrorMsg}
             </p>
           )}
         </div>
