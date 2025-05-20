@@ -134,6 +134,7 @@ const MyEventsPage = () => {
           eventTicketCount: item?.seats,
           eventTicketType: getTicketTypes(item.event?.tickets, item?.ticket),
           eventTicketPrice: item?.totalAmount,
+          eventTicketDiscount: item?.discount,
           eventStatus: getEventStatus(
             item.event?.startDateTime || "",
             item.event?.endDateTime
@@ -433,6 +434,12 @@ const MyEventsPage = () => {
                           <IndianRupee className="h-5 w-5" />
                           <p className="text-gray-800 ">Total Paid : ₹ {item.eventTicketPrice}</p>
                         </div>
+                        {item.eventTicketDiscount > 0 && (
+                          <div className="flex gap-3 items-center my-2">
+                            <IndianRupee className="h-5 w-5" />
+                            <p className="text-gray-800 ">Total Discount : ₹ {item.eventTicketDiscount}</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                     {renderStatusTitle(item)}
