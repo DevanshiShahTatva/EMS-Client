@@ -1,13 +1,14 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { XIcon, StarIcon } from 'lucide-react'
+import { StarIcon } from 'lucide-react'
 import { API_ROUTES } from '@/utils/constant'
 import { apiCall } from '@/utils/services/request'
 import { toast } from 'react-toastify'
 import Loader from '../common/Loader'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FeedbackDetails } from '@/app/events/types'
+import ModalLayout from '../common/CommonModalLayout'
 
 interface FeedbackModalProps {
   eventId: string
@@ -86,84 +87,70 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isEditFlag,eventId
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 bg-opacity-30 flex items-center justify-center p-4">
+    <div>
       {loader && <Loader />}
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative ">
-        <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-800">
-          <XIcon className="h-5 w-5" />
-        </button>
-
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">{isEditFlag ? "Update Feedback" : "Submit Feedback"}</h2>
-
-        <div className="space-y-4">
-          <div className="flex flex-col items-center">
-            {rating > 0 && (
-              <AnimatePresence>
-                <motion.div
-                  key={rating}
-                   initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{
+        <ModalLayout
+          onClose={onClose}
+          modalTitle={isEditFlag ? "Update Feedback" : "Submit Feedback"}
+          footerActions={[
+            { label: "Cancel", onClick: () => onClose(), variant: "outlined" },
+            { label: isEditFlag ? "Update":"Submit", onClick: () => handleSubmit(), variant: "primary" }
+          ]}
+        >
+          <div className="space-y-4 my-6">
+            <div className="flex flex-col items-center">
+              {rating > 0 && (
+                <AnimatePresence>
+                  <motion.div
+                    key={rating}
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
                       duration: 0.4,
                       scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
-                  }}
-                  className="text-2xl"
+                    }}
+                    className="text-2xl"
+                  >
+                    <img src={emojiMap[rating as keyof typeof emojiMap].emoji} alt="emotiicon" width={72} height={72} />
+                  </motion.div>
+                </AnimatePresence>
+              )}
+
+              <label className="block text-sm font-medium text-gray-700 mt-2">Rating</label>
+              <div className="flex space-x-1 mt-1">
+                {[1, 2, 3, 4, 5].map(star => (
+                  <StarIcon
+                    key={star}
+                    className={`h-6 w-6 cursor-pointer ${star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                    onClick={() => setRating(star)}
+                  />
+                ))}
+              </div>
+              {rating > 0 && (
+                <motion.p
+                  key={`text-${rating}`}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', bounce: 0.5 }}
+                  className="text-base mt-2 text-gray-700"
                 >
-                  <img src={emojiMap[rating as keyof typeof emojiMap].emoji} alt="emotiicon" width={72} height={72}/>
-                </motion.div>
-              </AnimatePresence>
-            )}
-
-            <label className="block text-sm font-medium text-gray-700 mt-2">Rating</label>
-            <div className="flex space-x-1 mt-1">
-              {[1, 2, 3, 4, 5].map(star => (
-                <StarIcon
-                  key={star}
-                  className={`h-6 w-6 cursor-pointer ${star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                  onClick={() => setRating(star)}
-                />
-              ))}
+                  {emojiMap[rating as keyof typeof emojiMap].text}
+                </motion.p>
+              )}
+              {errors.rating && <p className="text-sm text-red-500 mt-1">{errors.rating}</p>}
             </div>
-            {rating > 0 && (
-              <motion.p
-                key={`text-${rating}`}
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: 'spring', bounce: 0.5 }}
-                className="text-base mt-2 text-gray-700"
-              >
-                {emojiMap[rating as keyof typeof emojiMap].text}
-              </motion.p>
-            )}
-            {errors.rating && <p className="text-sm text-red-500 mt-1">{errors.rating}</p>}
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Description</label>
-            <textarea
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              className="w-full mt-1 p-2 border rounded-md"
-              rows={4}
-            ></textarea>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <textarea
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                className="w-full mt-1 p-2 border rounded-md"
+                rows={4}
+              ></textarea>
+            </div>
           </div>
-        </div>
-
-        <div className="mt-6 flex justify-end space-x-3">
-          <button
-            onClick={()=>{onClose()}}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-          {isEditFlag ? "Update":"Submit"}
-          </button>
-        </div>
-      </div>
+        </ModalLayout>
     </div>
   )
 }

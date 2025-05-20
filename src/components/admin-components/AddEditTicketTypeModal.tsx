@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Formik, Form } from "formik";
 import FormikTextField from "../common/FormikTextField";
 import { IAddEditTicketTypeModalProps, ITicketTypeFormValues } from "@/app/admin/dropdowns/types";
 import { TicketTypeValidationSchema } from "@/app/admin/dropdowns/helper";
+import ModalLayout from "../common/CommonModalLayout";
 
 const AddEditTicketTypeModal: React.FC<IAddEditTicketTypeModalProps> = ({
     isOpen,
@@ -25,16 +25,7 @@ const AddEditTicketTypeModal: React.FC<IAddEditTicketTypeModalProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-            <div className="bg-white w-full max-w-xl rounded-lg shadow-xl relative">
-                {/* Header */}
-                <div className="flex justify-between items-center border-b px-6 py-5 border-b-gray-300">
-                    <p className="font-bold text-2xl">
-                        {mode === "edit" ? "Edit Ticket Type" : "Add Ticket Type"}
-                    </p>
-                    <XMarkIcon onClick={onClose} className="h-6 w-6 cursor-pointer" />
-                </div>
-
+        <div>
                 {/* Form */}
                 <Formik
                     initialValues={initialValues}
@@ -43,47 +34,39 @@ const AddEditTicketTypeModal: React.FC<IAddEditTicketTypeModalProps> = ({
                     enableReinitialize
                 >
                     {() => (
-                        <Form className="flex flex-col gap-6 px-6 py-6">
-                            {/* Hidden field for ID */}
-                            {initialValues.id && (
-                                <input type="hidden" name="id" value={initialValues.id} />
-                            )}
+                        <Form>
+                            <ModalLayout
+                               onClose={onClose}
+                               modalTitle={mode === "edit" ? "Edit Ticket Type" : "Add Ticket Type"}
+                                footerActions={[
+                                    { label: "Cancel", onClick: () => onClose(), variant: "outlined" },
+                                    { label: submitLoading ? "Saving..." : "Save", type: "submit", variant: "primary" }
+                                ]}
+                            >
+                                <div className="flex flex-col gap-6 py-6">
+                                    {/* Hidden field for ID */}
+                                    {initialValues.id && (
+                                        <input type="hidden" name="id" value={initialValues.id} />
+                                    )}
 
-                            {/* Name */}
-                            <FormikTextField
-                                name="name"
-                                label="Ticket Type Name"
-                                placeholder="Enter ticket type name"
-                            />
+                                    {/* Name */}
+                                    <FormikTextField
+                                        name="name"
+                                        label="Ticket Type Name"
+                                        placeholder="Enter ticket type name"
+                                    />
 
-                            {/* Description */}
-                            <FormikTextField
-                                name="description"
-                                label="Description (optional)"
-                                placeholder="Enter short description"
-                            />
-
-                            {/* Action Buttons */}
-                            <div className="flex justify-center gap-3 pt-4">
-                                <button
-                                    type="button"
-                                    onClick={onClose}
-                                    className="w-full cursor-pointer px-4 py-2 rounded-[8px] font-bold border border-gray-500 text-gray-700 hover:bg-gray-100"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="w-full cursor-pointer px-4 py-2 rounded-[8px] font-bold bg-blue-500 text-white hover:bg-blue-600"
-                                    disabled={submitLoading}
-                                >
-                                    {submitLoading ? "Saving..." : "Save"}
-                                </button>
-                            </div>
+                                    {/* Description */}
+                                    <FormikTextField
+                                        name="description"
+                                        label="Description (optional)"
+                                        placeholder="Enter short description"
+                                    />
+                                </div>
+                            </ModalLayout>
                         </Form>
                     )}
                 </Formik>
-            </div>
         </div>
     );
 };

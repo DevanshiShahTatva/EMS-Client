@@ -40,7 +40,7 @@ const PaymentResultPage = () => {
       formData.append('paymentId', paymentId)
       formData.append('bookingDate', creationDate)
       parsedTickets?.usedPoints > 0 && formData.append('usedPoints', parsedTickets.usedPoints.toString())
-
+      parsedTickets?.discount > 0 && formData.append('discount', parsedTickets.discount.toString())
       apiCall({
         endPoint: API_ROUTES.EVENT.PAYMENT,
         method: 'POST',
@@ -103,11 +103,19 @@ const PaymentResultPage = () => {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Total Amount</span>
+              <span className="text-gray-600">Total Paid</span>
               <span className="font-medium text-gray-900">
               ₹{ticketDetails.totalPrice.toFixed(2)}
               </span>
             </div>
+            {ticketDetails.discount > 0 && (
+              <div className="flex justify-between">
+                <span className="text-gray-600">Total Discount</span>
+                <span className="font-medium text-gray-900">
+                ₹{ticketDetails.discount.toFixed(2)}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 

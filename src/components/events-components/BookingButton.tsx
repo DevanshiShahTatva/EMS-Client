@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import TicketBookingModal from './TicketBookingModal'
 import { areAllTicketsBooked } from '@/app/events/event-helper';
 import { EventTicket } from '@/app/events/types';
+import CustomButton from '../common/CustomButton';
 interface BookingButtonProps {
   tickets:EventTicket[];
   eventTitle: string;
@@ -37,23 +38,34 @@ const BookingButton: React.FC<BookingButtonProps> = ({
   }
   if (isSoldOut) {
     return (
-      <button
+      <CustomButton
         disabled
-        className="w-32 py-3 px-4 bg-gray-300 text-gray-500 font-medium rounded-md cursor-not-allowed"
+        variant='disabled'
+        className="w-32 py-3 px-4 font-medium"
       >
         Sold Out
-      </button>
+      </CustomButton>
     )
   }
   return (
     <>
-      <button
-        disabled={status}
-        onClick={handleBookingClick}
-        className={`w-32 py-3 px-4 font-medium rounded-md transition-colors ${status ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'}`}
-      >
-        {status ? "Event Ended":"Book Tickets"}
-      </button>
+      {status ?
+        <CustomButton
+          variant='disabled'
+          disabled
+          className='w-32 py-3 px-4 font-medium'
+        >
+          Event Ended
+        </CustomButton>
+        :
+        <CustomButton
+          variant='primary'
+          className='w-32 py-3 px-4 font-medium'
+          onClick={handleBookingClick}
+        >
+          Book Tickets
+        </CustomButton>
+      }
       <TicketBookingModal
         isOpen={isModalOpen}
         points={points}

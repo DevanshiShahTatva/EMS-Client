@@ -14,6 +14,7 @@ import { apiCall } from '@/utils/services/request';
 
 // Custom components
 import FormikTextField from "@/components/common/FormikTextField";
+import CustomButton from '@/components/common/CustomButton';
 
 // Helper supports
 import { ContactFormSchema, InitialContactFormValues } from './helper';
@@ -129,13 +130,14 @@ export default function ContactUsPage() {
                 />
 
                 <div className="text-end">
-                  <button
+                  <CustomButton
                     type="submit"
                     disabled={isSubmitting}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-5 rounded-lg transition disabled:opacity-50"
+                    variant={isSubmitting ? "disabled" : "primary"}
+                    className="py-3 px-5"
                   >
                     {isSubmitting ? "Submitting..." : "Submit"}
-                  </button>
+                  </CustomButton>
                 </div>
               </Form>
             )}

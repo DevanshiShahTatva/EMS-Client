@@ -87,7 +87,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
           totalPrice: selectedTicketType?.price,
         },
       })
-      sessionStorage.setItem("tickets",JSON.stringify({type:selectedTicketType?.type,quantity:quantity,totalPrice:totalPrice,ticketId:selectedTicketType?._id, usedPoints }));
+      sessionStorage.setItem("tickets",JSON.stringify({type:selectedTicketType?.type,quantity:quantity,totalPrice:finalAmount/100,ticketId:selectedTicketType?._id, usedPoints, discount: discount / 100 }));
       sessionStorage.setItem("eventTitle",eventTitle);
       window.location.href = res.data.url
     } catch (err) {

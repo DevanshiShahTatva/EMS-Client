@@ -233,12 +233,12 @@ const EventsPage: React.FC = () => {
 
       {(featuredEvent.length>0 && searchQuery==="") && (
         <div className="mb-8 mt-6">
-          <h2 className="text-xl font-semibold mb-4">Featured Event</h2>
+          <h2 className="text-xl font-semibold mb-4">Featured Event Near you</h2>
           <FeaturedEvent event={featuredEvent} />
         </div>
       )}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">All Events</h2>
+        <h2 className="text-xl font-semibold mb-4">Explore All Events</h2>
         <EventList events={regularEvents} />
       </div>
 

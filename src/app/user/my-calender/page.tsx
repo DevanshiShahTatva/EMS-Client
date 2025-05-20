@@ -16,6 +16,7 @@ import Loader from '@/components/common/Loader';
 import { API_ROUTES, ROUTES } from '@/utils/constant';
 import CalenderDropdown from './CalenderDropdown';
 import TooltipWrapper from '@/components/common/TooltipWrapper';
+import ModalLayout from '@/components/common/CommonModalLayout';
 
 type ExtendedEventInput = EventInput & {
   address?: string;
@@ -157,33 +158,38 @@ export default function MyCalendar() {
           />
         </div>
         {showModal && selectedEvent && (
-          <div className="fixed inset-0 bg-black/60 bg-opacity-40 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg w-[320px] md:w-[350px] relative">
-              <div className='absolute top-4 right-3'>
-                <XMarkIcon
-                  onClick={() => setShowModal(false)}
-                  className="h-6 w-6 cursor-pointer"
-                />
-              </div>
-              <h2 className="text-xl font-bold px-6 py-3 border-b">Event Details</h2>
-              <div className='p-6'>
-                <div className="flex flex-col gap-1 px-6 text-sm space-y-1  text-center">
-                  <div><span className='text-black font-bold text-[22px]'>{selectedEvent.title}</span></div>
-                  <div><span className='text-black font-bold'>{selectedEvent.address}</span></div>
-                  <div><span className='text-black font-bold'>{moment(selectedEvent.start?.toString()).local().format("DD MMM YYYY")} - {moment(selectedEvent.end?.toString()).local().format("DD MMM YYYY")}</span></div>
-                  <div><span className='text-black font-bold'>{moment(selectedEvent.start?.toString()).local().format('hh:mm A')} - {moment(selectedEvent.end?.toString()).local().format('hh:mm A')}</span></div>
+            <ModalLayout
+               onClose={() => setShowModal(false)}
+               modalTitle='Event Details'
+               footerActions={[
+                 { label : "View", onClick: () => redirectToDetailPage(selectedEvent.id), variant: "primary"}
+               ]}
+            >
+              <div className="px-0 py-4">
+                <div className="grid grid-cols-2 gap-4 text-md mt-2">
+                  <div className="space-y-1">
+                    <p className="text-gray-600 font-semibold">Event</p>
+                    <p className="text-gray-900 font-medium">
+                      {selectedEvent.title}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-600 font-semibold">Date</p>
+                    <p className="text-gray-900">{moment(selectedEvent.start?.toString()).local().format("DD MMM YYYY")} - {moment(selectedEvent.end?.toString()).local().format("DD MMM YYYY")}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-600 font-semibold">Location</p>
+                    <p className="text-gray-900">{selectedEvent.address}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-600 font-semibold">Time</p>
+                    <p className="text-gray-900">
+                      {moment(selectedEvent.start?.toString()).local().format('hh:mm A')} - {moment(selectedEvent.end?.toString()).local().format('hh:mm A')}
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div className='flex justify-center'>
-                <button
-                  onClick={() => redirectToDetailPage(selectedEvent.id)}
-                  className="mt-1 mb-6 bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
-                >
-                  Open Detail
-                </button>
-              </div>
-            </div>
-          </div>
+            </ModalLayout>
         )}
       </div>
     </div>

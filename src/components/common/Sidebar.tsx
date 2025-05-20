@@ -63,7 +63,7 @@ const Sidebar: React.FC<ISidebarPageProps> = ({ children, isOpen, onClose, activ
                     className={`flex items-center rounded-xl px-4 py-3 my-2 font-bold text-gray-700  hover:bg-blue-100 ${activeLink.includes(item.route) && "bg-blue-100"
                       }`}
                   >
-                    <TooltipWrapper tooltip={item.title}>
+                    <TooltipWrapper tooltip={item.title} disabled={!isCollase}>
                       <div className="flex gap-3">
                         <img
                           src={item.icon}
@@ -84,7 +84,7 @@ const Sidebar: React.FC<ISidebarPageProps> = ({ children, isOpen, onClose, activ
                     className={`flex items-center rounded-xl px-4 py-3 my-2 font-bold text-gray-700  hover:bg-blue-100 ${activeLink.includes(item.route) && "bg-blue-100"
                       }`}
                   >
-                    <TooltipWrapper tooltip={item.title}>
+                    <TooltipWrapper tooltip={item.title}disabled={!isCollase}>
                       <div className="flex gap-3">
                         <img
                           src={item.icon}
