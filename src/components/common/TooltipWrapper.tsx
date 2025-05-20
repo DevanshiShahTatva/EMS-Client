@@ -10,12 +10,18 @@ import {
 interface TooltipWrapperProps {
   tooltip: string;
   children: React.ReactNode;
+  disabled? : boolean
 }
 
 const TooltipWrapper: React.FC<TooltipWrapperProps> = ({
   tooltip,
   children,
+  disabled = false
 }) => {
+  if (disabled) {
+    return <>{children}</>;
+  }
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
