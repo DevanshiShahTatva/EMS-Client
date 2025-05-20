@@ -58,6 +58,7 @@ export type CheckoutTicket = {
   type:ITicketType;
   ticketId:string;
   usedPoints: number;
+  discount: number;
 }
 
 export type EventImage = {
