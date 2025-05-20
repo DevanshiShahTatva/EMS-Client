@@ -56,6 +56,7 @@ export const API_ROUTES = {
         TICKET_TYPE: "ticket-types",
         CANCELLED_EVENT_RATIO: "dashboard/analytics/cancellation-ratio",
         ATTENDED_EVENTS_ANALYTICS : "/dashboard/analytics/top-attended-events",
+        GENERATE_TERMS_CONDITIONS: "/terms-and-conditions/generate-ai"
     },
     AUTH: {
         LOGIN: `/login`,

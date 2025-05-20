@@ -9,10 +9,8 @@ import Loader from '@/components/common/Loader'
 import TitleSection from '@/components/common/TitleSection'
 import Breadcrumbs from '@/components/common/BreadCrumbs'
 import CustomButton from '@/components/common/CustomButton'
-
-// Icons
-import { TrashIcon } from "@heroicons/react/24/outline"
-
+import { marked } from "marked";
+import { Sparkles, Trash2 } from 'lucide-react';
 // types
 import { ITermsResponse } from './types'
 
@@ -24,13 +22,53 @@ import { API_ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant'
 
 // library
 import { toast } from 'react-toastify'
+import TermsTagModal from '@/components/admin-components/TermsTagModal'
 
 
 const AdminTCsPage = () => {
 
-    const [loader, setLoader] = useState(true)
+    const [loader, setLoader] = useState(false)
+    const [isGenerating, setIsGenerating] = useState(false)
+    const [openModal, setOpenModal] = useState(false)
+
     const [content, setContent] = useState("")
     const [error, setError] = useState(false)
+
+    const handleOpenModal = () => {
+        setOpenModal(true)
+    }
+    const handleCloseModal = () => {
+        setOpenModal(false)
+    }
+
+    const handleGenerateDescription = useCallback(async (keywords: string[]) => {
+        setIsGenerating(true)
+        try {
+
+            const body = {
+                "keywords": keywords
+            }
+
+            const res = await apiCall({
+                method: "POST",
+                endPoint: API_ROUTES.ADMIN.GENERATE_TERMS_CONDITIONS,
+                body: body,
+            });
+
+            if (res.success) {
+                const cleanText = res.data.replace(/```/g, '');
+                const html = await marked(cleanText);
+                setContent(html);
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            console.error(error);
+            toast.error(error?.message)
+        } finally {
+            setIsGenerating(false)
+            handleCloseModal()
+        }
+    }, []);
 
     const handleChange = (value: string) => {
         if (value.length !== 11) {
@@ -45,7 +83,7 @@ const AdminTCsPage = () => {
     const deleteTermsContent = async () => {
         setLoader(true);
         try {
-            
+
             const response = await apiCall({
                 endPoint: API_ROUTES.TERMS_AND_CONDITIONS,
                 method: 'DELETE',
@@ -54,7 +92,7 @@ const AdminTCsPage = () => {
             if (response && response.success) {
                 await getTermsContent()
                 toast.success("Terms & Conditions Reset Successfully")
-                
+
             }
         } catch (err) {
             console.error('Error fetching chart data', err);
@@ -64,7 +102,7 @@ const AdminTCsPage = () => {
     }
 
     const updateTermsContent = async () => {
-        if(content.length < 20) {
+        if (content.length < 20) {
             setError(true)
             return false
         }
@@ -116,26 +154,32 @@ const AdminTCsPage = () => {
 
     return (
         <div className='px-8 py-5'>
-
             {loader && <Loader />}
 
             <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.TERMS_AND_CONDITIONS.MAIN_PAGE} />
-            
             <ChartCard>
-
-
-                {/* Reset button */}
-                <div className='my-1 flex justify-between items-center'>
+                <div className='mb-6 flex justify-between items-center'>
                     <TitleSection title='Terms And Conditions' />
-                    <CustomButton
-                        onClick={deleteTermsContent}
-                        variant='delete'
-                        startIcon={<TrashIcon className="w-5 h-5 font-bold" />}
-                        className="disabled:bg-red-300 disabled:cursor-not-allowed md:flex gap-1 items-center cursor-pointer"
-                    >
-                        
-                        <p className="hidden md:block">Reset</p>
-                    </CustomButton>
+                    <div className='flex gap-2'>
+                        <CustomButton
+                            onClick={deleteTermsContent}
+                            variant='delete'
+                            startIcon={<Trash2 className="w-5 h-5 font-bold" />}
+                            className="disabled:bg-red-300 disabled:cursor-not-allowed md:flex gap-1 items-center cursor-pointer"
+                        >
+
+                            <p className="hidden md:block">Reset</p>
+                        </CustomButton>
+                        <CustomButton
+                            onClick={handleOpenModal}
+                            variant='primary'
+                            startIcon={<Sparkles className="w-5 h-5 font-bold" />}
+                            className="disabled:bg-red-300 disabled:cursor-not-allowed md:flex gap-1 items-center cursor-pointer"
+                        >
+
+                            <p className="hidden md:block">Ask AI</p>
+                        </CustomButton>
+                    </div>
                 </div>
 
                 <div>
@@ -143,7 +187,7 @@ const AdminTCsPage = () => {
                         name="tc"
                         value={content}
                         onChange={(value) => handleChange(value)}
-                        label='Description'
+                        label=''
                         errorKey={error}
                         errorMsg={content.length > 20 ? "" : "Enter valid terms content"}
                         placeholder='Enter Terms & Conditions'
@@ -161,6 +205,8 @@ const AdminTCsPage = () => {
                 </div>
 
             </ChartCard>
+            {openModal &&
+                <TermsTagModal onClose={handleCloseModal} onSave={handleGenerateDescription} loading={isGenerating}/>}
         </div>
     )
 }
