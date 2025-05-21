@@ -11,9 +11,10 @@ import TableSkeleton from '@/components/common/TableSkeloton'
 import Breadcrumbs from '@/components/common/BreadCrumbs'
 import TitleSection from '@/components/common/TitleSection'
 import CustomButton from '@/components/common/CustomButton'
+import SearchInput from '@/components/common/CommonSearchBar'
 
 // Icons
-import { MagnifyingGlassIcon, TrashIcon, EyeIcon, EnvelopeIcon } from "@heroicons/react/24/outline"
+import { TrashIcon, EyeIcon, EnvelopeIcon } from "@heroicons/react/24/outline"
 import { SquareCheckBig } from 'lucide-react'
 
 // Types
@@ -268,18 +269,12 @@ const AdminContactUsPage = () => {
               {/* Search Bar & Delete All  */}
               <div className="flex justify-between items-center gap-2 space-x-2 w-full my-5">
                   {/* Search Input */}
-                  <div className="relative w-full">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                          <MagnifyingGlassIcon className="h-6 w-6" />
-                      </span>
-                      <input
-                          type="text"
-                          value={searchQuery}
-                          onChange={(e) => handleSearch(e.target.value)}
-                          placeholder="Search requests"
-                          className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-                      />
-                  </div>
+                  <SearchInput
+                      value={searchQuery}
+                      onChange={(value) => handleSearch(value)}
+                      placeholder="Search requests"
+                      inputClassName='pl-10 pr-4 py-2 w-full'
+                  />
 
                   <CustomButton
                       onClick={openDeleteModal}

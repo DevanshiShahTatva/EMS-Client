@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
+import SearchInput from "@/components/common/CommonSearchBar";
 import TableSkeleton from "@/components/common/TableSkeloton";
 import Pagination from "@/components/admin-components/Pagination";
 import ChartCard from "@/components/admin-components/dashboard/ChartCard";
@@ -115,18 +115,12 @@ const RewardHistory = () => {
           <TitleSection title='Reward Point History' />
           <div className="flex gap-4 justify-between items-start sm:items-center my-5">
             <div className="flex  items-baseline sm:items-center sm:flex-row flex-col gap-2 space-x-2 w-full">
-              <div className="relative w-full md:w-[50%]">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  <MagnifyingGlassIcon className="h-6 w-6" />
-                </span>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  placeholder="Search.."
-                  onChange={(e) => searchEvents(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-                />
-              </div>
+              <SearchInput
+                value={searchQuery}
+                onChange={(val) => searchEvents(val)}
+                wrapperClassName="md:w-[50%]"
+                inputClassName="pl-10 pr-4 py-2 w-full"
+              />
             </div>
           </div>
           <div className="overflow-x-auto py-4 bg-white rounded-lg">

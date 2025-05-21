@@ -12,6 +12,7 @@ import Pagination from '@/components/admin-components/Pagination';
 import TableSkeleton from '@/components/common/TableSkeloton';
 import Breadcrumbs from '@/components/common/BreadCrumbs';
 import TitleSection from '@/components/common/TitleSection';
+import SearchInput from '@/components/common/CommonSearchBar';
 
 // types import
 import { EventResponse, EventsDataTypes, IApplyFiltersKey } from '@/utils/types';
@@ -20,7 +21,7 @@ import { IEventCategoryResp } from '../dropdowns/types';
 // library support 
 import { useRouter } from 'next/navigation';
 import moment from 'moment';
-import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon, ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/outline"
+import { FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon, ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/outline"
 import { toast } from 'react-toastify';
 import {
   Tooltip,
@@ -274,18 +275,12 @@ function EventsListpage() {
         <div className="flex gap-4 justify-between items-start sm:items-center my-5">
           <div className="flex  items-baseline sm:items-center sm:flex-row flex-col gap-2 space-x-2 w-full">
             {/* Search Input */}
-            <div className="relative w-full">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                <MagnifyingGlassIcon className="h-6 w-6" />
-              </span>
-              <input
-                type="text"
+            <SearchInput 
                 value={searchQuery}
-                onChange={(e) => searchEvents(e.target.value)}
+                onChange={(value) => searchEvents(value)}
                 placeholder="Search events"
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-              />
-            </div>
+                inputClassName='pl-10 pr-4 py-2 w-full'
+            />
 
             {/* Filters Button */}
             <div className="relative md:inline-block hidden">
