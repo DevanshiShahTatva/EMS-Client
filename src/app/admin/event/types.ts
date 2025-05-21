@@ -61,7 +61,7 @@ export type ITicket = {
     id: string;
     type: string;
     price: string;
-    maxQty: number;
+    maxQty: string;
     description: string;
     isEditing?: boolean;
     _id : string,
@@ -131,7 +131,7 @@ export interface IQuilEditorProps {
 };
 
 export interface ISelectFieldsProps {
-  label: string;
+  label?: string;
   name: string;
   errorKey : boolean;
   options :  any[];
@@ -142,4 +142,5 @@ export interface ISelectFieldsProps {
   required?: boolean;
   readOnly?:boolean;
   disabled?:boolean;
+  height?: string,
 };

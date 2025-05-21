@@ -21,6 +21,7 @@ const CustomSelectField: React.FC<ISelectFieldsProps> = ({
   errorKey,
   readOnly = false,
   disabled = false,
+  height = "1rem"
 }) => {
 
     const customStyles = {
@@ -37,11 +38,9 @@ const CustomSelectField: React.FC<ISelectFieldsProps> = ({
         "&:hover": {
           borderColor: state.isFocused ? "#3b82f6" : "#d1d5db",
         },
-        padding: "2px",
-        height: "3rem",
+        height: height,
         borderRadius: "0.375rem",
         fontSize: "1rem",
-        minHeight: "2.5rem",
       }),
       option: (base: any, state: any) => ({
         ...base,
@@ -67,8 +66,8 @@ const CustomSelectField: React.FC<ISelectFieldsProps> = ({
     };
 
     const optionsData = options.map((item) => ({
-      label: item.name,
-      value: item._id,
+      label: item?.name || item?.label,
+      value: item?._id || item?.value,
       icon: item.icon?.url || "",
       color: item?.color,
       bgColor: item?.bgColor,
@@ -99,10 +98,10 @@ const CustomSelectField: React.FC<ISelectFieldsProps> = ({
   };
 
   return (
-    <div className="mb-4">
-      <label htmlFor={name} className="block text-sm font-bold text-gray-700 mb-1">
+    <div>
+      {label && <label htmlFor={name} className="block text-sm font-bold text-gray-700 mb-1">
         {label} {required && <span className="text-red-500">*</span>}
-      </label>
+      </label>}
 
       <Select
         value={formattedValue}
