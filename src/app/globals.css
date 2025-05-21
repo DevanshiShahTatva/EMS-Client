@@ -202,6 +202,8 @@
   }
 }
 
+
+/* Calendar styles */
 .fc-scroller {
   overflow: auto !important;
 }
@@ -235,6 +237,10 @@
   border-radius: 5px;
   margin: 2px 0;
   cursor: pointer;
+}
+
+.fc .fc-daygrid-day-events {
+  min-height: 5em !important;
 }
 
 .fc .fc-event-title {
