@@ -13,6 +13,7 @@ type TModalFooterActions = {
   variant : "primary" | "secondary" | "delete" | "outlined";
   onClick?: () => void;
   type?: "button" | "submit"; // optional
+  disabled?: boolean 
 };
 
 interface ICustomModalProps {
@@ -60,7 +61,8 @@ const ModalLayout: React.FC<ICustomModalProps> = ({
                 type={btn.type || "button"}
                 onClick={btn.onClick}
                 variant={btn.variant}
-                className="w-full normal-case first-letter:uppercase"
+                className={btn.disabled ? "bg-gray-300 cursor-not-allowed" : "w-full normal-case first-letter:uppercase"}
+                disabled={btn.disabled}
               >
                 {btn.label}
               </CustomButton>

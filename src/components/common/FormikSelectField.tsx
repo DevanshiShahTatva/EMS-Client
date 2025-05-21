@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useField, ErrorMessage } from "formik";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import SearchInput from "./CommonSearchBar";
 
 interface Option {
   label: string;
@@ -88,13 +89,15 @@ const FormikSelectField: React.FC<FormikSelectFieldProps> = ({
 
         {isOpen && (
           <div className="absolute mt-0.5 z-10 w-full bg-white border border-gray-200 rounded-lg shadow-md max-h-64 overflow-auto">
-            {searchable && <div className="p-2 border-b border-gray-100 sticky top-0 bg-white z-10">
-              <input
-                type="text"
+            {searchable && 
+            <div>
+              <SearchInput
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(value) => setSearch(value)}
                 placeholder="Search"
-                className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                wrapperClassName="p-2 border-b border-gray-100 sticky top-0 bg-white z-10"
+                inputClassName="w-full px-4 py-2 text-sm"
+                hideIcon
               />
             </div>
             }

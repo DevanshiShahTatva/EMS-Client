@@ -13,6 +13,7 @@ import AddEditTicketTypeModal from '@/components/admin-components/AddEditTicketT
 import { ITicketType, ITicketTypeFormValues, ITicketTypesResp } from '@/app/admin/dropdowns/types';
 import { getPaginatedData, getSearchResults, initialTicketTypeFormValues } from '@/app/admin/dropdowns/helper';
 import CustomButton from '../common/CustomButton';
+import SearchInput from '../common/CommonSearchBar';
 
 function TicketTypeDropdown() {
     const [loading, setLoading] = useState(true);
@@ -177,18 +178,12 @@ function TicketTypeDropdown() {
             <ChartCard>
                 <TitleSection title="Ticket Types" />
                 <div className="flex justify-between items-center gap-2 space-x-2 w-full my-5">
-                    <div className="relative w-full">
-                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                            <MagnifyingGlassIcon className="h-6 w-6" />
-                        </span>
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => handleSearch(e.target.value)}
-                            placeholder="Search ticket type"
-                            className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-                        />
-                    </div>
+                    <SearchInput
+                        value={searchQuery}
+                        onChange={(value) => handleSearch(value)}
+                        placeholder="Search ticket type"
+                        inputClassName='pl-10 pr-4 py-2 w-full'
+                    />
 
                     <CustomButton
                         onClick={openAddModal}
