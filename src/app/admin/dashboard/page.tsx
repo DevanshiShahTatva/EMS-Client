@@ -14,13 +14,14 @@ import MapView from '@/components/admin-components/dashboard/MapView';
 import TopAttendedEvents from '@/components/admin-components/dashboard/TopAttendedChart';
 import TopCancelledTicketsByEvent from "@/components/admin-components/dashboard/TopCancelledTicketsByEvent";
 import UserBadgeChart from "@/components/admin-components/dashboard/UserBadgeChart";
+import FeedbackReview from '@/components/admin-components/dashboard/FeedbackReviews';
+import EventFeedbackViewer from '@/components/admin-components/dashboard/EventFeedbackViewer';
 
 // Helper Functions
 import { DASHBOARD_TITLE } from './helper';
 
 // Library
 import 'leaflet/dist/leaflet.css';
-
 
 function DashboardPage() {
     return (
@@ -72,11 +73,24 @@ function DashboardPage() {
             </div>
 
             <div className="flex flex-wrap mt-8">
-                <div className="lg:w-1/2 w-full h-full">
+                <div className="lg:w-1/2 w-full p-4 h-full">
                     <div className="bg-white rounded-lg shadow-lg w-full">
                         <UserBadgeChart />
                     </div>
                 </div>
+                <div className="lg:w-1/2 w-full p-4 h-full">
+                    <div className="bg-white rounded-lg shadow-lg w-full">
+                         <CardWithTitle title={DASHBOARD_TITLE.FEEDBACK_REVIEW_TITLE} tooltip={DASHBOARD_TITLE.FEEDBACK_REVIEW_CHART_TOOLTIP}>
+                            <FeedbackReview />
+                        </CardWithTitle>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex flex-wrap mt-8">
+                <CardWithTitle title={DASHBOARD_TITLE.EVENT_FEEDBACK_TITLE} tooltip={DASHBOARD_TITLE.EVENT_FEEDBACK_TOOLTIP}>
+                    <EventFeedbackViewer />
+                </CardWithTitle>
             </div>
 
             <div className="flex flex-wrap mt-8">

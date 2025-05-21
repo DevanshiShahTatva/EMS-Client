@@ -27,7 +27,11 @@ export const DASHBOARD_TITLE = {
     LIKE_MODAL_TITLE: "All Events by Likes",
     CANCELLLED_EVENT_BY_RATIO: "All Events By Cancellation Rate",
     REVENUE_MODAL_TITLE: "All Events by Revenue",
-    ATTENDE_EVENTS_MODAL_TITLE: "All Attended Events"
+    ATTENDE_EVENTS_MODAL_TITLE: "All Attended Events",
+    FEEDBACK_REVIEW_TITLE: "All Events Feedbacks",
+    FEEDBACK_REVIEW_CHART_TOOLTIP: "Avg. Ratio of feedbacks provided for each events",
+    EVENT_FEEDBACK_TITLE:"Individual Event Ratings",
+    EVENT_FEEDBACK_TOOLTIP:"Individual Event Ratings provided"
 }
 
 export const LikeTableColumns = [

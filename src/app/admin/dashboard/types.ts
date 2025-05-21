@@ -1,6 +1,7 @@
 export interface IBarChartProps {
   data: number[];
   labels: string[];
+  symbolType?: string;
 }
 
 export interface IDoughnutChartProps {
@@ -119,4 +120,32 @@ export type TOutputData = {
 export interface IBadgeCountData {
   badge: string;
   count: number;
+}
+
+export interface RatingsBreakdown {
+  [key: string]: number; 
+}
+
+export interface EventFeedbackSummary {
+  totalFeedbacks: number;
+  eventTitle: string | null;
+  eventImage: string | null;
+  ratingsBreakdown: RatingsBreakdown;
+  eventId: string;
+  averageRating: number;
+}
+
+export interface FeedbackAnalyticsData {
+  period: string;
+  currentReference: string;
+  startDate: string;
+  endDate: string;   
+  data: EventFeedbackSummary[];
+}
+
+export interface FeedbackAnalyticsResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: FeedbackAnalyticsData;
 }

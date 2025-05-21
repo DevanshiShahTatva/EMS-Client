@@ -13,7 +13,7 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { BALANCED_COLORS } from '@/utils/constant';
-import { formatNumberShort, RupeeSymbol } from '@/utils/helper';
+import { formatNumberShort, RupeeSymbol, StarSymbol } from '@/utils/helper';
 import { IBarChartProps } from '@/app/admin/dashboard/types';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title);
@@ -24,7 +24,7 @@ const wrapLabel = (label: string, maxLength: number) => {
     return `${label.substring(0, maxLength)}...`;
 };
 
-export default function BarChart({ data, labels }: IBarChartProps) {
+export default function BarChart({ data, labels,symbolType="rupee" }: IBarChartProps) {
     // Process labels to handle long text
     const processedLabels = useMemo(() => {
         return labels.map(label => wrapLabel(label, 10));
@@ -53,7 +53,7 @@ export default function BarChart({ data, labels }: IBarChartProps) {
                 callbacks: {
                     label: function (context) {
                         const value = context.formattedValue;
-                        return `${RupeeSymbol} ${value}`;
+                        return symbolType==="star" ? `${value} ${StarSymbol}` : `${RupeeSymbol} ${value}`;
                     },
                     // Use the original label as the tooltip title
                     title: function (context) {
@@ -66,7 +66,7 @@ export default function BarChart({ data, labels }: IBarChartProps) {
             y: {
                 beginAtZero: true,
                 ticks: {
-                    callback: (value) => `${RupeeSymbol} ${formatNumberShort(Number(value))}`,
+                    callback: (value) => symbolType==="star" ? `${formatNumberShort(Number(value))} ${StarSymbol}` : `${RupeeSymbol} ${formatNumberShort(Number(value))}`,
                     color: '#6B7280',
                     count: 6
                 },
