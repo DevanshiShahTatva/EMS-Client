@@ -28,7 +28,7 @@ const FormikSelectField: React.FC<FormikSelectFieldProps> = ({
   endIcon,
   searchable = false
 }) => {
-  const [field, , helpers] = useField(name);
+  const [field, meta, helpers] = useField(name);
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -61,7 +61,9 @@ const FormikSelectField: React.FC<FormikSelectFieldProps> = ({
           type="button"
           disabled={disabled}
           className={`w-full px-4 py-2 border rounded-lg text-left bg-white focus:outline-none ${
-            disabled
+            meta.error && meta.touched
+              ? "border-red-500"
+              : disabled
               ? "bg-gray-100 text-gray-400 cursor-not-allowed"
               : isOpen
               ? "border-blue-500"
