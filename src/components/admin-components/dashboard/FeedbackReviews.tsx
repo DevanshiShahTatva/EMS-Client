@@ -41,7 +41,7 @@ const FeedbackReview = () => {
   const chartData = useMemo(() => data.map((item) => item.averageRating), [data]);
 
   return (
-    <div className='min-h-[425px] mt-6 flex items-center justify-center'>
+    <div className='min-h-[400px] mt-6 flex items-center justify-center'>
       <div className='w-full'>
         {chartData.length ? (
           <div className="mb-6 justify-around">
