@@ -1,11 +1,9 @@
 "use client";
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import ChartCard from '@/components/admin-components/dashboard/ChartCard';
-import Pagination from '@/components/admin-components/Pagination';
 import DeleteModal from '@/components/common/DeleteModal';
-import TableSkeleton from '@/components/common/TableSkeloton';
 import TitleSection from '@/components/common/TitleSection';
-import { MagnifyingGlassIcon, TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { API_ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
 import { toast } from 'react-toastify';
@@ -14,6 +12,7 @@ import { ITicketType, ITicketTypeFormValues, ITicketTypesResp } from '@/app/admi
 import { getPaginatedData, getSearchResults, initialTicketTypeFormValues } from '@/app/admin/dropdowns/helper';
 import CustomButton from '../common/CustomButton';
 import SearchInput from '../common/CommonSearchBar';
+import DataTable from '../common/DataTable';
 
 function TicketTypeDropdown() {
     const [loading, setLoading] = useState(true);
@@ -173,6 +172,22 @@ function TicketTypeDropdown() {
         }
     }, [deleteItemId, fetchTicketTypesData, closeDeleteModal]);
 
+    const tableheaders: { header: string; key: keyof ITicketType }[] = [
+        { header: 'Ticket Type', key: 'name' },
+        { header: 'Description', key: 'description' },
+    ];
+
+    const tableActions = [
+        {
+            icon: <PencilSquareIcon className="h-5 w-5 text-blue-500 hover:text-blue-700 cursor-pointer" />,
+            onClick: (row: ITicketType) => openEditModal(row),
+        },
+        {
+            icon: <TrashIcon className="h-5 w-5 text-red-500 hover:text-red-700 cursor-pointer" />,
+            onClick: (row: ITicketType) => openDeleteModal(row._id),
+        },
+    ];
+
     return (
         <>
             <ChartCard>
@@ -195,64 +210,15 @@ function TicketTypeDropdown() {
                     </CustomButton>
                 </div>
 
-                {/* Data Table */}
-                <div className="overflow-x-auto py-4 bg-white rounded-lg">
-                    <table className="min-w-full table-fixed text-sm text-left text-gray-700">
-                        <thead className="bg-gray-100 text-xs uppercase">
-                            <tr>
-                                <th className="p-3">No</th>
-                                <th className="p-3">Ticket Type</th>
-                                <th className="p-3">Description</th>
-                                <th className="p-3 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {loading ? (
-                                <TableSkeleton rows={itemsPerPage} columns={4} />
-                            ) : tableRowData.length > 0 ? (
-                                tableRowData.map((item, idx) => (
-                                    <tr key={item._id} className="border-b hover:bg-gray-50">
-                                        <td className="p-3">{(currentPage - 1) * itemsPerPage + idx + 1}</td>
-                                        <td className="p-3">{item.name}</td>
-                                        <td className="p-3">{item.description}</td>
-                                        <td className="p-3 space-x-2 text-center">
-                                            <button
-                                                onClick={() => openEditModal(item)}
-                                                className="text-blue-500 hover:text-blue-700 cursor-pointer"
-                                            >
-                                                <PencilSquareIcon className="h-5 w-5" />
-                                            </button>
-                                            <button
-                                                onClick={() => openDeleteModal(item._id)}
-                                                className="text-red-500 hover:text-red-700 cursor-pointer"
-                                            >
-                                                <TrashIcon className="h-5 w-5" />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={4} className="text-center">
-                                        <p className="my-3 font-bold">No data found</p>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                {/* Data Table & Pagination */}
+                <DataTable
+                    loading={loading}
+                    data={ticketTypesData}
+                    columns={tableheaders}
+                    actions={tableActions}
+                    showSerialNumber
+                />
 
-                {/* Pagination */}
-                {ticketTypesData.length > 0 && (
-                    <Pagination
-                        totalItems={totalItems}
-                        totalPages={totalPages}
-                        currentPage={currentPage}
-                        itemsPerPage={itemsPerPage}
-                        onPageChange={setCurrentPage}
-                        onItemsPerPageChange={setItemsPerPage}
-                    />
-                )}
             </ChartCard>
 
             {/* DELETE MODAL */}

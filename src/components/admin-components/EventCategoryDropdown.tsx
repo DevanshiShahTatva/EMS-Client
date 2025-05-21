@@ -8,15 +8,15 @@ import ChartCard from './dashboard/ChartCard';
 import TitleSection from '../common/TitleSection';
 import { TLoadingState, IEventCategoryResp, IEventCategory, TCategoryFormValues } from '@/app/admin/dropdowns/types';
 import { API_ROUTES } from '@/utils/constant';
-import Pagination from '@/components/admin-components/Pagination';
 import DeleteModal from '@/components/common/DeleteModal';
-import TableSkeleton from '@/components/common/TableSkeloton';
-import { MagnifyingGlassIcon, TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { getCategoryPaginatedData, getCategorySearchResults, initialCategoryFormValues } from '@/app/admin/dropdowns/helper';
 import EventCategoryFormModal from './EventCategoryFormModal';
 import { getTruthyString } from '@/utils/helper';
 import CustomButton from '../common/CustomButton';
 import SearchInput from '../common/CommonSearchBar';
+import DataTable from '../common/DataTable';
+import { Column } from '@/utils/types';
 
 function EventCategoryDropdown() {
     const [loading, setLoading] = useState<TLoadingState>({
@@ -215,6 +215,42 @@ function EventCategoryDropdown() {
             createCategory(formValues)
         }
     }
+
+    const tableHeaders: Column<IEventCategory>[] = [
+        { header: 'Ticket Type', key: 'name' },
+        { header: 'Preview', key: 'color', sortKey: (row) => row.name, render: (item : IEventCategory) => 
+                <Badge
+                    style={{
+                        color: item.color,
+                        backgroundColor: item.bgColor,
+                    }}
+                    className="h-10 rounded-3xl px-4 gap-2"
+
+                >
+                    {item?.icon?.url ?
+                        <Image
+                            src={item?.icon?.url}
+                            alt="Icon preview"
+                            className="object-cover"
+                            width={16}
+                            height={16}
+                        /> : <></>}
+                    {item.name}
+                </Badge>
+        },
+    ];
+
+    const tableActions = [
+        {
+            icon: <PencilSquareIcon className="h-5 w-5 text-blue-500 hover:text-blue-700 cursor-pointer" />,
+            onClick: (row: IEventCategory) => openEditModal(row),
+        },
+        {
+            icon: <TrashIcon className="h-5 w-5 text-red-500 hover:text-red-700 cursor-pointer" />,
+            onClick: (row: IEventCategory) => openDeleteModal(row._id),
+        },
+    ];
+
     return (
         <div className='pt-8'>
             <ChartCard>
@@ -238,83 +274,15 @@ function EventCategoryDropdown() {
                     </CustomButton>
                 </div>
 
-                {/* Data Table */}
-                <div className="overflow-x-auto py-4 bg-white rounded-lg">
-                    <table className="min-w-full table-fixed text-sm text-left text-gray-700">
-                        <thead className="bg-gray-100 text-xs uppercase">
-                            <tr>
-                                <th className="p-3">No</th>
-                                <th className="p-3">Category Name</th>
-                                <th className="p-3">Preview</th>
-                                <th className="p-3 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {loading.getApi ? (
-                                <TableSkeleton rows={itemsPerPage} columns={4} />
-                            ) : tableRowData.length > 0 ? (
-                                tableRowData.map((item, idx) => (
-                                    <tr key={item._id} className="border-b hover:bg-gray-50">
-                                        <td className="p-3">{(currentPage - 1) * itemsPerPage + idx + 1}</td>
-                                        <td className="p-3">{item.name}</td>
-                                        <td className="p-3">
-                                            <Badge
-                                                style={{
-                                                    color: item.color,
-                                                    backgroundColor: item.bgColor,
-                                                }}
-                                                className="h-10 rounded-3xl px-4 gap-2"
+                {/* Data Table & Pagination */}
 
-                                            >
-                                                {item?.icon?.url ?
-                                                    <Image
-                                                        src={item?.icon?.url}
-                                                        alt="Icon preview"
-                                                        className="object-cover"
-                                                        width={16}
-                                                        height={16}
-                                                    /> : <></>}
-                                                {item.name}
-                                            </Badge>
-                                        </td>
-                                        <td className="p-3 space-x-2 text-center">
-                                            <button
-                                                onClick={() => openEditModal(item)}
-                                                className="text-blue-500 hover:text-blue-700 cursor-pointer"
-                                            >
-                                                <PencilSquareIcon className="h-5 w-5" />
-                                            </button>
-                                            <button
-                                                onClick={() => openDeleteModal(item._id)}
-                                                className="text-red-500 hover:text-red-700 cursor-pointer"
-                                            >
-                                                <TrashIcon className="h-5 w-5" />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={4} className="text-center">
-                                        <p className="my-3 font-bold">No data found</p>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-
-                {/* Pagination */}
-                {categoriesData.length > 0 && (
-                    <Pagination
-                        totalItems={totalItems}
-                        totalPages={totalPages}
-                        currentPage={currentPage}
-                        itemsPerPage={itemsPerPage}
-                        onPageChange={setCurrentPage}
-                        onItemsPerPageChange={setItemsPerPage}
-                    />
-                )}
+                <DataTable
+                    loading={loading.getApi}
+                    data={categoriesData}
+                    columns={tableHeaders}
+                    actions={tableActions}
+                    showSerialNumber
+                />
 
                 {/* DELETE MODAL */}
                 <DeleteModal
