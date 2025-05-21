@@ -39,8 +39,9 @@ export default function CalenderDropdown({
 
   return (
     <div className='flex justify-between items-center mb-5'>
-      <p className="text-sm mb-1 font-bold">
-        <span className="text-[14px] text-black md:text-[22px]">{title}</span>
+      <p className="text-sm mb-1">
+        <h1 className="text-2xl font-bold">My Calendar</h1>
+        <p className="text-gray-600">{title}</p>
       </p>
       <div className="flex text-black gap-2 items-center">
         {allowedTypes.length > 0 && (
