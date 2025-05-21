@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import React, { useState } from 'react';
 
 // Library support
 import { useRouter } from 'next/navigation';
@@ -21,11 +21,13 @@ import { API_ROUTES, BREAD_CRUMBS_ITEMS, ROUTES } from '@/utils/constant';
 import { IFAQsFormValues } from '@/app/admin/faqs/types';
 
 // Icons
-import {  TrashIcon } from "@heroicons/react/24/outline"
+import {  TrashIcon } from "@heroicons/react/24/outline";
+import CommonAIButton from '../common/CommonAIButton';
 
 const FAQForm : React.FC = () => {
 
-    const rounter = useRouter()
+    const rounter = useRouter();
+    const [isGeneratingAns, setIsGeneratingAns] = useState<boolean>(false);
 
     const handleSubmit = async (
         values: IFAQsFormValues,
@@ -47,7 +49,35 @@ const FAQForm : React.FC = () => {
         }
        
         actions.setSubmitting(false);
-      }
+      };
+
+    const handleGeneratAnswer = async (
+        question: string,
+        setFieldValue: (field: string, value: string) => void,
+        index: number
+    ) => {
+        try {
+            setIsGeneratingAns(true);
+            const res = await apiCall({
+            method: "POST",
+            endPoint: API_ROUTES.ADMIN.AI_GENERATE_FAQ_ANSWER,
+            body: {
+                question: question
+            },
+            });
+    
+            if (res.success) {
+            const markdown = res.data.replace(/\\n/g, "\n");
+
+            setFieldValue(`faqs[${index}].answer`, markdown);
+            setIsGeneratingAns(false);
+        }
+        } catch(error) {
+            console.error(error);
+            toast.error("Something went wrong!");
+            setIsGeneratingAns(false);
+        }
+    };
 
   return (
       <div className="mx-8 my-5">
@@ -64,7 +94,7 @@ const FAQForm : React.FC = () => {
                   validationSchema={FaqsValidationSchema}
                   onSubmit={handleSubmit}
               >
-                  {({ values, isSubmitting }) => (
+                  {({ values, isSubmitting, setFieldValue }) => (
                       <Form className="space-y-6">
                           <FieldArray name="faqs">
                               {({ push, remove }) => (
@@ -97,13 +127,20 @@ const FAQForm : React.FC = () => {
                                                       label='Question'
                                                   />
 
-                                                  <FormikTextField
-                                                      name={`faqs[${index}].answer`}
-                                                      placeholder="Enter your answer"
-                                                      label='Answer'
-                                                      type='textarea'
-                                                      rows={5}
-                                                  />
+                                                  <div className='w-full flex flex-col items-end'>
+                                                    <FormikTextField
+                                                        name={`faqs[${index}].answer`}
+                                                        placeholder="Enter your answer"
+                                                        label='Answer'
+                                                        type='textarea'
+                                                        rows={5}
+                                                    />
+                                                    <CommonAIButton
+                                                        handleButtonClick={() => handleGeneratAnswer(faq.question, setFieldValue, index)}
+                                                        isDisabled={!faq.question}
+                                                        isSubmitting={isGeneratingAns}
+                                                    />
+                                                  </div>
                                               </div>
 
                                           </div>
