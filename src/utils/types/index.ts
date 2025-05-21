@@ -96,16 +96,18 @@ export type ApiParams = {
 };
 
 export type Column<T> = {
-    header: string;
+    header: string | React.ReactNode;
     key: keyof T;
     render?: (row: T) => React.ReactNode;
     sortKey?: (row: T) => string | number;
+    isSortable? : boolean
 };
 
 export type Action<T> = {
     icon: React.ReactNode;
     onClick: (row: T) => void;
     tooltip?: string;
+    disabled?: (row: T) => boolean;
 };
 
 export type DtataTable<T> = {
@@ -129,7 +131,7 @@ export interface EventsDataTypes {
     price: string | number;
     ticketsAvailable: number;
     totalTickets : number,
-    ticketsArray : EventTicket[]
+    ticketsArray : EventTicket[],
 }
 
 

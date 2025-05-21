@@ -37,7 +37,9 @@ export default function DataTable<T>({
         if (!sortKey) return 0;
 
         const column = columns.find(col => col.key === sortKey);
-        if (!column) return 0;
+
+        // If column not found or sorting is disabled, return 0 (no change)
+        if (!column || column.isSortable === false) return 0;
 
         const valA = column.sortKey ? column.sortKey(a) : a[sortKey];
         const valB = column.sortKey ? column.sortKey(b) : b[sortKey];
@@ -70,7 +72,7 @@ export default function DataTable<T>({
                         {columns.map((col, index) => (
                             <th
                                 key={`${String(col.key)}-${index}`}
-                                onClick={() => handleSort(col.key)}
+                                onClick={() => col.isSortable !== false && handleSort(col.key)}
                                 className="p-3 text-left cursor-pointer select-none"
                             >
                                 <div className='flex gap-1 cursor-pointer'>
@@ -103,16 +105,20 @@ export default function DataTable<T>({
                                 {actions.length > 0 && (
                                     <td className="p-3">
                                         <div className="flex items-center gap-2">
-                                            {actions.map((action, idx) => (
-                                                <button
-                                                    key={idx}
-                                                    onClick={() => action.onClick(row)}
-                                                    className="text-gray-600 hover:text-black"
-                                                    title={action.tooltip ?? ''}
-                                                >
-                                                    {action.icon}
-                                                </button>
-                                            ))}
+                                            {actions.map((action, idx) => {
+                                                const isDisabled = action.disabled?.(row);
+                                                return (
+                                                    <button
+                                                        key={idx}
+                                                        onClick={() => !isDisabled && action.onClick(row)}
+                                                        title={action.tooltip ?? ''}
+                                                        className=""
+                                                        disabled={isDisabled}
+                                                    >
+                                                        {action.icon}
+                                                    </button>
+                                                );
+                                            })}
                                         </div>
                                     </td>
                                 )}
