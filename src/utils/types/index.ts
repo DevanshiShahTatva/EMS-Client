@@ -95,6 +95,27 @@ export type ApiParams = {
     headers?: HeadersInit;
 };
 
+export type Column<T> = {
+    header: string;
+    key: keyof T;
+    render?: (row: T) => React.ReactNode;
+    sortKey?: (row: T) => string | number;
+};
+
+export type Action<T> = {
+    icon: React.ReactNode;
+    onClick: (row: T) => void;
+    tooltip?: string;
+};
+
+export type DtataTable<T> = {
+    data: T[];
+    columns: Column<T>[];
+    actions?: Action<T>[];
+    loading?: boolean
+    showSerialNumber? : boolean
+};
+
 
 export interface EventsDataTypes {
     id: string
