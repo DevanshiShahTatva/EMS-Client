@@ -39,6 +39,7 @@ export const API_ROUTES = {
         UPDATE_EVENT: (id: string) => `/events/${id}`,
         AI_GENERATE_DESCRIPTION: "events/generate/event-description",
         AI_GENERATE_FAQ_ANSWER: "faq/generate/faq-answer",
+        AI_GENERATE_CONTACT_QUERY_ANSWER: "contact-us/query-ans-generate",
         // DASHBOARD
         DASHBOARD_OVERVIEW: 'dashboard/analytics/dashboard-overview',
         TOP_LIKED_EVENTS: 'dashboard/analytics/top-liked-events',
@@ -244,7 +245,6 @@ export const ALLOWED_FILE_FORMATS = ["jpg", "jpeg", "png", "webp"];
 export const MAX_FILE_SIZE_MB = 2;
 
 export const PAGINATION_OPTIONS = [
-    { value: 2, label: '2' },
     { value: 10, label: '10' },
     { value: 20, label: '20' },
     { value: 50, label: '50' },
@@ -365,3 +365,5 @@ export const CATEGORIES: Category[] = [
 ]
 
 export const MAX_CHARGE_VALUE = 18;
+
+export const SOCIAL_SHARE_LINK = "https://eventlyfe.netlify.app"

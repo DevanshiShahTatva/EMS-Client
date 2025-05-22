@@ -9,6 +9,14 @@ export interface IDeleteModalProps {
     confirmLoading?: boolean
 }
 
+export interface ICannotDeleteModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    title?: string;
+    description?: string;
+    eventList?: { _id: string, title: string, endDateTime: string }[];
+}
+
 export interface IFilterModalProps {
     isOpen: boolean;
     onClose: () => void;
