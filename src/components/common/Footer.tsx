@@ -8,9 +8,9 @@ import { useRouter } from 'next/navigation';
 import Cookie from 'js-cookie';
 
 // Image Paths
-import Facebook from "../../../public/assets/facebook.png";   
-import Twitter from "../../../public/assets/twitter.png";
+import Facebook from "../../../public/assets/facebook.png";
 import Whatsapp from "../../../public/assets/whatsapp.svg";  
+import XApp from "../../../public/assets/x_app_logo.svg";
 
 // 2. Third-Party Libraries
 import Link from 'next/link';
@@ -121,7 +121,7 @@ function Footer() {
                                 className="text-gray-300 hover:text-white"
                             >
                                 <Image
-                                src={Twitter}
+                                src={XApp}
                                 height={24}
                                 width={24}
                                 alt="twitter"
