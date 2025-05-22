@@ -1,21 +1,29 @@
 "use client";
 
+// React & Core Imports
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
-import { apiCall } from "@/utils/services/request";
+// Third-Party Libraries
+import { toast } from "react-toastify";
+import { CurrencyRupeeIcon, AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
+
+// Custom Components
 import CustomTextField from "@/components/admin-components/InputField";
-import ChartCard from "@/components/admin-components/dashboard/ChartCard";
+import CustomButton from "@/components/common/CustomButton";
 import Breadcrumbs from "@/components/common/BreadCrumbs";
+
+// Constants
 import {
   API_ROUTES,
   BREAD_CRUMBS_ITEMS,
   MAX_CHARGE_VALUE,
 } from "@/utils/constant";
-import CustomButton from "@/components/common/CustomButton";
+
+// Utilities / Helpers
+import { apiCall } from "@/utils/services/request";
 
 const PointConfiguration = () => {
-  const [points, setPoints] = useState("");
+  const [points, setPoints] = useState("0");
   const [charge, setCharge] = useState("0");
 
   useEffect(() => {
@@ -82,73 +90,86 @@ const PointConfiguration = () => {
 
   return (
     <div className="px-8 py-5">
-      <Breadcrumbs
-        breadcrumbsItems={BREAD_CRUMBS_ITEMS.ADMIN_CONFIGURATION.MAIN_PAGE}
-      />
-      <ChartCard>
-        <div className="flex flex-col gap-6">
-          <div>
-            <p className="text-lg font-bold mb-2">Point Configuration</p>
-            <div className="flex items-center gap-3 ">
-              <div className="mb-4">Rs. 1 = </div>
-              <CustomTextField
-                label=""
-                name="points"
-                type="text"
-                errorMsg=""
-                value={points}
-                errorKey={!points}
-                placeholder="Enter points"
-                onChange={(e) => {
-                  if (/^\d*$/.test(e.target.value)) {
-                    setPoints(e.target.value);
-                  }
-                }}
-              />
-              <p className="mb-4">Points</p>
-              <CustomButton
-                disabled={!points}
-                onClick={updatePoints}
-                variant="primary"
-                className="px-4 py-3 mb-4 text-white text-sm"
-              >
-                Update
-              </CustomButton>
-            </div>
-          </div>
-          <div>
-            <p className="text-lg font-bold">Admin Charge</p>
-            <p className="mb-3 text-sm text-gray-600">
-              Note: Please add tax here in below in percentage only max by{" "}
-              {MAX_CHARGE_VALUE}%.
-            </p>
-            <div className="flex items-center gap-5">
-              <div className="flex items-center gap-2">
-                <CustomTextField
-                  label=""
-                  name="setChargeVal"
-                  type="number"
-                  errorMsg=""
-                  value={charge}
-                  errorKey={!charge}
-                  placeholder="Enter charge"
-                  onChange={(e) => setCharge(e.target.value)}
-                />
-                <p className="mb-4">%</p>
-              </div>
-              <CustomButton
-                disabled={!charge}
-                onClick={updateCharge}
-                variant="primary"
-                className="px-4 py-3 text-white text-sm mb-4 cursor-pointer"
-              >
-                Update
-              </CustomButton>
-            </div>
-          </div>
+    <Breadcrumbs
+      breadcrumbsItems={BREAD_CRUMBS_ITEMS.ADMIN_CONFIGURATION.MAIN_PAGE}
+    />
+
+    <div className="flex flex-col gap-8 mt-5">
+      <div className="p-6 bg-white rounded-lg shadow-md border border-gray-100">
+        <div className="flex items-center gap-3 mb-4 text-indigo-700">
+          <CurrencyRupeeIcon className="h-7 w-7 transform transition-transform duration-200 hover:scale-110" />
+          <p className="text-xl font-bold tracking-tight">Point Configuration</p>
         </div>
-      </ChartCard>
+        <p className="mb-6 text-sm text-gray-600 leading-relaxed">
+          Note: The value entered here determines how many points are equivalent to ₹ 1. This sets the conversion rate for points to Indian Rupees.
+        </p>
+        <div className="flex flex-col gap-4 items-start">
+          <div className="w-full sm:max-w-md">
+            <CustomTextField
+              label="Points Value (for ₹1)"
+              name="points"
+              type="text"
+              errorMsg="Please enter the number of points equivalent to ₹1"
+              value={points}
+              errorKey={!points}
+              placeholder="Enter points value"
+              onChange={(e) => {
+                if (/^\d*$/.test(e.target.value)) {
+                  setPoints(e.target.value);
+                }
+              }}
+            />
+          </div>
+          <CustomButton
+            disabled={!points || Number(points) <= 0 || !/^\d*$/.test(points)}
+            onClick={updatePoints}
+            variant="primary"
+            className="px-6 py-2.5 text-white text-base rounded-md shadow-lg bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition-all duration-200 transform self-start"
+          >
+            Update Points
+          </CustomButton>
+        </div>
+      </div>
+      <hr className="border-t border-gray-200 my-2" />
+      <div className="p-6 bg-white rounded-lg shadow-md border border-gray-100">
+        <div className="flex items-center gap-3 mb-4 text-teal-700">
+          <AdjustmentsHorizontalIcon className="h-7 w-7 transform transition-transform duration-200 hover:rotate-12" />
+          <p className="text-xl font-bold tracking-tight">Admin Charge</p>
+        </div>
+        <p className="mb-6 text-sm text-gray-600 leading-relaxed">
+          Note: This is the percentage charge applied by the admin. Please ensure the value is between 0 and{" "}
+          <span className="font-semibold text-gray-800">{MAX_CHARGE_VALUE}%</span>.
+        </p>
+        <div className="flex flex-col gap-4 items-start">
+          <div className="w-full sm:max-w-md">
+            <CustomTextField
+              label="Percentage (%)"
+              name="setChargeVal"
+              type="text"
+              errorMsg="Please enter a percentage"
+              value={charge}
+              errorKey={!charge}
+              placeholder="Enter charge percentage"
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*\.?\d*$/.test(value) || value === "") {
+                  setCharge(value);
+                }
+              }}
+            />
+          </div>
+          <CustomButton
+            onClick={updateCharge}
+            variant="primary"
+            className="px-6 py-2.5 text-white text-base rounded-md shadow-lg bg-green-600 hover:bg-green-700 active:scale-[0.98] transition-all duration-200 transform self-start" 
+          >
+            Update Charge
+          </CustomButton>
+        </div>
+      </div>
+
     </div>
+  </div>
   );
 };
 
