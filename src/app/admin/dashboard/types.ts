@@ -1,7 +1,10 @@
+import { ChartOptions } from "chart.js";
+
 export interface IBarChartProps {
   data: number[];
   labels: string[];
   symbolType?: string;
+  options?: ChartOptions<'bar'>;
 }
 
 export interface IDoughnutChartProps {

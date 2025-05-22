@@ -57,7 +57,8 @@ export const API_ROUTES = {
         CANCELLED_EVENT_RATIO: "dashboard/analytics/cancellation-ratio",
         ATTENDED_EVENTS_ANALYTICS : "/dashboard/analytics/top-attended-events",
         GENERATE_TERMS_CONDITIONS: "/terms-and-conditions/generate-ai",
-        FEEDBACK_ANALYTICS : '/dashboard/analytics/feedback-analytics'
+        FEEDBACK_ANALYTICS : '/dashboard/analytics/feedback-analytics',
+        FEEDBACK_OVERVIEW: '/dashboard/analytics/feedback-overview',
     },
     AUTH: {
         LOGIN: `/login`,

@@ -22,6 +22,7 @@ import { DASHBOARD_TITLE } from './helper';
 
 // Library
 import 'leaflet/dist/leaflet.css';
+import FeedbackOverviewGraph from '@/components/admin-components/dashboard/FeedbackOverviewGraph';
 
 function DashboardPage() {
     return (
@@ -85,6 +86,12 @@ function DashboardPage() {
                         </CardWithTitle>
                     </div>
                 </div>
+            </div>
+
+            <div className="flex flex-wrap mt-8">
+                <CardWithTitle title={DASHBOARD_TITLE.FEEDBACK_OVERVIEW_TITLE} tooltip={DASHBOARD_TITLE.FEEDBACK_OVERVIEW_TOOLTIP}>
+                    <FeedbackOverviewGraph />
+                </CardWithTitle>
             </div>
 
             <div className="flex flex-wrap mt-8">
