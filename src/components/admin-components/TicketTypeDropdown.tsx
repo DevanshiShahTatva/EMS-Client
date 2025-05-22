@@ -181,9 +181,10 @@ function TicketTypeDropdown() {
         }
     }, [deleteItemId, fetchTicketTypesData, closeDeleteModal]);
 
-    const tableheaders: { header: string; key: keyof ITicketType }[] = [
+    const tableheaders: { header: string; key: keyof ITicketType, render?: (item: ITicketType) => string }[] = [
         { header: 'Ticket Type', key: 'name' },
         { header: 'Description', key: 'description' },
+        { header: 'Status', key: 'isUsed', render: (item: ITicketType) => item.isUsed ? "In Use" : "Not Used" }
     ];
 
     const tableActions = [

@@ -247,6 +247,7 @@ function EventCategoryDropdown() {
                     {item.name}
                 </Badge>
         },
+        { header: 'Status', key: 'isUsed', render: (item: IEventCategory) => item.isUsed ? "In Use" : "Not Used" }
     ];
 
     const tableActions = [
