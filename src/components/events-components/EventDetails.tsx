@@ -26,6 +26,7 @@ import BookingButton from './BookingButton'
 import GoogleMap from './GoogleMap'
 import ReviewsSection from './ReviewSection'
 import CustomButton from '../common/CustomButton'
+import WeatherReport from './WeatherReport'
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
@@ -208,6 +209,9 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
         </div>
         <div className="mt-8">
           <EventDescription description={event.description} />
+        </div>
+         <div className="mt-8">
+          <WeatherReport lat={event.location.lat} lng={event.location.lng} />
         </div>
         <div className="mt-8">
           <div className='flex items-center justify-between mb-4'>
