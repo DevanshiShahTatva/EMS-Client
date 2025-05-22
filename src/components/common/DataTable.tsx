@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // custom components
 import Pagination from '../admin-components/Pagination';
@@ -62,6 +62,10 @@ export default function DataTable<T>({
     const totalPages = Math.ceil(sortedData.length / itemsPerPage);
     const paginatedData = sortedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     const totalColumsCount = columns.length + (showSerialNumber ? 1 : 0) + (actions.length > 0 ? 1 : 0)
+
+    useEffect(() => {
+        setCurrentPage(1);
+      }, [data]);
 
     return (
         <div className="overflow-x-auto py-4 bg-white rounded-lg">

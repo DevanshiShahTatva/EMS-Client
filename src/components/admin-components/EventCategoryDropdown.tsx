@@ -10,13 +10,13 @@ import { TLoadingState, IEventCategoryResp, IEventCategory, TCategoryFormValues 
 import { API_ROUTES } from '@/utils/constant';
 import DeleteModal from '@/components/common/DeleteModal';
 import { TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
-import { getCategoryPaginatedData, getCategorySearchResults, initialCategoryFormValues } from '@/app/admin/dropdowns/helper';
+import { getCategorySearchResults, initialCategoryFormValues } from '@/app/admin/dropdowns/helper';
 import EventCategoryFormModal from './EventCategoryFormModal';
 import { getTruthyString } from '@/utils/helper';
 import CustomButton from '../common/CustomButton';
 import SearchInput from '../common/CommonSearchBar';
 import DataTable from '../common/DataTable';
-import { Column } from '@/utils/types';
+import { Action, Column } from '@/utils/types';
 
 function EventCategoryDropdown() {
     const [loading, setLoading] = useState<TLoadingState>({
@@ -31,17 +31,8 @@ function EventCategoryDropdown() {
     const [deleteItemId, setDeleteItemId] = useState<string>("");
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [currentPage, setCurrentPage] = useState(1);
     const [modalOpen, setModalOpen] = useState(false);
     const [formValues, setFormValues] = useState<TCategoryFormValues>(initialCategoryFormValues);
-
-    const tableRowData = useMemo(() => {
-        return getCategoryPaginatedData(categoriesData, currentPage, itemsPerPage);
-    }, [categoriesData, currentPage, itemsPerPage]);
-
-    const totalItems = categoriesData.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const setLoadingState = (key: keyof TLoadingState, value: boolean) => {
         setLoading((prev) => ({
@@ -77,7 +68,6 @@ function EventCategoryDropdown() {
     const handleSearch = useCallback((searchVal: string) => {
         const result = getCategorySearchResults(allCategoriesData, searchVal);
         setCategoriesData(result);
-        setCurrentPage(1);
         setSearchQuery(searchVal);
     }, [allCategoriesData]);
 
@@ -131,7 +121,6 @@ function EventCategoryDropdown() {
                 closeAddEditModal();
                 await fetchCategoriesData();
                 toast.success("Category Created Successfully");
-                setCurrentPage(1);
             }
         } catch (err) {
             console.error('Error creating category', err);
@@ -168,7 +157,6 @@ function EventCategoryDropdown() {
                 closeAddEditModal();
                 await fetchCategoriesData();
                 toast.success("Category Updated Successfully");
-                setCurrentPage(1);
             }
         } catch (err) {
             console.error('Error updating category', err);
@@ -199,7 +187,6 @@ function EventCategoryDropdown() {
                 closeDeleteModal();
                 await fetchCategoriesData();
                 toast.success("Category Deleted Successfully");
-                setCurrentPage(1);
             }
         } catch (err) {
             console.error('Error deleting category', err);
@@ -240,7 +227,7 @@ function EventCategoryDropdown() {
         },
     ];
 
-    const tableActions = [
+    const tableActions: Action<IEventCategory>[] = [
         {
             icon: <PencilSquareIcon className="h-5 w-5 text-blue-500 hover:text-blue-700 cursor-pointer" />,
             onClick: (row: IEventCategory) => openEditModal(row),
