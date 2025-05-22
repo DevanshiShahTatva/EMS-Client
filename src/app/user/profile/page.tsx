@@ -232,11 +232,11 @@ const UserProfilePage = () => {
 
       const initialProfileVal = {
         userName: receivedObj.name,
-        address: receivedObj.address,
-        country: receivedObj.country,
-        state: receivedObj.state,
-        city: receivedObj.city,
-        zipcode: receivedObj.zipcode,
+        address: receivedObj.address || "",
+        country: receivedObj.country || "",
+        state: receivedObj.state || "",
+        city: receivedObj.city || "",
+        zipcode: receivedObj.zipcode || "",
         profileImage: null,
       };
 

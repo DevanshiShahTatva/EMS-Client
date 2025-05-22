@@ -362,3 +362,5 @@ export const CATEGORIES: Category[] = [
 ]
 
 export const MAX_CHARGE_VALUE = 18;
+
+export const SOCIAL_SHARE_LINK = "https://eventlyfe.netlify.app"

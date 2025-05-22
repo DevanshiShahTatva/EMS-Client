@@ -9,12 +9,15 @@ import TitleSection from '../common/TitleSection';
 import { TLoadingState, IEventCategoryResp, IEventCategory, TCategoryFormValues } from '@/app/admin/dropdowns/types';
 import { API_ROUTES } from '@/utils/constant';
 import DeleteModal from '@/components/common/DeleteModal';
+import TableSkeleton from '@/components/common/TableSkeloton';
 import { TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { getCategorySearchResults, initialCategoryFormValues } from '@/app/admin/dropdowns/helper';
 import EventCategoryFormModal from './EventCategoryFormModal';
 import { getTruthyString } from '@/utils/helper';
 import CustomButton from '../common/CustomButton';
 import SearchInput from '../common/CommonSearchBar';
+import { AxiosError } from 'axios';
+import CannotDeleteModal from './CannotDeleteModal';
 import DataTable from '../common/DataTable';
 import { Action, Column } from '@/utils/types';
 
@@ -27,6 +30,8 @@ function EventCategoryDropdown() {
     });
     const [allCategoriesData, setAllCategoriesData] = useState<IEventCategory[]>([]);
     const [categoriesData, setCategoriesData] = useState<IEventCategory[]>([]);
+    const [cannotDeleteModalOpen, setCannotDeleteModalOpen] = useState(false);
+    const [usedInEvents, setUsedInEvents] = useState<{ _id: string, title: string, endDateTime: string }[]>([]);
 
     const [deleteItemId, setDeleteItemId] = useState<string>("");
 
@@ -189,7 +194,11 @@ function EventCategoryDropdown() {
                 toast.success("Category Deleted Successfully");
             }
         } catch (err) {
-            console.error('Error deleting category', err);
+            if (err instanceof AxiosError && err.response?.status === 400) {
+                closeDeleteModal();
+                setCannotDeleteModalOpen(true);
+                setUsedInEvents(err.response?.data.data);
+            }
         } finally {
             setLoadingState('deleteApi', false)
         }
@@ -225,6 +234,7 @@ function EventCategoryDropdown() {
                     {item.name}
                 </Badge>
         },
+        { header: 'Status', key: 'isUsed', render: (item: IEventCategory) => item.isUsed ? "In Use" : "Not Used" }
     ];
 
     const tableActions: Action<IEventCategory>[] = [
@@ -277,6 +287,15 @@ function EventCategoryDropdown() {
                     onClose={closeDeleteModal}
                     onConfirm={deleteCategoryById}
                     confirmLoading={loading.deleteApi}
+                />
+
+                {/* CANNOT DELETE MODAL */}
+                <CannotDeleteModal
+                    isOpen={cannotDeleteModalOpen}
+                    onClose={() => setCannotDeleteModalOpen(false)}
+                    eventList={usedInEvents}
+                    title="Cannot delete category"
+                    description="This category is currently linked to the following events."
                 />
 
                 {modalOpen &&
