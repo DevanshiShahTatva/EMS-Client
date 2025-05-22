@@ -136,7 +136,7 @@ const handleLikeEvent = async (eventId: string) => {
                     />
                   <div className="mt-auto space-y-2 mb-4">
                     <div className="flex items-center text-gray-600">
-                        <CategoryChip _id={ev.category._id} name={ev.category.name} isActive={ev.category.isActive} color={ev.category.color} bgColor={ev.category.bgColor} icon={ev.category.icon} createdAt={ev.category.createdAt} updatedAt={ev.category.updatedAt} __v={ev.category.__v} />
+                        <CategoryChip _id={ev.category._id} name={ev.category.name} isActive={ev.category.isActive} color={ev.category.color} bgColor={ev.category.bgColor} icon={ev.category.icon} createdAt={ev.category.createdAt} updatedAt={ev.category.updatedAt} __v={ev.category.__v} isUsed={false} />
                     </div>
                     <div className="space-y-3 mb-6">
                       <div className="flex items-center text-gray-600">
