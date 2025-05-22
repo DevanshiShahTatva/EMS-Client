@@ -25,6 +25,8 @@ import { apiCall } from "@/utils/services/request";
 const PointConfiguration = () => {
   const [points, setPoints] = useState("0");
   const [charge, setCharge] = useState("0");
+  const isInvalidCharge =
+  !charge || isNaN(+charge) || +charge < 0 || +charge > 18;
 
   useEffect(() => {
     const fetchPointInfo = async () => {
@@ -146,9 +148,15 @@ const PointConfiguration = () => {
               label="Percentage (%)"
               name="setChargeVal"
               type="text"
-              errorMsg="Please enter a percentage"
+              errorMsg={
+                !charge
+                  ? "Please enter a percentage"
+                  : +charge < 0 || +charge > 18
+                  ? "Percentage must be between 0 and 18"
+                  : ""
+              }
               value={charge}
-              errorKey={!charge}
+              errorKey={isInvalidCharge}
               placeholder="Enter charge percentage"
               onChange={(e) => {
                 const value = e.target.value;
