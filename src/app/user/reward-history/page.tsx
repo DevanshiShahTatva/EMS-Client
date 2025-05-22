@@ -29,7 +29,6 @@ const RewardHistory = () => {
   const [loading, setLoading] = useState(true);
 
   const [allData, setAllData] = useState<IHistory[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -53,7 +52,6 @@ const RewardHistory = () => {
     const result = filterBySearch(allData, search);
     setData(result);
     setSearchQuery(search);
-    setCurrentPage(1);
   };
 
   const tableHeaders: Column<IHistory>[] = [

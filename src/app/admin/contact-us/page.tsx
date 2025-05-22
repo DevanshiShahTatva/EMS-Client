@@ -23,7 +23,7 @@ import { Action, Column } from '@/utils/types'
 import { API_ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant'
 
 // Helpers
-import { getPaginatedData, getSearchResults, INITIAL_CONTATC_INFO, statusColor } from './helper'
+import { getSearchResults, INITIAL_CONTATC_INFO, statusColor } from './helper'
 
 //  Services
 import { apiCall } from '@/utils/services/request'
@@ -36,9 +36,7 @@ const AdminContactUsPage = () => {
 
     const [allRequestsData, setAllRequestData] = useState<IRequestType[]>([])
     const [requestsData, setRequestsData] = useState<IRequestType[]>([])
-    const [tableRowData, setTableRowData] = useState<IRequestType[]>([])
     const [selectedIds, setSelectedIds] = useState<string[]>([])
-
     const [contactInfo, setContactInfo] = useState<IRequestType>(INITIAL_CONTATC_INFO)
 
     const [loading, setLoading] = useState(true)
@@ -55,11 +53,7 @@ const AdminContactUsPage = () => {
 
     const handleSearch = (searchVal: string) => {
         const result = getSearchResults(allRequestsData, searchVal)
-        const rowResult = getPaginatedData(result, 1, itemsPerPage);
-
-        setTableRowData(rowResult);
         setRequestsData(result)
-        setCurrentPage(1);
         setSearchQuery(searchVal)
     }
 
@@ -116,7 +110,6 @@ const AdminContactUsPage = () => {
             if (response && response.success) {
                 await fetchRequestData()
                 toast.success("Record Deleted Successfully")
-                setCurrentPage(1)
                 setSelectedIds([])
             }
         } catch (err) {
@@ -141,7 +134,6 @@ const AdminContactUsPage = () => {
             if (response && response.success) {
                 await fetchRequestData()
                 toast.success("Status Updated Successfully")
-                setCurrentPage(1)
                 setSelectedIds([])
             }
         } catch (err) {
@@ -163,11 +155,8 @@ const AdminContactUsPage = () => {
             if (response && response.success) {
                 const receivedArray = response.data
 
-                const tableRowData = getPaginatedData(receivedArray, currentPage, itemsPerPage)
-
                 setAllRequestData(receivedArray)
                 setRequestsData(receivedArray)
-                setTableRowData(tableRowData)
             }
         } catch (err) {
             console.error('Error fetching chart data', err);
@@ -185,7 +174,7 @@ const AdminContactUsPage = () => {
             (currentPage - 1) * itemsPerPage,
             currentPage * itemsPerPage
         );
-        setTableRowData(paginated);
+        // setTableRowData(paginated);
     }, [currentPage, requestsData, itemsPerPage]);
 
     const handleClickAiReply = async (item: IRequestType) => {
