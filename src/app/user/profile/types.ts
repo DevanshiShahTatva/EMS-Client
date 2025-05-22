@@ -22,6 +22,15 @@ export interface IProfileInfoValues {
     city: string,
 };
 
+export interface IVoucher {
+    "description": string;
+    "expireTime": string;
+    "promoCode": string;
+    "maxDiscount": number;
+    "percentage": number;
+    "used": boolean;
+}
+
 export interface IUserInfo {
     _id: string;
     name: string;
@@ -35,4 +44,5 @@ export interface IUserInfo {
     points: number;
     currentBadge: string;
     lifetimeEarnedPoints: number;
+    vouchers: IVoucher[];
 }
