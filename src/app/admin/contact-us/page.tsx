@@ -30,7 +30,6 @@ import { apiCall } from '@/utils/services/request'
 
 // library
 import { toast } from 'react-toastify';
-import { marked } from "marked";
 import DataTable from '@/components/common/DataTable'
 
 const AdminContactUsPage = () => {
@@ -283,7 +282,6 @@ const AdminContactUsPage = () => {
                     <EnvelopeIcon className="h-5 w-5" />
                 </div>,
             onClick: (row) => handleClickAiReply(row)
-
         }
     ];
 
