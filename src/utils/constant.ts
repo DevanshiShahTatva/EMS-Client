@@ -39,6 +39,7 @@ export const API_ROUTES = {
         UPDATE_EVENT: (id: string) => `/events/${id}`,
         AI_GENERATE_DESCRIPTION: "events/generate/event-description",
         AI_GENERATE_FAQ_ANSWER: "faq/generate/faq-answer",
+        AI_GENERATE_CONTACT_QUERY_ANSWER: "contact-us/query-ans-generate",
         // DASHBOARD
         DASHBOARD_OVERVIEW: 'dashboard/analytics/dashboard-overview',
         TOP_LIKED_EVENTS: 'dashboard/analytics/top-liked-events',

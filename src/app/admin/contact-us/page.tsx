@@ -14,7 +14,7 @@ import CustomButton from '@/components/common/CustomButton'
 
 // Icons
 import { MagnifyingGlassIcon, TrashIcon, EyeIcon, EnvelopeIcon } from "@heroicons/react/24/outline"
-import { SquareCheckBig } from 'lucide-react'
+import { Loader, SquareCheckBig } from 'lucide-react'
 
 // Types
 import { IRequestResponse, IRequestType } from './types'
@@ -29,7 +29,8 @@ import { getPaginatedData, getSearchResults, INITIAL_CONTATC_INFO, statusColor }
 import { apiCall } from '@/utils/services/request'
 
 // library
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify';
+import { marked } from "marked";
 
 const AdminContactUsPage = () => {
 
@@ -47,6 +48,7 @@ const AdminContactUsPage = () => {
 
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+    const [isGeneratingAns, setIsGeneratingAns] = useState<boolean>(false);
 
     const totalItems = requestsData.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -186,6 +188,44 @@ const AdminContactUsPage = () => {
         setTableRowData(paginated);
       }, [currentPage, requestsData, itemsPerPage]);
 
+    const handleClickAiReply = async (item: IRequestType) => {
+    try {
+        setIsGeneratingAns(true);
+
+        const res = await apiCall({
+            method: "POST",
+            endPoint: API_ROUTES.ADMIN.AI_GENERATE_CONTACT_QUERY_ANSWER,
+            body: {
+                query: item.message,
+            },
+        });
+
+        if (res.success) {
+            // Clean Markdown from response
+            const markdownText = res.data.replace(/\\n/g, "\n").replace(/\*\*/g, "");
+            
+            const encodedBody = encodeURIComponent(markdownText);
+
+            // Build the mailto link
+            const mailtoLink = `mailto:${encodeURIComponent(item.email)}?subject=${encodeURIComponent(item.subject)}&body=${encodedBody}`;
+
+            // Create and trigger anchor
+            const element = document.createElement("a");
+            element.setAttribute("href", mailtoLink);
+            element.setAttribute("target", "_blank");
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+    } catch (error) {
+        console.error(error);
+        toast.error("Something went wrong!");
+    } finally {
+        setIsGeneratingAns(false);
+    }
+};
+
+
     const renderTableRows = () => {
         return tableRowData.map(item =>
             <tr key={item._id} className="border-b hover:bg-gray-50">
@@ -234,6 +274,12 @@ const AdminContactUsPage = () => {
                         >
                             <EnvelopeIcon className="h-5 w-5" />
                         </a>
+                        <div
+                            className="cursor-pointer ml-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex flex-row gap-2 py-2 px-2 rounded-sm"
+                            onClick={() => handleClickAiReply(item)}
+                        >
+                            {isGeneratingAns ? <Loader /> : <EnvelopeIcon className="h-5 w-5" />}
+                        </div>
                     </div>
                 </td>
             </tr>
