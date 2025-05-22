@@ -5,7 +5,7 @@ import Pagination from '@/components/admin-components/Pagination';
 import DeleteModal from '@/components/common/DeleteModal';
 import TableSkeleton from '@/components/common/TableSkeloton';
 import TitleSection from '@/components/common/TitleSection';
-import { MagnifyingGlassIcon, TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { API_ROUTES } from '@/utils/constant';
 import { apiCall } from '@/utils/services/request';
 import { toast } from 'react-toastify';
@@ -14,6 +14,8 @@ import { ITicketType, ITicketTypeFormValues, ITicketTypesResp } from '@/app/admi
 import { getPaginatedData, getSearchResults, initialTicketTypeFormValues } from '@/app/admin/dropdowns/helper';
 import CustomButton from '../common/CustomButton';
 import SearchInput from '../common/CommonSearchBar';
+import { AxiosError } from 'axios';
+import CannotDeleteModal from './CannotDeleteModal';
 
 function TicketTypeDropdown() {
     const [loading, setLoading] = useState(true);
@@ -25,6 +27,8 @@ function TicketTypeDropdown() {
     const [allTicketTypesData, setAllTicketTypesData] = useState<ITicketType[]>([]);
     const [ticketTypesData, setTicketTypesData] = useState<ITicketType[]>([]);
     const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
+    const [cannotDeleteModalOpen, setCannotDeleteModalOpen] = useState(false);
+    const [usedInEvents, setUsedInEvents] = useState<{ _id: string, title: string, endDateTime: string }[]>([]);
     const [isModalOpen, setModalOpen] = useState(false);
     const [initialValues, setInitialValues] = useState<ITicketTypeFormValues>(initialTicketTypeFormValues);
 
@@ -168,6 +172,11 @@ function TicketTypeDropdown() {
             }
         } catch (err) {
             console.error('Error deleting ticket type', err);
+            if (err instanceof AxiosError && err.response?.status === 400) {
+                closeDeleteModal();
+                setCannotDeleteModalOpen(true);
+                setUsedInEvents(err.response?.data.data);
+            }
         } finally {
             setDeleteApiLoading(false);
         }
@@ -203,6 +212,7 @@ function TicketTypeDropdown() {
                                 <th className="p-3">No</th>
                                 <th className="p-3">Ticket Type</th>
                                 <th className="p-3">Description</th>
+                                <th className="p-3">Status</th>
                                 <th className="p-3 text-center">Actions</th>
                             </tr>
                         </thead>
@@ -215,6 +225,7 @@ function TicketTypeDropdown() {
                                         <td className="p-3">{(currentPage - 1) * itemsPerPage + idx + 1}</td>
                                         <td className="p-3">{item.name}</td>
                                         <td className="p-3">{item.description}</td>
+                                        <td className="p-3">{item.isUsed ? "In Use" : "Not Used"}</td>
                                         <td className="p-3 space-x-2 text-center">
                                             <button
                                                 onClick={() => openEditModal(item)}
@@ -261,6 +272,13 @@ function TicketTypeDropdown() {
                 onClose={closeDeleteModal}
                 onConfirm={deleteTicketTypeById}
                 confirmLoading={deleteApiLoading}
+            />
+
+            {/* CANNOT DELETE MODAL */}
+            <CannotDeleteModal
+                isOpen={cannotDeleteModalOpen}
+                onClose={() => setCannotDeleteModalOpen(false)}
+                eventList={usedInEvents}
             />
 
             {/* ADD & EDIT MODAL */}
