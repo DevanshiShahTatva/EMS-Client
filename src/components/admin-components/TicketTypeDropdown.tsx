@@ -12,6 +12,8 @@ import { ITicketType, ITicketTypeFormValues, ITicketTypesResp } from '@/app/admi
 import { getPaginatedData, getSearchResults, initialTicketTypeFormValues } from '@/app/admin/dropdowns/helper';
 import CustomButton from '../common/CustomButton';
 import SearchInput from '../common/CommonSearchBar';
+import { AxiosError } from 'axios';
+import CannotDeleteModal from './CannotDeleteModal';
 import DataTable from '../common/DataTable';
 
 function TicketTypeDropdown() {
@@ -24,6 +26,8 @@ function TicketTypeDropdown() {
     const [allTicketTypesData, setAllTicketTypesData] = useState<ITicketType[]>([]);
     const [ticketTypesData, setTicketTypesData] = useState<ITicketType[]>([]);
     const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
+    const [cannotDeleteModalOpen, setCannotDeleteModalOpen] = useState(false);
+    const [usedInEvents, setUsedInEvents] = useState<{ _id: string, title: string, endDateTime: string }[]>([]);
     const [isModalOpen, setModalOpen] = useState(false);
     const [initialValues, setInitialValues] = useState<ITicketTypeFormValues>(initialTicketTypeFormValues);
 
@@ -167,14 +171,20 @@ function TicketTypeDropdown() {
             }
         } catch (err) {
             console.error('Error deleting ticket type', err);
+            if (err instanceof AxiosError && err.response?.status === 400) {
+                closeDeleteModal();
+                setCannotDeleteModalOpen(true);
+                setUsedInEvents(err.response?.data.data);
+            }
         } finally {
             setDeleteApiLoading(false);
         }
     }, [deleteItemId, fetchTicketTypesData, closeDeleteModal]);
 
-    const tableheaders: { header: string; key: keyof ITicketType }[] = [
+    const tableheaders: { header: string; key: keyof ITicketType, render?: (item: ITicketType) => string }[] = [
         { header: 'Ticket Type', key: 'name' },
         { header: 'Description', key: 'description' },
+        { header: 'Status', key: 'isUsed', render: (item: ITicketType) => item.isUsed ? "In Use" : "Not Used" }
     ];
 
     const tableActions = [
@@ -227,6 +237,13 @@ function TicketTypeDropdown() {
                 onClose={closeDeleteModal}
                 onConfirm={deleteTicketTypeById}
                 confirmLoading={deleteApiLoading}
+            />
+
+            {/* CANNOT DELETE MODAL */}
+            <CannotDeleteModal
+                isOpen={cannotDeleteModalOpen}
+                onClose={() => setCannotDeleteModalOpen(false)}
+                eventList={usedInEvents}
             />
 
             {/* ADD & EDIT MODAL */}

@@ -3,6 +3,7 @@ export interface ITicketType {
     name: string
     description: string
     isActive: boolean
+    isUsed: boolean
     createdAt: string
     updatedAt: string
     __v: number
@@ -43,6 +44,7 @@ export interface IEventCategory {
     color: string
     bgColor: string
     icon: Icon
+    isUsed: boolean
     createdAt: string
     updatedAt: string
     __v: number
