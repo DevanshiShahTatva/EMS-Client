@@ -1,18 +1,27 @@
 "use client";
 
+// React & Core Imports
 import React, { useState, useEffect } from 'react'
 
 // Next Library support
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import Cookie from 'js-cookie';
+
 // Image Paths
-import Instagram from "../../../public/assets/instagram.png"
-import Facebook from "../../../public/assets/facebook.png"
-import Twitter from "../../../public/assets/twitter.png"
-import Link from 'next/link'
-import { ROUTES } from '@/utils/constant'
-import { getAuthToken } from '@/utils/helper'
+import Facebook from "../../../public/assets/facebook.png";
+import Whatsapp from "../../../public/assets/whatsapp.svg";  
+import XApp from "../../../public/assets/x_app_logo.svg";
+
+// 2. Third-Party Libraries
+import Link from 'next/link';
+import { FacebookShareButton, TwitterShareButton, WhatsappShareButton } from 'react-share';
+
+// 3. Constants
+import { ROUTES, SOCIAL_SHARE_LINK } from '@/utils/constant';
+
+// 4. Utilities / Helpers
+import { getAuthToken } from '@/utils/helper';
 
 function Footer() {
     const router = useRouter();
@@ -83,33 +92,43 @@ function Footer() {
                     <div>
                         <h4 className="font-semibold mb-2">Follow Us</h4>
                         <div className="flex gap-4 justify-center">
-                            <Link href={ROUTES.HOME} className="text-gray-300 hover:text-white">
+                            <WhatsappShareButton
+                                url={SOCIAL_SHARE_LINK}
+                                className="text-gray-300 hover:text-white"
+                            >
                                 <Image
-                                    src={Instagram}
-                                    height={24}
-                                    width={24}
-                                    alt='instaIcons'
-                                    className='bg-transparent'
+                                src={Whatsapp}
+                                height={24}
+                                width={24}
+                                alt="whatsapp"
+                                className="bg-transparent"
                                 />
-                            </Link>
-                            <Link href={ROUTES.HOME} className="text-gray-300 hover:text-white">
+                            </WhatsappShareButton>
+                            <FacebookShareButton
+                                url={SOCIAL_SHARE_LINK}
+                                title="Check out this amazing event!" 
+                                className="text-gray-300 hover:text-white"
+                            >
                                 <Image
-                                    src={Facebook}
-                                    height={24}
-                                    width={24}
-                                    alt='instaIcons'
-                                    className='bg-transparent'
+                                src={Facebook}
+                                height={24}
+                                width={24}
+                                alt="facebook"
+                                className="bg-transparent"
                                 />
-                            </Link>
-                            <Link href={ROUTES.HOME} className="text-gray-300 hover:text-white">
+                            </FacebookShareButton>
+                            <TwitterShareButton
+                                url={SOCIAL_SHARE_LINK}
+                                className="text-gray-300 hover:text-white"
+                            >
                                 <Image
-                                    src={Twitter}
-                                    height={24}
-                                    width={24}
-                                    alt='instaIcons'
-                                    className='bg-transparent'
+                                src={XApp}
+                                height={24}
+                                width={24}
+                                alt="twitter"
+                                className="bg-transparent"
                                 />
-                            </Link>
+                            </TwitterShareButton>
                         </div>
                     </div>
                     </div>

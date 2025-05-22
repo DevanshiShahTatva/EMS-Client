@@ -103,6 +103,29 @@ export type ApiParams = {
     headers?: HeadersInit;
 };
 
+export type Column<T> = {
+    header: string | React.ReactNode;
+    key: keyof T;
+    render?: (row: T) => React.ReactNode;
+    sortKey?: (row: T) => string | number;
+    isSortable? : boolean
+};
+
+export type Action<T> = {
+    icon: React.ReactNode;
+    onClick: (row: T) => void;
+    tooltip?: string;
+    disabled?: (row: T) => boolean;
+};
+
+export type DtataTable<T> = {
+    data: T[];
+    columns: Column<T>[];
+    actions?: Action<T>[];
+    loading?: boolean
+    showSerialNumber? : boolean
+};
+
 
 export interface EventsDataTypes {
     id: string
@@ -116,7 +139,7 @@ export interface EventsDataTypes {
     price: string | number;
     ticketsAvailable: number;
     totalTickets : number,
-    ticketsArray : EventTicket[]
+    ticketsArray : EventTicket[],
 }
 
 

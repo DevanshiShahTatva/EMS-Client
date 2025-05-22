@@ -8,14 +8,13 @@ import DeleteDialog from '@/components/common/DeleteModal';
 import FilterModal from '@/components/common/FilterModal';
 import CustomButton from '@/components/common/CustomButton';
 import ChartCard from '@/components/admin-components/dashboard/ChartCard';
-import Pagination from '@/components/admin-components/Pagination';
-import TableSkeleton from '@/components/common/TableSkeloton';
 import Breadcrumbs from '@/components/common/BreadCrumbs';
 import TitleSection from '@/components/common/TitleSection';
 import SearchInput from '@/components/common/CommonSearchBar';
+import DataTable from '@/components/common/DataTable';
 
 // types import
-import { EventResponse, EventsDataTypes, IApplyFiltersKey } from '@/utils/types';
+import { Action, Column, EventResponse, EventsDataTypes, IApplyFiltersKey } from '@/utils/types';
 import { IEventCategoryResp } from '../dropdowns/types';
 
 // library support 
@@ -169,7 +168,7 @@ function EventsListpage() {
             (sum, ticket) => sum + ticket.totalSeats,
             0
           ),
-          ticketsArray: item.tickets
+          ticketsArray: item.tickets,
         }
       })
 
@@ -263,6 +262,71 @@ function EventsListpage() {
     );
   };
 
+  const tableHeaders: Column<EventsDataTypes>[] = [
+    {
+      header: "Image",
+      key: 'img',
+      isSortable: false,
+      render: (event) =>
+        <Image
+          src={event.img}
+          alt="avatar"
+          width={40}
+          height={40}
+          className="w-10 h-10 rounded-full object-cover"
+        />
+    },
+    { header: 'Title', key: 'title' },
+    { header: 'Category', key: 'category', render : (row) => <p>{row.category.name}</p> },
+    { header: 'Start Date/Time', key: 'startTime', render: (row) => <p>{moment(row.startTime).format("DD MMM YYYY, h:mm A")}</p> },
+    { header: 'Duration', key: 'duration'},
+    {
+      header: 'Location', key: 'location', render: (row) => <div className='max-w-40'>
+        <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger className="truncate max-w-[90%]">
+            {row.location}
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className=" text-white font-bold">
+              {row.location}
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      </div>
+    },
+    { header: 'Ticket Price', key: 'price' },
+    { header: 'Tickets Available', key: 'ticketsAvailable' },
+    {
+      header: 'Status', key: 'endTime' , isSortable: false, render: (row) => {
+        const status = getStatus(
+          row.startTime,
+          row.endTime,
+          row.ticketsAvailable
+        );
+        return (
+          <span
+            className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColor[status]}`}
+          >
+            {status}
+          </span>
+        )
+      }
+    },
+  ]
+
+  const tableActions: Action<EventsDataTypes>[] = [
+    {
+      icon: <PencilSquareIcon className="h-5 w-5 text-blue-500 hover:text-blue-700 cursor-pointer" />,
+      onClick: (row: EventsDataTypes) => navToEditPage(row.id),
+    },
+    {
+      icon: <TrashIcon className="h-5 w-5 text-red-500 hover:text-red-700 cursor-pointer" />,
+      onClick: (row: EventsDataTypes) => openDeleteModal(row.id),
+    },
+  ];
+    
   return (
     <div className="px-8 py-5">
       <Breadcrumbs breadcrumbsItems={BREAD_CRUMBS_ITEMS.EVENT.LIST_PAGE} />
@@ -343,130 +407,13 @@ function EventsListpage() {
         </div>
 
         {/* Data Table  */}
+        <DataTable
+            loading={loading}
+            columns={tableHeaders}
+            actions={tableActions}
+            data={eventsData}
+        />
 
-        <div className="overflow-x-auto py-4 bg-white rounded-lg">
-          <table className="min-w-full text-sm text-left text-gray-700">
-            <thead className="bg-gray-100 text-xs uppercase">
-              <tr>
-                <th className="p-3">Image</th>
-                <th className="p-3">{renderSortableRow("Title", "title")}</th>
-                <th className="p-3">
-                  {renderSortableRow("Category", "category")}
-                </th>
-                <th className="p-3">
-                  {renderSortableRow("Start Date/Time", "startTime")}
-                </th>
-                <th className="p-3">
-                  {renderSortableRow("Duration", "duration")}
-                </th>
-                <th className="p-3">
-                  {renderSortableRow("Location", "location")}
-                </th>
-                <th className="p-3">
-                  {renderSortableRow("Ticket Price", "price")}
-                </th>
-                <th className="p-3">
-                  {renderSortableRow("Tickets Available", "ticketsAvailable")}
-                </th>
-                <th className="p-3">{renderSortableRow("Status", "status")}</th>
-                <th className="p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ?
-                <TableSkeleton rows={itemsPerPage} columns={10} />
-               : rowData.length > 0 ? (
-                rowData.map((event, idx) => {
-                  const status = getStatus(
-                    event.startTime,
-                    event.endTime,
-                    event.ticketsAvailable
-                  );
-                  return (
-                    <tr key={idx} className="border-b hover:bg-gray-50">
-                      <td className="p-3">
-                        {event.img === "" ? (
-                          "-"
-                        ) : (
-                          <Image
-                            src={event.img}
-                            alt="avatar"
-                            width={40}
-                            height={40}
-                            className="w-10 h-10 rounded-full object-cover"
-                          />
-                        )}
-                      </td>
-                      <td className="p-3">{event.title}</td>
-                      <td className="p-3">{event.category?.name}</td>
-                      <td className="p-3">
-                        {moment(event.startTime).format("DD MMM YYYY, h:mm A")}
-                      </td>
-                      <td className="p-3">{event.duration}</td>
-                      <td className="p-3 max-w-40">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger className="truncate max-w-[90%]">
-                              {event.location}
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className=" text-white font-bold">
-                                {event.location}
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </td>
-                      <td className="p-3">{event.price}</td>
-                      <td className="p-3">{event.ticketsAvailable}</td>
-                      <td className="p-3">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColor[status]}`}
-                        >
-                          {status}
-                        </span>
-                      </td>
-                      <td className="p-3 space-x-2">
-                        <button
-                          onClick={() => navToEditPage(event.id)}
-                          className="text-blue-500 hover:text-blue-700 cursor-pointer"
-                        >
-                          <PencilSquareIcon className="h-5 w-5" />
-                        </button>
-                        <button
-                          onClick={() => openDeleteModal(event.id)}
-                          className="text-red-500 hover:text-red-700 cursor-pointer"
-                        >
-                          <TrashIcon className="h-5 w-5" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan={10} className="text-center">
-                    <p className="my-3 font-bold">No events found</p>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination */}
-        {eventsData.length > 0 && (
-          <Pagination
-            totalItems={totalItems}
-            totalPages={totalPages}
-            currentPage={currentPage}
-            itemsPerPage={itemsPerPage}
-            onPageChange={setCurrentPage}
-            onItemsPerPageChange={setItemsPerPage}
-          />
-        )}
-
-        
       </ChartCard>
 
       {/* Delete Popup */}
