@@ -55,6 +55,17 @@ export const getPaginatedData = (dataArray : EventsDataTypes[], currentPage : nu
     return result
 } 
 
+export const handleFreeTicketType = (dataArray : any[], value : string) => {
+    let freeType = false
+
+    const label = dataArray.find(item => item.value === value)?.label.toLowerCase();
+    if(label && label === "free") {
+        freeType = true
+    }
+
+    return freeType
+}
+
 export const InitialEventFormDataValues: IEventFormData = {
     title: "",
     description: "",

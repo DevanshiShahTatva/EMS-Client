@@ -126,11 +126,7 @@ export default function MyCalendar() {
     <div className='min-h-[calc(100vh-76px)] flex flex-col'>
       {loading && <Loader />}
       <div className="p-5 pt-5 md:p-10">
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold">My Calendar</h1>
-          <p className="text-gray-600">View your all events</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white rounded-lg shadow p-5">
           <CalenderDropdown
             title={title}
             onChange={handleViewChange}

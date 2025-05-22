@@ -14,9 +14,10 @@ import EditFaqModal from '@/components/admin-components/EditFaqsModal';
 import Breadcrumbs from '@/components/common/BreadCrumbs';
 import TitleSection from '@/components/common/TitleSection';
 import CustomButton from '@/components/common/CustomButton';
+import SearchInput from '@/components/common/CommonSearchBar';
 
 // Icons
-import { MagnifyingGlassIcon, TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline"
+import { TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline"
 
 // Constant imports
 import { API_ROUTES, BREAD_CRUMBS_ITEMS, ROUTES } from '@/utils/constant';
@@ -30,6 +31,7 @@ import { IFAQsItem, IFaqApiResponse, IFaqData } from './types';
 
 // Library support
 import { toast } from 'react-toastify';
+import DataTable from '@/components/common/DataTable';
 
 const AdminFaqsPage = () => {
   const router = useRouter()
@@ -179,6 +181,23 @@ const AdminFaqsPage = () => {
   }, [currentPage, faqsData, itemsPerPage]);
 
 
+  const tableheaders: { header: string; key: keyof IFaqData }[] = [
+    { header: 'Question', key: 'question' },
+    { header: 'Answer', key: 'answer' },
+  ];
+
+  const tableActions = [
+    {
+      icon: <PencilSquareIcon className="h-5 w-5 text-blue-500 hover:text-blue-700 cursor-pointer" />,
+      onClick: (row: IFaqData) => openEditModal(row),
+    },
+    {
+      icon: <TrashIcon className="h-5 w-5 text-red-500 hover:text-red-700 cursor-pointer" />,
+      onClick: (row: IFaqData) => openDeleteModal(row._id),
+    },
+  ];
+
+
 
   return (
     <div className='px-8 py-5'>
@@ -192,18 +211,12 @@ const AdminFaqsPage = () => {
         {/* Search Bar & Delete All  */}
         <div className="flex justify-between items-center gap-2 space-x-2 w-full my-5">
           {/* Search Input */}
-          <div className="relative w-full">
-            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <MagnifyingGlassIcon className="h-6 w-6" />
-            </span>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-              placeholder="Search faqs"
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-            />
-          </div>
+          <SearchInput
+            value={searchQuery}
+            onChange={(value) => handleSearch(value)}
+            placeholder="Search faqs"
+            inputClassName='pl-10 pr-4 py-2 w-full'
+          />
 
           <CustomButton
             variant='primary'
@@ -217,7 +230,7 @@ const AdminFaqsPage = () => {
 
         {/* Data Table  */}
 
-        <div className="overflow-x-auto py-4 bg-white rounded-lg">
+        {/* <div className="overflow-x-auto py-4 bg-white rounded-lg">
           <table className="min-w-full table-fixed text-sm text-left text-gray-700">
             <thead className="bg-gray-100 text-xs uppercase">
               <tr>
@@ -265,10 +278,18 @@ const AdminFaqsPage = () => {
                 )}
             </tbody>
           </table>
-        </div>
+        </div> */}
+
+        <DataTable 
+            loading={loading}
+            data={tableRowData}
+            columns={tableheaders}
+            actions={tableActions}
+            showSerialNumber
+        />
 
         {/* Pagination */}
-        {faqsData.length > 0 && (
+        {/* {faqsData.length > 0 && (
           <Pagination
             totalItems={totalItems}
             totalPages={totalPages}
@@ -277,7 +298,7 @@ const AdminFaqsPage = () => {
             onPageChange={setCurrentPage}
             onItemsPerPageChange={setItemsPerPage}
           />
-        )}
+        )} */}
       </ChartCard>
 
       {/* Delete Modal */}

@@ -8,6 +8,7 @@ import TooltipWrapper from "@/components/common/TooltipWrapper";
 import DownloadTicketModal from "@/components/events-components/DownloadTicketModal";
 import FeedbackModal from "@/components/events-components/FeedbackModal";
 import { FilterOptions } from '@/components/events-components/FilterOptions'
+import SearchInput from "@/components/common/CommonSearchBar";
 
 // Contsant & Helper Imports
 import { apiCall } from "@/utils/services/request";
@@ -329,18 +330,16 @@ const MyEventsPage = () => {
 
           {/* Search + Sort */}
           <div className="flex gap-3 justify-between md:justify-start flex-wrap">
-            <div className="relative bg-white rounded-lg md:w-[300px] w-full">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <SearchIcon className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search booked events..."
-                value={searchQuery}
-                onChange={(e) => handleSearchQuery(e.target.value)}
-                className="pl-12 pr-4 py-2 text-lg w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
+                <SearchInput
+                  placeholder="Search booked events..."
+                  value={searchQuery}
+                  onChange={(val) => handleSearchQuery(val)}
+                  inputClassName="pl-12 pr-4 py-2 text-lg w-full"
+                  wrapperClassName="bg-white rounded-lg md:w-[300px] w-full"
+                  icon={<SearchIcon className="h-5 w-5 text-gray-400" />}
+                  iconPositionClassName="inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+                />
+
             <div className="w-full md:w-auto">
             <FilterOptions
               sortOption={sortOption}
