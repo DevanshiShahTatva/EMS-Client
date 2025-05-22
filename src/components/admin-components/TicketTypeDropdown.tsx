@@ -9,12 +9,13 @@ import { apiCall } from '@/utils/services/request';
 import { toast } from 'react-toastify';
 import AddEditTicketTypeModal from '@/components/admin-components/AddEditTicketTypeModal';
 import { ITicketType, ITicketTypeFormValues, ITicketTypesResp } from '@/app/admin/dropdowns/types';
-import { getPaginatedData, getSearchResults, initialTicketTypeFormValues } from '@/app/admin/dropdowns/helper';
+import { getSearchResults, initialTicketTypeFormValues } from '@/app/admin/dropdowns/helper';
 import CustomButton from '../common/CustomButton';
 import SearchInput from '../common/CommonSearchBar';
 import { AxiosError } from 'axios';
 import CannotDeleteModal from './CannotDeleteModal';
 import DataTable from '../common/DataTable';
+import { Action } from '@/utils/types';
 
 function TicketTypeDropdown() {
     const [loading, setLoading] = useState(true);
@@ -32,20 +33,10 @@ function TicketTypeDropdown() {
     const [initialValues, setInitialValues] = useState<ITicketTypeFormValues>(initialTicketTypeFormValues);
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [currentPage, setCurrentPage] = useState(1);
-
-    const totalItems = ticketTypesData.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-    const tableRowData = useMemo(() => {
-        return getPaginatedData(ticketTypesData, currentPage, itemsPerPage);
-    }, [ticketTypesData, currentPage, itemsPerPage]);
 
     const handleSearch = useCallback((searchVal: string) => {
         const result = getSearchResults(allTicketTypesData, searchVal);
         setTicketTypesData(result);
-        setCurrentPage(1);
         setSearchQuery(searchVal);
     }, [allTicketTypesData]);
 
@@ -115,7 +106,6 @@ function TicketTypeDropdown() {
                 closeAddEditModal();
                 await fetchTicketTypesData();
                 toast.success("Ticket Type Created Successfully");
-                setCurrentPage(1);
             }
         } catch (err) {
             console.error('Error creating ticket type', err);
@@ -137,7 +127,6 @@ function TicketTypeDropdown() {
                 closeAddEditModal();
                 await fetchTicketTypesData();
                 toast.success("Ticket Type Updated Successfully");
-                setCurrentPage(1);
             }
         } catch (err) {
             console.error('Error updating ticket type', err);
@@ -167,7 +156,6 @@ function TicketTypeDropdown() {
                 closeDeleteModal();
                 await fetchTicketTypesData();
                 toast.success("Ticket Type Deleted Successfully");
-                setCurrentPage(1);
             }
         } catch (err) {
             console.error('Error deleting ticket type', err);
@@ -187,7 +175,7 @@ function TicketTypeDropdown() {
         { header: 'Status', key: 'isUsed', render: (item: ITicketType) => item.isUsed ? "In Use" : "Not Used" }
     ];
 
-    const tableActions = [
+    const tableActions: Action<ITicketType>[] = [
         {
             icon: <PencilSquareIcon className="h-5 w-5 text-blue-500 hover:text-blue-700 cursor-pointer" />,
             onClick: (row: ITicketType) => openEditModal(row),

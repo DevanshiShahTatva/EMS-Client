@@ -103,27 +103,28 @@ export const InitialEventFormDataErrorTypes = {
     points : false
 };
 
+export const parseDurationToMinutes = (duration: string): number => {
+    const regex = /(\d+)\s*(day|days|hr|hrs|hour|hours|min|minutes)/gi;
+    let totalMinutes = 0;
+
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(duration)) !== null) {
+        const value = parseInt(match[1]);
+        const unit = match[2].toLowerCase();
+
+        if (unit.includes("day")) totalMinutes += value * 24 * 60;
+        else if (unit.includes("hr") || unit.includes("hour")) totalMinutes += value * 60;
+        else if (unit.includes("min")) totalMinutes += value;
+    }
+
+    return totalMinutes;
+};
+
 export const sortEvents = (
     events: EventsDataTypes[],
     key: keyof Omit<EventsDataTypes, "img"> | "status",
     order: "asc" | "desc" = "asc"
 ): EventsDataTypes[] => {
-    const parseDurationToMinutes = (duration: string): number => {
-        const regex = /(\d+)\s*(day|days|hr|hrs|hour|hours|min|minutes)/gi;
-        let totalMinutes = 0;
-
-        let match: RegExpExecArray | null;
-        while ((match = regex.exec(duration)) !== null) {
-            const value = parseInt(match[1]);
-            const unit = match[2].toLowerCase();
-
-            if (unit.includes("day")) totalMinutes += value * 24 * 60;
-            else if (unit.includes("hr") || unit.includes("hour")) totalMinutes += value * 60;
-            else if (unit.includes("min")) totalMinutes += value;
-        }
-
-        return totalMinutes;
-    };
 
     return [...events].sort((a, b) => {
         let valA: any = a[key as keyof EventsDataTypes];
