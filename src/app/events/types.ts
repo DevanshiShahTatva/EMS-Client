@@ -59,6 +59,7 @@ export type CheckoutTicket = {
   ticketId:string;
   usedPoints: number;
   discount: number;
+  voucherId?: string;
 }
 
 export type EventImage = {

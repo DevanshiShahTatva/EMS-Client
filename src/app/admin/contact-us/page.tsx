@@ -23,22 +23,20 @@ import { Action, Column } from '@/utils/types'
 import { API_ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant'
 
 // Helpers
-import { getPaginatedData, getSearchResults, INITIAL_CONTATC_INFO, statusColor } from './helper'
+import { getSearchResults, INITIAL_CONTATC_INFO, statusColor } from './helper'
 
 //  Services
 import { apiCall } from '@/utils/services/request'
 
 // library
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify';
 import DataTable from '@/components/common/DataTable'
 
 const AdminContactUsPage = () => {
 
     const [allRequestsData, setAllRequestData] = useState<IRequestType[]>([])
     const [requestsData, setRequestsData] = useState<IRequestType[]>([])
-    const [tableRowData, setTableRowData] = useState<IRequestType[]>([])
     const [selectedIds, setSelectedIds] = useState<string[]>([])
-
     const [contactInfo, setContactInfo] = useState<IRequestType>(INITIAL_CONTATC_INFO)
 
     const [loading, setLoading] = useState(true)
@@ -48,17 +46,14 @@ const AdminContactUsPage = () => {
 
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+    const [isGeneratingAns, setIsGeneratingAns] = useState<boolean>(false);
 
     const totalItems = requestsData.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const handleSearch = (searchVal: string) => {
         const result = getSearchResults(allRequestsData, searchVal)
-        const rowResult = getPaginatedData(result, 1, itemsPerPage);
-
-        setTableRowData(rowResult);
         setRequestsData(result)
-        setCurrentPage(1);
         setSearchQuery(searchVal)
     }
 
@@ -115,7 +110,6 @@ const AdminContactUsPage = () => {
             if (response && response.success) {
                 await fetchRequestData()
                 toast.success("Record Deleted Successfully")
-                setCurrentPage(1)
                 setSelectedIds([])
             }
         } catch (err) {
@@ -140,7 +134,6 @@ const AdminContactUsPage = () => {
             if (response && response.success) {
                 await fetchRequestData()
                 toast.success("Status Updated Successfully")
-                setCurrentPage(1)
                 setSelectedIds([])
             }
         } catch (err) {
@@ -162,11 +155,8 @@ const AdminContactUsPage = () => {
             if (response && response.success) {
                 const receivedArray = response.data
 
-                const tableRowData = getPaginatedData(receivedArray, currentPage, itemsPerPage)
-
                 setAllRequestData(receivedArray)
                 setRequestsData(receivedArray)
-                setTableRowData(tableRowData)
             }
         } catch (err) {
             console.error('Error fetching chart data', err);
@@ -184,8 +174,45 @@ const AdminContactUsPage = () => {
             (currentPage - 1) * itemsPerPage,
             currentPage * itemsPerPage
         );
-        setTableRowData(paginated);
+        // setTableRowData(paginated);
     }, [currentPage, requestsData, itemsPerPage]);
+
+    const handleClickAiReply = async (item: IRequestType) => {
+    try {
+        setIsGeneratingAns(true);
+
+        const res = await apiCall({
+            method: "POST",
+            endPoint: API_ROUTES.ADMIN.AI_GENERATE_CONTACT_QUERY_ANSWER,
+            body: {
+                query: item.message,
+            },
+        });
+
+        if (res.success) {
+            // Clean Markdown from response
+            const markdownText = res.data.replace(/\\n/g, "\n").replace(/\*\*/g, "");
+            
+            const encodedBody = encodeURIComponent(markdownText);
+
+            // Build the mailto link
+            const mailtoLink = `mailto:${encodeURIComponent(item.email)}?subject=${encodeURIComponent(item.subject)}&body=${encodedBody}`;
+
+            // Create and trigger anchor
+            const element = document.createElement("a");
+            element.setAttribute("href", mailtoLink);
+            element.setAttribute("target", "_blank");
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+    } catch (error) {
+        console.error(error);
+        toast.error("Something went wrong!");
+    } finally {
+        setIsGeneratingAns(false);
+    }
+};
 
     const tableHeaders: Column<IRequestType>[] = [
         {
@@ -238,6 +265,12 @@ const AdminContactUsPage = () => {
         {
             icon: <EnvelopeIcon className="h-5 w-5 text-gray-700 hover:text-gray-800 cursor-pointer ml-4" />,
             onClick: (row) => window.open(`mailto:${row.email}?subject=${encodeURIComponent(row.subject)}`, '_blank'),
+        },
+        {
+            icon: <div className='cursor-pointer ml-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex flex-row gap-2 py-2 px-2 rounded-sm'>
+                    <EnvelopeIcon className="h-5 w-5" />
+                </div>,
+            onClick: (row) => handleClickAiReply(row)
         }
     ];
 

@@ -9,14 +9,17 @@ import TitleSection from '../common/TitleSection';
 import { TLoadingState, IEventCategoryResp, IEventCategory, TCategoryFormValues } from '@/app/admin/dropdowns/types';
 import { API_ROUTES } from '@/utils/constant';
 import DeleteModal from '@/components/common/DeleteModal';
+import TableSkeleton from '@/components/common/TableSkeloton';
 import { TrashIcon, PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
-import { getCategoryPaginatedData, getCategorySearchResults, initialCategoryFormValues } from '@/app/admin/dropdowns/helper';
+import { getCategorySearchResults, initialCategoryFormValues } from '@/app/admin/dropdowns/helper';
 import EventCategoryFormModal from './EventCategoryFormModal';
 import { getTruthyString } from '@/utils/helper';
 import CustomButton from '../common/CustomButton';
 import SearchInput from '../common/CommonSearchBar';
+import { AxiosError } from 'axios';
+import CannotDeleteModal from './CannotDeleteModal';
 import DataTable from '../common/DataTable';
-import { Column } from '@/utils/types';
+import { Action, Column } from '@/utils/types';
 
 function EventCategoryDropdown() {
     const [loading, setLoading] = useState<TLoadingState>({
@@ -27,21 +30,14 @@ function EventCategoryDropdown() {
     });
     const [allCategoriesData, setAllCategoriesData] = useState<IEventCategory[]>([]);
     const [categoriesData, setCategoriesData] = useState<IEventCategory[]>([]);
+    const [cannotDeleteModalOpen, setCannotDeleteModalOpen] = useState(false);
+    const [usedInEvents, setUsedInEvents] = useState<{ _id: string, title: string, endDateTime: string }[]>([]);
 
     const [deleteItemId, setDeleteItemId] = useState<string>("");
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [currentPage, setCurrentPage] = useState(1);
     const [modalOpen, setModalOpen] = useState(false);
     const [formValues, setFormValues] = useState<TCategoryFormValues>(initialCategoryFormValues);
-
-    const tableRowData = useMemo(() => {
-        return getCategoryPaginatedData(categoriesData, currentPage, itemsPerPage);
-    }, [categoriesData, currentPage, itemsPerPage]);
-
-    const totalItems = categoriesData.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const setLoadingState = (key: keyof TLoadingState, value: boolean) => {
         setLoading((prev) => ({
@@ -77,7 +73,6 @@ function EventCategoryDropdown() {
     const handleSearch = useCallback((searchVal: string) => {
         const result = getCategorySearchResults(allCategoriesData, searchVal);
         setCategoriesData(result);
-        setCurrentPage(1);
         setSearchQuery(searchVal);
     }, [allCategoriesData]);
 
@@ -131,7 +126,6 @@ function EventCategoryDropdown() {
                 closeAddEditModal();
                 await fetchCategoriesData();
                 toast.success("Category Created Successfully");
-                setCurrentPage(1);
             }
         } catch (err) {
             console.error('Error creating category', err);
@@ -168,7 +162,6 @@ function EventCategoryDropdown() {
                 closeAddEditModal();
                 await fetchCategoriesData();
                 toast.success("Category Updated Successfully");
-                setCurrentPage(1);
             }
         } catch (err) {
             console.error('Error updating category', err);
@@ -199,10 +192,13 @@ function EventCategoryDropdown() {
                 closeDeleteModal();
                 await fetchCategoriesData();
                 toast.success("Category Deleted Successfully");
-                setCurrentPage(1);
             }
         } catch (err) {
-            console.error('Error deleting category', err);
+            if (err instanceof AxiosError && err.response?.status === 400) {
+                closeDeleteModal();
+                setCannotDeleteModalOpen(true);
+                setUsedInEvents(err.response?.data.data);
+            }
         } finally {
             setLoadingState('deleteApi', false)
         }
@@ -238,9 +234,10 @@ function EventCategoryDropdown() {
                     {item.name}
                 </Badge>
         },
+        { header: 'Status', key: 'isUsed', render: (item: IEventCategory) => item.isUsed ? "In Use" : "Not Used" }
     ];
 
-    const tableActions = [
+    const tableActions: Action<IEventCategory>[] = [
         {
             icon: <PencilSquareIcon className="h-5 w-5 text-blue-500 hover:text-blue-700 cursor-pointer" />,
             onClick: (row: IEventCategory) => openEditModal(row),
@@ -290,6 +287,15 @@ function EventCategoryDropdown() {
                     onClose={closeDeleteModal}
                     onConfirm={deleteCategoryById}
                     confirmLoading={loading.deleteApi}
+                />
+
+                {/* CANNOT DELETE MODAL */}
+                <CannotDeleteModal
+                    isOpen={cannotDeleteModalOpen}
+                    onClose={() => setCannotDeleteModalOpen(false)}
+                    eventList={usedInEvents}
+                    title="Cannot delete category"
+                    description="This category is currently linked to the following events."
                 />
 
                 {modalOpen &&

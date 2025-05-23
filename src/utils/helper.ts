@@ -61,7 +61,7 @@ export const getTruthyNumber = (value: number | string | undefined | null): numb
 };
 
 export const RupeeSymbol = "₹"
-
+export const StarSymbol = "⭐"
 export const Logout = () => {
     localStorage.clear()
     sessionStorage.clear()

@@ -20,7 +20,7 @@ import { IEventCategoryResp } from '../dropdowns/types';
 // library support 
 import { useRouter } from 'next/navigation';
 import moment from 'moment';
-import { FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon, ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/outline"
+import { FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
 import { toast } from 'react-toastify';
 import {
   Tooltip,
@@ -35,31 +35,22 @@ import { API_ROUTES, BREAD_CRUMBS_ITEMS, ROUTES } from '@/utils/constant';
 
 // helper functions
 import { apiCall } from '@/utils/services/request';
-import { getStatus, getTicketPriceRange, sortEvents, getFilteredData, getMaxTicketPrice, getPaginatedData } from './helper';
+import { getStatus, getTicketPriceRange, getFilteredData, getMaxTicketPrice, parseDurationToMinutes } from './helper';
 
 function EventsListpage() {
   const router = useRouter()
 
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
-
   const [allEventsData, setAllEventsData] = useState<EventsDataTypes[]>([]) // Initial
   const [eventsData, setEventsData] = useState<EventsDataTypes[]>([]) // filtered
-  const [rowData, setRowData] = useState<EventsDataTypes[]>([]) // tableRow 
   const [loading, setLoading] = useState<boolean>(true)
   const [deletableEventId, setDeletableId] = useState<string>("")
 
   const [filterModal, setFilterModal] = useState(false)
   const [filterValues, setFilterValues] = useState<IApplyFiltersKey>({})
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
-  const [sortByKey, setSortByKey] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
   const [appliedFiltersCount, setAppliedFiltersCount] = useState(0)
   const [categoriesOptions, setCategoriesOptions] = useState<{ id: string, label: string, value: string }[]>([])
 
-
-  const totalItems = eventsData.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const navToCreateEventPage = () => {
     router.push(ROUTES.ADMIN.CREATE_EVENT)
@@ -81,21 +72,6 @@ function EventsListpage() {
     setFilterModal(false)
   }
 
-  const sortEventsByKey = (key: keyof Omit<EventsDataTypes, "img"> | "status") => {
-
-    let newOrder: "asc" | "desc" = "asc";
-
-    if (key === sortByKey) {
-      newOrder = sortOrder === "asc" ? "desc" : "asc";
-    }
-    const result = sortEvents(eventsData, key, newOrder);
-    const rowResult = getPaginatedData(result, 1, itemsPerPage);
-    setRowData(rowResult);
-    setEventsData(result)
-    setSortOrder(newOrder);
-    setSortByKey(key);
-  };
-
   const searchEvents = (keyword: string) => {
     const updatedFilters = {
       ...filterValues,
@@ -103,13 +79,10 @@ function EventsListpage() {
     };
   
     const result = getFilteredData(allEventsData, updatedFilters);
-    const rowResult = getPaginatedData(result.data, 1, itemsPerPage);
-  
-    setRowData(rowResult);
+
     setEventsData(result.data);
     setSearchQuery(keyword);
     setFilterValues(updatedFilters);
-    setCurrentPage(1);
   };
 
   const submitFilters = (filterValues: IApplyFiltersKey) => {
@@ -120,13 +93,10 @@ function EventsListpage() {
     };
 
     const result = getFilteredData(allEventsData, updatedFilters);
-    const rowResult = getPaginatedData(result.data, 1, itemsPerPage);
 
-    setRowData(rowResult);
     setEventsData(result.data);
     setFilterValues(updatedFilters);
     setAppliedFiltersCount(result.filterCount);
-    setCurrentPage(1);
   }
 
   const statusColor = {
@@ -172,11 +142,8 @@ function EventsListpage() {
         }
       })
 
-      const tableRowData = getPaginatedData(modifiedArray, currentPage, itemsPerPage)
-
       setAllEventsData(modifiedArray)
       setEventsData(modifiedArray)
-      setRowData(tableRowData)
       setLoading(false)
     } else {
       setAllEventsData([])
@@ -196,7 +163,6 @@ function EventsListpage() {
         toast.success("Event deleted successfully")
         setLoading(true)
         fetchEvents()
-        setCurrentPage(1)
       } else {
         toast.warning("Something went wrong. try again later")
       }
@@ -231,43 +197,12 @@ function EventsListpage() {
     fetchEvents()
   }, [])
 
-  useEffect(() => {
-    const paginated = eventsData.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
-    );
-    setRowData(paginated);
-  }, [currentPage, eventsData, itemsPerPage]);
-
-  const renderSortableRow = (
-    title: string,
-    sortKey: keyof Omit<EventsDataTypes, "img"> | "status"
-  ) => {
-    return (
-      <div
-        className="flex gap-1 cursor-pointer"
-        onClick={() => sortEventsByKey(sortKey)}
-      >
-        <p>{title}</p>
-        {sortByKey === sortKey && (
-          <div>
-            {sortOrder === "asc" ? (
-              <ArrowUpIcon className="h-4 w-4" />
-            ) : (
-              <ArrowDownIcon className="h-4 w-4" />
-            )}
-          </div>
-        )}
-      </div>
-    );
-  };
-
   const tableHeaders: Column<EventsDataTypes>[] = [
     {
       header: "Image",
-      key: 'img',
+      key: "img",
       isSortable: false,
-      render: (event) =>
+      render: (event) => (
         <Image
           src={event.img}
           alt="avatar"
@@ -275,31 +210,75 @@ function EventsListpage() {
           height={40}
           className="w-10 h-10 rounded-full object-cover"
         />
+      ),
     },
-    { header: 'Title', key: 'title' },
-    { header: 'Category', key: 'category', render : (row) => <p>{row.category.name}</p> },
-    { header: 'Start Date/Time', key: 'startTime', render: (row) => <p>{moment(row.startTime).format("DD MMM YYYY, h:mm A")}</p> },
-    { header: 'Duration', key: 'duration'},
+    { header: "Title", key: "title" },
     {
-      header: 'Location', key: 'location', render: (row) => <div className='max-w-40'>
-        <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger className="truncate max-w-[90%]">
-            {row.location}
-          </TooltipTrigger>
-          <TooltipContent>
-            <p className=" text-white font-bold">
-              {row.location}
-            </p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      </div>
+      header: "Category",
+      key: "category",
+      render: (row) => <p>{row.category.name}</p>,
+      sortKey: (row) => row.category.name,
     },
-    { header: 'Ticket Price', key: 'price' },
-    { header: 'Tickets Available', key: 'ticketsAvailable' },
     {
-      header: 'Status', key: 'endTime' , isSortable: false, render: (row) => {
+      header: "Start Date/Time",
+      key: "startTime",
+      render: (row) => (
+        <p>{moment(row.startTime).format("DD MMM YYYY, h:mm A")}</p>
+      ),
+    },
+    {
+      header: "Duration",
+      key: "duration",
+      sortKey: (row) => {
+        const minutes = parseDurationToMinutes(row.duration);
+        return minutes;
+      },
+    },
+    {
+      header: "Location",
+      key: "location",
+      render: (row) => (
+        <div className="max-w-40">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="truncate max-w-[90%]">
+                {row.location}
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className=" text-white font-bold">{row.location}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      ),
+    },
+    {
+      header: "Ticket Price",
+      key: "price",
+      sortKey: (row) => {
+        const prices = row.ticketsArray.map(t => t.price);
+        if (prices.length === 0) return 0;
+    
+        const min = Math.min(...prices);
+        const max = Math.max(...prices);
+    
+        return max - min; // difference between max and min
+      },
+    },
+    { header: "Tickets Available", key: "ticketsAvailable" },
+    {
+      header: "Status",
+      key: "endTime",
+      sortKey: (row) => {
+        const status = getStatus(
+          row.startTime,
+          row.endTime,
+          row.ticketsAvailable
+        );
+
+        return status;
+      },
+      render: (row) => {
         const status = getStatus(
           row.startTime,
           row.endTime,
@@ -311,10 +290,10 @@ function EventsListpage() {
           >
             {status}
           </span>
-        )
-      }
+        );
+      },
     },
-  ]
+  ];
 
   const tableActions: Action<EventsDataTypes>[] = [
     {
