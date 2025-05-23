@@ -27,6 +27,15 @@ export interface IFilterModalProps {
     categoriesOptions?: { id: string, label: string, value: string }[]
 }
 
+
+export interface IFilterUserModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    applyFilters: (filterValues : IApplyUserFiltersKey) => void;
+    maxPoints?: number
+    filterValues? : IApplyUserFiltersKey
+}
+
 export interface IBreadcrumbItem {
     label: string;
     navigateTo : string
@@ -44,6 +53,11 @@ export interface IEventPrice {
     min : number
 }
 
+export interface IUserPoints {
+    max : number
+    min : number
+}
+
 export interface IApplyFiltersKey {
     catogories?: string[]
     durations?: string[]
@@ -56,6 +70,12 @@ export interface IApplyFiltersKey {
     locationRadius? : string
 }
 
+export interface IApplyUserFiltersKey {
+    badges?: string[]
+    role? : string
+    pointRange?: IUserPoints
+    search? : string
+}
 export interface ISidebarPageProps {
   children : React.ReactNode, 
   role: string
