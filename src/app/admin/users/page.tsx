@@ -5,12 +5,11 @@ import React, { useState, useEffect, useCallback } from 'react'
 // Custom Components
 import ChartCard from '@/components/admin-components/dashboard/ChartCard'
 import TooltipWrapper from '@/components/common/TooltipWrapper'
-import DeleteModal from '@/components/common/DeleteModal'
 import Breadcrumbs from '@/components/common/BreadCrumbs'
 import TitleSection from '@/components/common/TitleSection'
-import CustomButton from '@/components/common/CustomButton'
 import SearchInput from '@/components/common/CommonSearchBar'
 import DataTable from '@/components/common/DataTable'
+import FilterModal from '@/components/admin-components/FilterUserModal'
 
 
 // Constant
@@ -21,10 +20,16 @@ import { apiCall } from '@/utils/services/request'
 
 // Types
 import { IUser, IUserData, IUsersApiResponse } from './types'
-import { Column } from '@/utils/types'
+import { Column, IApplyUserFiltersKey } from '@/utils/types'
 
 // library
 import clsx from 'clsx'
+
+// helper
+import { getFilteredData, getMaxPoints } from './helper'
+
+// icons
+import { FunnelIcon } from "@heroicons/react/24/outline"
 
 
 const UsersPage = () => {
@@ -33,10 +38,45 @@ const UsersPage = () => {
     const [allUsersData, setAllUsersData] = useState<IUserData[]>([])
     const [usersData, setUsersData] = useState<IUserData[]>([])
     const [searchQuery, setSearchQuery] = useState("")
+
+    const [filterModal, setFilterModal] = useState(false)
+    const [filterValues, setFilterValues] = useState<IApplyUserFiltersKey>({})
+    const [appliedFiltersCount, setAppliedFiltersCount] = useState(0)
+
+    const openFilterModal = () => {
+        setFilterModal(true)
+    }
+
+    const closeFilterModal = () => {
+        setFilterModal(false)
+    }
     
     const handleSearch = (searchVal: string) => {
+
+        const updatedFilters = {
+            ...filterValues,
+            search: searchVal,
+        };
+
+        const result = getFilteredData(allUsersData, updatedFilters);
+
+        setUsersData(result.data)
         setSearchQuery(searchVal)
     }
+
+    const submitFilters = (filterValues: IApplyUserFiltersKey) => {
+        closeFilterModal();
+        const updatedFilters = {
+          ...filterValues,
+          search: searchQuery || "", // include active search in filter logic
+        };
+
+        const result = getFilteredData(allUsersData, updatedFilters);
+    
+        setUsersData(result.data);
+        setFilterValues(updatedFilters);
+        setAppliedFiltersCount(result.filterCount);
+      }
 
     // Fecth users Data 
     const fetchUsersData = useCallback(async () => {
@@ -58,6 +98,7 @@ const UsersPage = () => {
                         profileImage: item.profileimage !== null ? item.profileimage.url : "",
                         badge: item.current_badge,
                         address: item.address !== null ? item.address : "-",
+                        points : item.total_earned_points,
                         role: item.role
                     }
                 })
@@ -93,6 +134,19 @@ const UsersPage = () => {
         },
         { header: 'Name', key: 'name' },
         { header: 'Email', key: 'email' },
+        { header: "Location", key : "address",
+            render: (row) => 
+                <TooltipWrapper tooltip={row.address}>
+                    <p className='max-w-24 truncate'>{row.address}</p>
+                </TooltipWrapper>
+        
+        },
+        { header: "Earned Points", key : "points", 
+            render: (row) => 
+            <p className={`font-bold ${row.points > 0 && 'text-green-500'}`}>
+                {row.points}
+            </p>
+        },
         {
             header: "Badge", key: "badge",
             render: (row) => {
@@ -150,6 +204,23 @@ const UsersPage = () => {
                       inputClassName='pl-10 pr-4 py-2 w-full'
                   />
 
+                  {/* Filters Button */}
+                  <div className="relative md:inline-block hidden">
+                      <button
+                          onClick={openFilterModal}
+                          className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
+                      >
+                          <FunnelIcon className="w-5 h-5 font-bold mr-2" />
+                          Filters
+                      </button>
+
+                      {appliedFiltersCount > 0 && (
+                          <span className="absolute -top-2 -right-2 bg-slate-200 text-green-800 text-sm font-bold px-1.5 py-0.5 rounded-full">
+                              {appliedFiltersCount}
+                          </span>
+                      )}
+                  </div>
+
 
               </div>
 
@@ -163,6 +234,14 @@ const UsersPage = () => {
               />
 
         </ChartCard>
+
+          {/* Filter Popup */}
+          <FilterModal
+              isOpen={filterModal}
+              onClose={closeFilterModal}
+              applyFilters={(filterValues) => submitFilters(filterValues)}
+              maxPoints={getMaxPoints(allUsersData)}
+          />
     </div>
   )
 }

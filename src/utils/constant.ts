@@ -301,6 +301,17 @@ export const PROFILE_TAB_OPTIONS = [
     { id: 3, value: "password", label: "Change Password" },
 ]
 
+export const USER_BADGES_OPTIONS = [
+    { label: "Bronze", value: "bronze"},
+    { label: "Silver", value: "silver" },
+    { label: "Gold", value: "gold"},
+]
+
+export const USERS_ROLE_OPTIONS = [
+    { label: "User", value: "user"},
+    { label: "Organizer", value: "organizer" },
+]
+
 
 import {
     MusicIcon,
