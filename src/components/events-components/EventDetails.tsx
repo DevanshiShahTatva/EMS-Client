@@ -10,7 +10,7 @@ import {
 import ImageCarousel from '@/components/events-components/ImageCarousel'
 import EventDescription from '@/components/events-components/EventDescription'
 import SimilarEvents from '@/components/events-components/SimilarEvents'
-import { EventDataObjResponse, EventDetails, FeedbackDetails } from '@/app/events/types'
+import { EventDataObjResponse, EventDetails, FeedbackDetails, WeatherDetails } from '@/app/events/types'
 import { getTicketPriceRange, onwardPriceRange } from '@/app/admin/event/helper'
 import {
   getAllTicketStatus,
@@ -27,13 +27,16 @@ import GoogleMap from './GoogleMap'
 import ReviewsSection from './ReviewSection'
 import CustomButton from '../common/CustomButton'
 import WeatherReport from './WeatherReport'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
   const [event, setEventDetail] = useState<EventDetails>()
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
-  const [feedbackData, setFeedbackData] = useState<FeedbackDetails[]>([])
+  const [feedbackData, setFeedbackData] = useState<FeedbackDetails[]>([]);
+  const [weatherData, setWeatherData] = useState<WeatherDetails | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -64,7 +67,8 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
     })
 
     if (result?.success && result.data) {
-      setEventDetail(result.data)
+      setEventDetail(result.data);
+      fetchWeatherData(result.data.location.lat, result.data.location.lng);
     }
     setLoading(false)
   }
@@ -84,7 +88,21 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
       getEventDetail();
       getEventFeedback();
     }
-  }, [eventId])
+  }, [eventId]);
+
+  const fetchWeatherData = async (lat: number, lng: number) => {
+    try {
+      const apiKey = process.env.REACT_APP_OPENWEATHER_API_KEY || "d1871bd0599d1966396475295187f1e3";
+      const endPoint = API_ROUTES.USER.WEATHER_API + `?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric`;
+      const resp = await axios.get(endPoint, { withCredentials: false });
+      if(resp.data) {
+        setWeatherData(resp.data);
+      };
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong");
+    }
+  };
 
   if (!event || !eventId) {
     return (
@@ -211,7 +229,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
           <EventDescription description={event.description} />
         </div>
          <div className="mt-8">
-          <WeatherReport lat={event.location.lat} lng={event.location.lng} />
+          <WeatherReport data={weatherData} />
         </div>
         <div className="mt-8">
           <div className='flex items-center justify-between mb-4'>
