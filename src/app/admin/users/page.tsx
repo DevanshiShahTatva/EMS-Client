@@ -23,6 +23,9 @@ import { apiCall } from '@/utils/services/request'
 import { IUser, IUserData, IUsersApiResponse } from './types'
 import { Column } from '@/utils/types'
 
+// library
+import clsx from 'clsx'
+
 
 const UsersPage = () => {
 
@@ -35,7 +38,7 @@ const UsersPage = () => {
         setSearchQuery(searchVal)
     }
 
-    // Fecth Contact Us Data 
+    // Fecth users Data 
     const fetchUsersData = useCallback(async () => {
         setLoading(true);
         try {
@@ -81,17 +84,51 @@ const UsersPage = () => {
             isSortable: false,
             render: (row) => (
                 row.profileImage !== "" ?
-                 <img
-                    src={row.profileImage}
-                    alt="avatar"
-                    className="w-10 h-10 rounded-full object-cover"
-                /> : "-"
+                    <img
+                        src={row.profileImage}
+                        alt="avatar"
+                        className="w-10 h-10 rounded-full object-cover"
+                    /> : "-"
             ),
         },
-
         { header: 'Name', key: 'name' },
         { header: 'Email', key: 'email' },
-        { header: 'Role', key: 'role' },
+        {
+            header: "Badge", key: "badge",
+            render: (row) => {
+                const badgeStyles = {
+                    gold: 'bg-yellow-500 text-white',
+                    silver: 'bg-gray-500 text-white',
+                    bronze: 'bg-cyan-500 text-white',
+                };
+                return (
+                    <span
+                        className={clsx(
+                            'font-semibold px-4 py-2 rounded-full inline-block',
+                            badgeStyles[row.badge.toLowerCase() as keyof typeof badgeStyles]
+                        )}
+                    >
+                        {row.badge}
+                    </span>
+                )
+            }
+        },
+        {
+            header: 'Role', key: 'role',
+            render: (row) => {
+                const chipStyles = {
+                    user: 'bg-blue-100 text-blue-700',
+                    organizer: 'bg-red-100 text-red-700',
+                };
+                return (
+                    <span
+                       className={`px-4 py-2 rounded-full capitalize font-semibold ${chipStyles[row.role as keyof typeof chipStyles]}`}
+                    >
+                        {row.role}
+                    </span>
+                )
+            }
+        },
     ]
 
   return (
