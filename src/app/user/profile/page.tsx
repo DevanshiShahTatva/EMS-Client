@@ -42,6 +42,7 @@ import {
   IOtpValues,
   IProfileInfoValues,
   IUserInfo,
+  IVoucher,
 } from "./types";
 
 // API Services
@@ -49,6 +50,13 @@ import { apiCall } from "@/utils/services/request";
 
 // Constant
 import { API_ROUTES, ROUTES } from "@/utils/constant";
+import moment from "moment";
+
+const statusColor = {
+  "Available": "bg-blue-100 text-blue-700",
+  "Expired": "bg-red-100 text-red-700",
+  "Used": "bg-gray-100 text-gray-700",
+};
 
 const UserProfilePage = () => {
   const router = useRouter();
@@ -228,6 +236,7 @@ const UserProfilePage = () => {
           receivedObj.profileimage !== null
             ? receivedObj.profileimage.url
             : null,
+        vouchers: receivedObj.vouchers
       };
 
       const initialProfileVal = {
@@ -253,6 +262,28 @@ const UserProfilePage = () => {
   useEffect(() => {
     fetchUserInfo();
   }, []);
+
+  const renderVoucherUI = (voucher: IVoucher) => {
+    const status = voucher.used ? "Used" : moment(voucher.expireTime).isBefore(moment()) ? "Expired" : "Available";
+    return (
+      <div className={`flex border rounded-md shadow-lg overflow-hidden ${(status === "Used" || status === "Expired") && "opacity-50"}`}>
+        <div className="relative bg-white border-l-green-500 border-green-500 border-2 border-l-[2px]" />
+        <div className="flex-1 px-2 py-3 space-y-1.5 ml-2">
+          <div className="flex justify-between items-center">
+            <p className="text-lg font-semibold text-gray-900">{voucher.promoCode}</p>
+            <p className={`px-3 py-1 rounded-full h-fit text-xs font-semibold ${statusColor[status]}`}>{status}</p>
+          </div>
+          <p className="text-xs text-gray-700 max-w-[200px]">{voucher.description}</p>
+          <p className="text-sm text-gray-500">Valid until {moment(voucher.expireTime).format('D MMMM YYYY h:mm A')}</p>
+        </div>
+        <div className="flex items-center px-3 border-l-[1.5px] border-dashed border-green-300">
+          <div className="w-6 h-6 flex items-center justify-center border border-green-500 text-green-600 rounded-full text-sm">
+            i
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const getIconColor = () => {
     const badgeColors: Record<string, string> = {
@@ -366,6 +397,28 @@ const UserProfilePage = () => {
                       Used points
                     </div>
                   </div>
+                </div>
+              </>
+            )}
+          </div>
+          <div className="rounded-3xl bg-white shadow-lg p-5 md:p-8">
+            {loading ? (
+              <Skeleton className="h-30 w-full aspect-square" />
+            ) : (
+              <>
+                <p className="text-xl font-bold mb-6 md:text-2xl">My vouchers</p>
+                <div className="flex flex-wrap gap-4 items-center">
+                  {userInfo.vouchers.length > 0 ?
+                    userInfo.vouchers.map((voucher, index: number) => {
+                      return (
+                        <div key={`${index + 1}`}>
+                          {renderVoucherUI(voucher)}
+                        </div>
+                      )
+                    })
+                    :
+                    <div>No voucher available!</div>
+                  }
                 </div>
               </>
             )}

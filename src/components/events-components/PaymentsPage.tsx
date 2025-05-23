@@ -39,6 +39,7 @@ const PaymentResultPage = () => {
       formData.append('totalAmount', parsedTickets.totalPrice.toString())
       formData.append('paymentId', paymentId)
       formData.append('bookingDate', creationDate)
+      parsedTickets.voucherId && formData.append('voucherId', parsedTickets.voucherId);
       parsedTickets?.usedPoints > 0 && formData.append('usedPoints', parsedTickets.usedPoints.toString())
       parsedTickets?.discount > 0 && formData.append('discount', parsedTickets.discount.toString())
       apiCall({

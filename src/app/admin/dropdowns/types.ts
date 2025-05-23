@@ -44,7 +44,7 @@ export interface IEventCategory {
     color: string
     bgColor: string
     icon: Icon
-    isUsed: boolean
+    isUsed?: boolean
     createdAt: string
     updatedAt: string
     __v: number
