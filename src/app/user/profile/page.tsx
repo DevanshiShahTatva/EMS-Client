@@ -42,7 +42,6 @@ import {
   IOtpValues,
   IProfileInfoValues,
   IUserInfo,
-  IVoucher,
 } from "./types";
 
 // API Services
@@ -50,13 +49,8 @@ import { apiCall } from "@/utils/services/request";
 
 // Constant
 import { API_ROUTES, ROUTES } from "@/utils/constant";
-import moment from "moment";
+import VoucherItem from "./VoucherItem";
 
-const statusColor = {
-  "Available": "bg-blue-100 text-blue-700",
-  "Expired": "bg-red-100 text-red-700",
-  "Used": "bg-gray-100 text-gray-700",
-};
 
 const UserProfilePage = () => {
   const router = useRouter();
@@ -189,7 +183,7 @@ const UserProfilePage = () => {
     const cityData = City.getCitiesOfState(values.country, values.state).find(c => c.name === values.city);
     formData.append("latitude", cityData?.latitude || "");
     formData.append("longitude", cityData?.longitude || "");
-    
+
     if (values.profileImage) {
       formData.append("profileimage", values.profileImage);
     }
@@ -262,28 +256,6 @@ const UserProfilePage = () => {
   useEffect(() => {
     fetchUserInfo();
   }, []);
-
-  const renderVoucherUI = (voucher: IVoucher) => {
-    const status = voucher.used ? "Used" : moment(voucher.expireTime).isBefore(moment()) ? "Expired" : "Available";
-    return (
-      <div className={`flex border rounded-md shadow-lg overflow-hidden ${(status === "Used" || status === "Expired") && "opacity-50"}`}>
-        <div className="relative bg-white border-l-green-500 border-green-500 border-2 border-l-[2px]" />
-        <div className="flex-1 px-2 py-3 space-y-1.5 ml-2">
-          <div className="flex justify-between items-center">
-            <p className="text-lg font-semibold text-gray-900">{voucher.promoCode}</p>
-            <p className={`px-3 py-1 rounded-full h-fit text-xs font-semibold ${statusColor[status]}`}>{status}</p>
-          </div>
-          <p className="text-xs text-gray-700 max-w-[200px]">{voucher.description}</p>
-          <p className="text-sm text-gray-500">Valid until {moment(voucher.expireTime).format('D MMMM YYYY h:mm A')}</p>
-        </div>
-        <div className="flex items-center px-3 border-l-[1.5px] border-dashed border-green-300">
-          <div className="w-6 h-6 flex items-center justify-center border border-green-500 text-green-600 rounded-full text-sm">
-            i
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   const getIconColor = () => {
     const badgeColors: Record<string, string> = {
@@ -412,7 +384,7 @@ const UserProfilePage = () => {
                     userInfo.vouchers.map((voucher, index: number) => {
                       return (
                         <div key={`${index + 1}`}>
-                          {renderVoucherUI(voucher)}
+                          <VoucherItem voucher={voucher} />
                         </div>
                       )
                     })
@@ -508,14 +480,14 @@ const UserProfilePage = () => {
                           </div>
 
                           <div className="text-end">
-                              <CustomButton
-                                type="submit"
-                                variant={isSubmitting ? "disabled" : "primary"}
-                                disabled={isSubmitting}
-                                className="py-3 px-5 mb-2"
-                              >
-                                {isSubmitting ? "Updating..." : "Update"}
-                              </CustomButton>
+                            <CustomButton
+                              type="submit"
+                              variant={isSubmitting ? "disabled" : "primary"}
+                              disabled={isSubmitting}
+                              className="py-3 px-5 mb-2"
+                            >
+                              {isSubmitting ? "Updating..." : "Update"}
+                            </CustomButton>
                           </div>
                         </div>
                       </Form>
@@ -554,16 +526,16 @@ const UserProfilePage = () => {
                       className="block w-full rounded-md px-4 py-2 text-md text-gray-500 placeholder-gray-400 border transition-all border-gray-300 focus:border-blue-500 focus:ring-blue-500 focus:outline-none focus:ring-1 disabled:bg-gray-100 cursor-not-allowed"
                     />
                   </div>
-                    {!changeEmail ? (
-                      <CustomButton
-                        type="submit"
-                        variant={"primary"}
-                        onClick={openChangeEmail}
-                        className="mt-3 mb-2 whitespace-nowrap"
-                      >
-                        Change Email
-                      </CustomButton>
-                    ) : (
+                  {!changeEmail ? (
+                    <CustomButton
+                      type="submit"
+                      variant={"primary"}
+                      onClick={openChangeEmail}
+                      className="mt-3 mb-2 whitespace-nowrap"
+                    >
+                      Change Email
+                    </CustomButton>
+                  ) : (
 
                     <CustomButton
                       onClick={cancelButtonClick}
@@ -594,14 +566,14 @@ const UserProfilePage = () => {
 
                         {newEmail === "" && (
                           <div className="text-start">
-                              <CustomButton
-                                type="submit"
-                                variant={isSubmitting ? "disabled" : "primary"}
-                                disabled={isSubmitting}
-                                className="py-3 px-5 mt-3 mb-2"
-                              >
-                                {isSubmitting ? "Verifying..." : "Verify Email"}
-                              </CustomButton>
+                            <CustomButton
+                              type="submit"
+                              variant={isSubmitting ? "disabled" : "primary"}
+                              disabled={isSubmitting}
+                              className="py-3 px-5 mt-3 mb-2"
+                            >
+                              {isSubmitting ? "Verifying..." : "Verify Email"}
+                            </CustomButton>
                           </div>
                         )}
                       </Form>
@@ -732,14 +704,14 @@ const UserProfilePage = () => {
                       />
 
                       <div className="text-end">
-                          <CustomButton
-                            type="submit"
-                            variant={isSubmitting ? "disabled" : "primary"}
-                            disabled={isSubmitting}
-                            className="py-3 px-5 mt-3 mb-2"
-                          >
-                            {isSubmitting ? "Saving..." : "Save Changes"}
-                          </CustomButton>
+                        <CustomButton
+                          type="submit"
+                          variant={isSubmitting ? "disabled" : "primary"}
+                          disabled={isSubmitting}
+                          className="py-3 px-5 mt-3 mb-2"
+                        >
+                          {isSubmitting ? "Saving..." : "Save Changes"}
+                        </CustomButton>
                       </div>
                     </Form>
                   )}
