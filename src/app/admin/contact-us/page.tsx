@@ -10,6 +10,7 @@ import Breadcrumbs from '@/components/common/BreadCrumbs'
 import TitleSection from '@/components/common/TitleSection'
 import CustomButton from '@/components/common/CustomButton'
 import SearchInput from '@/components/common/CommonSearchBar'
+import DataTable from '@/components/common/DataTable'
 
 // Icons
 import { TrashIcon, EyeIcon, EnvelopeIcon } from "@heroicons/react/24/outline"
@@ -30,7 +31,6 @@ import { apiCall } from '@/utils/services/request'
 
 // library
 import { toast } from 'react-toastify'
-import DataTable from '@/components/common/DataTable'
 
 const AdminContactUsPage = () => {
 
