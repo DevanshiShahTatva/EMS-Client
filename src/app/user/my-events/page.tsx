@@ -213,7 +213,7 @@ const MyEventsPage = () => {
   const renderEndedSection = (event: IEventsState) => {
     return (
       <AlertBox type="warning">
-        {!event.isAttended ? (
+        {event.isAttended ? (
           <div className="text-yellow-700">
             Hope you enjoyed this Event. Please give your{" "}
             <span
