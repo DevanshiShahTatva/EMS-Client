@@ -11,6 +11,7 @@ import { CurrencyRupeeIcon, AdjustmentsHorizontalIcon } from "@heroicons/react/2
 import CustomTextField from "@/components/admin-components/InputField";
 import CustomButton from "@/components/common/CustomButton";
 import Breadcrumbs from "@/components/common/BreadCrumbs";
+import Loader from '@/components/common/Loader';
 
 // Constants
 import {
@@ -25,17 +26,21 @@ import { apiCall } from "@/utils/services/request";
 const PointConfiguration = () => {
   const [points, setPoints] = useState("0");
   const [charge, setCharge] = useState("0");
+  const [loader, setLoader] = useState(false)
   const isInvalidCharge =
   !charge || isNaN(+charge) || +charge < 0 || +charge > 18;
 
   useEffect(() => {
+ 
     const fetchPointInfo = async () => {
+      setLoader(true)
       const res = await apiCall({
         method: "GET",
         endPoint: API_ROUTES.ADMIN.POINT_SETTING,
       });
       if (res.success) {
         setPoints(res.conversionRate);
+        setLoader(false)
       }
     };
 
@@ -54,6 +59,7 @@ const PointConfiguration = () => {
   };
 
   const updatePoints = async () => {
+    setLoader(true)
     const res = await apiCall({
       method: "PUT",
       body: {
@@ -64,6 +70,7 @@ const PointConfiguration = () => {
 
     if (res.success) {
       toast.success("Points updated successfully!");
+      setLoader(false)
     }
   };
 
@@ -75,7 +82,7 @@ const PointConfiguration = () => {
     if (Number(charge) > MAX_CHARGE_VALUE) {
       toast.error(`charge should not be more than ${MAX_CHARGE_VALUE}`);
     }
-
+    setLoader(true)
     const res = await apiCall({
       method: "PUT",
       body: {
@@ -87,11 +94,13 @@ const PointConfiguration = () => {
     if (res.success) {
       toast.success(res.message);
       fetchChargeInfo();
+      setLoader(false)
     }
   };
 
   return (
     <div className="px-8 py-5">
+    {loader && <Loader />}
     <Breadcrumbs
       breadcrumbsItems={BREAD_CRUMBS_ITEMS.ADMIN_CONFIGURATION.MAIN_PAGE}
     />
