@@ -69,9 +69,11 @@ const ReviewsPage = () => {
     if (result && result.success) {
       setReviews(result.data);
       setFilteredReviews(result.data);
+      setLoading(false);
     } else {
       setReviews([]);
       setFilteredReviews([]);
+      setLoading(false);
     }
     setLoading(false);
   };
@@ -99,7 +101,6 @@ const ReviewsPage = () => {
   }
 
   setFilteredReviews(filtered);
-
    const name = getUserName();
     name && setName(name);
 }, [searchQuery, filterRating, reviews,name]);
@@ -124,7 +125,7 @@ const ReviewsPage = () => {
   };
 
   const navigateToHome = () => {
-    router.push("/events");
+    router.push("/user/my-events");
   };
 
   const handleSearchQuery = (query: string) => {
@@ -148,14 +149,14 @@ const ReviewsPage = () => {
             Feedbacks not found
           </h2>
           <p className="text-gray-600 mb-4">
-            The event you're looking for doesn't exist or has been removed.
+            You can provide your valuable feedback for your past attended events, under my bookings sections.
           </p>
           <button
             onClick={navigateToHome}
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
           >
             <ArrowLeftIcon className="mr-2 h-4 w-4" />
-            Back to Events
+            Go to my bookings
           </button>
         </div>
       </div>

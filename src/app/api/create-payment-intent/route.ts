@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     const { tickets, eventTitle } = body;
     const { type, totalPrice, quantity, usedPoints = 0, finalAmount, discount = 0 } = tickets;
     const discountedUnitAmount = Math.round((finalAmount) / quantity);
-    if (discountedUnitAmount < 50) {
+    if (tickets.type.name.toLowerCase()!=="free" && discountedUnitAmount < 50) {
       return NextResponse.json(
         { error: 'Amount too low. Minimum charge is ₹0.50' },
         { status: 400 }
