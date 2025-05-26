@@ -1,46 +1,46 @@
-import React, { useState } from 'react'
+'use client'
+import React, { useEffect, useState } from 'react'
 import {
   StarIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  PencilIcon,
-  CircleUserRound,
 } from 'lucide-react'
 import EditReviewModal from './EditReviewModal'
 import Image from "next/image"
 import { FeedbackDetails } from '@/app/events/types'
-const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) => {
+import { getUserName } from '@/utils/helper'
+
+const ReviewCard = ({ feedback, onEdit }: { feedback: FeedbackDetails, onEdit: any }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [name, setName] = useState("")
   const maxLength = 100
   const needsExpansion = feedback.description.length > maxLength
-  const displayText =
-    needsExpansion && !isExpanded
-      ? `${feedback.description.slice(0, maxLength)}...`
-      : feedback.description
+
+  useEffect(() => {
+    const userName = getUserName();
+    if (userName) setName(userName);
+  }, []);
+
   return (
     <>
-      <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 h-full relative">
+      <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 w-full h-full relative">
         <div className="flex items-center space-x-2 mb-2">
-          <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-            <img
-              src={feedback.profileimage}
-              alt="User name"
-              className="w-full h-full object-cover"
-            />
+          <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
             {
-              feedback.profileimage ? 
-              <Image
-                src={feedback.profileimage}
-                alt="User"
-                width={48}
-                height={48}
-                className="w-full h-full object-cover"
-              /> : 
-                (<CircleUserRound width={48}
-                height={48}
-                className="rounded-full"
-                />)
+              feedback.profileimage ?
+                <Image
+                  src={feedback.profileimage}
+                  alt="User"
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-cover"
+                /> :
+                (
+                  <button className='h-10 w-10 rounded-full bg-indigo-600 text-white font-bold relative cursor-pointer'>
+                    {name.charAt(0).toUpperCase()}
+                  </button>
+                )
             }
           </div>
           <div className="min-w-0">
@@ -55,12 +55,14 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
             </div>
           </div>
         </div>
-      
-        <div className="relative mb-2">
+
+        <div className="relative mb-2 max-w-[240px]">
           <p
-            className={`text-gray-600 text-sm ${isExpanded ? 'max-h-48 overflow-y-auto pr-2' : 'max-h-20 overflow-hidden'}`}
+            className={`text-gray-600 text-sm transition-all duration-300 ease-in-out ${
+              isExpanded ? 'max-h-48 overflow-y-auto pr-1' : 'max-h-14 overflow-hidden'
+            }`}
           >
-            {displayText}
+            {feedback.description}
           </p>
           {needsExpansion && (
             <button
@@ -79,18 +81,19 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
             </button>
           )}
         </div>
-      
-        <div className="text-xs text-gray-400 mt-auto">{new Date(feedback.createdAt).toLocaleString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-        })} {feedback.isEdited ? "(Edited)" :""}
+
+        <div className="text-xs text-gray-400 mt-auto">
+          {new Date(feedback.createdAt).toLocaleString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          })}
         </div>
       </div>
-      
+
       {isEditModalOpen && (
         <EditReviewModal
           review={feedback}
@@ -104,4 +107,5 @@ const ReviewCard = ({ feedback, onEdit }:{feedback:FeedbackDetails,onEdit:any}) 
     </>
   )
 }
+
 export default ReviewCard
