@@ -148,6 +148,7 @@ export default function MyCalendar() {
               info.el.style.color = info.event.textColor || '';
               info.el.style.borderWidth = '1px';
               info.el.style.borderStyle = 'solid';
+              info.el.style.cursor = 'pointer';
             }}
             eventClick={handleEventClick}
             eventContent={renderEventContent}

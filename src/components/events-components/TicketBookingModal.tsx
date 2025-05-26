@@ -324,28 +324,34 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
     >
       <div className='pt-6'>
         {renderDynamicTickets()}
-        <div className='mt-6'>
-          {renderToggle()}
-        </div>
+        {totalPrice > 0 && (
+          <div className='mt-6'>
+            {renderToggle()}
+          </div>
+        )}
         <div className="mt-3">
-          {activeMethod === 'coins' && (
-            <div>
-              {points > 0 && (
-                <div className='mt-6'>
-                  <CoinRedeemCard
-                    totalUserCoins={points}
-                    totalAmount={totalPrice}
-                    conversionRate={conversionRate}
-                    setUsedPoints={updatePoints}
-                  />
-                </div>
-              )}
-            </div>
-          )}
-          {activeMethod === 'promo' && (
-            <div className='pt-5'>
-              {renderPromoCodeUI()}
-            </div>
+          {totalPrice > 0 && (
+          <div>
+            {activeMethod === 'coins' && (
+              <div>
+                {points > 0 && (
+                  <div className='mt-6'>
+                    <CoinRedeemCard
+                      totalUserCoins={points}
+                      totalAmount={totalPrice}
+                      conversionRate={conversionRate}
+                      setUsedPoints={updatePoints}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+            {activeMethod === 'promo' && (
+              <div className='pt-5'>
+                {renderPromoCodeUI()}
+              </div>
+            )}
+          </div>
           )}
           <div className="flex justify-between items-center mt-6 mb-5">
             <span className="text-gray-900 font-medium">Total Amount</span>

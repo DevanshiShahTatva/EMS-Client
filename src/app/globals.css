@@ -185,7 +185,7 @@
 
 @media (max-width: 1440px) {
   .hero-image.p1 {
-    max-width: 90%
+    max-width: 90% !important
   }
 }
 
@@ -196,7 +196,7 @@
 
 @media (max-width: 1440px) {
   .hero-image.p2 {
-    max-width: 90%
+    max-width: 90%  !important
   }
 }
 
@@ -207,7 +207,7 @@
 
 @media (max-width: 1440px) {
   .hero-image.p3 {
-    max-width: 90%
+    max-width: 90% !important
   }
 }
 
