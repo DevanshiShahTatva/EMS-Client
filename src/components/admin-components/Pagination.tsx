@@ -126,7 +126,10 @@ const Pagination: React.FC<PaginationProps> = ({
           }}
           className="w-20 text-sm"
           isSearchable={false}
+          menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+           menuPosition="absolute"
           styles={{
+             menuPortal: (base) => ({ ...base, zIndex: 9999 }), 
             control: (provided) => ({
               ...provided,
               minHeight: "32px",

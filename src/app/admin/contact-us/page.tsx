@@ -14,7 +14,7 @@ import DataTable from '@/components/common/DataTable'
 
 // Icons
 import { TrashIcon, EyeIcon, EnvelopeIcon } from "@heroicons/react/24/outline"
-import { SquareCheckBig } from 'lucide-react'
+import { Sparkles, SquareCheckBig } from 'lucide-react'
 
 // Types
 import { IRequestResponse, IRequestType } from './types'
@@ -267,9 +267,7 @@ const AdminContactUsPage = () => {
             onClick: (row) => window.open(`mailto:${row.email}?subject=${encodeURIComponent(row.subject)}`, '_blank'),
         },
         {
-            icon: <div className='cursor-pointer ml-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex flex-row gap-2 py-2 px-2 rounded-sm'>
-                    <EnvelopeIcon className="h-5 w-5" />
-                </div>,
+            icon: <Sparkles className="w-5 h-5 text-gray-700 hover:text-gray-800 ml-4 cursor-pointer" />,
             onClick: (row) => handleClickAiReply(row)
         }
     ];

@@ -10,7 +10,7 @@ import TitleSection from '@/components/common/TitleSection'
 import SearchInput from '@/components/common/CommonSearchBar'
 import DataTable from '@/components/common/DataTable'
 import FilterModal from '@/components/admin-components/FilterUserModal'
-
+import CustomButton from '@/components/common/CustomButton'
 
 // Constant
 import { API_ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant'
@@ -24,12 +24,16 @@ import { Column, IApplyUserFiltersKey } from '@/utils/types'
 
 // library
 import clsx from 'clsx'
+import { exportToExcel } from '@/utils/helper'
 
 // helper
 import { getFilteredData, getMaxPoints } from './helper'
 
 // icons
 import { FunnelIcon } from "@heroicons/react/24/outline"
+import { DownloadIcon } from 'lucide-react'
+
+
 
 
 const UsersPage = () => {
@@ -96,7 +100,7 @@ const UsersPage = () => {
                         name: item.name,
                         email: item.email,
                         profileImage: item.profileimage !== null ? item.profileimage.url : "",
-                        badge: item.current_badge,
+                        badge: item.current_badge ? item.current_badge : "-",
                         address: item.address !== null ? item.address : "-",
                         points : item.total_earned_points,
                         role: item.role
@@ -194,8 +198,8 @@ const UsersPage = () => {
              
               <TitleSection title='All Users' />
 
-              {/* Search Bar */}
-              <div className="flex justify-between items-center gap-2 space-x-2 w-full my-5">
+              {/* Search Bar & Filter Button */}
+              <div className="flex flex-col md:flex-row justify-between md:items-center  gap-4 md:gap-2 space-x-2 w-full my-5">
                   {/* Search Input */}
                   <SearchInput
                       value={searchQuery}
@@ -204,8 +208,9 @@ const UsersPage = () => {
                       inputClassName='pl-10 pr-4 py-2 w-full'
                   />
 
+                <div className='flex gap-4 justify-between'>
                   {/* Filters Button */}
-                  <div className="relative md:inline-block hidden">
+                  <div className="relative">
                       <button
                           onClick={openFilterModal}
                           className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
@@ -220,9 +225,21 @@ const UsersPage = () => {
                           </span>
                       )}
                   </div>
-
-
+                  {/* Export Butoon */}
+                  <div className='flex'>
+                      <CustomButton
+                          variant={ usersData.length === 0 ? "disabled" : "primary"}
+                          className='flex gap-2 items-center'
+                          startIcon={<DownloadIcon className='h-5 w-5' />}
+                          disabled={usersData.length === 0}
+                          onClick={() => exportToExcel(usersData,`UserOnPlatform-${Date.now()}.xlsx`)}
+                      >
+                          Export
+                      </CustomButton>
+                  </div>
+                </div>
               </div>
+              
 
               {/* Data Table with pagination */}
 

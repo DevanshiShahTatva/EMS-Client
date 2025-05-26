@@ -494,7 +494,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
     if (duration.trim() === "") {
       errorFields.duration = true;
     }
-    if (category === null) {
+    if (category.trim() === "") {
       errorFields.category = true;
     }
     if (tickets.length === 0) {
