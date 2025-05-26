@@ -53,7 +53,7 @@ export default function BarChart({ data, labels,symbolType="rupee" }: IBarChartP
                 callbacks: {
                     label: function (context) {
                         const value = context.formattedValue;
-                        return symbolType==="star" ? `${value} ${StarSymbol}` : `${RupeeSymbol} ${value}`;
+                        return symbolType==="count" ? `${value} ${StarSymbol}` : `${RupeeSymbol} ${value}`;
                     },
                     // Use the original label as the tooltip title
                     title: function (context) {
@@ -66,7 +66,7 @@ export default function BarChart({ data, labels,symbolType="rupee" }: IBarChartP
             y: {
                 beginAtZero: true,
                 ticks: {
-                    callback: (value) => symbolType==="star" ? `${formatNumberShort(Number(value))} ${StarSymbol}` : `${RupeeSymbol} ${formatNumberShort(Number(value))}`,
+                    callback: (value) => symbolType==="count" ? `${formatNumberShort(Number(value))}` : `${RupeeSymbol} ${formatNumberShort(Number(value))}`,
                     color: '#6B7280',
                     count: 6
                 },

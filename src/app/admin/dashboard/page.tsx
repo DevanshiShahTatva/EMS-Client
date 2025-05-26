@@ -81,17 +81,9 @@ function DashboardPage() {
                 </div>
                 <div className="lg:w-1/2 w-full p-4 h-full">
                     <div className="bg-white rounded-lg shadow-lg w-full">
-                         <CardWithTitle title={DASHBOARD_TITLE.FEEDBACK_REVIEW_TITLE} tooltip={DASHBOARD_TITLE.FEEDBACK_REVIEW_CHART_TOOLTIP}>
-                            <FeedbackReview />
-                        </CardWithTitle>
+                        <FeedbackReview />
                     </div>
                 </div>
-            </div>
-
-            <div className="flex flex-wrap mt-8">
-                <CardWithTitle title={DASHBOARD_TITLE.FEEDBACK_OVERVIEW_TITLE} tooltip={DASHBOARD_TITLE.FEEDBACK_OVERVIEW_TOOLTIP}>
-                    <FeedbackOverviewGraph />
-                </CardWithTitle>
             </div>
 
             <div className="flex flex-wrap mt-8">

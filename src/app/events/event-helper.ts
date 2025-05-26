@@ -121,7 +121,7 @@ if(events){
     const currentEvent = events.find(event => event._id === currentEventId);
 if (!currentEvent) return [];
 return events
-    .filter(event => event.category === currentEvent.category && event._id !== currentEventId)
+    .filter(event => event.category._id === currentEvent.category._id && event._id !== currentEventId)
     .slice(0, 3); 
 }
 };
