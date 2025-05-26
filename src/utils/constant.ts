@@ -59,7 +59,8 @@ export const API_ROUTES = {
         ATTENDED_EVENTS_ANALYTICS : "/dashboard/analytics/top-attended-events",
         GENERATE_TERMS_CONDITIONS: "/terms-and-conditions/generate-ai",
         FEEDBACK_ANALYTICS : '/dashboard/analytics/feedback-analytics',
-        FEEDBACK_OVERVIEW: '/dashboard/analytics/feedback-overview',
+        FEEDBACK_OVERVIEW: '/dashboard/analytics/feedback-all-feedbacks',
+        FEEDBACK_DETAILS: '/dashboard/analytics/feedback-details'
     },
     AUTH: {
         LOGIN: `/login`,

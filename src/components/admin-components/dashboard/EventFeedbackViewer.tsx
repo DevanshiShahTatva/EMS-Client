@@ -32,8 +32,8 @@ const EventFeedbackViewer = () => {
   }, []);
 
   return (
-    <div className="flex h-[500px] border rounded-lg overflow-hidden shadow">
-      <div className="w-1/3 border-r overflow-y-auto p-4 bg-gray-50">
+    <div className="flex h-[500px] rounded-lg overflow-hidden shadow">
+      <div className="w-1/3 overflow-y-auto p-4 bg-gray-50">
         {loading ? (
           <Skeleton className="w-full h-full" />
         ) : (
@@ -66,6 +66,7 @@ const EventFeedbackViewer = () => {
               <BarChart
                 data={Object.values(selectedEvent.ratingsBreakdown)}
                 labels={['1⭐', '2⭐', '3⭐', '4⭐', '5⭐']}
+                symbolType='count'
               />
             </div>
           </div>
