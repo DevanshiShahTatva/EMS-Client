@@ -62,6 +62,8 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
   const [existingImages, setExistingImages] = useState<(EventImage | File)[]>([])
   const [loader, setLoder] = useState(false)
 
+  const hasTouchedDescription = useRef(false);
+
   // CATEGORY AND TICKET TYPE
   const [categoriesOptions, setCategoriesOptions] = useState<IEventCategory[]>([])
   const [ticketTypeOptions, setTicketTypeOptions] = useState<ITicketType[]>([])
@@ -150,7 +152,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
   const ticketAddValidation = () => {
     const { type, price, maxQty, description } = newTicket;
 
-    const label = formattedTicketTypes.find(item => item.value === newTicket.type)?.label.toLowerCase();
+    const label = ticketTypeOptions.find(item => item._id === type)?.name.toLowerCase();
 
     // Basic blank field validation
     if (
@@ -182,8 +184,8 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
   const ticketEditValidation = (ticketValues: Partial<ITicket>) => {
     const { type, price, maxQty, description } = ticketValues;
 
-    const label = formattedTicketTypes.find(item => item.value === type)?.label.toLowerCase();
-
+    const label = ticketTypeOptions.find(item => item._id === type)?.name.toLowerCase();
+    
     // Strict blank field validation
     if (
       !type?.toString().trim() ||
@@ -220,6 +222,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
     setNewTicket({ type: "", price: "", maxQty: "", description: "", _id: "" });
     setAddRowVisible(false)
     setTicketErrorMsg("")
+    setFormValuesError({ ...formValuesError, ticket_type : false})
   };
 
   const handleEdit = (id: string) => {
@@ -273,7 +276,18 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
   }
 
   const handleDelete = (id: string) => {
-    setTickets((prev) => prev.filter((t) => t.id !== id));
+    setTickets((prev) => {
+      const updated = prev.filter((t) => t.id !== id);
+
+      if (updated.length === 0) {
+        setFormValuesError((prevErrors) => ({
+          ...prevErrors,
+          ticket_type: true,
+        }));
+      }
+
+      return updated;
+    });
   };
 
   const handleTitleChange = (value: string) => {
@@ -316,21 +330,35 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
   }
 
   const handleDescriptionChange = (value: string) => {
-    if (value.length !== 11) {
+
+    const input = value;
+    
+    // Convert HTML to plain text
+    const tempElement = document.createElement("div");
+    tempElement.innerHTML = input;
+    const text = (tempElement.textContent || tempElement.innerText || "").trim();
+    
+    // Skip validation on first render/input
+    if (!hasTouchedDescription.current) {
+      hasTouchedDescription.current = true;
+      return;
+    }
+
+    if (text.length === 0) {
       setFormValuesError((prevState) => ({
         ...prevState,
-        "description": true,
+        description: true,
       }));
     } else {
       setFormValuesError((prevState) => ({
         ...prevState,
-        "description": false,
+        description: false,
       }));
     }
 
     setFormValues((prevState) => ({
       ...prevState,
-      "description": value,
+      "description": text.length > 0 ? value : "",
     }));
   }
 
@@ -440,21 +468,38 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
     const startMoment = moment(startTime);
     const endMoment = moment(endTime);
 
-    const duration = moment.duration(endMoment.diff(startMoment));
+    if (!startMoment.isValid() || !endMoment.isValid()) return "Invalid date";
 
-    const days = duration.days();
-    const hours = duration.hours();
-    const minutes = duration.minutes();
+    if (endMoment.isSameOrBefore(startMoment)) return "Invalid meeting timing";
 
-    // Optional: build a readable string
+    // Clone to avoid mutating the original moment
+    const tempStart = startMoment.clone();
+
+    const years = endMoment.diff(tempStart, 'years');
+    tempStart.add(years, 'years');
+
+    const months = endMoment.diff(tempStart, 'months');
+    tempStart.add(months, 'months');
+
+    const days = endMoment.diff(tempStart, 'days');
+    tempStart.add(days, 'days');
+
+    const hours = endMoment.diff(tempStart, 'hours');
+    tempStart.add(hours, 'hours');
+
+    const minutes = endMoment.diff(tempStart, 'minutes');
+
     let result = "";
+    if (years > 0) result += `${years} year${years > 1 ? "s" : ""} `;
+    if (months > 0) result += `${months} month${months > 1 ? "s" : ""} `;
     if (days > 0) result += `${days} day${days > 1 ? "s" : ""} `;
     if (hours > 0) result += `${hours} hr${hours > 1 ? "s" : ""} `;
-    if (minutes > 0) result += `${minutes} min`;
+    const remainingMinutes = minutes - (years * 525600 + months * 43800 + days * 1440 + hours * 60);
+    if (remainingMinutes > 0) result += `${remainingMinutes} min`;
 
     return result.trim();
-
   };
+
 
   const handleAllValidations = () => {
 
@@ -890,7 +935,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
           </div>
         </div>
 
-        <QuilEditor
+          <QuilEditor
             label="Description"
             name={"description"}
             value={formValues.description}
@@ -904,7 +949,8 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
               formValues.description.length < 11
                 ? "Enter valid event description"
                 : formValues.description.length < 20
-                ? "Event description must be at least 20 characters long"
+                ? 
+                "Event description must be at least 20 characters long"
                 : ""
             }
           />
@@ -1130,13 +1176,13 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
                 )}
               </tbody>
             </table>
-            {!addRowVisible && (
+            {!addRowVisible && tickets.length < ticketTypeOptions.length && (
               <div
                 onClick={() => setAddRowVisible(true)}
                 className="px-2 cursor-pointer py-1"
               >
                 <p className="font-semibold underline text-blue-500">
-                  Add More Ticket
+                  {tickets.length >= 1 ? "Add More Ticket" : "Add Ticket"}
                 </p>
               </div>
             )}

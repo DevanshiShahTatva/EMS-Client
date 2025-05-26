@@ -41,7 +41,7 @@ const GoogleMap: React.FC<OpenStreetMapProps> = ({ location, locationName }) => 
   };
 
   return (
-    <div className="w-full h-96 rounded-lg overflow-hidden shadow">
+    <div className="w-full h-96 rounded-lg overflow-hidden shadow relative z-40">
       <MapContainer
         center={[location.lat, location.lng]}
         zoom={14}

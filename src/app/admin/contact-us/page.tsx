@@ -44,12 +44,7 @@ const AdminContactUsPage = () => {
     const [viewModal, setViewModal] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
 
-    const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [currentPage, setCurrentPage] = useState(1);
     const [isGeneratingAns, setIsGeneratingAns] = useState<boolean>(false);
-
-    const totalItems = requestsData.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const handleSearch = (searchVal: string) => {
         const result = getSearchResults(allRequestsData, searchVal)
@@ -169,13 +164,6 @@ const AdminContactUsPage = () => {
         fetchRequestData()
     }, [fetchRequestData])
 
-    useEffect(() => {
-        const paginated = requestsData.slice(
-            (currentPage - 1) * itemsPerPage,
-            currentPage * itemsPerPage
-        );
-        // setTableRowData(paginated);
-    }, [currentPage, requestsData, itemsPerPage]);
 
     const handleClickAiReply = async (item: IRequestType) => {
     try {
@@ -219,7 +207,7 @@ const AdminContactUsPage = () => {
             header: <input
                 type="checkbox"
                 className="form-checkbox accent-[#2563EB] h-4 w-4 cursor-pointer"
-                checked={!loading && selectedIds.length === allRequestsData.length}
+                checked={!loading && allRequestsData.length > 0 &&  selectedIds.length === allRequestsData.length}
                 onChange={() => selectAllRowsId()}
             />,
             key: 'name',

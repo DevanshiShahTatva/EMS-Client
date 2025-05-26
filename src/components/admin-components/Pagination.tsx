@@ -114,6 +114,7 @@ const Pagination: React.FC<PaginationProps> = ({
           per page:
         </span>
         <Select
+          menuPlacement="top"
           options={PAGINATION_OPTIONS}
           defaultValue={PAGINATION_OPTIONS.find(
             (opt) => opt.value === itemsPerPage

@@ -37,7 +37,7 @@ const ModalLayout: React.FC<ICustomModalProps> = ({
     const contentMaxHeigh = maxHeight ? `max-h-[${maxHeight}]` : "max-h-96";
 
   return (
-    <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/60 bg-opacity-40 px-8 md:px-0">
+    <div className="fixed inset-0 z-45 flex items-center justify-center bg-black/60 bg-opacity-40 px-8 md:px-0">
       <div className="bg-white w-full max-w-xl rounded-lg shadow-xl relative">
         {/* Title Section Start */}
         <div className="flex justify-between items-center border-b-1 px-6 py-5 border-b-gray-300">
