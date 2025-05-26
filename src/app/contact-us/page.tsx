@@ -103,27 +103,27 @@ export default function ContactUsPage() {
 
                 <FormikTextField
                   name="name"
-                  label="Name"
+                  label="Name*"
                   placeholder="Enter your name"
                   disabled={initialValues.name !== ""}
                 />
 
                 <FormikTextField
                   name="email"
-                  label="Email"
+                  label="Email*"
                   placeholder="Enter email address"
                   disabled={initialValues.email !== ""}
                 />
 
                 <FormikTextField
                   name="subject"
-                  label="Subject"
+                  label="Subject*"
                   placeholder="Enter subject"
                 />
 
                 <FormikTextField
                   name="message"
-                  label="Message"
+                  label="Message*"
                   placeholder="Enter message"
                   type="textarea"
                   rows={6}

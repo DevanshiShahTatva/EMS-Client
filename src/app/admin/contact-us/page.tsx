@@ -219,7 +219,7 @@ const AdminContactUsPage = () => {
             header: <input
                 type="checkbox"
                 className="form-checkbox accent-[#2563EB] h-4 w-4 cursor-pointer"
-                checked={!loading && selectedIds.length === allRequestsData.length}
+                checked={!loading && selectedIds.length !== 0 && selectedIds.length === allRequestsData.length}
                 onChange={() => selectAllRowsId()}
             />,
             key: 'name',
