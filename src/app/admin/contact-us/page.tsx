@@ -210,7 +210,7 @@ const AdminContactUsPage = () => {
                 checked={!loading && allRequestsData.length > 0 &&  selectedIds.length === allRequestsData.length}
                 onChange={() => selectAllRowsId()}
             />,
-            key: 'name',
+            key: '__v',
             isSortable: false,
             render: (row) =>
                 <input
