@@ -6,7 +6,7 @@ const adminDefaultRoute = ROUTES.ADMIN.DASHBOARD;
 const userDefaultRoute = ROUTES.USER_EVENTS;
 const organizerDefaultRoute = ROUTES.ORGANIZER.DASHBOARD;
 
-const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP];
+const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP,ROUTES.FORGOT_PASSWORD,ROUTES.RESET_PASSWORD];
 const organizerRoutes = [ROUTES.ORGANIZER.VERIFY_TICKETS, ROUTES.ORGANIZER.DASHBOARD];
 
 const adminRoutes = [
@@ -17,7 +17,8 @@ const adminRoutes = [
     ROUTES.ADMIN.CREATE_FAQs,
     ROUTES.ADMIN.TERMS_AND_CONDITIONS,
     ROUTES.ADMIN.DROPDOWNS,
-    ROUTES.ADMIN.ADMIN_CONFIGURATION
+    ROUTES.ADMIN.ADMIN_CONFIGURATION,
+    ROUTES.ADMIN.USERS
 ];
 const userRoutes = [
     ROUTES.USER_MY_EVENTS,
@@ -34,7 +35,6 @@ export async function middleware(request: NextRequest) {
     const currentPath = request.nextUrl.pathname;
     const isPublicRoute = publicRoutes.includes(currentPath);
     const token = request.cookies.get("authToken")?.value;
-
     if (!token) {
         if (!isPublicRoute) {
             return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
@@ -67,6 +67,7 @@ export async function middleware(request: NextRequest) {
         const defaultRedirect = defaultRoutes[userRole] || "/";
 
         if (isPublicRoute) {
+          
             return NextResponse.redirect(new URL(defaultRedirect, request.url));
         }
 
@@ -87,5 +88,8 @@ export const config = {
         "/events",
         "/admin/:path*",
         "/user/:path*",
+        "/login",
+        "/forgot-password",
+        "/reset-password"
     ],
 };

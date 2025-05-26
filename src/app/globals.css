@@ -183,14 +183,32 @@
   top: 70px;
 }
 
+@media (max-width: 1440px) {
+  .hero-image.p1 {
+    max-width: 90%
+  }
+}
+
 .hero-image.p2 {
   max-width: 1394px;
   top: 120px;
 }
 
+@media (max-width: 1440px) {
+  .hero-image.p2 {
+    max-width: 90%
+  }
+}
+
 .hero-image.p3 {
   max-width: 1098px;
   top: 40px;
+}
+
+@media (max-width: 1440px) {
+  .hero-image.p3 {
+    max-width: 90%
+  }
 }
 
 @keyframes scrollGrid {

@@ -22,12 +22,14 @@ export const ROUTES = {
         TERMS_AND_CONDITIONS : "/admin/terms-and-conditions",
         ADMIN_CONFIGURATION: "/admin/admin-configuration",
         DROPDOWNS : "/admin/dropdowns",
+        USERS: "/admin/users"
     },
     ORGANIZER: {
         VERIFY_TICKETS : "/organizer/verify-tickets",
         DASHBOARD : "/organizer/dashboard"
     },
-    RESET_PASSWORD: "/reset-password"
+    RESET_PASSWORD: "/reset-password",
+    FORGOT_PASSWORD:"/forgot-password",
 }
 
 export const API_ROUTES = {
@@ -137,10 +139,11 @@ export const BALANCED_COLORS = [
 export const ADMIN_SIDEBAR_ITEMS = [
     { id: 1, title: "Dashboard", route: ROUTES.ADMIN.DASHBOARD, icon: "/assets/DashboardIcon.svg" },
     { id: 2, title: "Events", route: ROUTES.ADMIN.EVENTS, icon: "/assets/EventsIcon.svg" },
-    { id: 3, title: "Support Requests", route: ROUTES.ADMIN.CONTACT_US, icon:  "/assets/support.svg"},
-    { id: 4, title: "FAQs", route: ROUTES.ADMIN.FAQs, icon:  "/assets/faqs.svg"},
-    { id: 5, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
-    { id: 7, title: "Admin Config", route: ROUTES.ADMIN.ADMIN_CONFIGURATION, icon:  "/assets/terms.svg"},
+    { id: 3, title: "Users", route: ROUTES.ADMIN.USERS, icon: "/assets/users.svg" },
+    { id: 4, title: "Support Requests", route: ROUTES.ADMIN.CONTACT_US, icon:  "/assets/support.svg"},
+    { id: 5, title: "FAQs", route: ROUTES.ADMIN.FAQs, icon:  "/assets/faqs.svg"},
+    { id: 6, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
+    { id: 7, title: "Admin Config", route: ROUTES.ADMIN.ADMIN_CONFIGURATION, icon:  "/assets/settingsIcon.svg"},
     { id: 8, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
 ]
 
@@ -220,7 +223,10 @@ export const BREAD_CRUMBS_ITEMS = {
     },
     ORGANIZER : {
         SCAN_TICKET_ITEMS : [{ label: "Scan QR", navigateTo: "" }]
-    }
+    },
+    ADMIN_USERS: {
+        MAIN_PAGE: [{ label: "Users", navigateTo: "" }],
+    },
 }
 
 export enum ROLE {
@@ -295,6 +301,17 @@ export const PROFILE_TAB_OPTIONS = [
     { id: 1, value: "personal", label: "Personal Information" },
     { id: 2, value: "email", label: "Update Email Address" },
     { id: 3, value: "password", label: "Change Password" },
+]
+
+export const USER_BADGES_OPTIONS = [
+    { label: "Bronze", value: "bronze"},
+    { label: "Silver", value: "silver" },
+    { label: "Gold", value: "gold"},
+]
+
+export const USERS_ROLE_OPTIONS = [
+    { label: "User", value: "user"},
+    { label: "Organizer", value: "organizer" },
 ]
 
 
