@@ -33,7 +33,6 @@ const userRoutes = [
 
 export async function middleware(request: NextRequest) {
     const currentPath = request.nextUrl.pathname;
-    console.log("i am public===",request.nextUrl.pathname)
     const isPublicRoute = publicRoutes.includes(currentPath);
     const token = request.cookies.get("authToken")?.value;
     if (!token) {
