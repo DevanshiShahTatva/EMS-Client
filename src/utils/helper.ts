@@ -1,4 +1,7 @@
+// Libraries
 import Cookie from 'js-cookie'
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 export const getAuthToken = () => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token") || ""
@@ -67,3 +70,19 @@ export const Logout = () => {
     sessionStorage.clear()
     Cookie.remove("authToken")
 }
+
+export const exportToExcel = <T>(data: T[], fileName = "data.xlsx") => {
+  // Create worksheet from JSON data
+  const worksheet = XLSX.utils.json_to_sheet(data);
+
+  // Create a new workbook and append the worksheet
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+  // Generate a buffer
+  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+
+  // Save to file
+  const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+  saveAs(blob, fileName);
+};
