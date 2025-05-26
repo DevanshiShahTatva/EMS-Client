@@ -95,7 +95,7 @@ const CancelTicketModal: React.FC<Props> = ({
                   <span className="text-red-900 font-medium">₹{totalPaid}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-red-700">Tax:</span>
+                  <span className="text-red-700">Platform Fees:</span>
                   <span className="text-red-900 font-medium">
                     ₹{taxCharge.toFixed(2)}
                   </span>
