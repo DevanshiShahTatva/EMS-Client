@@ -96,47 +96,6 @@ export default function EventCategoryFormModal({
                             ) : null}
                         </div>
 
-                        <div className="flex gap-4">
-                            <div className="w-1/2">
-                                <Label className="mb-2">Text Color</Label>
-                                <div className="flex items-center gap-2">
-                                    <input
-                                        type="color"
-                                        name="color"
-                                        value={formik.values.color}
-                                        onChange={formik.handleChange}
-                                        className={`h-10 w-full px-4 py-2 border 
-                                    ${formik.touched.color && formik.errors.color ? "border-red-500" : "border-gray-300"}
-                                    focus:ring-blue-500 focus:border-blue-500 rounded-lg 
-                                    focus:outline-none focus:ring-1
-                                    outline-none transition-all cursor-pointer`}
-                                    />
-                                </div>
-                                {formik.touched.color && formik.errors.color ? (
-                                    <div className="text-red-500 text-sm mt-1">{formik.errors.color}</div>
-                                ) : null}
-                            </div>
-
-                            <div className="w-1/2">
-                                <Label className="mb-2">Background Color</Label>
-                                <div className="flex items-center gap-2">
-                                    <input
-                                        type="color"
-                                        name="bgColor"
-                                        value={formik.values.bgColor}
-                                        onChange={formik.handleChange}
-                                        className={`h-10 w-full px-4 py-2 border 
-                                    ${formik.touched.bgColor && formik.errors.bgColor ? "border-red-500" : "border-gray-300"}
-                                    focus:ring-blue-500 focus:border-blue-500 rounded-lg 
-                                    focus:outline-none focus:ring-1
-                                    outline-none transition-all cursor-pointer`}
-                                    />
-                                </div>
-                                {formik.touched.bgColor && formik.errors.bgColor ? (
-                                    <div className="text-red-500 text-sm mt-1">{formik.errors.bgColor}</div>
-                                ) : null}
-                            </div>
-                        </div>
                         <div className="flex gap-6">
                             <div className="w-1/2">
                                 <Label className="mb-2">Upload Icon</Label>
@@ -205,6 +164,47 @@ export default function EventCategoryFormModal({
                             </div>
                         </div>
 
+                        <div className="flex gap-4">
+                            <div className="w-1/2">
+                                <Label className="mb-2">Text Color</Label>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="color"
+                                        name="color"
+                                        value={formik.values.color}
+                                        onChange={formik.handleChange}
+                                        className={`h-10 w-full px-4 py-2 border 
+                                    ${formik.touched.color && formik.errors.color ? "border-red-500" : "border-gray-300"}
+                                    focus:ring-blue-500 focus:border-blue-500 rounded-lg 
+                                    focus:outline-none focus:ring-1
+                                    outline-none transition-all cursor-pointer`}
+                                    />
+                                </div>
+                                {formik.touched.color && formik.errors.color ? (
+                                    <div className="text-red-500 text-sm mt-1">{formik.errors.color}</div>
+                                ) : null}
+                            </div>
+
+                            <div className="w-1/2">
+                                <Label className="mb-2">Background Color</Label>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="color"
+                                        name="bgColor"
+                                        value={formik.values.bgColor}
+                                        onChange={formik.handleChange}
+                                        className={`h-10 w-full px-4 py-2 border 
+                                    ${formik.touched.bgColor && formik.errors.bgColor ? "border-red-500" : "border-gray-300"}
+                                    focus:ring-blue-500 focus:border-blue-500 rounded-lg 
+                                    focus:outline-none focus:ring-1
+                                    outline-none transition-all cursor-pointer`}
+                                    />
+                                </div>
+                                {formik.touched.bgColor && formik.errors.bgColor ? (
+                                    <div className="text-red-500 text-sm mt-1">{formik.errors.bgColor}</div>
+                                ) : null}
+                            </div>
+                        </div>
                     </div>
 
                 </ModalLayout>
