@@ -164,159 +164,158 @@ const ReviewsPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div className="md:col-span-2 space-y-6 max-h-[80vh] overflow-y-auto pr-2">
-        {loading ? (
-          <Loader />
-        ) : filteredReviews.length === 0 ? (
-          <div className="bg-white p-6 rounded-xl shadow text-center col-span-2">
-            <p className="text-gray-500 text-lg">No feedbacks found.</p>
-            <p className="text-sm text-gray-400 mt-2">Try adjusting your search or filters.</p>
-          </div>
-        ) : (
-          filteredReviews.map((review) => (
-            <div key={review._id} className="bg-white shadow rounded-xl p-5">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  {review.profileimage ? (
+    
+      <div className="container mx-auto px-4 py-8 flex flex-col-reverse md:grid md:grid-cols-3 gap-6">
+        <div className="md:col-span-2 space-y-6 max-h-[80vh] overflow-y-auto pr-2">
+          {loading ? (
+            <Loader />
+          ) : filteredReviews.length === 0 ? (
+            <div className="bg-white p-6 rounded-xl shadow text-center col-span-2">
+              <p className="text-gray-500 text-lg">No feedbacks found.</p>
+              <p className="text-sm text-gray-400 mt-2">Try adjusting your search or filters.</p>
+            </div>
+          ) : (
+            filteredReviews.map((review) => (
+              <div key={review._id} className="bg-white shadow rounded-xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-4">
+                    {review.profileimage ? (
+                      <Image
+                        src={review.profileimage}
+                        alt="User"
+                        width={40}
+                        height={40}
+                        className="rounded-full"
+                      />
+                    ) : (
+                        <button className='h-10 w-10 rounded-full bg-indigo-600 text-white font-bold relative cursor-pointer'>
+                          {name.charAt(0).toUpperCase()}
+                        </button>
+                    )}
+                    <p className="font-semibold text-gray-800">{review.name}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button className="text-blue-500 hover:text-blue-700" onClick={() => setReview(review)}>
+                      <EditIcon className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => deleteReview(review._id)} className="text-red-500 hover:text-red-700">
+                      <Trash2Icon className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 mb-2">
+                  {review.eventImage ? (
                     <Image
-                      src={review.profileimage}
-                      alt="User"
-                      width={40}
-                      height={40}
-                      className="rounded-full"
+                      src={review.eventImage}
+                      alt="Event"
+                      width={56}
+                      height={56}
+                      className="rounded-md object-cover w-14 h-14"
                     />
                   ) : (
-                      <button className='h-10 w-10 rounded-full bg-indigo-600 text-white font-bold relative cursor-pointer'>
-                        {name.charAt(0).toUpperCase()}
-                      </button>
+                    <div className="w-14 h-14 bg-gray-200 rounded-md" />
                   )}
-                  <p className="font-semibold text-gray-800">{review.name}</p>
+                  <p className="text-lg font-bold text-gray-900 mt-2">{review.eventTitle}</p>
                 </div>
-                <div className="flex gap-2">
-                  <button className="text-blue-500 hover:text-blue-700" onClick={() => setReview(review)}>
-                    <EditIcon className="w-4 h-4" />
-                  </button>
-                  <button onClick={() => deleteReview(review._id)} className="text-red-500 hover:text-red-700">
-                    <Trash2Icon className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
 
-              <div className="flex items-start gap-4 mb-2">
-                {review.eventImage ? (
-                  <Image
-                    src={review.eventImage}
-                    alt="Event"
-                    width={56}
-                    height={56}
-                    className="rounded-md object-cover w-14 h-14"
-                  />
-                ) : (
-                  <div className="w-14 h-14 bg-gray-200 rounded-md" />
+                <div className="flex items-center gap-1 mb-2">
+                  {[...Array(5)].map((_, index) => (
+                    <StarIcon
+                      key={index}
+                      className={`w-5 h-5 ${index < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+                    />
+                  ))}
+                </div>
+
+                <p className="text-gray-700 text-sm mb-2">
+                  {expandedReview === review._id || review.description.length < 100
+                    ? review.description
+                    : `${review.description.slice(0, 100)}...`}
+                </p>
+
+                {review.description.length > 100 && (
+                  <button
+                    className="text-blue-500 text-sm flex items-center gap-1"
+                    onClick={() => toggleDescription(review._id)}
+                  >
+                    {expandedReview === review._id ? (
+                      <>
+                        Show Less <ChevronUp className="w-4 h-4" />
+                      </>
+                    ) : (
+                      <>
+                        Read More <ChevronDown className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
                 )}
-                <p className="text-lg font-bold text-gray-900 mt-2">{review.eventTitle}</p>
+
+                <p className="text-xs text-gray-500 mt-3">
+                  {format(new Date(review.createdAt), "MMM d, yyyy - h:mm a")}{" "}
+                  {review.isEdited ? "(Edited)" : ""}
+                </p>
               </div>
-
-              <div className="flex items-center gap-1 mb-2">
-                {[...Array(5)].map((_, index) => (
-                  <StarIcon
-                    key={index}
-                    className={`w-5 h-5 ${index < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
-                  />
-                ))}
-              </div>
-
-              <p className="text-gray-700 text-sm mb-2">
-                {expandedReview === review._id || review.description.length < 100
-                  ? review.description
-                  : `${review.description.slice(0, 100)}...`}
-              </p>
-
-              {review.description.length > 100 && (
-                <button
-                  className="text-blue-500 text-sm flex items-center gap-1"
-                  onClick={() => toggleDescription(review._id)}
-                >
-                  {expandedReview === review._id ? (
-                    <>
-                      Show Less <ChevronUp className="w-4 h-4" />
-                    </>
-                  ) : (
-                    <>
-                      Read More <ChevronDown className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              )}
-
-              <p className="text-xs text-gray-500 mt-3">
-                {format(new Date(review.createdAt), "MMM d, yyyy - h:mm a")}{" "}
-                {review.isEdited ? "(Edited)" : ""}
-              </p>
+            ))
+          )}
+        </div>
+        <div className="space-y-4 bg-white shadow rounded-xl p-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+            <div className="relative">
+              <SearchInput
+                placeholder="Search reviews..."
+                value={searchQuery}
+                onChange={handleSearchQuery}
+                inputClassName="pl-10 pr-4 py-2 w-full"
+                wrapperClassName="flex-grow w-full bg-white rounded-lg"
+              />
             </div>
-          ))
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Rating</label>
+            <div className="flex flex-wrap gap-2">
+              {[1, 2, 3, 4, 5].map((star:number) => (
+                <button
+                  key={star}
+                  onClick={() => setFilterRating(filterRating === star ? null : star)}
+                  className={`flex items-center gap-1 px-3 py-1 border rounded-md text-sm transition ${
+                    filterRating === star
+                      ? "bg-blue-600 text-white"
+                      : "bg-white border-gray-300"
+                  }`}
+                >
+                  <img
+                    src={emojiMap[star].emoji}
+                    alt={emojiMap[star].text}
+                    className="w-5 h-5"
+                  />
+                  <span>{emojiMap[star].text}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        {editReview && (
+          <FeedbackModal
+            eventId={editReview.eventId}
+            isOpen={showEditModal}
+            onClose={closeEditModal}
+            isEditFlag={true}
+            feedback={editReview}
+          />
+        )}
+
+        {deleteReviewId && (
+          <DeleteModal
+            isOpen={deleteModal}
+            onClose={closeDeleteModal}
+            onConfirm={() => handleDelete(deleteReviewId)}
+            description="Are you sure you want to delete feedback?"
+          />
         )}
       </div>
-
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
-          <div className="relative">
-            <SearchInput
-              placeholder="Search reviews..."
-              value={searchQuery}
-              onChange={handleSearchQuery}
-              inputClassName="pl-10 pr-4 py-2 w-full"
-              wrapperClassName="flex-grow w-full bg-white rounded-lg"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Rating</label>
-          <div className="flex flex-wrap gap-2">
-            {[1, 2, 3, 4, 5].map((star:number) => (
-              <button
-                key={star}
-                onClick={() => setFilterRating(filterRating === star ? null : star)}
-                className={`flex items-center gap-1 px-3 py-1 border rounded-md text-sm transition ${
-                  filterRating === star
-                    ? "bg-blue-600 text-white"
-                    : "bg-white border-gray-300"
-                }`}
-              >
-                <img
-                  src={emojiMap[star].emoji}
-                  alt={emojiMap[star].text}
-                  className="w-5 h-5"
-                />
-                <span>{emojiMap[star].text}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {editReview && (
-        <FeedbackModal
-          eventId={editReview.eventId}
-          isOpen={showEditModal}
-          onClose={closeEditModal}
-          isEditFlag={true}
-          feedback={editReview}
-        />
-      )}
-
-      {deleteReviewId && (
-        <DeleteModal
-          isOpen={deleteModal}
-          onClose={closeDeleteModal}
-          onConfirm={() => handleDelete(deleteReviewId)}
-          description="Are you sure you want to delete feedback?"
-        />
-      )}
-    </div>
   );
 };
 
