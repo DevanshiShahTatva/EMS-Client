@@ -192,7 +192,7 @@ const MyEventsPage = () => {
   const renderUpcomingSection = (event: IEventsState) => {
 
     if(event.isAttended) {
-      return renderOngoingSection()
+      return renderOngoingSection(event)
     } 
     
     return (
@@ -231,7 +231,14 @@ const MyEventsPage = () => {
     );
   };
 
-  const renderOngoingSection = () => {
+  const renderOngoingSection = (event: IEventsState) => {
+    if(!event.isAttended) {
+      return (
+        <AlertBox type="warning">
+          {'Your event is currently ongoing. Please make sure to attend.'}
+        </AlertBox>
+      );
+    }
     return (
       <AlertBox type="info">
         {`You've secured your spot. Stay tuned for updates and notifications.`}
@@ -252,7 +259,7 @@ const MyEventsPage = () => {
       case "upcoming":
         return renderUpcomingSection(event);
       case "ongoing":
-        return renderOngoingSection();
+        return renderOngoingSection(event);
       case "past":
         return renderEndedSection(event);
       default:
@@ -419,7 +426,7 @@ const MyEventsPage = () => {
                               &nbsp;
                               <TooltipWrapper
                                 tooltip={`Cost per ticket : ${
-                                  item.eventTicketPrice / item.eventTicketCount
+                                (item.eventTicketPrice / item.eventTicketCount).toFixed(2)
                                 }`}
                               >
                                 {item.eventTicketType}
@@ -431,7 +438,7 @@ const MyEventsPage = () => {
 
                         <div className="flex gap-3 items-center my-2">
                           <IndianRupee className="h-5 w-5" />
-                          <p className="text-gray-800 ">Total Paid : ₹ {item.eventTicketPrice}</p>
+                          <p className="text-gray-800 ">Total Paid : ₹ {item.eventTicketPrice.toFixed(2)}</p>
                         </div>
                         {item.eventTicketDiscount > 0 && (
                           <div className="flex gap-3 items-center my-2">

@@ -63,7 +63,7 @@ const DownloadTicketModal: React.FC<ITicketProps> = ({ eventData, isOpen, onClos
                   value={JSON.stringify(ticketData)}
                   size={150}
                 />
-                <div className="text-sm">Ticket ID <span className="font-medium">{Math.floor(100000 + Math.random() * 900000)}</span></div>
+                <div className="text-sm">Ticket ID <span className="font-medium">{eventData._id.toString().slice(-6).toUpperCase()}</span></div>
               </div>
             </div>
           </div>

@@ -379,7 +379,7 @@ const UserProfilePage = () => {
             ) : (
               <>
                 <p className="text-xl font-bold mb-6 md:text-2xl">My vouchers</p>
-                <div className="flex flex-wrap gap-4 items-center">
+                <div className="flex flex-wrap gap-6 items-center">
                   {userInfo.vouchers.length > 0 ?
                     userInfo.vouchers.map((voucher, index: number) => {
                       return (
