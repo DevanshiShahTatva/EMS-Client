@@ -37,12 +37,12 @@ export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
 
   const decodedHTML = useMemo(()=>he.decode(event.description),[event.description]);
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 flex flex-col h-full">
-      <div className="relative">
+    <div className="bg-white rounded-xl shadow-md border border-gray-200 flex flex-col h-full">
+      <div className="relative overflow-hidden rounded-t-xl group">
         <img
           src={event.image}
           alt={event.title}
-          className="w-full h-48 object-cover"
+          className="w-full h-50 object-cover rounded-t-xl transform transition-transform duration-300 ease-in-out group-hover:scale-[1.03]"
         />
         <button
           onClick={() => likeEvent(event.id)}
@@ -52,6 +52,9 @@ export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
             className={`h-5 w-5 ${event.isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
           />
         </button>
+        <div className="absolute top-3 left-3">
+          <CategoryChip {...event.category} bgColor="#fff" />
+        </div>
       </div>
       <div className="p-4 flex flex-col flex-grow">
         <div className="flex items-start justify-between mb-2">
@@ -64,9 +67,6 @@ export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
         </div>
         <div className="text-gray-600 text-sm line-clamp-2 mb-4" dangerouslySetInnerHTML={{__html:decodedHTML}}/>
         <div className="mt-auto space-y-2">
-          <div className="flex items-center text-sm text-gray-500">
-              <CategoryChip _id={event.category._id} name={event.category.name} isActive={event.category.isActive} color={event.category.color} bgColor={event.category.bgColor} icon={event.category.icon} createdAt={event.category.createdAt} updatedAt={event.category.updatedAt} __v={event.category.__v} isUsed={false} />
-          </div>
           <div className="flex items-center text-sm text-gray-500">
             <MapPin className="h-4 w-4 mr-2" />
             <TooltipProvider>
