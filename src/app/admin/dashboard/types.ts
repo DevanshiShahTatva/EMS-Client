@@ -41,6 +41,15 @@ export interface IStatResponse {
 export interface ITopEventsChartData {
   _id: string;
   title: string;
+  category: {
+    name: string;
+  };
+  likesCount: number;
+}
+
+export interface ITopEventsTableData {
+  _id: string;
+  title: string;
   category: string;
   likesCount: number;
 }

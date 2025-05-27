@@ -147,6 +147,7 @@
 
 .custom-tc-quill .ql-editor {
   height: 500px;
+  font-family: 'DM Sans', 'DM Sans Fallback', sans-serif;
 }
 
 .custom-quill .ql-editor.ql-blank::before,
@@ -186,7 +187,7 @@
 
 @media (max-width: 1440px) {
   .hero-image.p1 {
-    max-width: 90%
+    max-width: 90% !important
   }
 }
 
@@ -197,7 +198,7 @@
 
 @media (max-width: 1440px) {
   .hero-image.p2 {
-    max-width: 90%
+    max-width: 90%  !important
   }
 }
 
@@ -208,7 +209,7 @@
 
 @media (max-width: 1440px) {
   .hero-image.p3 {
-    max-width: 90%
+    max-width: 90% !important
   }
 }
 

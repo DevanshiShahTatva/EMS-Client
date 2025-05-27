@@ -3,9 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { HeartIcon, CalendarIcon, MapPin, TagIcon } from 'lucide-react'
 import { EventData } from '../../app/events/types'
 import { useRouter } from 'next/navigation'
-import { API_ROUTES, ROUTES } from '@/utils/constant';
-import { apiCall } from '@/utils/services/request';
-import { toast } from 'react-toastify'
+import {  ROUTES } from '@/utils/constant';
 import {
   Tooltip,
   TooltipContent,
@@ -19,9 +17,9 @@ import CustomButton from '../common/CustomButton'
 
 interface EventCardProps {
   event: EventData
+  likeEvent : (id : string) => void
 }
-export const EventCard: React.FC<EventCardProps> = ({ event }) => {
-  const [isLiked, setIsLiked] = useState(false)
+export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
   const statusColors = {
     ongoing: 'bg-yellow-100 text-yellow-800',
     ended: 'bg-red-100 text-red-800',
@@ -37,23 +35,6 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     router.push(`${ROUTES.USER_EVENTS}\\${eventId}`);
   }
 
-  const handleLikeEvent = async () => {
-    if(!isLiked)
-      toast.success("Liked the Event!")
-    else
-      toast.error("Disliked the Event!");
-    const response = await apiCall({
-      endPoint: API_ROUTES.ADMIN.GET_EVENTS + `/${event.id}/like`,
-      method: "POST",
-    });
-    if (response.success) {
-      setIsLiked(!isLiked)
-    }
-  };
-
-  useEffect(()=>{
-   setIsLiked(event.isLiked)
-  },[event])
   const decodedHTML = useMemo(()=>he.decode(event.description),[event.description]);
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 flex flex-col h-full">
@@ -64,11 +45,11 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
           className="w-full h-48 object-cover"
         />
         <button
-          onClick={handleLikeEvent}
+          onClick={() => likeEvent(event.id)}
           className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-sm cursor-pointer"
         >
           <HeartIcon
-            className={`h-5 w-5 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
+            className={`h-5 w-5 ${event.isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
           />
         </button>
       </div>
@@ -115,8 +96,8 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         {event.isSoldOut ? 
           <CustomButton
              variant='disabled'
-             disabled
-             className='w-full font-medium'
+             className='w-full font-medium cursor-pointer'
+             onClick={()=>navigateToEventDetails(event.id)}
           >
              Sold out
           </CustomButton>

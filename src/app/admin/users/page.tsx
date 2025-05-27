@@ -24,9 +24,9 @@ import { Column, IApplyUserFiltersKey } from '@/utils/types'
 
 // library
 import clsx from 'clsx'
-import { exportToExcel } from '@/utils/helper'
 
 // helper
+import { exportToExcel } from '@/utils/helper'
 import { getFilteredData, getMaxPoints } from './helper'
 
 // icons
@@ -133,7 +133,9 @@ const UsersPage = () => {
                         src={row.profileImage}
                         alt="avatar"
                         className="w-10 h-10 rounded-full object-cover"
-                    /> : "-"
+                    /> : <button className='h-10 w-10 rounded-full bg-blue-500 text-white font-bold relative cursor-pointer'>
+                        {row.name.charAt(0).toUpperCase()}
+                    </button>
             ),
         },
         { header: 'Name', key: 'name' },
@@ -232,7 +234,7 @@ const UsersPage = () => {
                           className='flex gap-2 items-center'
                           startIcon={<DownloadIcon className='h-5 w-5' />}
                           disabled={usersData.length === 0}
-                          onClick={() => exportToExcel(usersData,`UserOnPlatform-${Date.now()}.xlsx`)}
+                          onClick={() => exportToExcel(allUsersData,`Users-${Date.now()}.xlsx`)}
                       >
                           Export
                       </CustomButton>
