@@ -51,13 +51,21 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   const discount = promoCodeDiscount > 0 ? promoCodeDiscount * 100 : Math.round((usedPoints / conversionRate) * 100);
   const finalAmount = Math.max(totalPrice * 100 - discount, 0);
 
-  const handleTicketSelect = (type: string) => {
+  const handleTicketSelect = (type: string, price: number) => {
     if (selectedType === type) {
       setSelectedType(null)
       setQuantity(0)
     } else {
       setSelectedType(type)
       setQuantity(1)
+    }
+    if (price === 0) {
+      setActiveMethod(null);
+      setUsedPoints(0);
+      setPromoCode('');
+      setPromoCodeDiscount(0);
+      setVoucherId(null);
+      setPromoCodeMessage(null);
     }
   }
 
@@ -199,7 +207,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
                     </div>
                   ) : (
                     <button
-                      onClick={() => handleTicketSelect(ticket.type?._id)}
+                      onClick={() => handleTicketSelect(ticket.type?._id, ticket.price)}
                       disabled={available === 0}
                       className={`px-4 py-1.5 text-sm font-medium rounded border w-fit ${available === 0
                         ? "bg-gray-100 text-gray-400 cursor-not-allowed"
