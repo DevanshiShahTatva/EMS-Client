@@ -29,6 +29,7 @@ import moment from 'moment'
 // Icons & Images
 import { FunnelIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from "@heroicons/react/24/solid";
+import { toast } from 'react-toastify'
 
 
 const EventsPage: React.FC = () => {
@@ -60,14 +61,14 @@ const EventsPage: React.FC = () => {
     setAppliedFilters(updatedFilters);
   }
 
-  const applyFilters = (filterValues : IApplyFiltersKey) => {
+  const applyFilters = (filterValues : IApplyFiltersKey, data = allEvents) => {
     const updatedFilters = {
       ...filterValues,
       search: searchQuery || "", // include active search in filter logic
     };
 
     const results = convertFiltersToArray(filterValues)
-    const filteredData = getFilteredEventsData(allEvents, updatedFilters) 
+    const filteredData = getFilteredEventsData(data, updatedFilters) 
     setAppliedFilters(filterValues)
     setAppliedFiltersArray(results)
     setEvents(filteredData)
@@ -130,12 +131,39 @@ const EventsPage: React.FC = () => {
   
           setEvents(modifiedArray)
           setAllEvents(modifiedArray)
+          if(appliedFiltersArray.length > 0) {
+             applyFilters(appliedFilters, modifiedArray)
+          }
           setLoading(false)
         } else {
            setEvents([])
            setLoading(false)
         }
   }
+
+  const likeEvent = async (id: string) => {
+    setLoading(true);
+    try {
+      const response = await apiCall({
+        endPoint: API_ROUTES.ADMIN.GET_EVENTS + `/${id}/like`,
+        method: "POST",
+      });
+
+      if (response && response.success) {
+        const isliked = events.find(item => item.id === id)?.isLiked
+        if (isliked) {
+          toast.error("Disliked the Event!");
+        } else {
+          toast.success("Liked the Event!")
+        }
+        await fetchEvents()
+      }
+    } catch (err) {
+      console.error('Error fetching data', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getCategories = useCallback(async () => {
     try {
@@ -230,12 +258,12 @@ const EventsPage: React.FC = () => {
       {(featuredEvent.length>0 && searchQuery==="") && (
         <div className="mb-8 mt-6">
           <h2 className="text-xl font-semibold mb-4">Featured Event Near you</h2>
-          <FeaturedEvent event={featuredEvent} />
+          <FeaturedEvent event={featuredEvent} likeEvent={likeEvent} />
         </div>
       )}
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4">Explore All Events</h2>
-        <EventList events={regularEvents} />
+        <EventList events={regularEvents} likeEvent={likeEvent} />
       </div>
 
       <FilterModal
