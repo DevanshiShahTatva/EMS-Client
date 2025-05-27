@@ -32,6 +32,7 @@ export interface EventData {
     ticketsAvailable?: number;
     totalTickets?: number,
     ticketsArray?: EventTicket[],
+    availableTicketStatus?: string,
     location?: string;
     lat? : number,
     lng?: number

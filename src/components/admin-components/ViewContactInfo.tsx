@@ -56,6 +56,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
           value={contactInfo.message}
           type='textarea'
         />
+        <p className='h-5' />
 
         {/* Content UI End*/}
       </div>
