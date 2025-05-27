@@ -6,7 +6,6 @@ import { FilterOptions } from '@/components/events-components/FilterOptions'
 import { FeaturedEvent } from '@/components/events-components/FeaturedEvent'
 import { EventList } from '@/components/events-components/EventList'
 import EventListSkeleton from '@/components/events-components/EventListSkeleton'
-import Loader from '@/components/common/Loader'
 import FilterModal from '@/components/common/FilterModal'
 import SearchInput from '@/components/common/CommonSearchBar'
 
