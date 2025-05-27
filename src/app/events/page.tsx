@@ -186,7 +186,7 @@ const EventsPage: React.FC = () => {
   return (
     
     <div className="mx-auto p-10">
-      <h1 className="text-3xl font-bold mb-6">Discover Events</h1>
+      <h1 className="text-3xl font-bold mb-6">Discover events</h1>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 
         {/* Search Bar  */}
@@ -230,13 +230,13 @@ const EventsPage: React.FC = () => {
 
       {(featuredEvent.length>0 && searchQuery==="" && appliedFiltersArray.length===0) && (
         <div className="mb-8 mt-6">
-          <h2 className="text-xl font-semibold mb-4">Featured Event Near you</h2>
+          <h2 className="text-xl font-semibold mb-4">Featured event near you</h2>
           <FeaturedEvent event={featuredEvent} />
         </div>
       )}
       <div className="mb-8">
         { searchQuery==="" && appliedFiltersArray.length===0 && (
-          <h2 className="text-xl font-semibold mb-4">Explore All Events</h2>
+          <h2 className="text-xl font-semibold mb-4">Explore all events</h2>
         ) }
         <EventList events={regularEvents} />
       </div>
