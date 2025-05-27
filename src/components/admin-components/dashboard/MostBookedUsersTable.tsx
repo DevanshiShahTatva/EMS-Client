@@ -18,6 +18,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { API_ROUTES } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
+import ChartFallbackUI from "./ChartFallbackUI";
 
 interface IUser {
   totalBookings: number;
@@ -75,7 +76,7 @@ export default function MostBookedUsersTable() {
 
   const loadingSkeleton = useMemo(
     () =>
-      Array.from({ length: 10 }).map((_, index) => (
+      Array.from({ length: 11 }).map((_, index) => (
         <TableHeader key={index} className="text-xs uppercase bg-gray-100">
           <TableRow>
             <TableCell>
@@ -98,6 +99,7 @@ export default function MostBookedUsersTable() {
 
   const tableContent = useMemo(() => {
     if (loading) return loadingSkeleton;
+    if (!loading && !users.length) return <ChartFallbackUI handleRefresh={fetchUsers} />
 
     return (
       <>
@@ -142,10 +144,10 @@ export default function MostBookedUsersTable() {
         </TableBody>
       </>
     );
-  }, [loading, loadingSkeleton, users]);
+  }, [fetchUsers, loading, loadingSkeleton, users]);
 
   return (
-    <div className="mt-6">
+    <div className="mt-6 min-h-100 flex items-center">
       <Table>{tableContent}</Table>
     </div>
   );
