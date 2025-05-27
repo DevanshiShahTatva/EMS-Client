@@ -68,8 +68,8 @@ function Footer() {
                         </Link>
                         <p className="text-gray-300">Experience more, worry less.</p>
                     </div>
-                    <div className='flex flex-col md:flex-row gap-6 md:gap-15'>
-                        <div className='flex flex-row gap-15'>
+                    <div className='flex flex-col md:flex-row gap-6 md:gap-25'>
+                        <div className='flex flex-row gap-25'>
                             <div className="flex flex-col">
                                 <h4 className="font-semibold mb-2">Quick Links</h4>
                                 <Link href={ROUTES.HOME} className="text-gray-300 hover:underline">Home</Link>
@@ -78,7 +78,6 @@ function Footer() {
                                     <>
                                         <Link href={ROUTES.USER_MY_EVENTS} className="text-gray-300 hover:underline">My Bookings</Link>
                                         <Link href={ROUTES.USER_PROFILE} className="text-gray-300 hover:underline">Profile</Link>
-                                        <Link href="#" onClick={handleLogout} className="text-gray-300 hover:underline">Logout</Link>
                                     </>
                                 )}
                             </div>
@@ -133,8 +132,8 @@ function Footer() {
                     </div>
                     </div>
                 </div>
-                <div className="border-t border-t-[gray] text-center text-gray-400 mt-8 text-sm">
-                   <div className='pt-5'>Copyright © {new Date().getFullYear()} All Rights Reserved.</div>
+                <div className="border-t border-t-[gray-400] text-center text-gray-400 mt-8 text-sm">
+                   <div className='pt-5 text-gray-400'>Copyright © {new Date().getFullYear()} All Rights Reserved.</div>
                 </div>
             </footer>
         </div>
