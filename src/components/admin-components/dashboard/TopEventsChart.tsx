@@ -9,7 +9,7 @@ import PieChart, { ChartLegendSkeleton } from '../charts/PieChart';
 import TableModal from './TableModal';
 import { CardTitle } from './ChartCard';
 import { DASHBOARD_TITLE, LikeTableColumns } from '@/app/admin/dashboard/helper';
-import { ITopEventsChartData } from '@/app/admin/dashboard/types';
+import { ITopEventsChartData, ITopEventsTableData } from '@/app/admin/dashboard/types';
 import ChartFallbackUI from './ChartFallbackUI';
 
 const TopEventsChart = () => {
@@ -18,7 +18,7 @@ const TopEventsChart = () => {
     const [chartData, setChartData] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
     const [tableLoading, setTableLoading] = useState(true);
-    const [tableData, setTableData] = useState<ITopEventsChartData[]>([]);
+    const [tableData, setTableData] = useState<ITopEventsTableData[]>([]);
     const [open, setOpen] = useState(false);
 
     // Fetch chart data
@@ -46,7 +46,15 @@ const TopEventsChart = () => {
         try {
             const response = await apiCall({ endPoint: `${API_ROUTES.ADMIN.TOP_LIKED_EVENTS}`, method: 'GET' });
             const result = response?.data as ITopEventsChartData[] || {};
-            setTableData(result);
+            const filterResult = result.map((result) => {
+                return {
+                    _id: result._id,
+                    title: result.title,
+                    category: result.category.name,
+                    likesCount: result.likesCount
+                }
+            })
+            setTableData(filterResult);
         } catch (error) {
             console.error('Error fetching detailed data:', error);
         } finally {
