@@ -33,7 +33,9 @@ export const DASHBOARD_TITLE = {
     EVENT_FEEDBACK_TITLE:"Individual Event Ratings",
     EVENT_FEEDBACK_TOOLTIP:"Individual Event Ratings provided",
     FEEDBACK_OVERVIEW_TITLE:"Feedbacks Given by users",
-    FEEDBACK_OVERVIEW_TOOLTIP:"Feedbacks analysis whether they have been increased or descreased from last time"
+    FEEDBACK_OVERVIEW_TOOLTIP:"Feedbacks analysis whether they have been increased or descreased from last time",
+    FEEDBACK_ALL_DETAILS:"Feedback details",
+    FEEDBACK_ALL_DETAILS_TOOLTIP:"Analysis of the feedbacks given throughout each event and number of positive and negative feedbacks",
 }
 
 export const LikeTableColumns = [

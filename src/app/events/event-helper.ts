@@ -121,7 +121,7 @@ if(events){
     const currentEvent = events.find(event => event._id === currentEventId);
 if (!currentEvent) return [];
 return events
-    .filter(event => event.category === currentEvent.category && event._id !== currentEventId)
+    .filter(event => event.category._id === currentEvent.category._id && event._id !== currentEventId)
     .slice(0, 3); 
 }
 };
@@ -462,7 +462,7 @@ export const getFilteredEventsData = (events : EventData[], filterValues : IAppl
 }
 
 export const hasEventEnded = (endDateTime: string | Date): boolean => {
-  const endDate = new Date(endDateTime)
-  endDate.setDate(endDate.getDate() + 1)
-  return endDate.getTime() < new Date().getTime()
+  const endDate = new Date(endDateTime).getTime();
+  const todaysDate = new Date().getTime();
+  return endDate < todaysDate
 }

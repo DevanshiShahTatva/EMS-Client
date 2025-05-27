@@ -161,3 +161,10 @@ export interface FeedbackAnalyticsResponse {
   message: string;
   data: FeedbackAnalyticsData;
 }
+
+export interface IFeedbackChartData {
+  eventId: string;
+  title: string;
+  totalFeedbacks: string;
+  averageRating: number;
+}
