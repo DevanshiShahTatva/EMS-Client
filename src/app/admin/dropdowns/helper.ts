@@ -20,13 +20,19 @@ export const getSearchResults = (dataArray: ITicketType[], keyword: string) => {
     const lowerKeyword = keyword.toString().toLowerCase();
     return dataArray.filter(item =>
         item.name.toLowerCase().includes(lowerKeyword) ||
-        item.description.toLowerCase().includes(lowerKeyword)
+        item.description.toLowerCase().includes(lowerKeyword) ||
+        item.isUsed && "in use".includes(lowerKeyword) ||
+        !item.isUsed && "not used".includes(lowerKeyword)
     );
 }
 
 export const getCategorySearchResults = (dataArray: IEventCategory[], keyword: string) => {
     const lowerKeyword = keyword.toString().toLowerCase();
-    return dataArray.filter(item => item.name.toLowerCase().includes(lowerKeyword));
+    return dataArray.filter(item => 
+        item.name.toLowerCase().includes(lowerKeyword) ||
+        item.isUsed && "in use".includes(lowerKeyword) ||
+        !item.isUsed && "not used".includes(lowerKeyword)
+    );
 }
 
 export const TicketTypeValidationSchema = Yup.object().shape({
