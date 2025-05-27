@@ -32,7 +32,7 @@ const EventFeedbackViewer = () => {
   }, []);
 
   return (
-    <div className="flex h-[500px] rounded-lg overflow-hidden shadow">
+    <div className="flex h-[500px] rounded-lg overflow-hidden shadow mt-12">
       <div className="w-1/3 overflow-y-auto p-4 bg-gray-50">
         {loading ? (
           <Skeleton className="w-full h-full" />

@@ -146,6 +146,7 @@ const MyEventsPage = () => {
           bookingStatus: item.bookingStatus,
           cancelledAt: item.cancelledAt,
           isAttended: item.isAttended,
+          eventId:item.event._id,
         };
       });
 
@@ -218,7 +219,7 @@ const MyEventsPage = () => {
             Hope you enjoyed this Event. Please give your{" "}
             <span
               className="text-blue-500 cursor-pointer hover:underline"
-              onClick={() => setFeedbackEvent(event.id)}
+              onClick={() => setFeedbackEvent(event.eventId)}
             >
               Feedback
             </span>{" "}
@@ -310,11 +311,11 @@ const MyEventsPage = () => {
   filteredEvents = [...filteredEvents].sort(sortEvents(sortOption));
 
   return (
-    <div>
+    <div className="h-full">
       {loading && <Loader />}
-      <div className="min-h-[calc(100vh-76px)] flex flex-col">
-        <div className="mx-auto px-5 py-10 md:px-10 w-full">
-          <div className="bg-white border border-gray-100 p-5 rounded-xl w-full shadow-lg">
+      <div className="h-full flex flex-col">
+        <div className="h-full mx-auto px-5 py-10 md:px-10 w-full">
+          <div className="h-full bg-white border border-gray-100 p-5 rounded-xl w-full shadow-lg">
           <h1 className="text-3xl font-bold mb-2">My Bookings</h1>
 
           <div className="flex flex-col md:flex-row md:items-center md:justify-between my-5 gap-4 border-b-0 md:border-b  border-gray-200">
@@ -438,14 +439,8 @@ const MyEventsPage = () => {
 
                         <div className="flex gap-3 items-center my-2">
                           <IndianRupee className="h-5 w-5" />
-                          <p className="text-gray-800 ">Total Paid : ₹ {item.eventTicketPrice.toFixed(2)}</p>
+                          <p className="text-gray-800 ">Total Paid : ₹ {item.eventTicketPrice.toFixed(2)} {item.eventTicketDiscount > 0 && (`(${item.eventTicketDiscount} discounted)`)}</p>
                         </div>
-                        {item.eventTicketDiscount > 0 && (
-                          <div className="flex gap-3 items-center my-2">
-                            <IndianRupee className="h-5 w-5" />
-                            <p className="text-gray-800 ">Total Discount : ₹ {item.eventTicketDiscount}</p>
-                          </div>
-                        )}
                       </div>
                     </div>
                     {renderStatusTitle(item)}
@@ -453,7 +448,7 @@ const MyEventsPage = () => {
                 ))}
             </div>
           ) : (
-            <div className="text-center py-12">
+            <div className="text-center py-15">
               <p className="text-gray-500">No bookings found.</p>
             </div>
           )}

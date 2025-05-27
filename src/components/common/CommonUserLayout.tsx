@@ -55,7 +55,7 @@ const CommonUserLayout : React.FC<CommonUserLayoutProps> = ( { role, children })
     <div>
       <Header activeLink={pathname} collapseSidebar={handleCollapse} toggleSidebar={toggleSidebar} isAdmiRole={adminRoleType} isStaffRole={organizerRoleType} />
       <Sidebar role={role} isOpen={isSidebarOpen} isCollase={collapseSidebar} onClose={closeSidebar} activeLink={pathname}>
-         <main className={`bg-gray-100 min-h-[calc(100vh-82px)] ${isSidebarOpen ? "hidden" : "block"}`}>
+         <main className={`flex flex-col justify-between bg-gray-100 min-h-[calc(100vh-82px)] ${isSidebarOpen ? "hidden" : "block"}`}>
             {children}
          </main>
       </Sidebar>
