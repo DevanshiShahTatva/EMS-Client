@@ -83,7 +83,7 @@ const FeedbackReviews = () => {
             View Details
         </Button>
         } />
-      <div className='p-6 min-h-[450px] w-full items-center'>
+      <div className='p-6 min-h-[450px] flex items-center justify-center'>
         {chartData.length ? (
           <div className="mb-6 justify-around">
             <DateRangeFilter
