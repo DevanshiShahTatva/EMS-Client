@@ -69,7 +69,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isEditFlag,eventId
       onClose();
       isEditFlag ? toast.success('Feedback updated successfully.'):toast.success('Feedback submitted successfully.')
     } else {
-      toast.error('Some error has occurred. Please try again later.')
+      result.message ? toast.error(result.message):toast.error('Some error has occurred. Please try again later.')
       setRating(0)
       setDescription('')
       onClose()
