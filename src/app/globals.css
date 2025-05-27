@@ -76,6 +76,7 @@
   --sidebar-accent-foreground: #8c8c8c; /* Replaced oklch with rgb */
   --sidebar-border: #bdbdbd; /* Replaced oklch with hex */
   --sidebar-ring: #bdbdbd; /* Replaced oklch with hex */
+  --fc-list-event-hover-bg-color: transparent;
 }
 
 .dark {
