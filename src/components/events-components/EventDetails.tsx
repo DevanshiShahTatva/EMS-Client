@@ -209,11 +209,11 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
           <EventDescription description={event.description} />
         </div>
         <div className="mt-8">
-          <div className='flex items-center justify-between mb-4'>
+          <div className='flex items-center justify-between align-start mb-4'>
             <h2 className="text-xl font-semibold text-gray-900">
               Location
             </h2>
-            <button className='text-l text-blue-600 hover:underline font-semibold cursor-pointer' onClick={()=>openMapDirection(event.location)}>
+            <button className='text-l text-blue-600 underline font-semibold cursor-pointer' onClick={()=>openMapDirection(event.location)}>
               Get Directions
             </button>
           </div>
