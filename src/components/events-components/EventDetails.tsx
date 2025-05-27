@@ -26,6 +26,7 @@ import BookingButton from './BookingButton'
 import GoogleMap from './GoogleMap'
 import ReviewsSection from './ReviewSection'
 import CustomButton from '../common/CustomButton'
+import EventDetailsSkeleton from './EventDetailsSkeleton'
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
@@ -53,7 +54,6 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
     if (result?.success && result.data?.length > 0) {
       setEventsDetails(result.data)
     }
-    setLoading(false)
   }
 
   const getEventDetail = async () => {
@@ -65,7 +65,6 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
     if (result?.success && result.data) {
       setEventDetail(result.data)
     }
-    setLoading(false)
   }
   const getEventFeedback=async()=>{
     const result = await apiCall({
@@ -75,20 +74,22 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
     if(result?.success && result.data){
       setFeedbackData(result.data)
     }
-    setLoading(false)
   }
   useEffect(() => {
     if (eventId) {
       fetchEvents();
       getEventDetail();
       getEventFeedback();
+      setTimeout(()=>setLoading(false),2000);
     }
   }, [eventId])
 
-  if (!event || !eventId) {
+  if(loading){
+    return <EventDetailsSkeleton/>
+  }
+  if (!event) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        {loading && <Loader />}
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             Event not found
@@ -108,12 +109,10 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
       </div>
     )
   }
-
   const similarEvents = getSimilarEvents(eventsDetails, eventId)
   const {status,color} = getAllTicketStatus(event.tickets);
   return (
     <div className="min-h-screen bg-gray-50">
-      {loading && <Loader />}
       <header className="bg-white shadow">
         <div className="mx-auto py-6 px-4 sm:px-6 lg:px-8 flex items-center">
           <button
@@ -211,10 +210,10 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
         </div>
         <div className="mt-8">
           <div className='flex items-center justify-between mb-4'>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-xl font-semibold text-gray-900">
               Location
             </h2>
-            <button className='text-sm text-blue-600 hover:underline font-medium cursor-pointer' onClick={()=>openMapDirection(event.location)}>
+            <button className='text-l text-blue-600 hover:underline font-semibold cursor-pointer' onClick={()=>openMapDirection(event.location)}>
               Get Directions
             </button>
           </div>

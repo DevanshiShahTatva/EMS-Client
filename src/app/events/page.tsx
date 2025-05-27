@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { FilterOptions } from '@/components/events-components/FilterOptions'
 import { FeaturedEvent } from '@/components/events-components/FeaturedEvent'
 import { EventList } from '@/components/events-components/EventList'
+import EventListSkeleton from '@/components/events-components/EventListSkeleton'
 import Loader from '@/components/common/Loader'
 import FilterModal from '@/components/common/FilterModal'
 import SearchInput from '@/components/common/CommonSearchBar'
@@ -137,7 +138,6 @@ const EventsPage: React.FC = () => {
           setLoading(false)
         } else {
            setEvents([])
-           setLoading(false)
         }
   }
 
@@ -189,6 +189,7 @@ const EventsPage: React.FC = () => {
   useEffect(()=>{
     getCategories()
     fetchEvents(); 
+    setTimeout(()=>setLoading(false),2000);
   },[])
   const filteredEvents = events
   .filter((event) =>
@@ -206,13 +207,14 @@ const EventsPage: React.FC = () => {
     }
     return 0
   })
-
+  if(loading){
+    return <EventListSkeleton/>
+  }
   const featuredEvent = filteredEvents.filter(event => event.isFeatured && event.status!=="ended");
   const regularEvents = filteredEvents;
   return (
     
     <div className="mx-auto p-10">
-       {loading && <Loader />}
       <h1 className="text-3xl font-bold mb-6">Discover Events</h1>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 
@@ -255,7 +257,7 @@ const EventsPage: React.FC = () => {
 
       </div>
 
-      {(featuredEvent.length>0 && searchQuery==="") && (
+      {(featuredEvent.length>0 && searchQuery==="" && appliedFiltersArray.length===0) && (
         <div className="mb-8 mt-6">
           <h2 className="text-xl font-semibold mb-4">Featured Event Near you</h2>
           <FeaturedEvent event={featuredEvent} likeEvent={likeEvent} />
