@@ -201,6 +201,8 @@ export type EventDataObjResponse = {
     numberOfPoint: number;
     likesCount:number;
     __v?: number;
+    averageRating:number;
+    totalFeedbacks:number;
 };
 
 export type EventResponse = EventDataObjResponse[];

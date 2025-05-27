@@ -128,6 +128,8 @@ export interface EventDetails {
   likesCount: number
   userPoints: number;
   conversionRate: number;
+  averageRating:number;
+  totalFeedbacks:number;
 }
 
 
