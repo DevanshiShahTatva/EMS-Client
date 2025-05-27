@@ -14,8 +14,9 @@ interface FeedbackModalProps {
   eventId: string
   isOpen: boolean
   onClose: () => void
-  isEditFlag:boolean
-  feedback:FeedbackDetails
+  isEditFlag: boolean
+  feedback: FeedbackDetails
+  onSubmitAfter?: () => void
 }
 
 interface ValidationErrors {
@@ -31,7 +32,7 @@ const emojiMap = {
 }
 
 
-export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isEditFlag,eventId, isOpen, onClose,feedback }) => {
+export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isEditFlag, eventId, isOpen, onClose, feedback, onSubmitAfter }) => {
   const [rating, setRating] = useState(0)
   const [description, setDescription] = useState('')
   const [errors, setErrors] = useState<ValidationErrors>({})
@@ -67,7 +68,14 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isEditFlag,eventId
       setRating(0)
       setDescription('')
       onClose();
-      isEditFlag ? toast.success('Feedback updated successfully.'):toast.success('Feedback submitted successfully.')
+      if (onSubmitAfter) {
+        onSubmitAfter()
+      }
+      if (isEditFlag) {
+        toast.success('Feedback updated successfully.')
+      } else {
+        toast.success('Feedback submitted successfully.')
+      }
     } else {
       toast.error('Some error has occurred. Please try again later.')
       setRating(0)
