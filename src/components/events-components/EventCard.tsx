@@ -115,8 +115,8 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         {event.isSoldOut ? 
           <CustomButton
              variant='disabled'
-             disabled
-             className='w-full font-medium'
+             className='w-full font-medium cursor-pointer'
+             onClick={()=>navigateToEventDetails(event.id)}
           >
              Sold out
           </CustomButton>

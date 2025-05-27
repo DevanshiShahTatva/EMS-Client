@@ -29,6 +29,7 @@ import moment from 'moment'
 // Icons & Images
 import { FunnelIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from "@heroicons/react/24/solid";
+import EventListSkeleton from '@/components/events-components/EventListSkeleton'
 
 
 const EventsPage: React.FC = () => {
@@ -130,10 +131,8 @@ const EventsPage: React.FC = () => {
   
           setEvents(modifiedArray)
           setAllEvents(modifiedArray)
-          setLoading(false)
         } else {
            setEvents([])
-           setLoading(false)
         }
   }
 
@@ -161,6 +160,7 @@ const EventsPage: React.FC = () => {
   useEffect(()=>{
     getCategories()
     fetchEvents(); 
+    setTimeout(()=>setLoading(false),2000);
   },[])
   const filteredEvents = events
   .filter((event) =>
@@ -178,13 +178,14 @@ const EventsPage: React.FC = () => {
     }
     return 0
   })
-
+  if(loading){
+    return <EventListSkeleton/>
+  }
   const featuredEvent = filteredEvents.filter(event => event.isFeatured && event.status!=="ended");
   const regularEvents = filteredEvents;
   return (
     
     <div className="mx-auto p-10">
-       {loading && <Loader />}
       <h1 className="text-3xl font-bold mb-6">Discover Events</h1>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 
@@ -227,14 +228,16 @@ const EventsPage: React.FC = () => {
 
       </div>
 
-      {(featuredEvent.length>0 && searchQuery==="") && (
+      {(featuredEvent.length>0 && searchQuery==="" && appliedFiltersArray.length===0) && (
         <div className="mb-8 mt-6">
           <h2 className="text-xl font-semibold mb-4">Featured Event Near you</h2>
           <FeaturedEvent event={featuredEvent} />
         </div>
       )}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Explore All Events</h2>
+        { searchQuery==="" && appliedFiltersArray.length===0 && (
+          <h2 className="text-xl font-semibold mb-4">Explore All Events</h2>
+        ) }
         <EventList events={regularEvents} />
       </div>
 

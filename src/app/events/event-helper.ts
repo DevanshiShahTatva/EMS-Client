@@ -462,7 +462,7 @@ export const getFilteredEventsData = (events : EventData[], filterValues : IAppl
 }
 
 export const hasEventEnded = (endDateTime: string | Date): boolean => {
-  const endDate = new Date(endDateTime)
-  endDate.setDate(endDate.getDate() + 1)
-  return endDate.getTime() < new Date().getTime()
+  const endDate = new Date(endDateTime).getTime();
+  const todaysDate = new Date().getTime();
+  return endDate < todaysDate
 }
