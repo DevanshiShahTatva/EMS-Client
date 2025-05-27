@@ -146,6 +146,7 @@ const MyEventsPage = () => {
           bookingStatus: item.bookingStatus,
           cancelledAt: item.cancelledAt,
           isAttended: item.isAttended,
+          eventId:item.event._id,
         };
       });
 
@@ -218,7 +219,7 @@ const MyEventsPage = () => {
             Hope you enjoyed this Event. Please give your{" "}
             <span
               className="text-blue-500 cursor-pointer hover:underline"
-              onClick={() => setFeedbackEvent(event.id)}
+              onClick={() => setFeedbackEvent(event.eventId)}
             >
               Feedback
             </span>{" "}
