@@ -258,8 +258,8 @@ export const PAGINATION_OPTIONS = [
 ];
 
 export const LOCATION_OPTIONS = [
-  { value: "5", label: '0 km - 5 km' },
-  { value: "10", label: '5 km - 10 km' },
+  { value: "5", label: 'upto 5 km' },
+  { value: "10", label: 'upto 10 km' },
   { value: "25", label: 'upto 25 km' },
   { value: "50", label: 'upto 50 km' },
 ];

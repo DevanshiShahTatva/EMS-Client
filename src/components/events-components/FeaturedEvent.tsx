@@ -1,5 +1,9 @@
 'use client'
 import React, { useEffect, useState, useRef } from 'react'
+
+import { useRouter } from 'next/navigation'
+
+// Library
 import {
   HeartIcon,
   CalendarIcon,
@@ -8,29 +12,26 @@ import {
   ChevronRight,
   MapPin,
 } from 'lucide-react'
+
+// types
 import { EventData } from '../../app/events/types'
-import { API_ROUTES, ROUTES } from '@/utils/constant'
-import { apiCall } from '@/utils/services/request'
-import { useRouter } from 'next/navigation'
-import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
-import { toast } from 'react-toastify'
+
+// constants
+import { ROUTES } from '@/utils/constant'
+
+// custom components
 import CategoryChip from './CategoryChip'
 import CustomButton from '../common/CustomButton'
 interface FeaturedEventProps {
   event: EventData[]
+  likeEvent : (id : string) => void
 }
 
-export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
-  const [likedEvents, setLikedEvents] = useState<{ [key: string]: boolean }>({})
+export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event, likeEvent }) => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const router = useRouter();
    
-  useEffect(() => {
-    const initialLikes = Object.fromEntries(event.map(e => [e.id, e.isLiked]))
-    setLikedEvents(initialLikes)
-  }, [event])
-
   useEffect(() => {
     if (event.length <= 1) return
 
@@ -42,24 +43,6 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
   }, [event.length])
-
-const handleLikeEvent = async (eventId: string) => {
-  const likeCheck = event.findIndex((ev)=>ev.id==eventId);
-  if(!event[likeCheck].isLiked)
-    toast.success("Liked an Event!");
-   else 
-    toast.error("Disliked an Event!");
-   const response = await apiCall({
-      endPoint: API_ROUTES.ADMIN.GET_EVENTS+`/${eventId}/like`,
-      method: "POST",
-    });
-    if (response.success) {
-      setLikedEvents(prev => ({
-        ...prev,
-        [eventId]: !prev[eventId],
-      }))
-    }
-  }
 
   const statusColors = {
     ongoing: 'bg-yellow-100 text-yellow-800',
@@ -109,12 +92,12 @@ const handleLikeEvent = async (eventId: string) => {
                       className="w-full h-48 md:h-full object-cover"
                     />
                     <button
-                      onClick={() => handleLikeEvent(ev.id)}
+                      onClick={() => likeEvent(ev.id)}
                       className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md cursor-pointer"
                     >
                       <HeartIcon
                         className={`h-6 w-6 ${
-                          likedEvents[ev.id]
+                          ev.isLiked
                             ? 'fill-red-500 text-red-500'
                             : 'text-gray-400'
                         }`}
