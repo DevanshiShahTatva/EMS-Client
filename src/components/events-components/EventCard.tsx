@@ -37,13 +37,13 @@ export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
 
   const decodedHTML = useMemo(()=>he.decode(event.description),[event.description]);
   return (
-<div className="bg-white rounded-xl shadow-md border border-gray-200 flex flex-col h-full">
-  <div className="relative overflow-hidden rounded-t-xl group">
-  <img
-    src={event.image}
-    alt={event.title}
-    className="w-full h-50 object-cover rounded-t-xl transform transition-transform duration-300 ease-in-out group-hover:scale-[1.03]"
-  />
+    <div className="bg-white rounded-xl shadow-md border border-gray-200 flex flex-col h-full">
+      <div className="relative overflow-hidden rounded-t-xl group">
+        <img
+          src={event.image}
+          alt={event.title}
+          className="w-full h-50 object-cover rounded-t-xl transform transition-transform duration-300 ease-in-out group-hover:scale-[1.03]"
+        />
         <button
           onClick={() => likeEvent(event.id)}
           className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-sm cursor-pointer"
@@ -52,10 +52,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
             className={`h-5 w-5 ${event.isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
           />
         </button>
-      <div className="absolute top-3 left-3">
-        <CategoryChip {...event.category} bgColor="#fff" />
+        <div className="absolute top-3 left-3">
+          <CategoryChip {...event.category} bgColor="#fff" />
+        </div>
       </div>
-    </div>
       <div className="p-4 flex flex-col flex-grow">
         <div className="flex items-start justify-between mb-2">
           <h3 className="text-lg font-semibold line-clamp-1">{event.title}</h3>
