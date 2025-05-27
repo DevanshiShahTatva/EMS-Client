@@ -101,7 +101,7 @@ export const ProfileInfoSchema = Yup.object({
   address: Yup.string().required("Street Address is required"),
   zipcode: Yup.string()
     .required("Zip Code is required")
-    .matches(/^[A-Za-z0-9\s\-]{3,10}$/, "Invalid zip code format. Use 3–10 characters: letters, numbers, spaces, or hyphens")
+    .matches(/^[A-Za-z0-9\s\-]{3,10}$/, "Invalid zip code format. \nUse 3–10 characters with letters, numbers, spaces or hyphens")
     .trim(),
   country: Yup.string().required("Country is required"),
   state: Yup.string().required("State is required"),
