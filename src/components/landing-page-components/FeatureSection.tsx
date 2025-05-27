@@ -1,6 +1,7 @@
 import React from "react";
 
 import { MapPinned, Ticket, PartyPopper, CircleArrowRight } from "lucide-react";
+import { ROUTES } from "@/utils/constant";
 
 const FEATURES_DATA = [
   {
@@ -8,7 +9,7 @@ const FEATURES_DATA = [
     title: "Discovery & Exploration",
     description:
       "Explore local and national events tailored to your interests — sports, music, culture, and more. Never miss out on trending events. Discover what’s coming up next near you.",
-    link: "#",
+    link: ROUTES.USER_EVENTS,
     hoverBg: "hover:bg-green-100",
     hoverTitleColor: "group-hover:text-green-600",
   },
@@ -17,7 +18,7 @@ const FEATURES_DATA = [
     title: "Personal Touch",
     description:
       "Explore events that match your vibe — from peaceful retreats to high-energy concerts. Find and attend events that turn ordinary days into unforgettable experiences.",
-    link: "#",
+    link: ROUTES.CONTACT_US,
     hoverBg: "hover:bg-red-100",
     hoverTitleColor: "group-hover:text-red-600",
   },
@@ -26,7 +27,7 @@ const FEATURES_DATA = [
     title: "Simplicity & Convenience",
     description:
       "Say goodbye to FOMO — we make it easy to find and attend events that matter to you. From discovery to ticketing, manage your entire event experience effortlessly.",
-    link: "#",
+    link: ROUTES.USER_PROFILE,
     hoverBg: "hover:bg-blue-100",
     hoverTitleColor: "group-hover:text-blue-600",
   },
@@ -62,7 +63,7 @@ const FeatureSection = () => {
                 </div>
 
                 <div className="mt-6">
-                  <a className="flex items-center text-blue-600 font-medium hover:underline cursor-pointer">
+                  <a className="flex items-center text-blue-600 font-medium hover:underline cursor-pointer" href={feature.link}>
                     Learn more
                     <CircleArrowRight className="w-5 h-5 ml-2 text-blue-600 transition-transform group-hover:translate-x-1" />
                   </a>
