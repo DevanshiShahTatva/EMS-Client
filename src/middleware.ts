@@ -6,7 +6,7 @@ const adminDefaultRoute = ROUTES.ADMIN.DASHBOARD;
 const userDefaultRoute = ROUTES.USER_EVENTS;
 const organizerDefaultRoute = ROUTES.ORGANIZER.DASHBOARD;
 
-const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP,ROUTES.FORGOT_PASSWORD,ROUTES.RESET_PASSWORD];
+const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP, ROUTES.FORGOT_PASSWORD, ROUTES.RESET_PASSWORD];
 const organizerRoutes = [ROUTES.ORGANIZER.VERIFY_TICKETS, ROUTES.ORGANIZER.DASHBOARD];
 
 const adminRoutes = [
@@ -54,7 +54,7 @@ export async function middleware(request: NextRequest) {
         const roleRoutes: Record<string, string[]> = {
             [ROLE.Admin]: adminRoutes,
             [ROLE.User]: userRoutes,
-            [ROLE.Organizer] : organizerRoutes
+            [ROLE.Organizer]: organizerRoutes
         };
 
         const defaultRoutes: Record<string, string> = {
@@ -67,7 +67,6 @@ export async function middleware(request: NextRequest) {
         const defaultRedirect = defaultRoutes[userRole] || "/";
 
         if (isPublicRoute) {
-          
             return NextResponse.redirect(new URL(defaultRedirect, request.url));
         }
 
@@ -85,11 +84,14 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
+        // PUBLIC ROUTE
+        "/login",
+        "/sign-up",
+        "/forgot-password",
+        "/reset-password",
+        // OTHER
         "/events",
         "/admin/:path*",
         "/user/:path*",
-        "/login",
-        "/forgot-password",
-        "/reset-password"
     ],
 };

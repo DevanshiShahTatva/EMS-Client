@@ -58,7 +58,7 @@ export const FilterOptions: React.FC<FilterOptionsProps> = ({
     <div ref={dropdownRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-max items-center space-x-2 px-4 py-3 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+        className="flex w-max items-center cursor-pointer space-x-2 px-4 py-3 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
       >
         <SlidersIcon className="h-4 w-4" />
         <span>{currentLabel}</span>
@@ -74,7 +74,7 @@ export const FilterOptions: React.FC<FilterOptionsProps> = ({
                   setSortOption(option.value as SortOption)
                   setIsOpen(false)
                 }}
-                className={`block w-full text-left px-4 py-2 text-sm ${sortOption === option.value ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'}`}
+                className={`block cursor-pointer w-full text-left px-4 py-2 text-sm ${sortOption === option.value ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'}`}
               >
                 {option.label}
               </button>

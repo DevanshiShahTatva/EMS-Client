@@ -91,6 +91,7 @@ export interface IEventsState {
     bookingStatus: string,
     cancelledAt: Date,
     isAttended: boolean;
+    eventId:string;
 }
 
 export type SortOption = 'none' | 'date-asc' | 'date-desc' | 'title-asc' | 'title-desc';

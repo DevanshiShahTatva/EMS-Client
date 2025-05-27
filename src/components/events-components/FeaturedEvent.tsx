@@ -1,5 +1,9 @@
 'use client'
 import React, { useEffect, useState, useRef } from 'react'
+
+import { useRouter } from 'next/navigation'
+
+// Library
 import {
   CalendarIcon,
   TagIcon,
@@ -7,12 +11,15 @@ import {
   ChevronRight,
   MapPin,
 } from 'lucide-react'
-import { EventData } from '../../app/events/types'
-import { ROUTES } from '@/utils/constant'
-import { useRouter } from 'next/navigation'
 
+// types
+import { EventData } from '../../app/events/types'
+
+// constants
+import { ROUTES } from '@/utils/constant'
 interface FeaturedEventProps {
   event: EventData[]
+  likeEvent : (id : string) => void
 }
 
 export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {

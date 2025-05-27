@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 // Third-Party Libraries
 import { toast } from "react-toastify";
 import { CurrencyRupeeIcon, AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
+import Image from 'next/image'
 
 // Custom Components
 import CustomTextField from "@/components/admin-components/InputField";
@@ -126,13 +127,15 @@ const PointConfiguration = () => {
             <p className="text-xl font-bold tracking-tight flex-grow text-left">
               Point Configuration
             </p>
-            <span
+            <Image
+              src={"/assets/downArrowIcon.svg"}
+              alt="logo"
+              width={24}
+              height={24}
               className={`transform transition-transform duration-300 ${
                 openStates[0] ? "rotate-180" : ""
               }`}
-            >
-              ▼
-            </span>
+            />
           </button>
 
           {openStates[0] && (
@@ -183,13 +186,15 @@ const PointConfiguration = () => {
             <p className="text-xl font-bold tracking-tight flex-grow text-left">
               Admin Charge
             </p>
-            <span
+            <Image
+              src={"/assets/downArrowIcon.svg"}
+              alt="logo"
+              width={24}
+              height={24}
               className={`transform transition-transform duration-300 ${
                 openStates[1] ? "rotate-180" : ""
               }`}
-            >
-              ▼
-            </span>
+            />
           </button>
 
           {openStates[1] && (
@@ -209,7 +214,7 @@ const PointConfiguration = () => {
                     name="setChargeVal"
                     type="text"
                     errorMsg={
-                      charge===""
+                      charge === ""
                         ? "Please enter a percentage"
                         : +charge < 0 || +charge > MAX_CHARGE_VALUE
                         ? `Percentage must be between 0 and ${MAX_CHARGE_VALUE}`

@@ -68,7 +68,7 @@ const VoucherItem = ({ voucher }: { voucher: IVoucher }) => {
   };
 
   return (
-    <div className={`flex rounded-lg border bg-white transition-transform duration-300 ${isExpired ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[104%]'}`}>
+    <div className={`flex rounded-lg border bg-white transition-transform duration-80 ${isExpired ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[104%]'}`}>
       <div className={`text-white w-13 flex items-center justify-center relative rounded-l-lg ${statusColor[status]}`}>
         <div className="text-md font-bold rotate-[-90deg] whitespace-nowrap tracking-wider">% DISCOUNT</div>
         {[22, 39, 56, 73].map((top, i) => (
@@ -79,7 +79,7 @@ const VoucherItem = ({ voucher }: { voucher: IVoucher }) => {
           />
         ))}
       </div>
-      <div className="p-4 flex-1 shadow-lg rounded-r-lg">
+      <div className="p-4 flex-1 rounded-r-lg hover:shadow-lg">
         <div className="flex items-center space-x-3">
           <svg width="25" height="25" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <circle cx="50" cy="50" r="50" fill={badgeColors[badgeType]}></circle>
