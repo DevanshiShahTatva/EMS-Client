@@ -35,7 +35,9 @@ export interface EventData {
     availableTicketStatus?: string,
     location?: string;
     lat? : number,
-    lng?: number
+    lng?: number,
+    averageRating:number,
+    totalFeedbacks:number,
 }
   
 export type EventLocation = {
@@ -86,6 +88,8 @@ export type EventDataObjResponse = {
   numberOfPoint: number;
   isLiked:boolean;
   likesCount:number;
+  averageRating:number;
+  totalFeedbacks:number;
 };
 
 export type EventResponse = EventDataObjResponse[];
@@ -139,6 +143,8 @@ export interface EventData {
   isLiked: boolean;
   status: EventStatus;
   isFeatured: boolean;
+  averageRating:number;
+  totalFeedbacks:number;
 }
 export interface EventsDataTypes {
   id: string
@@ -177,6 +183,8 @@ export interface EventDetails {
   likes: string[]
   isLiked: boolean
   likesCount: number
+  averageRating:number
+  totalFeedbacks:number
 }
 
 export interface FeedbackDetails {

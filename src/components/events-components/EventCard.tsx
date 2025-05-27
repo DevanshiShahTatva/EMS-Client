@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useMemo, useState } from 'react'
-import { HeartIcon, CalendarIcon, MapPin, TagIcon } from 'lucide-react'
+import { HeartIcon, CalendarIcon, MapPin, TagIcon, StarIcon } from 'lucide-react'
 import { EventData } from '../../app/events/types'
 import { useRouter } from 'next/navigation'
 import {  ROUTES } from '@/utils/constant';
@@ -86,9 +86,18 @@ export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
             <CalendarIcon className="h-4 w-4 mr-2" />
             <span className='font-bold'>{formattedDate}</span>
           </div>
-          <div className="flex items-center text-sm text-gray-500">
-            <TagIcon className="h-4 w-4 mr-2" />
-            <span className='font-bold'>{event.priceRange}</span>
+          <div className="flex items-center text-sm text-gray-500 justify-between mb-2">
+            <div className="flex items-center">
+              <TagIcon className="h-4 w-4 mr-2" />
+              <span className='font-bold'>{event.priceRange}</span>
+            </div>
+           { event.averageRating>0  ? <div className="flex items-center">
+              <span className="text-yellow-800 flex items-center">
+                <StarIcon className="text-yellow-500 h-4 w-4 mr-1" />
+                {event.averageRating} ({event.totalFeedbacks})
+              </span>
+            </div> : <></>
+            }
           </div>
         </div>
       </div>
