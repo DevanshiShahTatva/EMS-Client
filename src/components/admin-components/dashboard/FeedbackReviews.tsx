@@ -83,7 +83,7 @@ const FeedbackReviews = () => {
             View Details
         </Button>
         } />
-      <div className='p-6 min-h-[450px] flex items-center justify-center'>
+      <div className='p-6 min-h-[450px] w-full items-center'>
         {chartData.length ? (
           <div className="mb-6 justify-around">
             <DateRangeFilter
@@ -102,7 +102,9 @@ const FeedbackReviews = () => {
             <BarChart data={chartData} labels={chartLabels} symbolType="count" />
           </div>
         ) : (
-          <ChartFallbackUI handleRefresh={fetchData} />
+          <div className="min-h-[250px] h-[400px] md:h-[300px] w-full flex items-center justify-center">
+            <ChartFallbackUI handleRefresh={fetchData} />
+          </div>
         )}
       </div>
       <TableModal
