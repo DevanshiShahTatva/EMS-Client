@@ -37,7 +37,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
 
   const decodedHTML = useMemo(()=>he.decode(event.description),[event.description]);
   return (
-    <div className="bg-white rounded-xl shadow-md border border-gray-200 flex flex-col h-full">
+    <div className="bg-white hover:shadow-lg rounded-xl shadow-md border border-gray-200 flex flex-col h-full">
       <div className="relative overflow-hidden rounded-t-xl group">
         <img
           src={event.image}
@@ -93,15 +93,6 @@ export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
         </div>
       </div>
       <div className="px-4 pb-4">
-        {event.isSoldOut ? 
-          <CustomButton
-             variant='disabled'
-             className='w-full font-medium cursor-pointer'
-             onClick={()=>navigateToEventDetails(event.id)}
-          >
-             Sold out
-          </CustomButton>
-          :
           <CustomButton
              variant='primary'
              className='w-full font-medium'
@@ -109,8 +100,6 @@ export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
           >
              View details
           </CustomButton>
-      
-        }
       </div>
     </div>
   )

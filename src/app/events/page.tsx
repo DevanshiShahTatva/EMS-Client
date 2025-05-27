@@ -1,5 +1,5 @@
 'use client'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useRef } from 'react'
 
 // Custom components
 import { FilterOptions } from '@/components/events-components/FilterOptions'
@@ -12,7 +12,7 @@ import SearchInput from '@/components/common/CommonSearchBar'
 // Constant support
 import { API_ROUTES } from '@/utils/constant'
 import { getTicketPriceRange } from '../admin/event/helper'
-import { areAllTicketsBooked, convertFiltersToArray, getEventStatus, isNearbyWithUserLocation, removeFilterFromObject, getFilteredEventsData, getMaxTicketPrice } from './event-helper'
+import { areAllTicketsBooked, convertFiltersToArray, getEventStatus, isNearbyWithUserLocation, removeFilterFromObject, getFilteredEventsData, getMaxTicketPrice, getTicketAvailibilityStatus } from './event-helper'
 
 // Types support
 import { EventData, SortOption, EventResponse } from "./types";
@@ -43,6 +43,8 @@ const EventsPage: React.FC = () => {
   const [appliedFilters, setAppliedFilters] = useState<IApplyFiltersKey>({})
   const [appliedFiltersArray, setAppliedFiltersArray] = useState<LabelValue[]>([])
   const [categoriesOptions, setCategoriesOptions] = useState<{ id: string, label: string, value: string }[]>([])
+
+  const likeTimersRef = useRef<{ [key: string]: ReturnType<typeof setTimeout> }>({});
 
   const openFilterModal = () => setFilterModal(true)
 
@@ -125,7 +127,8 @@ const EventsPage: React.FC = () => {
               ),
               ticketsArray: item.tickets,
               lat: item.location.lat,
-              lng : item.location.lng
+              lng : item.location.lng,
+              availableTicketStatus: getTicketAvailibilityStatus(item.tickets)
             }
            }))
   
@@ -140,28 +143,43 @@ const EventsPage: React.FC = () => {
         }
   }
 
-  const likeEvent = async (id: string) => {
-    setLoading(true);
-    try {
-      const response = await apiCall({
-        endPoint: API_ROUTES.ADMIN.GET_EVENTS + `/${id}/like`,
-        method: "POST",
-      });
+  const likeEvent = (id: string) => {
 
-      if (response && response.success) {
-        const isliked = events.find(item => item.id === id)?.isLiked
-        if (isliked) {
-          toast.error("Disliked the Event!");
-        } else {
-          toast.success("Liked the Event!")
-        }
-        await fetchEvents()
-      }
-    } catch (err) {
-      console.error('Error fetching data', err);
-    } finally {
-      setLoading(false);
+    // 1. Optimistically update local event state
+    setEvents((prevEvents) => {
+      return prevEvents.map((event) =>
+        event.id === id ? { ...event, isLiked: !event.isLiked } : event
+      );
+    });
+
+    // 2. Get the new isLiked value for toast
+    const isNowLiked = !events.find((e) => e.id === id)?.isLiked;
+    if (isNowLiked) {
+      toast.success('Liked the Event!');
+    } else {
+      toast.error('Disliked the Event!');
     }
+
+    // 3. Clear any existing timeout for this event ID
+    if (likeTimersRef.current[id]) {
+      clearTimeout(likeTimersRef.current[id]);
+    }
+
+    // 4. Set new timeout to debounce API call
+    likeTimersRef.current[id] = setTimeout(async () => {
+      try {
+        const response = await apiCall({
+          endPoint: `${API_ROUTES.ADMIN.GET_EVENTS}/${id}/like`,
+          method: 'POST',
+        });
+
+        if (response && response.success) {
+          await fetchEvents(); // Optional re-sync with backend
+        }
+      } catch (err) {
+        console.error('Error sending like API call:', err);
+      }
+    }, 500); // 1-second debounce
   };
 
   const getCategories = useCallback(async () => {
@@ -211,9 +229,10 @@ const EventsPage: React.FC = () => {
   }
   const featuredEvent = filteredEvents.filter(event => event.isFeatured && event.status!=="ended");
   const regularEvents = filteredEvents;
+
   return (
     
-    <div className="mx-auto p-10">
+    <div className="mx-auto w-full p-10">
       <h1 className="text-3xl font-bold mb-6">Discover Events</h1>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 
@@ -263,7 +282,7 @@ const EventsPage: React.FC = () => {
         </div>
       )}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Explore All Events</h2>
+        <h2 className="text-xl font-semibold mb-4">{events.length > 0 ? "Explore All Events" : "" }</h2>
         <EventList events={regularEvents} likeEvent={likeEvent} />
       </div>
 
