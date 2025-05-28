@@ -11,6 +11,9 @@ import SearchInput from '@/components/common/CommonSearchBar'
 import DataTable from '@/components/common/DataTable'
 import FilterModal from '@/components/admin-components/FilterUserModal'
 import CustomButton from '@/components/common/CustomButton'
+import AddBulkUserModal from '@/components/admin-components/AddBulkUserModal'
+import AddSingleUserModal from '@/components/admin-components/AddSingleUserModal'
+import ModalLayout from '@/components/common/CommonModalLayout'
 
 // Constant
 import { API_ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant'
@@ -31,9 +34,7 @@ import { getFilteredData, getMaxPoints } from './helper'
 
 // icons
 import { FunnelIcon } from "@heroicons/react/24/outline"
-import { DownloadIcon } from 'lucide-react'
-
-
+import { DownloadIcon, FilePlus2, UserPlus } from 'lucide-react'
 
 
 const UsersPage = () => {
@@ -46,6 +47,60 @@ const UsersPage = () => {
     const [filterModal, setFilterModal] = useState(false)
     const [filterValues, setFilterValues] = useState<IApplyUserFiltersKey>({})
     const [appliedFiltersCount, setAppliedFiltersCount] = useState(0)
+
+    const [typeModal, setTypeModal] = useState(false)
+    const [bulkModal, setBulkModal] = useState(false)
+    const [singleModal, setSingleModal] = useState(false)
+    const [activeUserCard, setActiveUserCard] = useState<"" | "bulk" | "single">("")
+
+
+    const USER_SELECTION_CARD = [
+        {
+            title: "Upload Users",
+            description: "Bulk upload users using a CSV file.",
+            icon: <FilePlus2 className="h-9 w-9 text-blue-500" />,
+            key: "bulk"
+        },
+        {
+            title: "Single User",
+            description: "Manually add a single user.",
+            icon: <UserPlus className="h-9 w-9 text-blue-500" />,
+            key: "single"
+        },
+    ];
+
+    const handleCardClick = (selectedCard: "bulk" | "single") => {
+        selectedCard === "bulk" ? openBulkModal() : openSingleModal()
+        setActiveUserCard(selectedCard)
+       setTypeModal(false)
+    }
+
+    const openTypeModal = () => {
+        setTypeModal(true)
+    }
+
+    const closeTypeModal = () => {
+        setTypeModal(false)
+        setActiveUserCard("")
+    }
+
+    const openBulkModal = () => {
+        setBulkModal(true)
+    }
+
+    const closeBulkModal = () => {
+        setBulkModal(false)
+        openTypeModal()
+    }
+
+    const openSingleModal = () => {
+        setSingleModal(true)
+    }
+
+    const closeSingleModal = () => {
+        setSingleModal(false)
+        openTypeModal()
+    }
 
     const openFilterModal = () => {
         setFilterModal(true)
@@ -241,10 +296,15 @@ const UsersPage = () => {
                   </div>
                 </div>
               </div>
+
+              <div className='text-end'>
+                <CustomButton variant='outlined' onClick={openTypeModal}>
+                    Add new user
+                </CustomButton>
+              </div>
               
 
               {/* Data Table with pagination */}
-
               <DataTable
                 loading={loading}
                 data={usersData}
@@ -253,6 +313,48 @@ const UsersPage = () => {
               />
 
         </ChartCard>
+
+          {/* Modal type selection */}
+          {typeModal &&
+              <ModalLayout
+                  modalTitle='Add New Users'
+                  onClose={closeTypeModal}
+              >
+                  <div className='my-5 w-full'>
+                      <label className="block text-sm font-semibold text-gray-500 mb-1">
+                          Select one option*
+                      </label>
+
+                      <div className="flex flex-col sm:flex-row gap-4 p-4">
+                          {USER_SELECTION_CARD.map((opt, idx) => (
+                              <div
+                                  key={idx}
+                                  className={`flex flex-col items-center gap-4 p-4 cursor-pointer rounded-xl border ${activeUserCard === opt.key ? "border-blue-500" : "border-gray-200"} shadow-sm hover:shadow-lg hover:border-blue-500 transition-all duration-200 bg-white w-full sm:w-1/2`}
+                                  onClick={() => handleCardClick(opt.key as "bulk" | "single")}
+                              >
+                                  <div className="mt-1">{opt.icon}</div>
+                                  <div>
+                                      <h3 className="text-lg text-center font-semibold text-gray-800">{opt.title}</h3>
+                                      <p className="text-sm text-center text-gray-500">{opt.description}</p>
+                                  </div>
+                              </div>
+                          ))}
+                      </div>
+                  </div>
+              </ModalLayout>
+          }
+
+        {/* Bulk User Modal */}
+        <AddBulkUserModal
+            isOpen={bulkModal}
+            onClose={closeBulkModal}
+        />
+
+        {/* Single User Modal */}
+        <AddSingleUserModal
+            isOpen={singleModal}
+            onClose={closeSingleModal}
+        />
 
           {/* Filter Popup */}
           <FilterModal
