@@ -62,7 +62,7 @@ const FormikTextField: React.FC<FormikTextFieldProps> = ({
             <ErrorMessage
                 name={name}
                 component="div"
-                className="text-red-500 text-sm mt-1"
+                className="text-red-500 text-sm mt-1 whitespace-pre-line"
             />
         </div>
     );

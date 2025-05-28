@@ -114,7 +114,7 @@ const FAQForm : React.FC = () => {
                                                       onClick={() => push({ question: '', answer: '' })}
                                                       className="underline text-blue-500 font-bold cursor-pointer"
                                                   >
-                                                      Add Field
+                                                      Add Question
                                                   </button> : <button
                                                       type="button"
                                                       onClick={() => remove(index)}
