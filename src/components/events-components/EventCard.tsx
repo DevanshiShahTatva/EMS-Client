@@ -94,7 +94,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
            { event.averageRating>0  ? <div className="flex items-center">
               <span className="text-yellow-800 flex items-center">
                 <StarIcon className="text-yellow-500 h-4 w-4 mr-1" />
-                {event.averageRating} ({event.totalFeedbacks})
+                {event.averageRating}
               </span>
             </div> : <></>
             }
