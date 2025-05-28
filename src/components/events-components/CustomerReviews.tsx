@@ -86,7 +86,7 @@ const CustomerReviews = ({ feedbacks, eventName }: { eventName: string; feedback
               <span className="text-gray-600 w-4">{stars}</span>
               <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
                 <div
-                  className="bg-indigo-600 h-full"
+                  className="bg-blue-500 h-full"
                   style={{ width: `${percent}%` }}
                 />
               </div>
