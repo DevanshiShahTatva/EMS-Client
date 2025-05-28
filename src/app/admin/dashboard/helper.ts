@@ -36,6 +36,7 @@ export const DASHBOARD_TITLE = {
     FEEDBACK_OVERVIEW_TOOLTIP:"Feedbacks analysis whether they have been increased or descreased from last time",
     FEEDBACK_ALL_DETAILS:"Feedback details",
     FEEDBACK_ALL_DETAILS_TOOLTIP:"Analysis of the feedbacks given throughout each event and number of positive and negative feedbacks",
+    FEEDBACK_ALL_REVIEW:"Avg. Feedback rating details by Events"
 }
 
 export const LikeTableColumns = [

@@ -282,7 +282,10 @@ const EventsPage: React.FC = () => {
         </div>
       )}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">{events.length > 0 ? "Explore All Events" : "" }</h2>
+       { 
+        (searchQuery==="" && appliedFiltersArray.length===0) &&
+        <h2 className="text-xl font-semibold mb-4">Explore All Events</h2>
+       }
         <EventList events={regularEvents} likeEvent={likeEvent} />
       </div>
 

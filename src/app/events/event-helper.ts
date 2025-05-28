@@ -53,7 +53,7 @@ export const getUserLocation = (userLat: number, userLng: number, targetLat: num
     targetLng: number,
     top3Events: EventDataObjResponse[],
     currentEvent: EventDataObjResponse,
-    radiusInKm: number = 5
+    radiusInKm: number = 25
   ): Promise<boolean> => {
     if (typeof window === "undefined" || !navigator.geolocation) {
       return false;
