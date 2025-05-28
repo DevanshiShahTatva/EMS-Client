@@ -29,7 +29,7 @@ const SimilarEvents: React.FC<SimilarEventsProps> = ({ events }) => {
                 <img
                   src={event.images[0].url}
                   alt={event.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full max-h-30 object-cover"
                 />
               </div>
               <div className="p-4 w-2/3">
