@@ -147,7 +147,7 @@ export default function MostBookedUsersTable() {
   }, [fetchUsers, loading, loadingSkeleton, users]);
 
   return (
-    <div className="mt-6 min-h-100 flex items-center">
+    <div className="pt-6">
       <Table>{tableContent}</Table>
     </div>
   );

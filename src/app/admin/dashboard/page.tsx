@@ -16,13 +16,13 @@ import TopCancelledTicketsByEvent from "@/components/admin-components/dashboard/
 import UserBadgeChart from "@/components/admin-components/dashboard/UserBadgeChart";
 import FeedbackReview from '@/components/admin-components/dashboard/FeedbackReviews';
 import EventFeedbackViewer from '@/components/admin-components/dashboard/EventFeedbackViewer';
+import FeedbackOverviewGraph from '@/components/admin-components/dashboard/FeedbackOverviewGraph';
 
 // Helper Functions
 import { DASHBOARD_TITLE } from './helper';
 
 // Library
 import 'leaflet/dist/leaflet.css';
-import FeedbackOverviewGraph from '@/components/admin-components/dashboard/FeedbackOverviewGraph';
 
 function DashboardPage() {
     return (

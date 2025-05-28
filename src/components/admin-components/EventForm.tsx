@@ -468,9 +468,9 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
     const startMoment = moment(startTime);
     const endMoment = moment(endTime);
 
-    if (!startMoment.isValid() || !endMoment.isValid()) return "Invalid date";
+    if (!startMoment.isValid() || !endMoment.isValid()) return "";
 
-    if (endMoment.isSameOrBefore(startMoment)) return "Invalid meeting timing";
+    if (endMoment.isSameOrBefore(startMoment)) return "";
 
     // Clone to avoid mutating the original moment
     const tempStart = startMoment.clone();
@@ -885,6 +885,9 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
               onChange={(val) => handleStartTimeChange(val)}
               errorKey={formValuesError.start_time}
               errorMsg="Enter valid event start time"
+              minDate={!isEditMode ? new Date() : formValues.start_time === null
+                ? new Date()
+                : formValues.start_time}
             />
           </div>
           <div className="md:col-span-6 col-span-12">

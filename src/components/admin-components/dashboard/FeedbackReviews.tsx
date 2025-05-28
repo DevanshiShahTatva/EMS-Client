@@ -113,7 +113,7 @@ const FeedbackReviews = () => {
           columns={LikeTableColumns}
           data={tableData}
           loading={tableLoading}
-          title={DASHBOARD_TITLE.LIKE_MODAL_TITLE}
+          title={DASHBOARD_TITLE.FEEDBACK_ALL_REVIEW}
           pagesize={5}
       />
     </div>
