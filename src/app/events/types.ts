@@ -193,7 +193,7 @@ export interface FeedbackUserInfo {
 export interface FeedbackItem {
   _id:string;
   rating: number;
-  description: number;
+  description: string;
   isEdited: boolean;
   createdAt: string;
   updatedAt: string;

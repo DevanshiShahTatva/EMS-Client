@@ -4,7 +4,9 @@ import {
   ArrowLeftIcon,
   CalendarIcon,
   ClockIcon,
+  HeartIcon,
   MapPinIcon,
+  StarIcon,
   TagIcon
 } from 'lucide-react'
 import ImageCarousel from '@/components/events-components/ImageCarousel'
@@ -26,6 +28,7 @@ import GoogleMap from './GoogleMap'
 import CustomButton from '../common/CustomButton'
 import EventDetailsSkeleton from './EventDetailsSkeleton'
 import CustomerReviews from './CustomerReviews'
+import CategoryChip from './CategoryChip'
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
@@ -129,12 +132,36 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
       </header>
       <main className="mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-          <div className="lg:col-span-2 lg:mb-0">
+          <div className="lg:col-span-2">
             <div
-              className="bg-white shadow rounded-lg overflow-hidden"
-              style={{ height: '380px' }}
-            >
-              <ImageCarousel images={event.images} />
+              className="bg-white shadow rounded-lg overflow-hidden">
+              <div className='h-[380px]'>
+                <ImageCarousel images={event.images} />
+              </div>
+              <div className='flex justify-between items-center px-4 py-3'>
+                  <CategoryChip {...event.category} />
+                    <div className='flex items-center space-x-1'>
+                      <div className='flex items-center'>
+                        <StarIcon className='w-5 h-5 text-yellow-400 fill-yellow-400'/>
+                        <span className="text-sm font-semibold text-yellow-800">
+                          {feedbackData?.averageRating ?? 0}/5
+                        </span>
+                      </div>
+                      <div className='flex items-center'>
+                        <button
+                          // onClick={() => likeEvent(event.id)}
+                          className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-sm cursor-pointer"
+                        >
+                          <HeartIcon
+                            className={`h-5 w-5 ${event.isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
+                          />
+                          <span className="text-sm font-semibold text-gray-800">
+                            {event.likesCount} Likes
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+              </div>
             </div>
           </div>
           <div className="lg:col-span-1 h-full">
