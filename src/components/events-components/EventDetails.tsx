@@ -245,7 +245,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
           {activeTab === "Reviews" && (
             <div>
               {feedbackData && feedbackData?.length !== 0
-                ? <CustomerReviews feedbacks={feedbackData} />
+                ? <CustomerReviews eventName={event.title} feedbacks={feedbackData} />
                 : <div className='py-20 flex justify-center'>No feedback available!</div>
               }
             </div>

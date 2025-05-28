@@ -8,7 +8,7 @@ const colorArr: Record<number, string> = {
   2: 'text-green-600 bg-green-100',
   3: 'text-orange-600 bg-orange-100',
   4: 'text-pink-600 bg-pink-100',
-  5: 'text-blue-600 bg-blue-100',
+  5: 'text-yellow-600 bg-yellow-100',
 }
 
 const labelArr: Record<number, string> = {
@@ -20,17 +20,31 @@ const labelArr: Record<number, string> = {
 }
 
 export const StarRating = ({ rating }: { rating: number }) => (
-  <div className="flex space-x-0.5">
-    {[1, 2, 3, 4, 5].map((star) => (
-      <StarIcon
-        key={star}
-        className={`w-4 h-4 ${star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 fill-gray-300'}`}
-      />
-    ))}
+  <div className="flex items-center space-x-0.5">
+    {[...Array(5)].map((_, index) => {
+      const starValue = index + 1;
+      const isFilled = starValue <= Math.floor(rating);
+      const isPartiallyFilled = starValue === Math.ceil(rating) && rating % 1 !== 0;
+      const fillPercentage = isPartiallyFilled ? Math.round((rating % 1) * 100) : 0;
+
+      return (
+        <div key={`${index + 1}`} className="relative w-4 h-4">
+          <StarIcon className="absolute w-4 h-4 text-gray-300 fill-gray-300" />
+          {isFilled && (
+            <StarIcon className="absolute w-4 h-4 text-yellow-400 fill-yellow-400" />
+          )}
+          {isPartiallyFilled && (
+            <div className="absolute overflow-hidden" style={{ width: `${fillPercentage}%` }}>
+              <StarIcon className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+            </div>
+          )}
+        </div>
+      );
+    })}
   </div>
 );
 
-const CustomerReviews = ({ feedbacks }: { feedbacks: FeedbackDetails[] }) => {
+const CustomerReviews = ({ feedbacks, eventName }: { eventName: string; feedbacks: FeedbackDetails[] }) => {
   const ratingDistribution: Record<number, number> = {
     5: feedbacks.filter((feedback) => feedback.rating === 5).length,
     4: feedbacks.filter((feedback) => feedback.rating === 4).length,
@@ -45,25 +59,25 @@ const CustomerReviews = ({ feedbacks }: { feedbacks: FeedbackDetails[] }) => {
   }
 
   const totalRating = feedbacks.reduce((sum, feedback) => sum + feedback.rating, 0);
-  const averageRating = (totalRating / feedbacks.length).toFixed(1);
+  const averageRating = (totalRating / feedbacks.length);
 
   const ratingData = [5, 4, 3, 2, 1].map((rating) => ({
     stars: rating,
-    percent: maxCount > 0 ? Math.round((ratingDistribution[rating] / maxCount) * 100) : 0
+    percent: maxCount > 0 ? Math.round((ratingDistribution[rating] / feedbacks.length) * 100) : 0
   }));
 
   return (
-    <div className='flex gap-10 mt-10'>
-      <div className="max-w-sm w-full border p-6 bg-white rounded-xl shadow-md">
+    <div className='flex gap-10 mt-10 flex-col md:flex-row'>
+      <div className="self-center max-w-sm w-full border p-6 bg-white rounded-xl shadow-md">
         <div className="flex flex-col items-center">
-          <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mb-3">
-            <img src="/icon.png" alt="icon" className="w-8 h-8" />
+          <div className="mb-3">
+            <img src='/review_icon.png' alt="icon" className="w-18 h-16" />
           </div>
           <p className="text-gray-600 text-sm">Customer reviews</p>
-          <p className="text-3xl font-semibold text-gray-900 mt-1">{averageRating}</p>
-          <p className="text-sm text-gray-400 mb-2">130 Reviews</p>
+          <p className="text-3xl font-bold text-gray-900 mt-1">{averageRating.toFixed(1)}</p>
+          <p className="text-sm text-gray-400 mb-2">{feedbacks.length}{feedbacks.length > 1 ? " Review" : " Reviews"}</p>
           <div>
-            <StarRating rating={4} />
+            <StarRating rating={averageRating} />
           </div>
         </div>
         <div className="mt-6 space-y-2">
@@ -72,7 +86,7 @@ const CustomerReviews = ({ feedbacks }: { feedbacks: FeedbackDetails[] }) => {
               <span className="text-gray-600 w-4">{stars}</span>
               <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
                 <div
-                  className="bg-purple-600 h-full"
+                  className="bg-indigo-600 h-full"
                   style={{ width: `${percent}%` }}
                 />
               </div>
@@ -87,7 +101,7 @@ const CustomerReviews = ({ feedbacks }: { feedbacks: FeedbackDetails[] }) => {
               <div key={`${i + 1}`} className="flex justify-between items-center">
                 <div className="flex items-center space-x-2">
                   <span className={`w-5 h-5 pt-0.5 rounded-full text-center text-xs font-semibold ${colorArr[aspect]}`}>
-                    {i + 1}
+                    {aspect}
                   </span>
                   <span className="text-gray-700">{labelArr[aspect]}</span>
                 </div>
@@ -99,7 +113,11 @@ const CustomerReviews = ({ feedbacks }: { feedbacks: FeedbackDetails[] }) => {
           </div>
         </div>
       </div>
-      <ReviewsRightSection reviews={feedbacks} />
+      <ReviewsRightSection
+        reviews={feedbacks}
+        eventName={eventName}
+        averageRating={averageRating.toFixed(1)}
+      />
     </div>
   )
 }
