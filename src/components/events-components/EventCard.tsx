@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useMemo, useState } from 'react'
-import { HeartIcon, CalendarIcon, MapPin, TagIcon, StarIcon } from 'lucide-react'
+import { HeartIcon, CalendarIcon, MapPin, TagIcon } from 'lucide-react'
 import { EventData } from '../../app/events/types'
 import { useRouter } from 'next/navigation'
 import {  ROUTES } from '@/utils/constant';

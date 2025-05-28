@@ -35,7 +35,7 @@ export interface EventData {
     availableTicketStatus?: string,
     location?: string;
     lat? : number,
-    lng?: number,
+    lng?: number
 }
   
 export type EventLocation = {
