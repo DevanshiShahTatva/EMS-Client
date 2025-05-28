@@ -10,7 +10,7 @@ import {
 import ImageCarousel from '@/components/events-components/ImageCarousel'
 import EventDescription from '@/components/events-components/EventDescription'
 import SimilarEvents from '@/components/events-components/SimilarEvents'
-import { EventDataObjResponse, EventDetails, FeedbackDetails } from '@/app/events/types'
+import { EventDataObjResponse, EventDetails, FeedbackDetails, FeedbackResponseData } from '@/app/events/types'
 import { onwardPriceRange } from '@/app/admin/event/helper'
 import {
   getAllTicketStatus,
@@ -32,7 +32,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [event, setEventDetail] = useState<EventDetails>()
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
-  const [feedbackData, setFeedbackData] = useState<FeedbackDetails[]>([])
+  const [feedbackData, setFeedbackData] = useState<FeedbackResponseData>()
   const [activeTab, setActiveTab] = useState<string>('Event details');
 
   useEffect(() => {
@@ -244,8 +244,8 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
           )}
           {activeTab === "Reviews" && (
             <div>
-              {feedbackData && feedbackData?.length !== 0
-                ? <CustomerReviews eventName={event.title} feedbacks={feedbackData} />
+              {feedbackData && feedbackData.allFeedbacks?.length !== 0
+                ? <CustomerReviews eventName={event.title} feedbacks={feedbackData.allFeedbacks} />
                 : <div className='py-20 flex justify-center'>No feedback available!</div>
               }
             </div>
