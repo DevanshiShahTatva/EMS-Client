@@ -48,7 +48,7 @@ const BookingByTicketType: React.FC = () => {
 
     return (
         <>
-            <div className='min-h-[450px] mt-6 flex items-center justify-center'>
+            <div className='min-h-[450px] flex items-center justify-center'>
                 <div>
                     {loading ?
                         <div className="w-full flex justify-center items-center flex-col">

@@ -19,7 +19,7 @@ const TermsTagModal: React.FC<TermsTagModalProps> = ({
     onSave,
     maxTags = 10,
     placeholder = 'Add a tag',
-    validationRegex = /^[a-zA-Z0-9\-_]+$/,
+    validationRegex = /^[a-zA-Z0-9\-_\s]+$/,
     loading
 }) => {
     const [tags, setTags] = useState<string[]>([]);
@@ -71,8 +71,11 @@ const TermsTagModal: React.FC<TermsTagModalProps> = ({
                     />
                 </div>
                 <div className="text-sm text-gray-500">
-                    <p>Press Enter to add a tag. {maxTags && `Maximum ${maxTags} tags allowed.`}</p>
-                    <p>Allowed characters: alphanumeric, dash (-), and underscore (_).</p>
+                    <ul className="list-disc list-inside">
+                        <li>Press Enter to add a tag.</li>
+                        {maxTags && <li>Maximum {maxTags} tags allowed.</li>}
+                        <li>Allowed characters: alphanumeric, dash (-), and underscore (_).</li>
+                    </ul>
                 </div>
             </div>
 
@@ -83,13 +86,13 @@ const TermsTagModal: React.FC<TermsTagModalProps> = ({
                 <div className="flex space-x-2 ml-auto">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
                     >
                         Cancel
                     </button>
                     <CommonAIButton
                         handleButtonClick={handleSave}
-                        isDisabled={!!error || !!loading}
+                        isDisabled={!!error || !!loading || !tags.length}
                         isSubmitting={loading}
                     />
 

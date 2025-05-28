@@ -108,7 +108,7 @@ const CancelTicketModal: React.FC<Props> = ({
                 </div>
                 <p className="text-red-700 text-xs mt-2">
                   *Refunds will be processed within 7-10 business days to your
-                  original payment method. Service fees may not be refundable.
+                  original payment method. Platform fees may not be refundable.
                 </p>
               </div>
             </div>

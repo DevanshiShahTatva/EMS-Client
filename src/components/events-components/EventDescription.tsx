@@ -1,5 +1,5 @@
 'use client'
-import React, { useState,useMemo } from 'react'
+import React, { useMemo } from 'react'
 import he from 'he';
 import "../../app/customDescription.css";
 interface EventDescriptionProps {
@@ -12,9 +12,9 @@ const EventDescription: React.FC<EventDescriptionProps> = ({
 }) => {
   const decodedHTML = useMemo(()=>he.decode(description),[description]);
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-lg font-medium text-gray-900">Description</h3>
+    <div className="bg-white rounded-lg pt-5">
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-xl font-semibold text-gray-900 mb-4">Description</h3>
       </div>
       <div
         className={`transition-all duration-300`}

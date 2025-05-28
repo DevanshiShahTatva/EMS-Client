@@ -24,12 +24,12 @@ const SimilarEvents: React.FC<SimilarEventsProps> = ({ events }) => {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {events.map((event) => (
           <Link href={`/events/${event._id}`} key={event._id} className="block">
-            <div className="bg-white overflow-hidden shadow rounded-lg transition-shadow hover:shadow-md flex cursor-pointer">
+            <div className="bg-white overflow-hidden border rounded-lg transition-shadow hover:shadow-md flex cursor-pointer">
               <div className="w-1/3">
                 <img
                   src={event.images[0].url}
                   alt={event.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full max-h-30 object-cover"
                 />
               </div>
               <div className="p-4 w-2/3">
