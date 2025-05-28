@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   ArrowLeftIcon,
   CalendarIcon,
@@ -19,6 +19,7 @@ import {
   getSimilarEvents,
   hasEventEnded,
   openMapDirection,
+  getLikesCount
 } from '@/app/events/event-helper'
 import { apiCall } from '@/utils/services/request'
 import { API_ROUTES } from '@/utils/constant'
@@ -29,6 +30,7 @@ import CustomButton from '../common/CustomButton'
 import EventDetailsSkeleton from './EventDetailsSkeleton'
 import CustomerReviews from './CustomerReviews'
 import CategoryChip from './CategoryChip'
+import { toast } from 'react-toastify'
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
@@ -37,7 +39,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const router = useRouter()
   const [feedbackData, setFeedbackData] = useState<FeedbackResponseData>()
   const [activeTab, setActiveTab] = useState<string>('Event details');
-
+  const likeTimersRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('eventId', eventId)
@@ -86,7 +88,37 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
       setTimeout(() => setLoading(false), 2000);
     }
   }, [eventId])
-
+    const likeEvent = (isLiked:boolean,id: string) => {
+      setEventDetail((prevEvent)=>{
+        if(!prevEvent) return event;
+        return {
+        ...prevEvent,
+        isLiked:!prevEvent.isLiked,
+        likesCount:!prevEvent.isLiked ? prevEvent.likesCount + 1 : prevEvent.likesCount - 1,
+        }
+      })
+      if(!isLiked){
+        toast.success('Liked the Event!');
+      } else {
+        toast.error('Disliked the Event!');
+      }   
+      if(likeTimersRef.current){
+        clearTimeout(likeTimersRef.current);
+      }     
+      likeTimersRef.current = setTimeout(async()=>{
+        try {
+          const response = await apiCall({
+            endPoint: `${API_ROUTES.ADMIN.GET_EVENTS}/${id}/like`,
+            method: 'POST',
+          });
+          if(response && response.success){
+            await getEventDetail();
+          }
+        } catch (err) {
+          console.error('Error sending like API call:', err);
+        }
+      },500)
+    };
   if (loading) {
     return <EventDetailsSkeleton />
   }
@@ -114,6 +146,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
   }
   const similarEvents = getSimilarEvents(eventsDetails, eventId)
   const { status, color } = getAllTicketStatus(event.tickets);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
@@ -141,7 +174,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
               <div className='flex justify-between items-center px-4 py-3'>
                   <CategoryChip {...event.category} />
                     <div className='flex items-center space-x-1'>
-                      <div className='flex items-center'>
+                      <div className='flex items-center space-x-1 p-1'>
                         <StarIcon className='w-5 h-5 text-yellow-400 fill-yellow-400'/>
                         <span className="text-sm font-semibold text-yellow-800">
                           {feedbackData?.averageRating ?? 0}/5
@@ -149,16 +182,16 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                       </div>
                       <div className='flex items-center'>
                         <button
-                          // onClick={() => likeEvent(event.id)}
-                          className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-sm cursor-pointer"
+                          onClick={() =>{likeEvent(event.isLiked,event._id)}}
+                          className="p-1 bg-white rounded-full shadow-sm cursor-pointer"
                         >
                           <HeartIcon
                             className={`h-5 w-5 ${event.isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
                           />
-                          <span className="text-sm font-semibold text-gray-800">
-                            {event.likesCount} Likes
-                          </span>
                         </button>
+                          <span className="text-sm font-semibold text-gray-800">
+                            {getLikesCount(event.likesCount)} Likes
+                          </span>
                       </div>
                     </div>
               </div>
