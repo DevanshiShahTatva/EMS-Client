@@ -22,7 +22,7 @@ const ReviewCard = ({ name, updatedAt, profileimage, rating, description }: IRev
         }
         <div>
           <h4 className="text-sm font-semibold">{name}</h4>
-          <p className="text-xs text-gray-500">{moment(updatedAt).format('DD MMM, YYYY')}</p>
+          <p className="text-xs text-gray-500">{moment(updatedAt).format('DD MMM, YYYY - hh:mm A')}</p>
         </div>
       </div>
       <StarRating rating={rating} />
@@ -55,14 +55,14 @@ const ReviewsRightSection = ({ reviews, averageRating, eventName }: { eventName:
                 alt="not found"
                 key={`${i + 1}`}
                 src={review.profileimage}
-                className="z-1 w-10 h-10 rounded-full border-2 border-white"
+                className={`z-${i + 1} w-10 h-10 rounded-full border-2 border-white`}
               /> :
-              <div className='border flex justify-center items-center h-10 w-10 rounded-full bg-white text-blue-600 font-bold relative'>
+              <div className={`z-${i + 1} border flex justify-center items-center h-10 w-10 rounded-full bg-white text-indigo-600 font-bold relative`}>
                 {review.name.charAt(0).toUpperCase()}
               </div>
           })}
           {reviews.length > 5 && (
-            <div className='z-2 border flex justify-center items-center h-10 w-10 rounded-full bg-white text-blue-600 font-bold relative'>
+            <div className='z-10 border flex justify-center items-center h-10 w-10 rounded-full bg-white text-indigo-600 font-bold relative'>
               {reviews.length - 5}+
             </div>
           )}
