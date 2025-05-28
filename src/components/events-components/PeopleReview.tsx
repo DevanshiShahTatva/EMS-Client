@@ -16,7 +16,7 @@ const ReviewCard = ({ name, updatedAt, profileimage, rating, description }: IRev
       <div className="flex items-center space-x-3">
         {profileimage ?
           <img src={profileimage} alt={name} className="w-10 h-10 rounded-full" />
-          : <div className='flex justify-center items-center h-10 w-10 rounded-full bg-indigo-600 text-white font-bold'>
+          : <div className='flex justify-center items-center h-10 w-10 rounded-full bg-blue-500 text-white font-bold'>
             {name.charAt(0).toUpperCase()}
           </div>
         }
@@ -45,7 +45,7 @@ const ReviewsRightSection = ({ reviews, averageRating, eventName }: { eventName:
 
   return (
     <div className="w-full md:w-2/3 space-y-4">
-      <div className="bg-indigo-600 text-white p-5 rounded-xl shadow-md relative">
+      <div className="bg-blue-500 text-white p-5 rounded-xl shadow-md relative">
         <h2 className="text-lg font-bold">{eventName}</h2>
         <p className="text-sm">{formatToBucket(reviews.length)} {averageRating} Ratings</p>
         <div className="absolute top-1/2 right-4 transform -translate-y-1/2 flex -space-x-4">
@@ -57,12 +57,12 @@ const ReviewsRightSection = ({ reviews, averageRating, eventName }: { eventName:
                 src={review.profileimage}
                 className="z-1 w-10 h-10 rounded-full border-2 border-white"
               /> :
-              <div className='border flex justify-center items-center h-10 w-10 rounded-full bg-white text-indigo-600 font-bold relative'>
+              <div className='border flex justify-center items-center h-10 w-10 rounded-full bg-white text-blue-600 font-bold relative'>
                 {review.name.charAt(0).toUpperCase()}
               </div>
           })}
           {reviews.length > 5 && (
-            <div className='z-2 border flex justify-center items-center h-10 w-10 rounded-full bg-white text-indigo-600 font-bold relative'>
+            <div className='z-2 border flex justify-center items-center h-10 w-10 rounded-full bg-white text-blue-600 font-bold relative'>
               {reviews.length - 5}+
             </div>
           )}
