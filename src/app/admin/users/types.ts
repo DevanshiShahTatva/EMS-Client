@@ -42,3 +42,9 @@ export interface IUserData {
     points : number
     role: string;
 }
+
+export interface ISingleUserFormValues {
+    name: string
+    email: string
+    role: string
+}

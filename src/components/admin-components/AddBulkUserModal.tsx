@@ -6,6 +6,12 @@ import React from "react";
 import ModalLayout from "../common/CommonModalLayout";
 import DragDropFile from "../common/DragDrop";
 
+// services
+import { exportToExcel } from "@/utils/helper";
+
+// constant
+import { SAMPLE_USER_DATA } from "@/utils/constant";
+
 
 interface IBulkUserModalProps {
     isOpen: boolean;
@@ -20,6 +26,10 @@ const AddBulkUserModal: React.FC<IBulkUserModalProps> = ({ isOpen, onClose }) =>
         e.target.value = "";
       };
 
+    const downloadSampleFile = () => {
+        exportToExcel(SAMPLE_USER_DATA, "Sample_File.xlsx")
+    }
+
     if (!isOpen) return null;
 
     return (
@@ -32,12 +42,12 @@ const AddBulkUserModal: React.FC<IBulkUserModalProps> = ({ isOpen, onClose }) =>
             ]}
 
         >
-            <div className="my-2 flex justify-between">
+            <div className="my-5 flex justify-between">
                 <label className="block text-sm font-semibold text-gray-500 mb-1">
-                    Upload csv file*
+                    Upload file*
                 </label>
-                <p className="text-sm text-blue-500 underline">
-                    Download Sample CSV
+                <p className="text-sm text-blue-500 underline cursor-pointer" onClick={downloadSampleFile}>
+                    Download Sample File
                 </p>
             </div>
             <div className="my-5">

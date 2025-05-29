@@ -241,6 +241,11 @@ export const INITIAL_TICKETS_TYPES = [
     { id: "3", type: "Free", price: "0", maxQty: 50, description: "General admission", _id: "" },
 ]
 
+export const SAMPLE_USER_DATA = [
+    { name : "Sample-1", email: "sample-1@yopmail.com", role : "user"},
+    { name : "Sample-2", email: "sample-2@yopmail.com", role : "organizer"},
+]
+
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string;
 
 export const AUTOCOMPLETE_API = (debouncedQuery: string) => `https://us1.locationiq.com/v1/search.php?key=${apiKey}&q=${encodeURIComponent(

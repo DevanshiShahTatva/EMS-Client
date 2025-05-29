@@ -57,7 +57,7 @@ const UsersPage = () => {
     const USER_SELECTION_CARD = [
         {
             title: "Upload Users",
-            description: "Bulk upload users using a CSV file.",
+            description: "Bulk upload users using a Csv/Excel file.",
             icon: <FilePlus2 className="h-9 w-9 text-blue-500" />,
             key: "bulk"
         },
