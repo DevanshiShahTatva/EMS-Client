@@ -180,7 +180,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
           weather: day.weathers[i]
         }))
       };
-    }).slice(0, 4);
+    }).slice(0, 7);
   };
   
   if (loading) {
