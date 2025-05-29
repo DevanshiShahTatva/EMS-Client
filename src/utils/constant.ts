@@ -12,6 +12,7 @@ export const ROUTES = {
     USER_MY_CALENDER: "/user/my-calender",
     USER_REWARDED_HISTORY: "/user/reward-history",
     USER_REVIEW_HISTORY: "/user/my-reviews",
+    USER_CHAT: '/user/chat',
     ADMIN: {
         DASHBOARD: "/admin/dashboard",
         EVENTS: "/admin/event",
@@ -22,7 +23,8 @@ export const ROUTES = {
         TERMS_AND_CONDITIONS : "/admin/terms-and-conditions",
         ADMIN_CONFIGURATION: "/admin/admin-configuration",
         DROPDOWNS : "/admin/dropdowns",
-        USERS: "/admin/users"
+        USERS: "/admin/users",
+        ADMIN_CHAT: '/admin/chat',
     },
     ORGANIZER: {
         VERIFY_TICKETS : "/organizer/verify-tickets",
@@ -145,6 +147,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 6, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
     { id: 7, title: "Admin Config", route: ROUTES.ADMIN.ADMIN_CONFIGURATION, icon:  "/assets/settingsIcon.svg"},
     { id: 8, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
+    { id: 9, title: "My chat", route: ROUTES.ADMIN.ADMIN_CHAT, icon:  "/assets/dropdownsIcon.svg"},
 ]
 
 export const USER_SIDEBAR_ITEMS = [
@@ -164,6 +167,7 @@ export const USER_HEADER_ITEMS = [
     { id: 2, title: "Events", route: ROUTES.USER_EVENTS},
     { id: 3, title: "Contact Us", route: ROUTES.CONTACT_US },
     { id: 4, title: "FAQs", route: ROUTES.FAQs},
+    { id: 5, title: "Chat", route: ROUTES.USER_CHAT },
 ]
 
 export const CATOGORIES_ITEMS = [

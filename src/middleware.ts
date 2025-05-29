@@ -18,7 +18,8 @@ const adminRoutes = [
     ROUTES.ADMIN.TERMS_AND_CONDITIONS,
     ROUTES.ADMIN.DROPDOWNS,
     ROUTES.ADMIN.ADMIN_CONFIGURATION,
-    ROUTES.ADMIN.USERS
+    ROUTES.ADMIN.USERS,
+    ROUTES.ADMIN.ADMIN_CHAT
 ];
 const userRoutes = [
     ROUTES.USER_MY_EVENTS,
@@ -29,6 +30,7 @@ const userRoutes = [
     ROUTES.USER_REWARDED_HISTORY,
     ROUTES.USER_REVIEW_HISTORY,
     ROUTES.USER_MY_CALENDER,
+    ROUTES.USER_CHAT
 ];
 
 export async function middleware(request: NextRequest) {
