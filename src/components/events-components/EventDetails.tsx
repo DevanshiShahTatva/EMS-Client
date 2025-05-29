@@ -171,7 +171,8 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
               <div className='h-[380px]'>
                 <ImageCarousel images={event.images} />
               </div>
-              <div className='flex justify-between items-center px-4 py-3'>
+            </div>
+            <div className='flex justify-between items-center px-4 py-3'>
                   <CategoryChip {...event.category} />
                     <div className='flex items-center space-x-1'>
                       <div className='flex items-center space-x-1 p-1'>
@@ -195,9 +196,8 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                       </div>
                     </div>
               </div>
-            </div>
           </div>
-          <div className="lg:col-span-1 h-full">
+          <div className="lg:col-span-1 h-[380]">
             <div className="bg-white shadow rounded-lg p-6 h-full flex flex-col justify-between min-h-[380px]">
               {/* Top section */}
               <div>
