@@ -128,7 +128,7 @@ const EventsPage: React.FC = () => {
               ticketsArray: item.tickets,
               lat: item.location.lat,
               lng : item.location.lng,
-              availableTicketStatus: getTicketAvailibilityStatus(item.tickets)
+              availableTicketStatus: getTicketAvailibilityStatus(item.tickets),
             }
            }))
   

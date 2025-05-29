@@ -1,22 +1,25 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   ArrowLeftIcon,
   CalendarIcon,
   ClockIcon,
+  HeartIcon,
   MapPinIcon,
+  StarIcon,
   TagIcon
 } from 'lucide-react'
 import ImageCarousel from '@/components/events-components/ImageCarousel'
 import EventDescription from '@/components/events-components/EventDescription'
 import SimilarEvents from '@/components/events-components/SimilarEvents'
-import { EventDataObjResponse, EventDetails, FeedbackDetails } from '@/app/events/types'
+import { EventDataObjResponse, EventDetails, FeedbackDetails, FeedbackResponseData } from '@/app/events/types'
 import { onwardPriceRange } from '@/app/admin/event/helper'
 import {
   getAllTicketStatus,
   getSimilarEvents,
   hasEventEnded,
   openMapDirection,
+  getLikesCount
 } from '@/app/events/event-helper'
 import { apiCall } from '@/utils/services/request'
 import { API_ROUTES } from '@/utils/constant'
@@ -26,15 +29,17 @@ import GoogleMap from './GoogleMap'
 import CustomButton from '../common/CustomButton'
 import EventDetailsSkeleton from './EventDetailsSkeleton'
 import CustomerReviews from './CustomerReviews'
+import CategoryChip from './CategoryChip'
+import { toast } from 'react-toastify'
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
   const [event, setEventDetail] = useState<EventDetails>()
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
-  const [feedbackData, setFeedbackData] = useState<FeedbackDetails[]>([])
+  const [feedbackData, setFeedbackData] = useState<FeedbackResponseData>()
   const [activeTab, setActiveTab] = useState<string>('Event details');
-
+  const likeTimersRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('eventId', eventId)
@@ -83,7 +88,37 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
       setTimeout(() => setLoading(false), 2000);
     }
   }, [eventId])
-
+    const likeEvent = (isLiked:boolean,id: string) => {
+      setEventDetail((prevEvent)=>{
+        if(!prevEvent) return event;
+        return {
+        ...prevEvent,
+        isLiked:!prevEvent.isLiked,
+        likesCount:!prevEvent.isLiked ? prevEvent.likesCount + 1 : prevEvent.likesCount - 1,
+        }
+      })
+      if(!isLiked){
+        toast.success('Liked the Event!');
+      } else {
+        toast.error('Disliked the Event!');
+      }   
+      if(likeTimersRef.current){
+        clearTimeout(likeTimersRef.current);
+      }     
+      likeTimersRef.current = setTimeout(async()=>{
+        try {
+          const response = await apiCall({
+            endPoint: `${API_ROUTES.ADMIN.GET_EVENTS}/${id}/like`,
+            method: 'POST',
+          });
+          if(response && response.success){
+            await getEventDetail();
+          }
+        } catch (err) {
+          console.error('Error sending like API call:', err);
+        }
+      },500)
+    };
   if (loading) {
     return <EventDetailsSkeleton />
   }
@@ -111,6 +146,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
   }
   const similarEvents = getSimilarEvents(eventsDetails, eventId)
   const { status, color } = getAllTicketStatus(event.tickets);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
@@ -129,15 +165,39 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
       </header>
       <main className="mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-          <div className="lg:col-span-2 lg:mb-0">
+          <div className="lg:col-span-2">
             <div
-              className="bg-white shadow rounded-lg overflow-hidden"
-              style={{ height: '380px' }}
-            >
-              <ImageCarousel images={event.images} />
+              className="bg-white shadow rounded-lg overflow-hidden">
+              <div className='h-[380px]'>
+                <ImageCarousel images={event.images} />
+              </div>
             </div>
+            <div className='flex justify-between items-center py-2'>
+                  <CategoryChip item={event.category} style={{borderRadius:"8px",height:"28px"}}/>
+                    <div className='flex items-center space-x-1 mr-1'>
+                      <div className='flex items-center space-x-1 p-1'>
+                        <StarIcon className='w-5 h-5 text-yellow-400 fill-yellow-400'/>
+                        <span className="text-sm font-semibold text-yellow-800">
+                          {feedbackData?.averageRating ?? 0}/5
+                        </span>
+                      </div>
+                      <div className='flex items-center'>
+                        <button
+                          onClick={() =>{likeEvent(event.isLiked,event._id)}}
+                          className="p-1 bg-white rounded-full shadow-sm cursor-pointer"
+                        >
+                          <HeartIcon
+                            className={`h-5 w-5 ${event.isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
+                          />
+                        </button>
+                          <span className="text-sm font-semibold text-gray-800">
+                            {getLikesCount(event.likesCount)} Likes
+                          </span>
+                      </div>
+                    </div>
+              </div>
           </div>
-          <div className="lg:col-span-1 h-full">
+          <div className="lg:col-span-1 h-[380]">
             <div className="bg-white shadow rounded-lg p-6 h-full flex flex-col justify-between min-h-[380px]">
               {/* Top section */}
               <div>
@@ -244,8 +304,8 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
           )}
           {activeTab === "Reviews" && (
             <div>
-              {feedbackData && feedbackData?.length !== 0
-                ? <CustomerReviews eventName={event.title} feedbacks={feedbackData} />
+              {feedbackData && feedbackData.allFeedbacks?.length !== 0
+                ? <CustomerReviews eventName={event.title} feedbacks={feedbackData.allFeedbacks} />
                 : <div className='py-20 flex justify-center'>No feedback available!</div>
               }
             </div>

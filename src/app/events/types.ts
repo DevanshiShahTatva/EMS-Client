@@ -179,6 +179,34 @@ export interface EventDetails {
   likesCount: number
 }
 
+export interface FeedbackEventInfo {
+  id: string;
+  title: string;
+  image: string | null;
+}
+export interface FeedbackUserInfo {
+  id:string;
+  name:string;
+  email:string;
+  profileimage:string | null;
+}
+export interface FeedbackItem {
+  _id:string;
+  rating: number;
+  description: string;
+  isEdited: boolean;
+  createdAt: string;
+  updatedAt: string;
+  user: FeedbackUserInfo | null;
+  event: FeedbackEventInfo;
+}
+
+export interface FeedbackResponseData {
+  averageRating:number;
+  totalFeedback:number;
+  allFeedbacks:FeedbackItem[];
+}
+
 export interface FeedbackDetails {
    _id: string;
   eventId: string;

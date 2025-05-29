@@ -7,7 +7,7 @@ import { apiCall } from '@/utils/services/request'
 import { toast } from 'react-toastify'
 import Loader from '../common/Loader'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FeedbackDetails } from '@/app/events/types'
+import { FeedbackDetails, FeedbackItem } from '@/app/events/types'
 import ModalLayout from '../common/CommonModalLayout'
 
 interface FeedbackModalProps {
@@ -15,7 +15,7 @@ interface FeedbackModalProps {
   isOpen: boolean
   onClose: () => void
   isEditFlag: boolean
-  feedback: FeedbackDetails
+  feedback: FeedbackItem
   onSubmitAfter?: () => void
 }
 
