@@ -53,7 +53,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
           />
         </button>
         <div className="absolute top-3 left-3">
-          <CategoryChip {...event.category} bgColor="#fff" />
+          <CategoryChip item={{...event.category,bgColor:"#fff"}} />
         </div>
       </div>
       <div className="p-4 flex flex-col flex-grow">

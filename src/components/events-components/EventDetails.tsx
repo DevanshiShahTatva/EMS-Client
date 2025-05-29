@@ -172,9 +172,9 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                 <ImageCarousel images={event.images} />
               </div>
             </div>
-            <div className='flex justify-between items-center px-4 py-3'>
-                  <CategoryChip {...event.category} />
-                    <div className='flex items-center space-x-1'>
+            <div className='flex justify-between items-center py-2'>
+                  <CategoryChip item={event.category} style={{borderRadius:"8px",height:"28px"}}/>
+                    <div className='flex items-center space-x-1 mr-1'>
                       <div className='flex items-center space-x-1 p-1'>
                         <StarIcon className='w-5 h-5 text-yellow-400 fill-yellow-400'/>
                         <span className="text-sm font-semibold text-yellow-800">
