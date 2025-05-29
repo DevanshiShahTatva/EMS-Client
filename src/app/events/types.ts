@@ -30,25 +30,26 @@ export type SortOption =
   | "title-asc"
   | "title-desc";
 export interface EventData {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  date: string;
-  priceRange: string;
-  category: IEventCategory;
-  isSoldOut: boolean;
-  isLiked: boolean;
-  status: EventStatus;
-  isFeatured: boolean;
-  startTime?: string;
-  endTime?: string;
-  ticketsAvailable?: number;
-  totalTickets?: number;
-  ticketsArray?: EventTicket[];
-  location?: string;
-  lat?: number;
-  lng?: number;
+    id: string;
+    title: string;
+    description: string;
+    image: string;
+    date: string;
+    priceRange: string;
+    category: IEventCategory;
+    isSoldOut: boolean;
+    isLiked: boolean;
+    status: EventStatus;
+    isFeatured: boolean;
+    startTime?: string;
+    endTime?: string;
+    ticketsAvailable?: number;
+    totalTickets?: number,
+    ticketsArray?: EventTicket[],
+    availableTicketStatus?: string,
+    location?: string;
+    lat? : number,
+    lng?: number
 }
 
 export type EventLocation = {

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { SlidersIcon, ChevronDownIcon } from 'lucide-react'
 import { SortOption } from '../../app/events/types'
 interface FilterOptionsProps {
@@ -11,6 +11,24 @@ export const FilterOptions: React.FC<FilterOptionsProps> = ({
   setSortOption,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, []);
+
   const sortOptions = [
     {
       value: 'none',
@@ -37,10 +55,10 @@ export const FilterOptions: React.FC<FilterOptionsProps> = ({
     sortOptions.find((option) => option.value === sortOption)?.label ||
     'Sort by'
   return (
-    <div className="relative">
+    <div ref={dropdownRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-max items-center space-x-2 px-4 py-3 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+        className="flex w-max items-center cursor-pointer space-x-2 px-4 py-3 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
       >
         <SlidersIcon className="h-4 w-4" />
         <span>{currentLabel}</span>
@@ -56,7 +74,7 @@ export const FilterOptions: React.FC<FilterOptionsProps> = ({
                   setSortOption(option.value as SortOption)
                   setIsOpen(false)
                 }}
-                className={`block w-full text-left px-4 py-2 text-sm ${sortOption === option.value ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'}`}
+                className={`block cursor-pointer w-full text-left px-4 py-2 text-sm ${sortOption === option.value ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'}`}
               >
                 {option.label}
               </button>

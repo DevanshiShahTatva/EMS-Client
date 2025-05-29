@@ -28,7 +28,8 @@ export const ROUTES = {
         VERIFY_TICKETS : "/organizer/verify-tickets",
         DASHBOARD : "/organizer/dashboard"
     },
-    RESET_PASSWORD: "/reset-password"
+    RESET_PASSWORD: "/reset-password",
+    FORGOT_PASSWORD:"/forgot-password",
 }
 
 export const API_ROUTES = {
@@ -60,7 +61,8 @@ export const API_ROUTES = {
         ATTENDED_EVENTS_ANALYTICS : "/dashboard/analytics/top-attended-events",
         GENERATE_TERMS_CONDITIONS: "/terms-and-conditions/generate-ai",
         FEEDBACK_ANALYTICS : '/dashboard/analytics/feedback-analytics',
-        FEEDBACK_OVERVIEW: '/dashboard/analytics/feedback-overview',
+        FEEDBACK_OVERVIEW: '/dashboard/analytics/feedback-all-feedbacks',
+        FEEDBACK_DETAILS: '/dashboard/analytics/feedback-details'
     },
     AUTH: {
         LOGIN: `/login`,
@@ -142,7 +144,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 4, title: "Support Requests", route: ROUTES.ADMIN.CONTACT_US, icon:  "/assets/support.svg"},
     { id: 5, title: "FAQs", route: ROUTES.ADMIN.FAQs, icon:  "/assets/faqs.svg"},
     { id: 6, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
-    { id: 7, title: "Admin Config", route: ROUTES.ADMIN.ADMIN_CONFIGURATION, icon:  "/assets/terms.svg"},
+    { id: 7, title: "Admin Config", route: ROUTES.ADMIN.ADMIN_CONFIGURATION, icon:  "/assets/settingsIcon.svg"},
     { id: 8, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
 ]
 
@@ -257,8 +259,8 @@ export const PAGINATION_OPTIONS = [
 ];
 
 export const LOCATION_OPTIONS = [
-  { value: "5", label: '0 km - 5 km' },
-  { value: "10", label: '5 km - 10 km' },
+  { value: "5", label: 'upto 5 km' },
+  { value: "10", label: 'upto 10 km' },
   { value: "25", label: 'upto 25 km' },
   { value: "50", label: 'upto 50 km' },
 ];

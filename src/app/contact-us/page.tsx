@@ -74,7 +74,7 @@ export default function ContactUsPage() {
 
   return (
     <section className="bg-gray-100 py-10 px-4 sm:px-6 md:px-8">
-      <div className="mx-auto flex flex-col lg:flex-row gap-10 items-stretch">
+      <div className="mx-auto flex flex-col lg:flex-row gap-10 items-start">
         {/* Left: Image */}
         <div className="w-full lg:w-1/2">
           <img
@@ -103,27 +103,27 @@ export default function ContactUsPage() {
 
                 <FormikTextField
                   name="name"
-                  label="Name"
+                  label="Name*"
                   placeholder="Enter your name"
                   disabled={initialValues.name !== ""}
                 />
 
                 <FormikTextField
                   name="email"
-                  label="Email"
+                  label="Email*"
                   placeholder="Enter email address"
                   disabled={initialValues.email !== ""}
                 />
 
                 <FormikTextField
                   name="subject"
-                  label="Subject"
+                  label="Subject*"
                   placeholder="Enter subject"
                 />
 
                 <FormikTextField
                   name="message"
-                  label="Message"
+                  label="Message*"
                   placeholder="Enter message"
                   type="textarea"
                   rows={6}

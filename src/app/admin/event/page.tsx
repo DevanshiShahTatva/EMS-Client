@@ -258,11 +258,8 @@ function EventsListpage() {
       sortKey: (row) => {
         const prices = row.ticketsArray.map(t => t.price);
         if (prices.length === 0) return 0;
-    
         const min = Math.min(...prices);
-        const max = Math.max(...prices);
-    
-        return max - min; // difference between max and min
+        return min;
       },
     },
     { header: "Tickets Available", key: "ticketsAvailable" },

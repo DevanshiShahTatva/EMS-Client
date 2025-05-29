@@ -1,36 +1,32 @@
 'use client'
 import React, { useEffect, useState, useRef } from 'react'
+
+import { useRouter } from 'next/navigation'
+
+// Library
 import {
-  HeartIcon,
   CalendarIcon,
   TagIcon,
   ChevronLeft,
   ChevronRight,
   MapPin,
 } from 'lucide-react'
+
+// types
 import { EventData } from '../../app/events/types'
-import { API_ROUTES, ROUTES } from '@/utils/constant'
-import { apiCall } from '@/utils/services/request'
-import { useRouter } from 'next/navigation'
-import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
-import { toast } from 'react-toastify'
-import CategoryChip from './CategoryChip'
-import CustomButton from '../common/CustomButton'
+
+// constants
+import { ROUTES } from '@/utils/constant'
 interface FeaturedEventProps {
   event: EventData[]
+  likeEvent : (id : string) => void
 }
 
 export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
-  const [likedEvents, setLikedEvents] = useState<{ [key: string]: boolean }>({})
   const [currentSlide, setCurrentSlide] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const router = useRouter();
    
-  useEffect(() => {
-    const initialLikes = Object.fromEntries(event.map(e => [e.id, e.isLiked]))
-    setLikedEvents(initialLikes)
-  }, [event])
-
   useEffect(() => {
     if (event.length <= 1) return
 
@@ -42,24 +38,6 @@ export const FeaturedEvent: React.FC<FeaturedEventProps> = ({ event }) => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
   }, [event.length])
-
-const handleLikeEvent = async (eventId: string) => {
-  const likeCheck = event.findIndex((ev)=>ev.id==eventId);
-  if(!event[likeCheck].isLiked)
-    toast.success("Liked an Event!");
-   else 
-    toast.error("Disliked an Event!");
-   const response = await apiCall({
-      endPoint: API_ROUTES.ADMIN.GET_EVENTS+`/${eventId}/like`,
-      method: "POST",
-    });
-    if (response.success) {
-      setLikedEvents(prev => ({
-        ...prev,
-        [eventId]: !prev[eventId],
-      }))
-    }
-  }
 
   const statusColors = {
     ongoing: 'bg-yellow-100 text-yellow-800',
@@ -97,96 +75,60 @@ const handleLikeEvent = async (eventId: string) => {
           return (
             <div
               key={ev.id}
-              className="w-full flex-shrink-0"
-              style={{ width: '100%' }}
+              className="w-full flex-shrink-0 cursor-pointer group"
+              onClick={() => navigateToEventDetails(ev.id)}
             >
-              <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
-                <div className="flex flex-col md:flex-row">
-                  <div className="md:w-2/5 relative">
-                    <img
-                      src={ev.image}
-                      alt={ev.title}
-                      className="w-full h-48 md:h-full object-cover"
-                    />
-                    <button
-                      onClick={() => handleLikeEvent(ev.id)}
-                      className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md cursor-pointer"
-                    >
-                      <HeartIcon
-                        className={`h-6 w-6 ${
-                          likedEvents[ev.id]
-                            ? 'fill-red-500 text-red-500'
-                            : 'text-gray-400'
-                        }`}
-                      />
-                    </button>
+              <div className="relative w-full h-90 rounded-xl overflow-hidden shadow-md border border-gray-200 group">
+                <div className="absolute inset-0 rounded-xl overflow-hidden z-0">
+                  <img
+                    src={ev.image}
+                    alt={ev.title}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+                </div>
+
+                <div className="relative z-20 h-full flex flex-col justify-between p-5 text-white">
+                <div className="flex justify-between items-start">
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[ev.status]}`}>
+                      {ev.status.charAt(0).toUpperCase() + ev.status.slice(1)}
+                    </span>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-bold truncate">{ev.title}</h2>
                   </div>
-                  <div className="p-6 md:w-3/5 flex flex-col">
-                    <div className="flex items-start justify-between mb-3">
-                      <h2 className="text-2xl font-bold">{ev.title}</h2>
-                      <span
-                        className={`text-sm px-3 py-1 rounded-full ml-3 ${statusColors[ev.status]}`}
-                      >
-                        {ev.status.charAt(0).toUpperCase() + ev.status.slice(1)}
-                      </span>
+                   
+                  <div className="text-sm space-y-1 text-gray-200">
+                    <div className="flex items-center">
+                      <CalendarIcon className="h-4 w-4 mr-1.5" />
+                      <span>{formattedDate}</span>
                     </div>
-                    <div
-                      className="text-gray-600 line-clamp-6 mb-6"
-                      dangerouslySetInnerHTML={{ __html: ev.description }}
-                    />
-                  <div className="mt-auto space-y-2 mb-4">
-                    <div className="flex items-center text-gray-600">
-                        <CategoryChip _id={ev.category._id} name={ev.category.name} isActive={ev.category.isActive} color={ev.category.color} bgColor={ev.category.bgColor} icon={ev.category.icon} createdAt={ev.category.createdAt} updatedAt={ev.category.updatedAt} __v={ev.category.__v} isUsed={false} />
+                    <div className="flex items-center">
+                      <TagIcon className="h-4 w-4 mr-1.5" />
+                      <span>{ev.priceRange}</span>
                     </div>
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center text-gray-600">
-                        <CalendarIcon className="h-5 w-5 mr-3" />
-                        <span>{formattedDate}</span>
-                      </div>
-                      <div className="flex items-top text-gray-600">
-                       <MapPin className="h-6 w-6 mr-3 shrink-0" />
-                        <span>{ev.location}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <TagIcon className="h-5 w-5 mr-3" />
-                        <span className="font-medium">{ev.priceRange}</span>
-                      </div>
-                      </div>
-                  </div>
-                    <div className="mt-auto">
-                      {ev.isSoldOut ?
-                        <CustomButton
-                          variant='disabled'
-                          disabled
-                          className='font-medium py-3 px-6'
-                        >
-                          Sold out
-                        </CustomButton>
-                        :
-                        <CustomButton
-                          variant='primary'
-                          className='font-medium py-3 px-6'
-                          onClick={() => navigateToEventDetails(ev.id)}
-                        >
-                          View details
-                        </CustomButton>
-                      }
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 mr-1.5" />
+                      <span className="truncate">{ev.location}</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
           )
         })}
       </div>
       {event.length > 1 && (
         <>
-          <div className="flex justify-center mt-4 mb-4 space-x-2">
+          <div className="flex justify-center mt-4 mb-2 space-x-2">
             {event.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`h-3 w-3 rounded-full transition-all duration-300 ${
+                className={`h-2 w-2 rounded-full transition-all duration-300 ${
                   currentSlide === index
                     ? 'bg-blue-600 scale-110'
                     : 'bg-gray-300 hover:bg-gray-400'

@@ -130,7 +130,7 @@ export default function DataTable<T>({
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={totalColumsCount} className="text-center">
+                            <td colSpan={totalColumsCount} className="text-center h-40">
                                 <p className="my-3 font-bold">No data found</p>
                             </td>
                         </tr>

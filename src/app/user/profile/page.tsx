@@ -89,7 +89,7 @@ const UserProfilePage = () => {
     actions: FormikHelpers<IChangePasswordFormValues>
   ) => {
     actions.setSubmitting(true);
-    const body = { newPassword: values.newPassword };
+    const body = { newPassword: values.newPassword, oldPassword: values.oldPassword };
 
     const result = await apiCall({
       endPoint: API_ROUTES.USER.PROFILE.RESET_PASSWORD,
@@ -272,7 +272,7 @@ const UserProfilePage = () => {
 
   return (
     <div>
-      <div className="mx-auto flex flex-row gap-10 p-3 md:p-10">
+      <div className="mx-auto flex flex-row gap-10 p-3 md:p-10 lg:max-h-svh">
         <div className="rounded-3xl bg-white shadow-lg w-1/4 lg:block hidden">
           <Formik
             initialValues={initialProfileInfoValues}
@@ -302,7 +302,7 @@ const UserProfilePage = () => {
             )}
           </Formik>
         </div>
-        <div className="w-full lg:w-3/4 flex flex-col gap-8">
+        <div className="w-full lg:w-3/4 flex flex-col gap-8 lg:overflow-auto scrollbar-none">
           <div className="rounded-3xl bg-white shadow-lg lg:hidden block pb-8">
             <Formik
               initialValues={initialProfileInfoValues}
@@ -379,7 +379,7 @@ const UserProfilePage = () => {
             ) : (
               <>
                 <p className="text-xl font-bold mb-6 md:text-2xl">My vouchers</p>
-                <div className="flex flex-wrap gap-4 items-center">
+                <div className="flex flex-wrap gap-6 items-center">
                   {userInfo.vouchers.length > 0 ?
                     userInfo.vouchers.map((voucher, index: number) => {
                       return (

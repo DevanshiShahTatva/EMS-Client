@@ -40,7 +40,7 @@ const RevenueByCategory = () => {
     const chartData = useMemo(() => data.map((item) => item.totalValue), [data]);
 
     return (
-        <div className='min-h-[450px] mt-6 flex items-center justify-center'>
+        <div className='min-h-[450px] flex items-center justify-center'>
             <div className='w-full'>
                 {chartData.length ?
                     <div className="mb-6">

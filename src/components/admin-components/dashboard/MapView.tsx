@@ -29,19 +29,11 @@ const MapView = () => {
   useEffect(() => {
     (async () => {
       const leaflet = await import("leaflet");
-      const markerIcon2x = (
-        await import("leaflet/dist/images/marker-icon-2x.png")
-      ).default;
-      const markerIcon = (await import("leaflet/dist/images/marker-icon.png"))
-        .default;
-      const markerShadow = (
-        await import("leaflet/dist/images/marker-shadow.png")
-      ).default;
 
       leaflet.Icon.Default.mergeOptions({
-        iconRetinaUrl: markerIcon2x,
-        iconUrl: markerIcon,
-        shadowUrl: markerShadow,
+        iconRetinaUrl: "/leaflet/marker-icon-2x.png",
+        iconUrl: "/leaflet/marker-icon.png",
+        shadowUrl: "/leaflet/marker-shadow.png",
       });
 
       setL(leaflet);

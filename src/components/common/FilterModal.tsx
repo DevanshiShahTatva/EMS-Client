@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 
 // library support
-import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Checkbox } from "@/components/ui/checkbox"
 import { CalendarIcon } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
@@ -441,7 +440,7 @@ const FilterModal: React.FC<IFilterModalProps> = ({
                 />
                 <label
                   htmlFor={option.value}
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  className="text-sm font-medium cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   {option.label}
                 </label>
@@ -480,22 +479,26 @@ const FilterModal: React.FC<IFilterModalProps> = ({
               {isDisabled && <div className="text-sm text-red-500 mb-4 italic">*Please enable location to apply below filter</div>}
 
               <div className="space-y-4">
-                {LOCATION_OPTIONS.map((option) => (
+                {LOCATION_OPTIONS.map((option) => {
+                  const isSelected = locationRadius === option.value;
+                  return (
                   <div key={option.value} className="flex items-center space-x-2">
                     <Checkbox
+                      id={option.value}
                       checked={option.value === locationRadius}
                       disabled={isDisabled}
-                      onCheckedChange={() => setLocationRadius(option.value)}
+                      onCheckedChange={() => setLocationRadius(isSelected ? "" : option.value)}
                       className="border border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white data-[state=checked]:border-blue-600 focus-visible:ring-0 focus-visible:ring-offset-0"
                     />
                     <label
-                      htmlFor={option.label}
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      htmlFor={option.value}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed cursor-pointer peer-disabled:opacity-70"
                     >
                       {option.label}
                     </label>
                   </div>
-                ))}
+                )
+                })}
               </div>
             </div>
           </>

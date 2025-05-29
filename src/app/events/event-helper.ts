@@ -53,7 +53,7 @@ export const getUserLocation = (userLat: number, userLng: number, targetLat: num
     targetLng: number,
     top3Events: EventDataObjResponse[],
     currentEvent: EventDataObjResponse,
-    radiusInKm: number = 5
+    radiusInKm: number = 25
   ): Promise<boolean> => {
     if (typeof window === "undefined" || !navigator.geolocation) {
       return false;
@@ -116,12 +116,31 @@ export const getAllTicketStatus=(tickets:Ticket[])=>{
   }
 }
 
+export const getTicketAvailibilityStatus=(tickets:Ticket[])=>{
+  let totalTicket=0,bookedTickets=0;
+  tickets.map((ticket)=>{
+    totalTicket+=ticket.totalSeats;
+    bookedTickets+=ticket.totalBookedSeats;
+  })
+  const availableSeats = totalTicket - bookedTickets;
+  const ratio = availableSeats / totalTicket;
+  if (availableSeats <= 0) {
+    return "soldOut"
+  } else if (ratio > 0.5) {
+    return "available"
+  } else if (ratio > 0.2) {
+    return "fastFilling"
+  } else {
+    return "almostFull"
+  }
+}
+
 export const getSimilarEvents = (events:EventDataObjResponse[] | null,currentEventId :string) => {
 if(events){
     const currentEvent = events.find(event => event._id === currentEventId);
 if (!currentEvent) return [];
 return events
-    .filter(event => event.category === currentEvent.category && event._id !== currentEventId)
+    .filter(event => event.category._id === currentEvent.category._id && event._id !== currentEventId)
     .slice(0, 3); 
 }
 };
@@ -344,28 +363,7 @@ export const filterByTicketsAvailability = (
     ticketType: string // one of: "available" | "fastFilling" | "almostFull" | "soldOut"
 ): EventData[] => {
 
-    return events.filter(event => {
-      const { ticketsAvailable, totalTickets } = event
-      if (!totalTickets || totalTickets === 0) return false
-
-      if (ticketsAvailable && totalTickets) {
-        const percentageAvailable = (ticketsAvailable / totalTickets) * 100
-
-        switch (ticketType) {
-          case "available":
-            return percentageAvailable > 50
-          case "fastFilling":
-            return percentageAvailable > 20 && percentageAvailable <= 50
-          case "almostFull":
-            return percentageAvailable > 0 && percentageAvailable <= 20
-          case "soldOut":
-            return ticketsAvailable === 0
-          default:
-            return false
-        }
-
-      }
-    })
+  return events.filter(event =>  event.availableTicketStatus === ticketType)
 }
 
 
@@ -462,7 +460,7 @@ export const getFilteredEventsData = (events : EventData[], filterValues : IAppl
 }
 
 export const hasEventEnded = (endDateTime: string | Date): boolean => {
-  const endDate = new Date(endDateTime)
-  endDate.setDate(endDate.getDate() + 1)
-  return endDate.getTime() < new Date().getTime()
+  const endDate = new Date(endDateTime).getTime();
+  const todaysDate = new Date().getTime();
+  return endDate < todaysDate
 }

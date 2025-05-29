@@ -47,7 +47,7 @@ const FormikSelectField: React.FC<FormikSelectFieldProps> = ({
   }, []);
 
   const filteredOptions = options.filter((opt) =>
-    String(opt.value).toLowerCase().includes(search.toLowerCase())
+    String(opt.label).toLowerCase().includes(search.toLowerCase())
   );
 
   return (

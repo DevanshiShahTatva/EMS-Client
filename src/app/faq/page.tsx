@@ -51,7 +51,7 @@ export default function FAQPage() {
 
   return (
     <section className="bg-gray-100 py-10 px-4 sm:px-6 md:px-8">
-      <div className="mx-auto flex flex-col lg:flex-row gap-10 items-stretch">
+      <div className="mx-auto flex flex-col lg:flex-row gap-10 items-start">
         {/* Left Side: Banner Image */}
         <div className="w-full lg:w-1/2">
           <img

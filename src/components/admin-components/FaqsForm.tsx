@@ -28,6 +28,7 @@ const FAQForm : React.FC = () => {
 
     const rounter = useRouter();
     const [isGeneratingAns, setIsGeneratingAns] = useState<boolean>(false);
+    const [currentIndex, setCurrentIndex] = useState<number>(0);
 
     const handleSubmit = async (
         values: IFAQsFormValues,
@@ -57,6 +58,7 @@ const FAQForm : React.FC = () => {
         index: number
     ) => {
         try {
+            setCurrentIndex(index);
             setIsGeneratingAns(true);
             const res = await apiCall({
             method: "POST",
@@ -75,6 +77,7 @@ const FAQForm : React.FC = () => {
         } catch(error) {
             console.error(error);
             toast.error("Something went wrong!");
+            setCurrentIndex(0);
             setIsGeneratingAns(false);
         }
     };
@@ -111,7 +114,7 @@ const FAQForm : React.FC = () => {
                                                       onClick={() => push({ question: '', answer: '' })}
                                                       className="underline text-blue-500 font-bold cursor-pointer"
                                                   >
-                                                      Add Field
+                                                      Add Question
                                                   </button> : <button
                                                       type="button"
                                                       onClick={() => remove(index)}
@@ -138,7 +141,7 @@ const FAQForm : React.FC = () => {
                                                     <CommonAIButton
                                                         handleButtonClick={() => handleGeneratAnswer(faq.question, setFieldValue, index)}
                                                         isDisabled={!faq.question}
-                                                        isSubmitting={isGeneratingAns}
+                                                        isSubmitting={currentIndex == index && isGeneratingAns}
                                                     />
                                                   </div>
                                               </div>

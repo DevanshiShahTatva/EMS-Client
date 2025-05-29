@@ -20,17 +20,24 @@ export const getSearchResults = (dataArray: ITicketType[], keyword: string) => {
     const lowerKeyword = keyword.toString().toLowerCase();
     return dataArray.filter(item =>
         item.name.toLowerCase().includes(lowerKeyword) ||
-        item.description.toLowerCase().includes(lowerKeyword)
+        item.description.toLowerCase().includes(lowerKeyword) ||
+        item.isUsed && "in use".includes(lowerKeyword) ||
+        !item.isUsed && "not used".includes(lowerKeyword)
     );
 }
 
 export const getCategorySearchResults = (dataArray: IEventCategory[], keyword: string) => {
     const lowerKeyword = keyword.toString().toLowerCase();
-    return dataArray.filter(item => item.name.toLowerCase().includes(lowerKeyword));
+    return dataArray.filter(item => 
+        item.name.toLowerCase().includes(lowerKeyword) ||
+        item.isUsed && "in use".includes(lowerKeyword) ||
+        !item.isUsed && "not used".includes(lowerKeyword)
+    );
 }
 
 export const TicketTypeValidationSchema = Yup.object().shape({
-    name: Yup.string().required("Ticket type name is required"),
+    name: Yup.string().trim().required("Ticket type name is required")
+        .matches(/^[a-zA-Z0-9 \-]+$/, "Ticket type name can only contain letters, numbers, spaces and hyphens"),
     description: Yup.string(),
 });
 
@@ -53,7 +60,8 @@ export const initialCategoryFormValues = {
 }
 
 export const categoryValidationSchema = Yup.object().shape({
-    name: Yup.string().required("Category name is required")
+    name: Yup.string().trim().required("Category name is required")
+        .matches(/^[a-zA-Z0-9 \-]+$/, "Ticket type name can only contain letters, numbers, spaces and hyphens")
         .max(30, "Category name must be at most 30 characters"),
     color: Yup.string()
         .required("Please select color")

@@ -11,7 +11,6 @@ import ImageCarousel from '@/components/events-components/ImageCarousel'
 import EventDescription from '@/components/events-components/EventDescription'
 import SimilarEvents from '@/components/events-components/SimilarEvents'
 import { EventDataObjResponse, EventDetails, FeedbackDetails, WeatherDetails } from '@/app/events/types'
-import { getTicketPriceRange, onwardPriceRange } from '@/app/admin/event/helper'
 import {
   getAllTicketStatus,
   getSimilarEvents,
@@ -21,14 +20,15 @@ import {
 import { apiCall } from '@/utils/services/request'
 import { API_ROUTES } from '@/utils/constant'
 import { useRouter } from 'next/navigation'
-import Loader from '../common/Loader'
 import BookingButton from './BookingButton'
 import GoogleMap from './GoogleMap'
-import ReviewsSection from './ReviewSection'
 import CustomButton from '../common/CustomButton'
 import WeatherReport from './WeatherReport'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import EventDetailsSkeleton from './EventDetailsSkeleton'
+import CustomerReviews from './CustomerReviews'
+import { onwardPriceRange } from '@/app/admin/event/helper'
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
@@ -37,6 +37,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const router = useRouter()
   const [feedbackData, setFeedbackData] = useState<FeedbackDetails[]>([]);
   const [weatherData, setWeatherData] = useState<WeatherDetails | null>(null);
+  const [activeTab, setActiveTab] = useState<string>('Event details');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -57,7 +58,6 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
     if (result?.success && result.data?.length > 0) {
       setEventsDetails(result.data)
     }
-    setLoading(false)
   }
 
   const getEventDetail = async () => {
@@ -70,23 +70,22 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
       setEventDetail(result.data);
       fetchWeatherData(result.data.location.lat, result.data.location.lng);
     }
-    setLoading(false)
   }
-  const getEventFeedback=async()=>{
+  const getEventFeedback = async () => {
     const result = await apiCall({
-      endPoint:`${API_ROUTES.GET_FEEDBACK(eventId)}`,
-      method:'GET'
+      endPoint: `${API_ROUTES.GET_FEEDBACK(eventId)}`,
+      method: 'GET'
     })
-    if(result?.success && result.data){
+    if (result?.success && result.data) {
       setFeedbackData(result.data)
     }
-    setLoading(false)
   }
   useEffect(() => {
     if (eventId) {
       fetchEvents();
       getEventDetail();
       getEventFeedback();
+      setTimeout(() => setLoading(false), 2000);
     }
   }, [eventId]);
 
@@ -104,10 +103,12 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
     }
   };
 
-  if (!event || !eventId) {
+  if (loading) {
+    return <EventDetailsSkeleton />
+  }
+  if (!event) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        {loading && <Loader />}
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             Event not found
@@ -121,18 +122,16 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
             onClick={() => navigateToHome()}
             className='inline-flex items-center font-medium'
           >
-               Back to Events
+            Back to Events
           </CustomButton>
         </div>
       </div>
     )
   }
-
   const similarEvents = getSimilarEvents(eventsDetails, eventId)
-  const {status,color} = getAllTicketStatus(event.tickets);
+  const { status, color } = getAllTicketStatus(event.tickets);
   return (
     <div className="min-h-screen bg-gray-50">
-      {loading && <Loader />}
       <header className="bg-white shadow">
         <div className="mx-auto py-6 px-4 sm:px-6 lg:px-8 flex items-center">
           <button
@@ -150,40 +149,40 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
       <main className="mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
           <div className="lg:col-span-2 lg:mb-0">
-            <div 
+            <div
               className="bg-white shadow rounded-lg overflow-hidden"
               style={{ height: '380px' }}
             >
               <ImageCarousel images={event.images} />
             </div>
           </div>
-            <div className="lg:col-span-1 h-full">
-              <div className="bg-white shadow rounded-lg p-6 h-full flex flex-col justify-between min-h-[380px]">
-                {/* Top section */}
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                    {event.title}
-                  </h2>
-                  <div className="space-y-3 pb-4">
-                    <div className="flex items-top text-gray-600">
-                      <CalendarIcon className="h-5 w-5 mr-2 text-gray-400" />
-                      <span>
-                        {new Date(event.startDateTime).toLocaleDateString(
-                          'en-US',
+          <div className="lg:col-span-1 h-full">
+            <div className="bg-white shadow rounded-lg p-6 h-full flex flex-col justify-between min-h-[380px]">
+              {/* Top section */}
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  {event.title}
+                </h2>
+                <div className="space-y-3 pb-4">
+                  <div className="flex items-top text-gray-600">
+                    <CalendarIcon className="h-5 w-5 mr-2 text-gray-400" />
+                    <span>
+                      {new Date(event.startDateTime).toLocaleDateString(
+                        'en-US',
                         {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      }
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        }
                       )} - {new Date(event.endDateTime).toLocaleDateString(
                         'en-US',
                         {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      }
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        }
                       )}
                     </span>
                   </div>
@@ -191,7 +190,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                     <ClockIcon className="h-5 w-5 mr-2 text-gray-400" />
                     <span>
                       Duration - ({event.duration})
-                      </span>
+                    </span>
                   </div>
                   <div className="flex items-top text-gray-600">
                     <MapPinIcon className="h-5 w-5 mr-2 text-gray-400 shrink-0" />
@@ -225,28 +224,52 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
             </div>
           </div>
         </div>
-        <div className="mt-8">
-          <EventDescription description={event.description} />
-        </div>
-         <div className="mt-8">
-          <WeatherReport data={weatherData} />
-        </div>
-        <div className="mt-8">
-          <div className='flex items-center justify-between mb-4'>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Location
-            </h2>
-            <button className='text-sm text-blue-600 hover:underline font-medium cursor-pointer' onClick={()=>openMapDirection(event.location)}>
-              Get Directions
-            </button>
+        <div className='mt-10 p-6 shadow-lg rounded-lg bg-white'>
+          <div className="bg-white w-full border-b border-gray-300">
+            <div className="relative space-x-4 flex w-full md:w-auto">
+              {["Event details", "Reviews"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`relative pb-3 px-2 text-sm md:text-base font-medium transition-all duration-200 cursor-pointer ${activeTab === tab
+                    ? "text-blue-600 after:content-[''] after:absolute after:-bottom-[1px] after:left-0 after:w-full after:h-[2px] after:bg-blue-600"
+                    : "text-gray-500 hover:text-blue-500"
+                    }`}
+                >
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>
+              ))}
+            </div>
           </div>
-          <GoogleMap
-            location={{lat:event.location.lat,lng:event.location.lng}}
-            locationName={event.location.address}
-          />
+          {activeTab === "Event details" && (
+            <div>
+              <EventDescription description={event.description} />
+              <div className="mt-5">
+                <div className='flex items-center justify-between mb-4'>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Location
+                  </h2>
+                  <button className='text-l text-blue-600 hover:underline font-semibold cursor-pointer' onClick={() => openMapDirection(event.location)}>
+                    Get Directions
+                  </button>
+                </div>
+                <GoogleMap
+                  location={{ lat: event.location.lat, lng: event.location.lng }}
+                  locationName={event.location.address}
+                />
+              </div>
+              {similarEvents?.length !== 0 && <SimilarEvents events={similarEvents} />}
+            </div>
+          )}
+          {activeTab === "Reviews" && (
+            <div>
+              {feedbackData && feedbackData?.length !== 0
+                ? <CustomerReviews eventName={event.title} feedbacks={feedbackData} />
+                : <div className='py-20 flex justify-center'>No feedback available!</div>
+              }
+            </div>
+          )}
         </div>
-        { feedbackData?.length!==0 && <ReviewsSection feedbacks={feedbackData}/> }
-        { similarEvents?.length!==0 && <SimilarEvents events={similarEvents} />}
       </main>
     </div>
   )

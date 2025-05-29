@@ -38,7 +38,7 @@ const UserBadgeChart = () => {
 
   useEffect(() => {
     fetchChartData();
-  }, []);
+  }, [fetchChartData]);
 
   return (
     <div>

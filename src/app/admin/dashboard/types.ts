@@ -41,6 +41,15 @@ export interface IStatResponse {
 export interface ITopEventsChartData {
   _id: string;
   title: string;
+  category: {
+    name: string;
+  };
+  likesCount: number;
+}
+
+export interface ITopEventsTableData {
+  _id: string;
+  title: string;
   category: string;
   likesCount: number;
 }
@@ -151,4 +160,11 @@ export interface FeedbackAnalyticsResponse {
   success: boolean;
   message: string;
   data: FeedbackAnalyticsData;
+}
+
+export interface IFeedbackChartData {
+  eventId: string;
+  title: string;
+  totalFeedbacks: string;
+  averageRating: number;
 }

@@ -1,18 +1,18 @@
 'use client'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useRef } from 'react'
 
 // Custom components
 import { FilterOptions } from '@/components/events-components/FilterOptions'
 import { FeaturedEvent } from '@/components/events-components/FeaturedEvent'
 import { EventList } from '@/components/events-components/EventList'
-import Loader from '@/components/common/Loader'
+import EventListSkeleton from '@/components/events-components/EventListSkeleton'
 import FilterModal from '@/components/common/FilterModal'
 import SearchInput from '@/components/common/CommonSearchBar'
 
 // Constant support
 import { API_ROUTES } from '@/utils/constant'
 import { getTicketPriceRange } from '../admin/event/helper'
-import { areAllTicketsBooked, convertFiltersToArray, getEventStatus, isNearbyWithUserLocation, removeFilterFromObject, getFilteredEventsData, getMaxTicketPrice } from './event-helper'
+import { areAllTicketsBooked, convertFiltersToArray, getEventStatus, isNearbyWithUserLocation, removeFilterFromObject, getFilteredEventsData, getMaxTicketPrice, getTicketAvailibilityStatus } from './event-helper'
 
 // Types support
 import { EventData, SortOption, EventResponse } from "./types";
@@ -29,6 +29,7 @@ import moment from 'moment'
 // Icons & Images
 import { FunnelIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from "@heroicons/react/24/solid";
+import { toast } from 'react-toastify'
 
 
 const EventsPage: React.FC = () => {
@@ -42,6 +43,8 @@ const EventsPage: React.FC = () => {
   const [appliedFilters, setAppliedFilters] = useState<IApplyFiltersKey>({})
   const [appliedFiltersArray, setAppliedFiltersArray] = useState<LabelValue[]>([])
   const [categoriesOptions, setCategoriesOptions] = useState<{ id: string, label: string, value: string }[]>([])
+
+  const likeTimersRef = useRef<{ [key: string]: ReturnType<typeof setTimeout> }>({});
 
   const openFilterModal = () => setFilterModal(true)
 
@@ -60,14 +63,14 @@ const EventsPage: React.FC = () => {
     setAppliedFilters(updatedFilters);
   }
 
-  const applyFilters = (filterValues : IApplyFiltersKey) => {
+  const applyFilters = (filterValues : IApplyFiltersKey, data = allEvents) => {
     const updatedFilters = {
       ...filterValues,
       search: searchQuery || "", // include active search in filter logic
     };
 
     const results = convertFiltersToArray(filterValues)
-    const filteredData = getFilteredEventsData(allEvents, updatedFilters) 
+    const filteredData = getFilteredEventsData(data, updatedFilters) 
     setAppliedFilters(filterValues)
     setAppliedFiltersArray(results)
     setEvents(filteredData)
@@ -124,18 +127,60 @@ const EventsPage: React.FC = () => {
               ),
               ticketsArray: item.tickets,
               lat: item.location.lat,
-              lng : item.location.lng
+              lng : item.location.lng,
+              availableTicketStatus: getTicketAvailibilityStatus(item.tickets)
             }
            }))
   
           setEvents(modifiedArray)
           setAllEvents(modifiedArray)
+          if(appliedFiltersArray.length > 0) {
+             applyFilters(appliedFilters, modifiedArray)
+          }
           setLoading(false)
         } else {
            setEvents([])
-           setLoading(false)
         }
   }
+
+  const likeEvent = (id: string) => {
+
+    // 1. Optimistically update local event state
+    setEvents((prevEvents) => {
+      return prevEvents.map((event) =>
+        event.id === id ? { ...event, isLiked: !event.isLiked } : event
+      );
+    });
+
+    // 2. Get the new isLiked value for toast
+    const isNowLiked = !events.find((e) => e.id === id)?.isLiked;
+    if (isNowLiked) {
+      toast.success('Liked the Event!');
+    } else {
+      toast.error('Disliked the Event!');
+    }
+
+    // 3. Clear any existing timeout for this event ID
+    if (likeTimersRef.current[id]) {
+      clearTimeout(likeTimersRef.current[id]);
+    }
+
+    // 4. Set new timeout to debounce API call
+    likeTimersRef.current[id] = setTimeout(async () => {
+      try {
+        const response = await apiCall({
+          endPoint: `${API_ROUTES.ADMIN.GET_EVENTS}/${id}/like`,
+          method: 'POST',
+        });
+
+        if (response && response.success) {
+          await fetchEvents(); // Optional re-sync with backend
+        }
+      } catch (err) {
+        console.error('Error sending like API call:', err);
+      }
+    }, 500); // 1-second debounce
+  };
 
   const getCategories = useCallback(async () => {
     try {
@@ -161,6 +206,7 @@ const EventsPage: React.FC = () => {
   useEffect(()=>{
     getCategories()
     fetchEvents(); 
+    setTimeout(()=>setLoading(false),2000);
   },[])
   const filteredEvents = events
   .filter((event) =>
@@ -178,13 +224,15 @@ const EventsPage: React.FC = () => {
     }
     return 0
   })
-
+  if(loading){
+    return <EventListSkeleton/>
+  }
   const featuredEvent = filteredEvents.filter(event => event.isFeatured && event.status!=="ended");
   const regularEvents = filteredEvents;
+
   return (
     
-    <div className="mx-auto p-10">
-       {loading && <Loader />}
+    <div className="mx-auto w-full p-10">
       <h1 className="text-3xl font-bold mb-6">Discover Events</h1>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 
@@ -227,15 +275,18 @@ const EventsPage: React.FC = () => {
 
       </div>
 
-      {(featuredEvent.length>0 && searchQuery==="") && (
+      {(featuredEvent.length>0 && searchQuery==="" && appliedFiltersArray.length===0) && (
         <div className="mb-8 mt-6">
           <h2 className="text-xl font-semibold mb-4">Featured Event Near you</h2>
-          <FeaturedEvent event={featuredEvent} />
+          <FeaturedEvent event={featuredEvent} likeEvent={likeEvent} />
         </div>
       )}
       <div className="mb-8">
+       { 
+        (searchQuery==="" && appliedFiltersArray.length===0) &&
         <h2 className="text-xl font-semibold mb-4">Explore All Events</h2>
-        <EventList events={regularEvents} />
+       }
+        <EventList events={regularEvents} likeEvent={likeEvent} />
       </div>
 
       <FilterModal
