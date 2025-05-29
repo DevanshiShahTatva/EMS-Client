@@ -1,8 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import { getToken, onMessage } from "firebase/messaging";
-import { getFirebaseMessaging } from "../../lib/firebaseClient";
-import notification from "../../../public/assets/notificationIcon.svg";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import notification from "../../../public/assets/notificationIcon.svg";
+import { getToken, onMessage } from "firebase/messaging";
+import { getFirebaseMessaging } from "@/lib/firebaseClient";
+import alarm from "../../../public/assets/alarm.png";
+import { format, isToday, isYesterday, parseISO } from "date-fns";
 
 type Notification = {
   title: string;
@@ -10,8 +12,6 @@ type Notification = {
   read: boolean;
   timestamp: string;
 };
-
-const VAPID_KEY = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
 
 const NotificationBell: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>(() => {
@@ -23,11 +23,70 @@ const NotificationBell: React.FC = () => {
       return [];
     }
   });
+
   const [popupOpen, setPopupOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const unreadCount = notifications.filter((n) => !n.read).length;
 
+  const timeAgo = (dateString: string) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffMs = now.getTime() - date.getTime();
+
+    const seconds = Math.floor(diffMs / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (seconds < 60) return "Just now";
+    if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+    if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+    return `${days} day${days > 1 ? "s" : ""} ago`;
+  };
+
+  const addNotification = (newNotification: Notification) => {
+    setNotifications((prev) => {
+      const exists = prev.some(
+        (n) =>
+          n.title === newNotification.title &&
+          n.body === newNotification.body &&
+          !n.read
+      );
+      if (exists) return prev;
+
+      const updated = [newNotification, ...prev];
+      localStorage.setItem("notifications", JSON.stringify(updated));
+      const audio = new Audio("/notification.mp3");
+      audio.play();
+      return updated;
+    });
+  };
+
+  const groupNotificationsByDate = (notifications: Notification[]) => {
+    const groups: { [key: string]: Notification[] } = {};
+
+    notifications.forEach((notif) => {
+      const date = parseISO(notif.timestamp);
+      let label;
+      if (isToday(date)) {
+        label = "Today";
+      } else if (isYesterday(date)) {
+        label = "Yesterday";
+      } else {
+        label = format(date, "MMMM d, yyyy"); 
+      }
+      if (!groups[label]) {
+        groups[label] = [];
+      }
+      groups[label].push(notif);
+    });
+
+    return groups;
+  };
+
   useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
     async function setupFCM() {
       const messaging = await getFirebaseMessaging();
       if (!messaging) return;
@@ -35,26 +94,23 @@ const NotificationBell: React.FC = () => {
       try {
         const permission = await Notification.requestPermission();
         if (permission === "granted") {
-          const token = await getToken(messaging, { vapidKey: VAPID_KEY });
+          const token = await getToken(messaging, {
+            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+          });
           console.log("FCM Token:", token);
         }
 
-        onMessage(messaging, (payload) => {
+        unsubscribe = onMessage(messaging, (payload) => {
           const { title = "No title", body = "No body" } =
             payload.notification || {};
-          const newNotification = {
+          const newNotification: Notification = {
             title,
             body,
             read: false,
-            timestamp: "just now",
+            timestamp: new Date().toISOString(),
           };
 
-          const existing = JSON.parse(
-            localStorage.getItem("notifications") || "[]"
-          );
-          const updated = [newNotification, ...existing];
-          localStorage.setItem("notifications", JSON.stringify(updated));
-          setNotifications(updated);
+          addNotification(newNotification);
         });
       } catch (error) {
         console.error("FCM error:", error);
@@ -62,6 +118,10 @@ const NotificationBell: React.FC = () => {
     }
 
     setupFCM();
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -84,34 +144,34 @@ const NotificationBell: React.FC = () => {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    navigator.serviceWorker?.addEventListener("message", (event) => {
+    const handler = (event: MessageEvent) => {
       if (event.data?.type === "PUSH_NOTIFICATION") {
         const payload = event.data.payload;
         const { title = "No title", body = "No body" } =
           payload.notification || {};
-        const newNotification = {
+        const newNotification: Notification = {
           title,
           body,
           read: false,
-          timestamp: "just now",
+          timestamp: new Date().toISOString(),
         };
-        const existing = JSON.parse(
-          localStorage.getItem("notifications") || "[]"
-        );
-        const updated = [newNotification, ...existing];
-        localStorage.setItem("notifications", JSON.stringify(updated));
-        setNotifications(updated);
-      }
-    });
-  }, []);
 
-  useEffect(() => {}, []);
+        addNotification(newNotification);
+      }
+    };
+
+    navigator.serviceWorker?.addEventListener("message", handler);
+    return () => {
+      navigator.serviceWorker?.removeEventListener("message", handler);
+    };
+  }, []);
 
   const togglePopup = () => {
     if (!popupOpen) {
-      setNotifications((prev) => prev.map((n) => ({ ...n })));
+      setPopupOpen(true);
+    } else {
+      setPopupOpen(false);
     }
-    setPopupOpen(!popupOpen);
   };
 
   const clearNotifications = () => {
@@ -123,7 +183,7 @@ const NotificationBell: React.FC = () => {
   const markAsRead = (index: number) => {
     setNotifications((prev) => {
       const updated = [...prev];
-      updated[index].read = true;
+      updated.splice(index, 1);
       localStorage.setItem("notifications", JSON.stringify(updated));
       return updated;
     });
@@ -158,24 +218,33 @@ const NotificationBell: React.FC = () => {
 
       {popupOpen && (
         <div
-          className="absolute right-0 mt-2 w-80 bg-white shadow-lg rounded-md border z-50 max-h-72 "
+          className="absolute right-0 mt-2 w-100 bg-white shadow-lg rounded-md border z-50 max-h-72"
           role="region"
           aria-label="Notifications"
         >
           <div className="flex justify-between items-center p-3 border-b">
             <h3 className="font-bold text-lg">Notifications</h3>
-            <button
-              onClick={clearNotifications}
-              className="text-sm text-red-600 hover:text-red-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-red-400 rounded"
-              aria-label="Clear all notifications"
-              title="Clear all notifications"
-            >
-              Clear All
-            </button>
+            {notifications.filter((item) => !item.read).length > 0 && (
+              <button
+                onClick={clearNotifications}
+                className="text-sm text-indigo-600 hover:text-indigo-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-red-400 rounded"
+                aria-label="Clear all notifications"
+                title="Clear all notifications"
+              >
+                Mark all as read
+              </button>
+            )}
           </div>
 
-          {notifications.length === 0 ? (
-            <div className="p-4 text-center text-sm text-gray-500 select-none">
+          {notifications.filter((item) => !item.read).length === 0 ? (
+            <div className="p-4 text-center text-md text-gray-500 select-none font-[700]">
+              <Image
+                className="m-auto mb-3"
+                src={alarm}
+                height={70}
+                width={50}
+                alt="alarm"
+              ></Image>
               No notifications yet
             </div>
           ) : (
@@ -184,55 +253,53 @@ const NotificationBell: React.FC = () => {
               role="region"
               aria-label="Notifications"
             >
-              {notifications.map(
-                ({ title, body, read, timestamp }: Notification, index) => (
-                  <div
-                    key={index}
-                    className={`
-                    flex items-start space-x-3 p-4 transition-colors duration-200
-                    ${
-                      !read
-                        ? "bg-slate-100 hover:bg-slate-200"
-                        : "hover:bg-gray-50"
-                    }
-                    focus:outline-none focus:ring-2 focus:ring-slate-500
-                  `}
-                    role="button"
-                    tabIndex={0}
-                    aria-pressed={read}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                      }
-                    }}
-                  >
-                    {!read && (
-                      <span className="flex-shrink-0 mt-1 h-2.5 w-2.5 rounded-full bg-slate-600 animate-pulse"></span>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-center mb-1">
-                        <h3 className="text-sm font-semibold text-slate-900 truncate">
-                          {title}
-                        </h3>
-                        <time className="text-xs text-slate-400 ml-2 whitespace-nowrap">
-                          {timestamp}
-                        </time>
-                      </div>
-                      <p className="text-sm text-slate-700 line-clamp-2">
-                        {body}
-                      </p>
-                      {!read && (
-                        <button
-                          onClick={() => markAsRead(index)}
-                          className="mt-2 text-xs text-indigo-600 hover:underline focus:outline-none"
-                        >
-                          Mark as Read
-                        </button>
-                      )}
-                    </div>
-                  </div>
+              {Object.entries(
+                groupNotificationsByDate(
+                  notifications.filter((item) => !item.read)
                 )
-              )}
+              ).map(([label, notifs], groupIndex) => (
+                <div key={groupIndex}>
+                  <div className="bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-600">
+                    {label}
+                  </div>
+                  {notifs.map(({ title, body, read, timestamp }, index) => (
+                    <div
+                      key={`${groupIndex}-${index}`}
+                      className="flex items-start space-x-3 p-4 transition-colors duration-200 hover:bg-indigo-50"
+                      role="button"
+                      tabIndex={0}
+                      aria-pressed={read}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                        }
+                      }}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-center mb-1">
+                          <h3 className="text-md font-semibold text-slate-900 truncate">
+                            {title}
+                          </h3>
+                          <time className="text-xs text-slate-400 ml-2 whitespace-nowrap">
+                            {timeAgo(timestamp)}
+                          </time>
+                        </div>
+                        <p className="text-sm text-slate-700 line-clamp-2">
+                          {body}
+                        </p>
+                        {!read && (
+                          <button
+                            onClick={() => markAsRead(index)}
+                            className="mt-2 text-xs text-indigo-600 hover:underline focus:outline-none"
+                          >
+                            ✓ Mark as Read
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
           )}
         </div>
