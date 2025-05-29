@@ -466,19 +466,22 @@ const MyEventsPage = () => {
             isEditFlag={false}
             feedback={{
                  _id: '',
-                eventId: '',
-                userId: '',
-                name: '',
-                email: '',
                 rating: 0,
                 description: '',
                 isEdited: false,
                 createdAt: '',
                 updatedAt: '',
-                profileimage: '',
-                eventImage:'',
-                eventTitle:'',
-                __v: 0
+                event:{
+                  id: "",
+                  title: "",
+                  image: null
+                },
+                user:{
+                  id: "",
+                  name: "",
+                  email: "",
+                  profileimage: null
+                },
             }}
           />
 

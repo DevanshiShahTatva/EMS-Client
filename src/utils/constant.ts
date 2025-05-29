@@ -82,10 +82,11 @@ export const API_ROUTES = {
             UPDATE_USER_INFO : "/update/user",
             RESET_EMAIL : "/reset_setting_email",
             VERIFY_EMAIL : "/verify_setting_email",
-            RESET_PASSWORD: "/reset_setting_password"
+            RESET_PASSWORD: "/reset_setting_password",
         },
         USER_DETAILS : "/user_details",
-        REWARD_HISTORY: "/point-setting/reward-history"
+        REWARD_HISTORY: "/point-setting/reward-history",
+        WEATHER_API: "https://api.openweathermap.org/data/2.5/forecast"
     },
     STAFF : {
         VALIDATE_TICKETS : "/ticket/book/validate",
