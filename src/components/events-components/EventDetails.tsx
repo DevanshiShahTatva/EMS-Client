@@ -36,7 +36,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
   const [feedbackData, setFeedbackData] = useState<FeedbackDetails[]>([]);
-  const [weatherData, setWeatherData] = useState<WeatherDetails | null>(null);
+  const [weatherData, setWeatherData] = useState<any | null>(null);
   const [activeTab, setActiveTab] = useState<string>('Event details');
 
   useEffect(() => {
@@ -95,12 +95,57 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
       const endPoint = API_ROUTES.USER.WEATHER_API + `?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric`;
       const resp = await axios.get(endPoint, { withCredentials: false });
       if(resp.data) {
-        setWeatherData(resp.data);
+        const dailyForecasts = processForecastData(resp.data.list);
+        setWeatherData({
+          current: resp.data.list[0],
+          city: resp.data.city,
+          daily: dailyForecasts
+      });
       };
     } catch (err) {
       console.error(err);
       toast.error("Something went wrong");
     }
+  };
+
+  const processForecastData = (forecasts: any[]) => {
+    const dailyData: Record<string, any> = {};
+    
+    forecasts.forEach(item => {
+      const date = item.dt_txt.split(' ')[0];
+      
+      if (!dailyData[date]) {
+        dailyData[date] = {
+          date,
+          temps: [],
+          weathers: [],
+          timeStamps: [],
+          icons: []
+        };
+      }
+      dailyData[date].temps.push(item.main.temp);
+      dailyData[date].icons.push(item.weather[0].icon);
+      dailyData[date].weathers.push(item.weather[0].main);
+      dailyData[date].timeStamps.push(item.dt_txt);
+    });
+    
+    return Object.values(dailyData).map(day => {
+      const latestWeather = day.weathers[day.weathers.length - 1];
+      const icon = day.icons[day.icons.length - 1];
+      return {
+        date: day.date,
+        minTemp: Math.min(...day.temps),
+        maxTemp: Math.max(...day.temps),
+        weather: latestWeather,
+        icon: icon,
+        forecasts: day.timeStamps.map((ts: string, i: number) => ({
+          time: ts.split(' ')[1],
+          icon: day.icons[i],
+          temp: day.temps[i],
+          weather: day.weathers[i]
+        }))
+      };
+    }).slice(0, 4);
   };
 
   if (loading) {
@@ -227,7 +272,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
         <div className='mt-10 p-6 shadow-lg rounded-lg bg-white'>
           <div className="bg-white w-full border-b border-gray-300">
             <div className="relative space-x-4 flex w-full md:w-auto">
-              {["Event details", "Reviews"].map((tab) => (
+              {["Event details", "Reviews", "Weather"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -268,6 +313,9 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                 : <div className='py-20 flex justify-center'>No feedback available!</div>
               }
             </div>
+          )}
+          {activeTab === "Weather" && (
+            <WeatherReport data={weatherData} />
           )}
         </div>
       </main>

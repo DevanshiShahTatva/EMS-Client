@@ -84,7 +84,7 @@ export const API_ROUTES = {
         },
         USER_DETAILS : "/user_details",
         REWARD_HISTORY: "/point-setting/reward-history",
-        WEATHER_API: "https://api.openweathermap.org/data/2.5/weather"
+        WEATHER_API: "https://api.openweathermap.org/data/2.5/forecast"
     },
     STAFF : {
         VALIDATE_TICKETS : "/ticket/book/validate",
