@@ -16,18 +16,18 @@ import { format } from "date-fns";
 import Loader from "../common/Loader";
 import { useRouter } from "next/navigation";
 import FeedbackModal from "./FeedbackModal";
-import { FeedbackDetails } from "@/app/events/types";
+import { FeedbackDetails, FeedbackItem } from "@/app/events/types";
 import DeleteModal from "../common/DeleteModal";
 import { toast } from "react-toastify";
 import SearchInput from "../common/CommonSearchBar";
 
 const ReviewsPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [reviews, setReviews] = useState<FeedbackDetails[]>([]);
+  const [reviews, setReviews] = useState<FeedbackItem[]>([]);
   const [expandedReview, setExpandedReview] = useState<string | null>(null);
 
   const [showEditModal, setEditModal] = useState(false);
-  const [editReview, setEditReview] = useState<FeedbackDetails>();
+  const [editReview, setEditReview] = useState<FeedbackItem>();
   const [deleteReviewId, setDeleteReviewId] = useState<string>("");
   const [deleteModal, setDeleteModal] = useState(false);
   const [filterRating, setFilterRating] = useState<number | null>(null);
@@ -42,7 +42,7 @@ const ReviewsPage = () => {
     5: { emoji: '/Great_Face.png', text: 'Great' },
   }), []);
 
-  const setReview = useCallback((review: FeedbackDetails) => {
+  const setReview = useCallback((review: FeedbackItem) => {
     setEditReview(review);
     setEditModal(true);
   }, []);
@@ -78,13 +78,13 @@ const ReviewsPage = () => {
   }, []);
 
   const filteredReviews = useMemo(() => {
-    let filtered = reviews;
+    let filtered = reviews.filter(review => review.user !== null && review.event !== null);
 
     if (searchQuery.trim()) {
       const lowerQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (review) =>
-          review.eventTitle.toLowerCase().includes(lowerQuery) ||
+          review.event?.title.toLowerCase().includes(lowerQuery) ||
           review.description.toLowerCase().includes(lowerQuery) ||
           review.rating.toString().includes(lowerQuery)
       );
@@ -193,10 +193,10 @@ const ReviewsPage = () => {
             filteredReviews.map((review) => (
               <div key={review._id} className="bg-white shadow rounded-xl p-5">
                 <div className="flex items-start justify-between gap-4 mb-2">
-                  <div className="flex items-center gap-3 cursor-pointer" onClick={() => review?.eventId && navigateToEvent(review?.eventId)}>
-                    {review.eventImage ? (
+                  <div className="flex items-center gap-3 cursor-pointer" onClick={() => review.event?.id && navigateToEvent(review.event.id)}>
+                    {review.event?.image ? (
                       <Image
-                        src={review.eventImage}
+                        src={review.event.image}
                         alt="Event"
                         width={56}
                         height={56}
@@ -205,7 +205,7 @@ const ReviewsPage = () => {
                     ) : (
                       <div className="w-14 h-14 bg-gray-200 rounded-md" />
                     )}
-                    <p className="text-lg font-bold text-gray-900">{review.eventTitle}</p>
+                    <p className="text-lg font-bold text-gray-900">{review?.event?.title}</p>
                   </div>
                   <div className="flex gap-2">
                     <button className="text-blue-500 hover:text-blue-700" onClick={() => setReview(review)}>
@@ -280,7 +280,7 @@ const ReviewsPage = () => {
         </div>
         {editReview && (
           <FeedbackModal
-            eventId={editReview.eventId}
+            eventId={editReview.event.id}
             isOpen={showEditModal}
             onClose={closeEditModal}
             onSubmitAfter={fetchReviews}

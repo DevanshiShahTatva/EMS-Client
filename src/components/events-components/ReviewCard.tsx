@@ -38,7 +38,7 @@ const ReviewCard = ({ feedback, onEdit }: { feedback: FeedbackDetails, onEdit: a
                 /> :
                 (
                   <button className='h-10 w-10 rounded-full bg-indigo-600 text-white font-bold relative cursor-pointer'>
-                    {name.charAt(0).toUpperCase()}
+                    {feedback.name.charAt(0).toUpperCase()}
                   </button>
                 )
             }

@@ -53,7 +53,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
           />
         </button>
         <div className="absolute top-3 left-3">
-          <CategoryChip {...event.category} bgColor="#fff" />
+          <CategoryChip item={{...event.category,bgColor:"#fff"}} />
         </div>
       </div>
       <div className="p-4 flex flex-col flex-grow">
@@ -87,8 +87,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, likeEvent }) => {
             <span className='font-bold'>{formattedDate}</span>
           </div>
           <div className="flex items-center text-sm text-gray-500">
-            <TagIcon className="h-4 w-4 mr-2" />
-            <span className='font-bold'>{event.priceRange}</span>
+            <div className="flex items-center">
+              <TagIcon className="h-4 w-4 mr-2" />
+              <span className='font-bold'>{event.priceRange}</span>
+            </div>
           </div>
         </div>
       </div>
