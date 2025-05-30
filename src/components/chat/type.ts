@@ -10,6 +10,12 @@ export interface IMessage {
   }
 }
 
+export interface IMember {
+  id: string;
+  name: string;
+  avatar: string;
+}
+
 export interface IGroup {
   id: string;
   name: string;
@@ -18,5 +24,5 @@ export interface IGroup {
   lastMessage?: string;
   lastMessageTime?: string;
   lastMessageSender?: string;
-  members: string[];
+  members: IMember[];
 }
