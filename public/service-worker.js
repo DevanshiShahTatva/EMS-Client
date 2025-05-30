@@ -1,4 +1,4 @@
-const CACHE_NAME = "evently-v1"
+const CACHE_NAME = "evently-v2"
 
 async function cacheCoreAssets(){
     const cache = await caches.open(CACHE_NAME);
