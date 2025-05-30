@@ -62,7 +62,9 @@ export const API_ROUTES = {
         GENERATE_TERMS_CONDITIONS: "/terms-and-conditions/generate-ai",
         FEEDBACK_ANALYTICS : '/dashboard/analytics/feedback-analytics',
         FEEDBACK_OVERVIEW: '/dashboard/analytics/feedback-all-feedbacks',
-        FEEDBACK_DETAILS: '/dashboard/analytics/feedback-details'
+        FEEDBACK_DETAILS: '/dashboard/analytics/feedback-details',
+        SINGLE_USER_CREATION : '/admin/single-user-creation',
+        BULK_USER_CREATION : '/admin/bulk-uploads'
     },
     AUTH: {
         LOGIN: `/login`,

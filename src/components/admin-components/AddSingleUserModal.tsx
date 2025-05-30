@@ -4,7 +4,6 @@ import React from "react";
 
 // Custom Components
 import ModalLayout from "../common/CommonModalLayout";
-import CustomButton from "@/components/common/CustomButton";
 import FormikSelectField from "@/components/common/FormikSelectField";
 import FormikTextField from "@/components/common/FormikTextField";
 
@@ -16,7 +15,7 @@ import { toast } from "react-toastify";
 import { InitialSingleUserValues, SingleUserFormSchema } from "@/app/admin/users/helper";
 
 // constants
-import { USER_ROLES } from "@/utils/constant";
+import { API_ROUTES, USER_ROLES } from "@/utils/constant";
 
 // Icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
@@ -24,18 +23,38 @@ import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // Types
 import { ISingleUserFormValues } from "@/app/admin/users/types";
 
+// services
+import { apiCall } from "@/utils/services/request";
+
 
 interface ISingleUserModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onSubmit : () => void
 }
 
-const AddSingleUserModal: React.FC<ISingleUserModalProps> = ({ isOpen, onClose }) => {
+const AddSingleUserModal: React.FC<ISingleUserModalProps> = ({ isOpen, onClose, onSubmit }) => {
 
     const handleSubmit = async (values: ISingleUserFormValues, actions: FormikHelpers<ISingleUserFormValues>) => {
-        actions.setSubmitting(true);
-        actions.setSubmitting(false)
-        onClose()
+        actions.setSubmitting(true); 
+        
+        try {
+
+            const result = await apiCall({
+                method: "POST",
+                endPoint: API_ROUTES.ADMIN.SINGLE_USER_CREATION,
+                body: values,
+                withToken: true
+            })
+
+            if (result && result.success) {
+                toast.success(result?.message || "Something went wrong. please try again later.")
+                onSubmit()
+                actions.setSubmitting(false)
+            }
+        } catch (error) {
+            console.error(error)
+        } 
     };
 
     if (!isOpen) return null;
@@ -54,7 +73,7 @@ const AddSingleUserModal: React.FC<ISingleUserModalProps> = ({ isOpen, onClose }
                             modalTitle='Add User'
                             footerActions={[
                                 { label: "Cancel", onClick: () => onClose(), variant: "outlined" },
-                                { label: isSubmitting ? "Submitting...." : "Submit", type: "submit", variant: "primary" }
+                                { label: isSubmitting ? "Submitting...." : "Submit", type: "submit", variant: isSubmitting ? "disabled" : "primary" }
                             ]}
 
                         >

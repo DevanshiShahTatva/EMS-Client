@@ -22,7 +22,7 @@ import { API_ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant'
 import { apiCall } from '@/utils/services/request'
 
 // Types
-import { IUser, IUserData, IUsersApiResponse } from './types'
+import { ISingleUserFormValues, IUser, IUserData, IUsersApiResponse } from './types'
 import { Column, IApplyUserFiltersKey } from '@/utils/types'
 
 // library
@@ -35,6 +35,7 @@ import { getFilteredData, getMaxPoints } from './helper'
 // icons
 import { FunnelIcon } from "@heroicons/react/24/outline"
 import { DownloadIcon, FilePlus2, UserPlus } from 'lucide-react'
+import { toast } from 'react-toastify'
 
 
 const UsersPage = () => {
@@ -172,6 +173,20 @@ const UsersPage = () => {
             setLoading(false);
         }
     }, []);
+
+    // Single user Upload 
+    const singleUserUpload = async () => {
+        setLoading(true)
+        try {
+            await fetchUsersData()
+            closeSingleModal()
+            closeTypeModal()
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     useEffect(() => {
         fetchUsersData()
@@ -354,6 +369,7 @@ const UsersPage = () => {
         <AddSingleUserModal
             isOpen={singleModal}
             onClose={closeSingleModal}
+            onSubmit={singleUserUpload}
         />
 
           {/* Filter Popup */}
