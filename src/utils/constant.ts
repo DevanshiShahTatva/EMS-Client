@@ -64,7 +64,8 @@ export const API_ROUTES = {
         FEEDBACK_OVERVIEW: '/dashboard/analytics/feedback-all-feedbacks',
         FEEDBACK_DETAILS: '/dashboard/analytics/feedback-details',
         SINGLE_USER_CREATION : '/admin/single-user-creation',
-        BULK_USER_CREATION : '/admin/bulk-uploads'
+        BULK_USER_CREATION : '/admin/bulk-uploads',
+        DELETE_USER: (id: string) => `/admin/delete-user/${id}`
     },
     AUTH: {
         LOGIN: `/login`,
