@@ -78,7 +78,7 @@ const ReviewsPage = () => {
   }, []);
 
   const filteredReviews = useMemo(() => {
-    let filtered = reviews;
+    let filtered = reviews.filter(review => review.user !== null && review.event !== null);
 
     if (searchQuery.trim()) {
       const lowerQuery = searchQuery.toLowerCase();
@@ -205,7 +205,7 @@ const ReviewsPage = () => {
                     ) : (
                       <div className="w-14 h-14 bg-gray-200 rounded-md" />
                     )}
-                    <p className="text-lg font-bold text-gray-900">{review.event.title}</p>
+                    <p className="text-lg font-bold text-gray-900">{review?.event?.title}</p>
                   </div>
                   <div className="flex gap-2">
                     <button className="text-blue-500 hover:text-blue-700" onClick={() => setReview(review)}>

@@ -10,7 +10,7 @@ import clsx from "clsx";
 // types support
 type TModalFooterActions = {
   label: string;
-  variant : "primary" | "secondary" | "delete" | "outlined";
+  variant : "primary" | "secondary" | "delete" | "outlined" | "disabled";
   onClick?: () => void;
   type?: "button" | "submit"; // optional
   disabled?: boolean 
