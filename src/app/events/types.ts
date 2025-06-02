@@ -1,20 +1,34 @@
 import { IApplyFiltersKey } from "@/utils/types";
 
 export interface IEventDetailPageProps {
-    params: Promise<{ eventId: string }>;
+  params: Promise<{ eventId: string }>;
 }
 
 export interface LabelValue {
-    label: string;
-    value: string;
-    rowKey : keyof IApplyFiltersKey
+  label: string;
+  value: string;
+  rowKey: keyof IApplyFiltersKey;
 }
 
-
 import { IEventCategory, ITicketType } from "../admin/dropdowns/types";
-export type EventStatus = 'ongoing' | 'ended' | 'upcoming';
-export type EventCategory = 'Music' | 'all' | 'Film & Media' | 'Food & Drink' | 'Sports' | 'Art & Culture' | 'Business' | 'Wellness' | 'Education' | 'Gaming';
-export type SortOption = 'none' | 'date-asc' | 'date-desc' | 'title-asc' | 'title-desc';
+export type EventStatus = "ongoing" | "ended" | "upcoming";
+export type EventCategory =
+  | "Music"
+  | "all"
+  | "Film & Media"
+  | "Food & Drink"
+  | "Sports"
+  | "Art & Culture"
+  | "Business"
+  | "Wellness"
+  | "Education"
+  | "Gaming";
+export type SortOption =
+  | "none"
+  | "date-asc"
+  | "date-desc"
+  | "title-asc"
+  | "title-desc";
 export interface EventData {
     id: string;
     title: string;
@@ -37,7 +51,7 @@ export interface EventData {
     lat? : number,
     lng?: number
 }
-  
+
 export type EventLocation = {
   address: string;
   lat: number;
@@ -48,20 +62,20 @@ export type EventTicket = {
   _id: string;
   type: ITicketType;
   price: number;
-  totalSeats: number,
-  totalBookedSeats: number,
+  totalSeats: number;
+  totalBookedSeats: number;
   description: string;
 };
 
 export type CheckoutTicket = {
-  totalPrice:number;
-  quantity:number;
-  type:ITicketType;
-  ticketId:string;
+  totalPrice: number;
+  quantity: number;
+  type: ITicketType;
+  ticketId: string;
   usedPoints: number;
   discount: number;
   voucherId?: string;
-}
+};
 
 export type EventImage = {
   _id: string;
@@ -76,7 +90,7 @@ export type EventDataObjResponse = {
   category: IEventCategory;
   duration: string;
   startDateTime: string; // ISO string
-  endDateTime: string;   // ISO string
+  endDateTime: string; // ISO string
   location: EventLocation;
   tickets: EventTicket[];
   images: EventImage[]; // optional, since second object has no images
@@ -84,48 +98,47 @@ export type EventDataObjResponse = {
   updatedAt: string;
   __v?: number;
   numberOfPoint: number;
-  isLiked:boolean;
-  likesCount:number;
+  isLiked: boolean;
+  likesCount: number;
 };
 
 export type EventResponse = EventDataObjResponse[];
 
 export interface Ticket {
-  type: ITicketType
-  price: number
-  totalSeats: number
-  totalBookedSeats: number
-  description: string
-  _id: string
+  type: ITicketType;
+  price: number;
+  totalSeats: number;
+  totalBookedSeats: number;
+  description: string;
+  _id: string;
 }
 
 export interface Location {
-  address: string
-  lat: number
-  lng: number
+  address: string;
+  lat: number;
+  lng: number;
 }
 
 export interface EventDetails {
-  _id: string
-  title: string
-  description: string 
-  location: Location
-  startDateTime: string
-  endDateTime: string
-  duration: string
-  category: IEventCategory
-  tickets: Ticket[]
-  images: EventImage[]
-  createdAt: string
-  updatedAt: string
-  __v: number
-  likes: string[]
-  isLiked: boolean
-  likesCount: number
+  _id: string;
+  title: string;
+  description: string;
+  location: Location;
+  startDateTime: string;
+  endDateTime: string;
+  duration: string;
+  category: IEventCategory;
+  tickets: Ticket[];
+  images: EventImage[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  likes: string[];
+  isLiked: boolean;
+  likesCount: number;
   userPoints: number;
   conversionRate: number;
 }
-
 
 export interface EventData {
   id: string;
@@ -141,7 +154,7 @@ export interface EventData {
   isFeatured: boolean;
 }
 export interface EventsDataTypes {
-  id: string
+  id: string;
   img: string;
   title: string;
   category: string;
@@ -153,34 +166,61 @@ export interface EventsDataTypes {
   ticketsAvailable: number;
 }
 
-
 export interface Location {
-  address: string
-  lat: number
-  lng: number
+  address: string;
+  lat: number;
+  lng: number;
 }
 
 export interface EventDetails {
-  _id: string
-  title: string
-  description: string 
-  location: Location
-  startDateTime: string
-  endDateTime: string
-  duration: string
-  category: IEventCategory
-  tickets: Ticket[]
-  images: EventImage[]
-  createdAt: string
-  updatedAt: string
-  __v: number
-  likes: string[]
-  isLiked: boolean
-  likesCount: number
+  _id: string;
+  title: string;
+  description: string;
+  location: Location;
+  startDateTime: string;
+  endDateTime: string;
+  duration: string;
+  category: IEventCategory;
+  tickets: Ticket[];
+  images: EventImage[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  likes: string[];
+  isLiked: boolean;
+  likesCount: number;
+}
+
+export interface FeedbackEventInfo {
+  id: string;
+  title: string;
+  image: string | null;
+}
+export interface FeedbackUserInfo {
+  id:string;
+  name:string;
+  email:string;
+  profileimage:string | null;
+}
+export interface FeedbackItem {
+  _id:string;
+  rating: number;
+  description: string;
+  isEdited: boolean;
+  createdAt: string;
+  updatedAt: string;
+  user: FeedbackUserInfo | null;
+  event: FeedbackEventInfo;
+}
+
+export interface FeedbackResponseData {
+  averageRating:number;
+  totalFeedback:number;
+  allFeedbacks:FeedbackItem[];
 }
 
 export interface FeedbackDetails {
-   _id: string;
+  _id: string;
   eventId: string;
   userId: string;
   name: string;
@@ -190,24 +230,72 @@ export interface FeedbackDetails {
   isEdited: boolean;
   createdAt: string;
   updatedAt: string;
-  profileimage:string;
-  eventImage:string;
-  eventTitle:string;
+  profileimage: string;
+  eventImage: string;
+  eventTitle: string;
   __v: number;
 }
 export interface CategoryIcon {
-  url: string
-  imageId: string
+  url: string;
+  imageId: string;
 }
 
 export interface CustomEventCategory {
-  _id: string
-  name: string
-  isActive: boolean
-  color: string
-  bgColor: string
-  icon: CategoryIcon
-  createdAt: string
-  updatedAt: string
-  __v: number
+  _id: string;
+  name: string;
+  isActive: boolean;
+  color: string;
+  bgColor: string;
+  icon: CategoryIcon;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface WeatherDetails {
+  coord: {
+    lon: number;
+    lat: number;
+  };
+  weather: [
+    {
+      id: number;
+      main: string;
+      description: string;
+      icon: string;
+    }
+  ];
+  base: string;
+  main: {
+    temp: number;
+    feels_like: number;
+    temp_min: number;
+    temp_max: number;
+    pressure: number;
+    humidity: number;
+    sea_level: number;
+    grnd_level: number;
+  };
+  visibility: number;
+  wind: {
+    speed: number;
+    deg: number;
+    gust: number;
+  };
+  rain: {
+    "1h": number;
+  };
+  clouds: {
+    all: number;
+  };
+  dt: number;
+  sys: {
+    country: string;
+    sunrise: number;
+    sunset: number;
+  };
+  timezone: number;
+  id: number;
+  name: string;
+  cod: number;
 }

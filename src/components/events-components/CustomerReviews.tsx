@@ -1,7 +1,7 @@
 import React from 'react';
 import { StarIcon } from 'lucide-react';
 import ReviewsRightSection from './PeopleReview';
-import { FeedbackDetails } from '@/app/events/types';
+import { FeedbackDetails, FeedbackItem, FeedbackResponseData } from '@/app/events/types';
 
 const colorArr: Record<number, string> = {
   1: 'text-purple-600 bg-purple-100',
@@ -44,7 +44,7 @@ export const StarRating = ({ rating }: { rating: number }) => (
   </div>
 );
 
-const CustomerReviews = ({ feedbacks, eventName }: { eventName: string; feedbacks: FeedbackDetails[] }) => {
+const CustomerReviews = ({ feedbacks, eventName }: { eventName: string; feedbacks: FeedbackItem[] }) => {
   const ratingDistribution: Record<number, number> = {
     5: feedbacks.filter((feedback) => feedback.rating === 5).length,
     4: feedbacks.filter((feedback) => feedback.rating === 4).length,

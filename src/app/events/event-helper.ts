@@ -464,3 +464,18 @@ export const hasEventEnded = (endDateTime: string | Date): boolean => {
   const todaysDate = new Date().getTime();
   return endDate < todaysDate
 }
+
+export const getLikesCount = (likesCount:number)=>{
+  if(isNaN(likesCount)) return 0;
+
+  if(likesCount >=1_000_000_000){
+    return (likesCount / 1_000_000_000).toFixed(1).replace(/\.0$/,'') + 'B';
+  }
+  if(likesCount >=1_000_000){
+    return (likesCount / 1_000_000).toFixed(1).replace(/\.0$/,'') + 'M';
+  }
+  if(likesCount >=1_000){
+    return (likesCount / 1_000).toFixed(1).replace(/\.0$/,'') + 'k';
+  }
+  return likesCount.toString();
+}

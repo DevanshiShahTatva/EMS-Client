@@ -62,7 +62,10 @@ export const API_ROUTES = {
         GENERATE_TERMS_CONDITIONS: "/terms-and-conditions/generate-ai",
         FEEDBACK_ANALYTICS : '/dashboard/analytics/feedback-analytics',
         FEEDBACK_OVERVIEW: '/dashboard/analytics/feedback-all-feedbacks',
-        FEEDBACK_DETAILS: '/dashboard/analytics/feedback-details'
+        FEEDBACK_DETAILS: '/dashboard/analytics/feedback-details',
+        SINGLE_USER_CREATION : '/admin/single-user-creation',
+        BULK_USER_CREATION : '/admin/bulk-uploads',
+        DELETE_USER: (id: string) => `/admin/delete-user/${id}`
     },
     AUTH: {
         LOGIN: `/login`,
@@ -80,10 +83,11 @@ export const API_ROUTES = {
             UPDATE_USER_INFO : "/update/user",
             RESET_EMAIL : "/reset_setting_email",
             VERIFY_EMAIL : "/verify_setting_email",
-            RESET_PASSWORD: "/reset_setting_password"
+            RESET_PASSWORD: "/reset_setting_password",
         },
         USER_DETAILS : "/user_details",
-        REWARD_HISTORY: "/point-setting/reward-history"
+        REWARD_HISTORY: "/point-setting/reward-history",
+        WEATHER_API: "https://api.openweathermap.org/data/2.5/forecast"
     },
     STAFF : {
         VALIDATE_TICKETS : "/ticket/book/validate",
@@ -97,6 +101,9 @@ export const API_ROUTES = {
     USER_FEEDBACK:"/feedbacks",
     PUT_FEEDBACK:(id:string|null)=>`/feedbacks/${id}`,
     CATEGORY: "/ticket-categories",
+    CHATBOT: {
+        CHAT: "/chatbot/chat",
+    }
 }
 export const LIGHT_COLORS = [
     '#FFB3BA', // Light Red
@@ -239,6 +246,11 @@ export const INITIAL_TICKETS_TYPES = [
     { id: "1", type: "Premium", price: "300", maxQty: 100, description: "All access, Goodies", _id: "" },
     { id: "2", type: "Standard", price: "150", maxQty: 50, description: "Front row, extra access", _id: "" },
     { id: "3", type: "Free", price: "0", maxQty: 50, description: "General admission", _id: "" },
+]
+
+export const SAMPLE_USER_DATA = [
+    { name : "Sample-1", email: "sample-1@yopmail.com", role : "user"},
+    { name : "Sample-2", email: "sample-2@yopmail.com", role : "organizer"},
 ]
 
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string;
