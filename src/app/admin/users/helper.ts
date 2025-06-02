@@ -1,26 +1,5 @@
 import { IApplyUserFiltersKey, IUserPoints } from "@/utils/types";
 import { IUserData } from "./types";
-import * as Yup from "yup";
-
-export const SingleUserFormSchema = Yup.object().shape({
-    name: Yup.string()
-        .required("Name is required")
-        .min(2, "Name must be at least 2 characters")
-        .max(50, "Name must be no more than 50 characters")
-        .matches(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-
-    email: Yup.string()
-        .required("Email is required")
-        .email("Invalid email format"),
-    role: Yup.string().oneOf(["user", "organizer"]).required("Role is required"),
-});
-
-export const InitialSingleUserValues = {
-    name: "",
-    email: "",
-    role : ""
-}
-
 
 export const getMaxPoints = (userArr: IUserData[]): number => {
     const pointsArray = userArr.map(item => item.points)

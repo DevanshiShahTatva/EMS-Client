@@ -3,7 +3,6 @@ import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-import ChatBotWidget from "@/components/common/ChatBotWidget";
 
 const dmSans = DM_Sans({
   display: "swap",
@@ -29,7 +28,6 @@ export default function RootLayout({
       >
         <ToastContainer />
         {children}
-        <ChatBotWidget />
       </body>
     </html>
   );

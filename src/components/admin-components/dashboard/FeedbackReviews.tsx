@@ -69,9 +69,7 @@ const FeedbackReviews = () => {
     };
   const chartLabels = useMemo(() => data.map((d) => `${d.rating} Star`), [data]);
   const chartData = useMemo(() => data.map((d) => d.count), [data]);
-  const shouldDisplayRatings=(data:RatingDistribution[])=> {
-      return data.some((item: { count: number; }) => item.count > 0);
-  }
+
   return (
     <div>
       <CardTitle
@@ -86,7 +84,7 @@ const FeedbackReviews = () => {
         </Button>
         } />
       <div className='p-6 min-h-[450px] w-full items-center'>
-        {shouldDisplayRatings(data) ? (
+        {chartData.length ? (
           <div className="mb-6 justify-around">
             <DateRangeFilter
               onChange={setFilter}
@@ -99,7 +97,7 @@ const FeedbackReviews = () => {
 
         {loading ? (
           <Skeleton className="h-75 w-full rounded-md" />
-        ) : shouldDisplayRatings(data) ? (
+        ) : chartData.length ? (
           <div className="min-h-[250px] h-[400px] md:h-[300px] w-full flex items-center justify-center">
             <BarChart data={chartData} labels={chartLabels} symbolType="count" />
           </div>
