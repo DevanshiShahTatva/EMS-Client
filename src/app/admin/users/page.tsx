@@ -14,6 +14,7 @@ import CustomButton from '@/components/common/CustomButton'
 import AddBulkUserModal from '@/components/admin-components/AddBulkUserModal'
 import AddSingleUserModal from '@/components/admin-components/AddSingleUserModal'
 import ModalLayout from '@/components/common/CommonModalLayout'
+import DeleteModal from '@/components/common/DeleteModal'
 
 // Constant
 import { API_ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant'
@@ -23,17 +24,18 @@ import { apiCall } from '@/utils/services/request'
 
 // Types
 import { IUser, IUserData, IUsersApiResponse } from './types'
-import { Column, IApplyUserFiltersKey } from '@/utils/types'
+import { Action, Column, IApplyUserFiltersKey } from '@/utils/types'
 
 // library
 import clsx from 'clsx'
+import { toast } from "react-toastify"
 
 // helper
 import { exportToExcel } from '@/utils/helper'
 import { getFilteredData, getMaxPoints } from './helper'
 
 // icons
-import { FunnelIcon } from "@heroicons/react/24/outline"
+import { FunnelIcon, TrashIcon } from "@heroicons/react/24/outline"
 import { DownloadIcon, FilePlus2, PlusIcon, UserPlus } from 'lucide-react'
 
 
@@ -45,6 +47,7 @@ const UsersPage = () => {
     const [usersData, setUsersData] = useState<IUserData[]>([])
     const [searchQuery, setSearchQuery] = useState("")
 
+    const [deletableId, setDeletableId] = useState<string>("")
     const [filterModal, setFilterModal] = useState(false)
     const [filterValues, setFilterValues] = useState<IApplyUserFiltersKey>({})
     const [appliedFiltersCount, setAppliedFiltersCount] = useState(0)
@@ -53,6 +56,7 @@ const UsersPage = () => {
     const [bulkModal, setBulkModal] = useState(false)
     const [singleModal, setSingleModal] = useState(false)
     const [activeUserCard, setActiveUserCard] = useState<"" | "bulk" | "single">("")
+
 
 
     const USER_SELECTION_CARD = [
@@ -110,6 +114,14 @@ const UsersPage = () => {
     const closeFilterModal = () => {
         setFilterModal(false)
     }
+
+    const openDeleteModal = (id: string) => {
+        setDeletableId(id)
+    }
+
+    const closeDeleteModal = () => {
+        setDeletableId("")
+    }
     
     const handleSearch = (searchVal: string) => {
 
@@ -136,7 +148,30 @@ const UsersPage = () => {
         setUsersData(result.data);
         setFilterValues(updatedFilters);
         setAppliedFiltersCount(result.filterCount);
-      }
+    }
+
+    // Delete User 
+    const deleteUser = async () => {
+        setDeletableId("")
+        setLoading(true);
+        try {
+
+            const response = await apiCall({
+                endPoint: API_ROUTES.ADMIN.DELETE_USER(deletableId),
+                method: 'DELETE',
+            });
+
+            if (response && response.success) {
+                await fetchUsersData()
+                toast.success("User Deleted Successfully")
+                setDeletableId("")
+            }
+        } catch (err) {
+            console.error('Error fetching chart data', err);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     // Fecth users Data 
     const fetchUsersData = useCallback(async () => {
@@ -275,6 +310,13 @@ const UsersPage = () => {
         },
     ]
 
+    const tableActions: Action<IUserData>[] = [
+        {
+            icon: <TrashIcon className="h-5 w-5 text-red-500 hover:text-red-700 cursor-pointer  ml-5" />,
+            onClick: (row: IUserData) => openDeleteModal(row._id),
+        },
+    ];
+
   return (
     <div className='px-8 py-5'>
         
@@ -345,7 +387,7 @@ const UsersPage = () => {
                 loading={loading}
                 data={usersData}
                 columns={tableHeaders}
-                actions={[]}
+                actions={tableActions}
               />
 
         </ChartCard>
@@ -401,6 +443,13 @@ const UsersPage = () => {
               onClose={closeFilterModal}
               applyFilters={(filterValues) => submitFilters(filterValues)}
               maxPoints={getMaxPoints(allUsersData)}
+          />
+
+          {/* Delete Modal */}
+          <DeleteModal
+              isOpen={deletableId !== ""}
+              onClose={closeDeleteModal}
+              onConfirm={deleteUser}
           />
     </div>
   )
