@@ -273,23 +273,58 @@ const UsersPage = () => {
             </p>
         },
         {
-            header: "Badge", key: "badge",
+            header: 'Badge',
+            key: 'badge',
             render: (row) => {
-                const badgeStyles = {
-                    gold: 'bg-yellow-500 text-white',
-                    silver: 'bg-gray-500 text-white',
-                    bronze: 'bg-cyan-500 text-white',
+                const badgeConfig = {
+                    gold: {
+                        gradient: 'from-[#FFD700] via-[#FFEB3B] to-[#FFC107]',
+                        border: 'border-[#DAA520]',
+                        textColor: 'text-yellow-900',
+                        ringColor: 'ring-[#FFD700]'
+                    },
+                    silver: {
+                        gradient: 'from-[#D3D3D3] via-[#E0E0E0] to-[#B0B0B0]',
+                        border: 'border-[#A9A9A9]',
+                        textColor: 'text-gray-700',
+                        ringColor: 'ring-[#C0C0C0]'
+                    },
+                    bronze: {
+                        gradient: 'from-[#CD7F32] via-[#D2691E] to-[#A0522D]',
+                        border: 'border-[#8B4513]',
+                        textColor: 'text-orange-900',
+                        ringColor: 'ring-[#CD7F32]'
+                    }
                 };
-                return (
-                    <span
-                        className={clsx(
-                            'font-semibold px-4 py-2 rounded-full inline-block',
-                            badgeStyles[row.badge.toLowerCase() as keyof typeof badgeStyles]
-                        )}
-                    >
-                        {row.badge}
-                    </span>
-                )
+
+                const MedalChip = ({ type }: { type: 'gold' | 'silver' | 'bronze' }) => {
+                    const styles = badgeConfig[type];
+
+                    return (
+                        <div
+                            className={clsx(
+                                'w-10 h-10 rounded-full border-4 ring-2 flex items-center justify-center flex-col font-bold text-xs uppercase',
+                                `bg-gradient-to-br ${styles.gradient}`,
+                                styles.border,
+                                styles.textColor,
+                                styles.ringColor
+                            )}
+                        >
+                            <TooltipWrapper tooltip={row.badge}>
+                                <span>{row.badge?.charAt(0).toUpperCase()}</span>
+                            </TooltipWrapper>
+                        </div>
+                    );
+                };
+
+                const badgeType = row.badge?.toLowerCase();
+                const validTypes = ['gold', 'silver', 'bronze'] as const;
+
+                if (validTypes.includes(badgeType as typeof validTypes[number])) {
+                    return <MedalChip type={badgeType as 'gold' | 'silver' | 'bronze'} />;
+                } else {
+                    return <span className="text-gray-400 italic">No badge</span>;
+                }
             }
         },
         {
@@ -297,7 +332,7 @@ const UsersPage = () => {
             render: (row) => {
                 const chipStyles = {
                     user: 'bg-blue-100 text-blue-700',
-                    organizer: 'bg-red-100 text-red-700',
+                    organizer: 'bg-green-100 text-green-700',
                 };
                 return (
                     <span
@@ -312,7 +347,7 @@ const UsersPage = () => {
 
     const tableActions: Action<IUserData>[] = [
         {
-            icon: <TrashIcon className="h-5 w-5 text-red-500 hover:text-red-700 cursor-pointer  ml-5" />,
+            icon: <TrashIcon className="h-5 w-5 text-red-500 hover:text-red-700 cursor-pointer ml-5" />,
             onClick: (row: IUserData) => openDeleteModal(row._id),
         },
     ];
@@ -356,11 +391,11 @@ const UsersPage = () => {
                       {/* Export Butoon */}
                       <div className='flex'>
                           <CustomButton
-                              variant={usersData.length === 0 ? "disabled" : "primary"}
+                              variant={usersData.length === 0 ? "disabled" : "secondary"}
                               className='flex gap-2 items-center'
                               startIcon={<DownloadIcon className='h-5 w-5' />}
                               disabled={usersData.length === 0}
-                              onClick={() => exportToExcel(allUsersData, `Users-${Date.now()}.xlsx`)}
+                              onClick={() => exportToExcel(usersData, `Users-${Date.now()}.xlsx`)}
                           >
                               Export
                           </CustomButton>
@@ -369,7 +404,7 @@ const UsersPage = () => {
                       {/* Add Butoon */}
                       <div className='flex'>
                           <CustomButton
-                              variant='delete'
+                              variant='primary'
                               onClick={openTypeModal}
                               className='flex gap-2 items-center'
                               startIcon={<PlusIcon className='h-5 w-5' />}
@@ -399,10 +434,6 @@ const UsersPage = () => {
                   onClose={closeTypeModal}
               >
                   <div className='my-5 w-full'>
-                      <label className="block text-sm font-semibold text-gray-500 mb-1">
-                          Select one option*
-                      </label>
-
                       <div className="flex flex-col sm:flex-row gap-4 p-4">
                           {USER_SELECTION_CARD.map((opt, idx) => (
                               <div
