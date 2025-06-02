@@ -18,32 +18,32 @@ const Breadcrumbs: React.FC<IBreadcrumbsProps> = ({ breadcrumbsItems }) => {
   const router = useRouter();
 
   const navToDashboard = () => {
-    const role = getUserRole();
-    if (role !== "") {
-      switch (role) {
-        case ROLE.Admin:
-          return router.push(ROUTES.ADMIN.DASHBOARD);
-        case ROLE.Organizer:
-          return router.push(ROUTES.ORGANIZER.DASHBOARD);
-        default:
-          return router.push(ROUTES.HOME);
+    const role = getUserRole()
+    if(role !== "") {
+
+      switch(role) {
+          case ROLE.Admin :
+            return router.push(ROUTES.ADMIN.DASHBOARD)
+          case ROLE.Organizer :
+            return router.push(ROUTES.ORGANIZER.DASHBOARD)
+          default:
+            return router.push(ROUTES.HOME)
       }
+
     }
-    return false;
-  };
+    return false
+  }
 
   const handleClick = (path: string) => {
-    if (path === "") {
-      return false;
+
+    if(path === "") {
+        return false
     }
-    router.push(path);
+    router.push(path)
   };
 
   return (
-    <nav
-      className="flex items-center space-x-1 text-md mb-2"
-      aria-label="Breadcrumb"
-    >
+    <nav className="flex items-center space-x-1 text-md mb-2" aria-label="Breadcrumb">
       <div
         onClick={navToDashboard}
         className="flex items-center space-x-1 p-1  rounded cursor-pointer text-gray-500 hover:underline font-semibold"
