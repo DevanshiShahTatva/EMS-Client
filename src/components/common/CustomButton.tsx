@@ -23,7 +23,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   const baseClasses = "px-4 py-2 font-bold transition duration-200";
   const typeClasses = {
     primary: "bg-blue-500 hover:bg-blue-600 cursor-pointer rounded-[8px] text-white",
-    secondary: "bg-gray-500 hover:bg-gray-600 cursor-pointer rounded-[8px]",
+    secondary: "bg-gray-500 hover:bg-gray-600 cursor-pointer rounded-[8px] text-white",
     delete: "bg-red-500 hover:bg-red-600 rounded-[8px] text-white cursor-pointer",
     outlined: "border border-gray-500 text-gray-700 hover:bg-gray-100 cursor-pointer rounded-[8px]",
     disabled: "bg-gray-100 text-gray-400 cursor-not-allowed rounded-[8px]"
