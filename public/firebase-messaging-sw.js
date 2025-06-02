@@ -6,13 +6,13 @@ importScripts(
 );
 
 firebase.initializeApp({
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+  apiKey: "AIzaSyBj2D3Vrw6EtB2LtqNq8fPPOg0D-E3ESDM",
+  authDomain: "evently-aa407.firebaseapp.com",
+  projectId: "evently-aa407",
+  storageBucket: "evently-aa407.firebasestorage.app",
+  messagingSenderId: "532802052003",
+  appId: "1:532802052003:web:49ef0ea05709c44bbc0416",
+  measurementId: "G-564KBD4CLQ",
 });
 
 const messaging = firebase.messaging();

@@ -1,34 +1,39 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import notification from "../../../public/assets/notificationIcon.svg";
 import { getToken, onMessage } from "firebase/messaging";
 import { getFirebaseMessaging } from "@/lib/firebaseClient";
 import alarm from "../../../public/assets/alarm.png";
 import { format, isToday, isYesterday, parseISO } from "date-fns";
-
-type Notification = {
-  title: string;
-  body: string;
-  read: boolean;
-  timestamp: string;
-};
+import {
+  getNotifications,
+  markAllAsRead,
+  markAsRead,
+  NotificationResp,
+  registerFCMToken,
+} from "@/utils/services/notification";
 
 const NotificationBell: React.FC = () => {
-  const [notifications, setNotifications] = useState<Notification[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const stored = localStorage.getItem("notifications");
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  });
-
+  const [notifications, setNotifications] = useState<NotificationResp[]>([]);
+  const [loading, setLoading] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const fcmTokenRegistered = useRef(false); // Track FCM registration
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  const timeAgo = (dateString: string) => {
+  const fetchNotifications = useCallback(async () => {
+      setLoading(true);
+      try {
+        const data = await getNotifications();
+        setNotifications(data);
+      } catch (error) {
+        console.error("Failed to fetch notifications", error);
+      } finally {
+        setLoading(false);
+      }
+  }, []);
+
+  const timeAgo = useCallback((dateString: string) => {
     const now = new Date();
     const date = new Date(dateString);
     const diffMs = now.getTime() - date.getTime();
@@ -42,75 +47,84 @@ const NotificationBell: React.FC = () => {
     if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
     if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
     return `${days} day${days > 1 ? "s" : ""} ago`;
-  };
+  }, []);
 
-  const addNotification = (newNotification: Notification) => {
+  const addNotification = useCallback((newNotification: NotificationResp) => {
     setNotifications((prev) => {
+      // Prevent duplicates using ID or title+body
       const exists = prev.some(
         (n) =>
-          n.title === newNotification.title &&
-          n.body === newNotification.body &&
-          !n.read
+          n._id === newNotification._id ||
+          (n.title === newNotification.title && n.body === newNotification.body)
       );
-      if (exists) return prev;
-
-      const updated = [newNotification, ...prev];
-      localStorage.setItem("notifications", JSON.stringify(updated));
-      const audio = new Audio("/notification.mp3");
-      audio.play();
-      return updated;
+      return exists ? prev : [newNotification, ...prev];
     });
-  };
+  }, []);
 
-  const groupNotificationsByDate = (notifications: Notification[]) => {
-    const groups: { [key: string]: Notification[] } = {};
+  const groupNotificationsByDate = useCallback(
+    (notifications: NotificationResp[]) => {
+      const groups: { [key: string]: NotificationResp[] } = {};
 
-    notifications.forEach((notif) => {
-      const date = parseISO(notif.timestamp);
-      let label;
-      if (isToday(date)) {
-        label = "Today";
-      } else if (isYesterday(date)) {
-        label = "Yesterday";
-      } else {
-        label = format(date, "MMMM d, yyyy"); 
-      }
-      if (!groups[label]) {
-        groups[label] = [];
-      }
-      groups[label].push(notif);
-    });
+      notifications.forEach((notif) => {
+        const date = parseISO(notif.createdAt);
+        let label;
+        if (isToday(date)) {
+          label = "Today";
+        } else if (isYesterday(date)) {
+          label = "Yesterday";
+        } else {
+          label = format(date, "MMMM d, yyyy");
+        }
+        if (!groups[label]) {
+          groups[label] = [];
+        }
+        groups[label].push(notif);
+      });
 
-    return groups;
-  };
+      return groups;
+    },
+    []
+  );
 
   useEffect(() => {
+    fetchNotifications()
     let unsubscribe: (() => void) | undefined;
 
     async function setupFCM() {
       const messaging = await getFirebaseMessaging();
-      if (!messaging) return;
+      if (!messaging || fcmTokenRegistered.current) return;
 
       try {
         const permission = await Notification.requestPermission();
         if (permission === "granted") {
-          const token = await getToken(messaging, {
-            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
-          });
-          console.log("FCM Token:", token);
+          // Only register token once
+          if (!localStorage.getItem("fcmToken")) {
+            const token = await getToken(messaging, {
+              vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+            });
+            console.log("FCM Token:", token);
+            localStorage.setItem("fcmToken", token);
+            await registerFCMToken(token);
+          }
+          fcmTokenRegistered.current = true;
         }
 
-        unsubscribe = onMessage(messaging, (payload) => {
-          const { title = "No title", body = "No body" } =
-            payload.notification || {};
-          const newNotification: Notification = {
+        unsubscribe = onMessage(messaging, (payload: any) => {
+          const data = payload.data || {};
+          const title = payload.notification?.title || "No title";
+          const body = payload.notification?.body || "No body";
+          const _id = data._id || `temp-${Date.now()}`;
+
+          playNotificationSound();
+
+          addNotification({
+            _id,
             title,
             body,
-            read: false,
-            timestamp: new Date().toISOString(),
-          };
-
-          addNotification(newNotification);
+            isRead: false,
+            data,
+            createdAt: new Date().toISOString(),
+          });
         });
       } catch (error) {
         console.error("FCM error:", error);
@@ -122,7 +136,25 @@ const NotificationBell: React.FC = () => {
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, []);
+  }, [fetchNotifications]);
+
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      await markAsRead(id);
+      fetchNotifications();
+    } catch (error) {
+      console.error("Failed to mark as read", error);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await markAllAsRead();
+      fetchNotifications();
+    } catch (error) {
+      console.error("Failed to mark all as read", error);
+    }
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -141,22 +173,35 @@ const NotificationBell: React.FC = () => {
     };
   }, [popupOpen]);
 
+  const playNotificationSound = () => {
+    const audio = new Audio("/notification.mp3");
+    audio.volume = 0.7; // optional
+    audio.play().catch((e) => {
+      console.error("Audio playback failed", e);
+    });
+  };
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const handler = (event: MessageEvent) => {
       if (event.data?.type === "PUSH_NOTIFICATION") {
         const payload = event.data.payload;
-        const { title = "No title", body = "No body" } =
-          payload.notification || {};
-        const newNotification: Notification = {
+        const data = payload.data || {};
+        const title = payload.notification?.title || "No title";
+        const body = payload.notification?.body || "No body";
+        const _id = data._id;
+
+        playNotificationSound();
+
+        addNotification({
+          _id,
           title,
           body,
-          read: false,
-          timestamp: new Date().toISOString(),
-        };
-
-        addNotification(newNotification);
+          isRead: false,
+          data,
+          createdAt: new Date().toISOString(),
+        });
       }
     };
 
@@ -164,53 +209,22 @@ const NotificationBell: React.FC = () => {
     return () => {
       navigator.serviceWorker?.removeEventListener("message", handler);
     };
+  }, [addNotification]);
+
+  const togglePopup = useCallback(() => {
+    setPopupOpen((prev) => !prev);
   }, []);
-
-  const togglePopup = () => {
-    if (!popupOpen) {
-      setPopupOpen(true);
-    } else {
-      setPopupOpen(false);
-    }
-  };
-
-  const clearNotifications = () => {
-    localStorage.removeItem("notifications");
-    setNotifications([]);
-    setPopupOpen(false);
-  };
-
-  const markAsRead = (index: number) => {
-    setNotifications((prev) => {
-      const updated = [...prev];
-      updated.splice(index, 1);
-      localStorage.setItem("notifications", JSON.stringify(updated));
-      return updated;
-    });
-  };
 
   return (
     <div className="relative mt-1" ref={containerRef}>
       <button
         onClick={togglePopup}
-        className="relative p-1 bg-white rounded-full border border-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 overflow-visible transition"
+        className="relative p-2 bg-white rounded-full border border-gray-300 hover:bg-gray-100 shadow-sm transition"
         aria-label="Toggle notifications"
       >
-        <Image src={notification} alt="notification" height={33} width={33} />
+        <Image src={notification} alt="notification" height={28} width={28} />
         {unreadCount > 0 && (
-          <span
-            className="
-              absolute top-0 right-0
-              flex items-center justify-center
-              h-5 w-5
-              text-xs font-bold leading-none text-white
-              bg-red-600 rounded-full
-              select-none
-              z-10
-              animate-pulse
-              transform translate-x-1/2 -translate-y-1/2
-            "
-          >
+          <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-600 text-white text-xs font-bold flex items-center justify-center rounded-full ring-2 ring-white animate-ping-fast">
             {unreadCount}
           </span>
         )}
@@ -218,16 +232,18 @@ const NotificationBell: React.FC = () => {
 
       {popupOpen && (
         <div
-          className="absolute right-0 mt-2 w-100 bg-white shadow-lg rounded-md border z-50 max-h-72"
+          className="absolute right-0 mt-3 w-96 bg-white/80 backdrop-blur-lg border border-gray-200 rounded-2xl shadow-xl z-50 max-h-[500px] overflow-hidden"
           role="region"
           aria-label="Notifications"
         >
-          <div className="flex justify-between items-center p-3 border-b">
-            <h3 className="font-bold text-lg">Notifications</h3>
-            {notifications.filter((item) => !item.read).length > 0 && (
+          <div className="flex justify-between items-center p-4 border-b bg-white/70">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Notifications
+            </h3>
+            {unreadCount > 0 && (
               <button
-                onClick={clearNotifications}
-                className="text-sm text-indigo-600 hover:text-indigo-800 font-semibold transition focus:outline-none focus:ring-2 focus:ring-red-400 rounded"
+                onClick={handleMarkAllAsRead}
+                className="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition"
                 aria-label="Clear all notifications"
                 title="Clear all notifications"
               >
@@ -236,68 +252,56 @@ const NotificationBell: React.FC = () => {
             )}
           </div>
 
-          {notifications.filter((item) => !item.read).length === 0 ? (
-            <div className="p-4 text-center text-md text-gray-500 select-none font-[700]">
+          {unreadCount === 0 ? (
+            <div className="p-6 text-center text-gray-500 font-medium">
               <Image
-                className="m-auto mb-3"
+                className="mx-auto mb-4"
                 src={alarm}
                 height={70}
                 width={50}
                 alt="alarm"
-              ></Image>
+              />
               No notifications yet
             </div>
           ) : (
-            <div
-              className="max-w-md mx-auto divide-y divide-gray-200 bg-white rounded-md shadow-lg max-h-96 overflow-y-auto"
-              role="region"
-              aria-label="Notifications"
-            >
+            <div className="divide-y divide-gray-100 max-h-[420px] overflow-y-auto">
               {Object.entries(
                 groupNotificationsByDate(
-                  notifications.filter((item) => !item.read)
+                  notifications.filter((item) => !item.isRead)
                 )
               ).map(([label, notifs], groupIndex) => (
                 <div key={groupIndex}>
-                  <div className="bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-600">
+                  <div className="px-4 py-2 bg-gray-50 text-xs font-bold text-gray-500 uppercase tracking-wide">
                     {label}
                   </div>
-                  {notifs.map(({ title, body, read, timestamp }, index) => (
-                    <div
-                      key={`${groupIndex}-${index}`}
-                      className="flex items-start space-x-3 p-4 transition-colors duration-200 hover:bg-indigo-50"
-                      role="button"
-                      tabIndex={0}
-                      aria-pressed={read}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                        }
-                      }}
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-center mb-1">
-                          <h3 className="text-md font-semibold text-slate-900 truncate">
+                  {notifs.map(
+                    ({ _id, title, body, isRead, createdAt }, index) => (
+                      <div
+                        key={`${groupIndex}-${index}`}
+                        className="px-4 py-3 hover:bg-indigo-50 cursor-pointer transition group"
+                      >
+                        <div className="flex justify-between items-center">
+                          <h4 className="text-sm font-semibold text-gray-800 group-hover:text-indigo-700">
                             {title}
-                          </h3>
-                          <time className="text-xs text-slate-400 ml-2 whitespace-nowrap">
-                            {timeAgo(timestamp)}
+                          </h4>
+                          <time className="text-xs text-gray-400 ml-2 shrink-0 whitespace-nowrap">
+                            {timeAgo(createdAt)}
                           </time>
                         </div>
-                        <p className="text-sm text-slate-700 line-clamp-2">
+                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">
                           {body}
                         </p>
-                        {!read && (
+                        {!isRead && (
                           <button
-                            onClick={() => markAsRead(index)}
-                            className="mt-2 text-xs text-indigo-600 hover:underline focus:outline-none"
+                            onClick={() => handleMarkAsRead(_id)}
+                            className="mt-2 text-xs text-indigo-600 hover:underline flex items-center gap-1"
                           >
                             ✓ Mark as Read
                           </button>
                         )}
                       </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               ))}
             </div>
