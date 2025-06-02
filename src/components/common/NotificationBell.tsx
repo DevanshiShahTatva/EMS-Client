@@ -10,10 +10,14 @@ import {
   markAllAsRead,
   markAsRead,
   NotificationResp,
+  readNotification,
   registerFCMToken,
 } from "@/utils/services/notification";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/utils/constant";
 
 const NotificationBell: React.FC = () => {
+  const router = useRouter();
   const [notifications, setNotifications] = useState<NotificationResp[]>([]);
   const [loading, setLoading] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
@@ -22,15 +26,15 @@ const NotificationBell: React.FC = () => {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const fetchNotifications = useCallback(async () => {
-      setLoading(true);
-      try {
-        const data = await getNotifications();
-        setNotifications(data);
-      } catch (error) {
-        console.error("Failed to fetch notifications", error);
-      } finally {
-        setLoading(false);
-      }
+    setLoading(true);
+    try {
+      const data = await getNotifications();
+      setNotifications(data);
+    } catch (error) {
+      console.error("Failed to fetch notifications", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const timeAgo = useCallback((dateString: string) => {
@@ -87,7 +91,7 @@ const NotificationBell: React.FC = () => {
   );
 
   useEffect(() => {
-    fetchNotifications()
+    fetchNotifications();
     let unsubscribe: (() => void) | undefined;
 
     async function setupFCM() {
@@ -138,7 +142,8 @@ const NotificationBell: React.FC = () => {
     };
   }, [fetchNotifications]);
 
-  const handleMarkAsRead = async (id: string) => {
+  const handleMarkAsRead = async (event: any, id: string) => {
+    event.stopPropagation();
     try {
       await markAsRead(id);
       fetchNotifications();
@@ -215,16 +220,35 @@ const NotificationBell: React.FC = () => {
     setPopupOpen((prev) => !prev);
   }, []);
 
+  const handleClickOnNotification = async (id: string, data: any) => {
+    if (data.type) {
+      const res = await readNotification(id);
+      if (res.status) {
+        togglePopup();
+        if (data.type === "ticket") {
+          router.push(ROUTES.USER_MY_EVENTS);
+        } else if (data.type === "profile") {
+          router.push(ROUTES.USER_PROFILE);
+        } else if (data.type === "points") {
+          router.push(ROUTES.USER_MY_EVENTS);
+        } else if (data.type === "feedback") {
+          router.push(ROUTES.USER_REVIEW_HISTORY);
+        }
+      }
+      fetchNotifications();
+    }
+  };
+
   return (
     <div className="relative mt-1" ref={containerRef}>
       <button
         onClick={togglePopup}
-        className="relative p-2 bg-white rounded-full border border-gray-300 hover:bg-gray-100 shadow-sm transition"
+        className="relative p-2 bg-white rounded-full border border-gray-300 hover:bg-gray-100 shadow-sm transition-all duration-200 transform hover:scale-105"
         aria-label="Toggle notifications"
       >
         <Image src={notification} alt="notification" height={28} width={28} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-600 text-white text-xs font-bold flex items-center justify-center rounded-full ring-2 ring-white animate-ping-fast">
+          <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-600 text-white text-xs font-bold flex items-center justify-center rounded-full ring-2 ring-white">
             {unreadCount}
           </span>
         )}
@@ -232,78 +256,107 @@ const NotificationBell: React.FC = () => {
 
       {popupOpen && (
         <div
-          className="absolute right-0 mt-3 w-96 bg-white/80 backdrop-blur-lg border border-gray-200 rounded-2xl shadow-xl z-50 max-h-[500px] overflow-hidden"
+          className="absolute right-0 mt-3 w-[420px] bg-white border border-gray-200 rounded-2xl shadow-xl z-50 max-h-[500px] overflow-hidden animate-fade-in"
           role="region"
           aria-label="Notifications"
         >
-          <div className="flex justify-between items-center p-4 border-b bg-white/70">
-            <h3 className="text-lg font-semibold text-gray-800">
+          <div className="flex justify-between items-center p-4 border-b bg-gradient-to-r from-indigo-50 to-purple-50">
+            <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+              <span className="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">
+                {unreadCount}
+              </span>
               Notifications
             </h3>
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
-                className="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition"
+                className="cursor-pointer text-sm text-indigo-600 hover:text-indigo-800 font-medium transition flex items-center gap-1 group"
                 aria-label="Clear all notifications"
-                title="Clear all notifications"
               >
+                <span className="group-hover:scale-110 transition-transform">
+                  ✓
+                </span>
                 Mark all as read
               </button>
             )}
           </div>
 
           {unreadCount === 0 ? (
-            <div className="p-6 text-center text-gray-500 font-medium">
-              <Image
-                className="mx-auto mb-4"
-                src={alarm}
-                height={70}
-                width={50}
-                alt="alarm"
-              />
-              No notifications yet
+            <div className="p-8 text-center flex flex-col items-center">
+              <div className="bg-indigo-100 rounded-full p-4 w-fit mb-4">
+                <Image
+                  src={alarm}
+                  height={60}
+                  width={60}
+                  alt="No notifications"
+                  className="opacity-80"
+                />
+              </div>
+              <h4 className="font-medium text-gray-700 mb-1">
+                No notifications yet
+              </h4>
+              <p className="text-gray-500 text-sm max-w-xs">
+                We'll notify you when something new arrives
+              </p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-100 max-h-[420px] overflow-y-auto">
-              {Object.entries(
-                groupNotificationsByDate(
-                  notifications.filter((item) => !item.isRead)
-                )
-              ).map(([label, notifs], groupIndex) => (
-                <div key={groupIndex}>
-                  <div className="px-4 py-2 bg-gray-50 text-xs font-bold text-gray-500 uppercase tracking-wide">
-                    {label}
-                  </div>
-                  {notifs.map(
-                    ({ _id, title, body, isRead, createdAt }, index) => (
-                      <div
-                        key={`${groupIndex}-${index}`}
-                        className="px-4 py-3 hover:bg-indigo-50 cursor-pointer transition group"
-                      >
-                        <div className="flex justify-between items-center">
-                          <h4 className="text-sm font-semibold text-gray-800 group-hover:text-indigo-700">
-                            {title}
-                          </h4>
-                          <time className="text-xs text-gray-400 ml-2 shrink-0 whitespace-nowrap">
-                            {timeAgo(createdAt)}
-                          </time>
+            <div className="max-h-[420px] overflow-y-auto">
+              {Object.entries(groupNotificationsByDate(notifications)).map(
+                ([label, notifs], groupIndex) => (
+                  <div key={groupIndex}>
+                    <div className="px-4 py-2.5 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide border-b border-gray-100">
+                      {label}
+                    </div>
+                    {notifs.map(
+                      (
+                        { _id, title, body, isRead, createdAt, data },
+                        index
+                      ) => (
+                        <div
+                          key={`${groupIndex}-${index}`}
+                          className={`px-4 py-3 hover:bg-indigo-50 cursor-pointer transition-all duration-150 border-b border-gray-100 last:border-0 ${
+                            !isRead ? "bg-indigo-50/50" : ""
+                          }`}
+                          onClick={() => handleClickOnNotification(_id, data)}
+                        >
+                          <div className="flex gap-3">
+                            <div className="flex flex-col items-center">
+                              {!isRead && (
+                                <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                              )}
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <div className="flex justify-between items-start">
+                                <h4 className="text-sm font-semibold text-gray-800">
+                                  {title}
+                                </h4>
+                                <div className="flex items-center gap-2">
+                                  <time className="text-xs text-gray-400 whitespace-nowrap">
+                                    {timeAgo(createdAt)}
+                                  </time>
+                                </div>
+                              </div>
+                              <p className="text-sm text-gray-600 mt-1.5 line-clamp-2">
+                                {body}
+                              </p>
+                              <button
+                                  onClick={(event) => handleMarkAsRead(event, _id)}
+                                  className="cursor-pointer mt-2 text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-opacity opacity-70 hover:opacity-100"
+                                  aria-label="Mark as read"
+                                >
+                                  <span className="text-sm">
+                                    Mark as read ✓
+                                  </span>
+                                </button>
+                            </div>
+                          </div>
                         </div>
-                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                          {body}
-                        </p>
-                        {!isRead && (
-                          <button
-                            onClick={() => handleMarkAsRead(_id)}
-                            className="mt-2 text-xs text-indigo-600 hover:underline flex items-center gap-1"
-                          >
-                            ✓ Mark as Read
-                          </button>
-                        )}
-                      </div>
-                    )
-                  )}
-                </div>
-              ))}
+                      )
+                    )}
+                  </div>
+                )
+              )}
             </div>
           )}
         </div>

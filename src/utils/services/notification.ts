@@ -28,6 +28,14 @@ export const markAsRead = async (id: string) => {
   });
 };
 
+export const readNotification = async (id: string) => {
+  const response = await apiCall({
+    endPoint: `${API_URL}/read-notification/${id}`,
+    method: "PUT",
+  });
+  return response;
+};
+
 export const markAllAsRead = async () => {
   await apiCall({
     endPoint: `${API_URL}/mark-as-all-read`,
