@@ -1,7 +1,14 @@
 export interface IMessage {
+  _id: string;
   createdAt: string;
   content: string;
-  sender: {
+  status?: 'edited' | 'deleted';
+  isSystemMessage?: boolean;
+  systemMessageType?: string;
+  systemMessageData?: {
+    userId: string;
+  };
+  sender?: {
     _id: string;
     name: string;
     profileimage?: {

@@ -5,7 +5,7 @@ import React from 'react';
 
 function AdminChat() {
   return (
-    <div className='max-h-[calc(100vh-81px)] w-full flex bg-[#f5f5fa] text-sm p-3'>
+    <div className='min-h-[calc(100vh-81px)] max-h-[calc(100vh-81px)] w-full flex bg-[#f5f5fa] text-sm p-3'>
       <Chat />
     </div>
   )
