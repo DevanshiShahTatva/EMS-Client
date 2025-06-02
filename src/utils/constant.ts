@@ -98,6 +98,9 @@ export const API_ROUTES = {
     USER_FEEDBACK:"/feedbacks",
     PUT_FEEDBACK:(id:string|null)=>`/feedbacks/${id}`,
     CATEGORY: "/ticket-categories",
+    CHATBOT: {
+        CHAT: "/chatbot/chat",
+    }
 }
 export const LIGHT_COLORS = [
     '#FFB3BA', // Light Red
