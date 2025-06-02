@@ -312,7 +312,7 @@ const UsersPage = () => {
 
     const tableActions: Action<IUserData>[] = [
         {
-            icon: <TrashIcon className="h-5 w-5 text-red-500 hover:text-red-700 cursor-pointer ml-5" />,
+            icon: <TrashIcon className="h-5 w-5 text-red-500 hover:text-red-700 cursor-pointer  ml-5" />,
             onClick: (row: IUserData) => openDeleteModal(row._id),
         },
     ];
