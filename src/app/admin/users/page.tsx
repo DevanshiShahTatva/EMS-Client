@@ -34,8 +34,8 @@ import { getFilteredData, getMaxPoints } from './helper'
 
 // icons
 import { FunnelIcon } from "@heroicons/react/24/outline"
-import { DownloadIcon, FilePlus2, UserPlus } from 'lucide-react'
-import { toast } from 'react-toastify'
+import { DownloadIcon, FilePlus2, PlusIcon, UserPlus } from 'lucide-react'
+
 
 
 const UsersPage = () => {
@@ -294,43 +294,50 @@ const UsersPage = () => {
                       inputClassName='pl-10 pr-4 py-2 w-full'
                   />
 
-                <div className='flex gap-4 justify-between'>
-                  {/* Filters Button */}
-                  <div className="relative">
-                      <button
-                          onClick={openFilterModal}
-                          className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
-                      >
-                          <FunnelIcon className="w-5 h-5 font-bold mr-2" />
-                          Filters
-                      </button>
+                  <div className='flex gap-4 justify-between'>
+                      {/* Filters Button */}
+                      <div className="relative">
+                          <button
+                              onClick={openFilterModal}
+                              className="flex items-center font-bold cursor-pointer bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md"
+                          >
+                              <FunnelIcon className="w-5 h-5 font-bold mr-2" />
+                              Filters
+                          </button>
 
-                      {appliedFiltersCount > 0 && (
-                          <span className="absolute -top-2 -right-2 bg-slate-200 text-green-800 text-sm font-bold px-1.5 py-0.5 rounded-full">
-                              {appliedFiltersCount}
-                          </span>
-                      )}
+                          {appliedFiltersCount > 0 && (
+                              <span className="absolute -top-2 -right-2 bg-slate-200 text-green-800 text-sm font-bold px-1.5 py-0.5 rounded-full">
+                                  {appliedFiltersCount}
+                              </span>
+                          )}
+                      </div>
+                      {/* Export Butoon */}
+                      <div className='flex'>
+                          <CustomButton
+                              variant={usersData.length === 0 ? "disabled" : "primary"}
+                              className='flex gap-2 items-center'
+                              startIcon={<DownloadIcon className='h-5 w-5' />}
+                              disabled={usersData.length === 0}
+                              onClick={() => exportToExcel(allUsersData, `Users-${Date.now()}.xlsx`)}
+                          >
+                              Export
+                          </CustomButton>
+                      </div>
+
+                      {/* Add Butoon */}
+                      <div className='flex'>
+                          <CustomButton
+                              variant='delete'
+                              onClick={openTypeModal}
+                              className='flex gap-2 items-center'
+                              startIcon={<PlusIcon className='h-5 w-5' />}
+                          >
+                              Add
+                          </CustomButton>
+                      </div>
                   </div>
-                  {/* Export Butoon */}
-                  <div className='flex'>
-                      <CustomButton
-                          variant={ usersData.length === 0 ? "disabled" : "primary"}
-                          className='flex gap-2 items-center'
-                          startIcon={<DownloadIcon className='h-5 w-5' />}
-                          disabled={usersData.length === 0}
-                          onClick={() => exportToExcel(allUsersData,`Users-${Date.now()}.xlsx`)}
-                      >
-                          Export
-                      </CustomButton>
-                  </div>
-                </div>
               </div>
 
-              <div className='text-end'>
-                <CustomButton variant='outlined' onClick={openTypeModal}>
-                    Add new user
-                </CustomButton>
-              </div>
               
 
               {/* Data Table with pagination */}
