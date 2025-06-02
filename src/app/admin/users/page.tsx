@@ -22,7 +22,7 @@ import { API_ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant'
 import { apiCall } from '@/utils/services/request'
 
 // Types
-import { ISingleUserFormValues, IUser, IUserData, IUsersApiResponse } from './types'
+import { IUser, IUserData, IUsersApiResponse } from './types'
 import { Column, IApplyUserFiltersKey } from '@/utils/types'
 
 // library
@@ -180,6 +180,20 @@ const UsersPage = () => {
         try {
             await fetchUsersData()
             closeSingleModal()
+            closeTypeModal()
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    // Bulk user Upload 
+    const bulkUserUpload = async () => {
+        setLoading(true)
+        try {
+            await fetchUsersData()
+            closeBulkModal()
             closeTypeModal()
         } catch (error) {
             console.error(error)
@@ -363,6 +377,8 @@ const UsersPage = () => {
         <AddBulkUserModal
             isOpen={bulkModal}
             onClose={closeBulkModal}
+            onSubmit={bulkUserUpload}
+
         />
 
         {/* Single User Modal */}

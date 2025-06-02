@@ -78,8 +78,6 @@ const AddSingleUserModal: React.FC<ISingleUserModalProps> = ({ isOpen, onClose, 
 
                         >
                             <div className="my-5 space-y-5">
-                                <FormikTextField name="name" label="Name" placeholder="Enter name" type="text" />
-                                <FormikTextField name="email" label="Email" placeholder="Enter email" type="email" />
                                 <FormikSelectField
                                     label="Role"
                                     name="role"
@@ -89,6 +87,8 @@ const AddSingleUserModal: React.FC<ISingleUserModalProps> = ({ isOpen, onClose, 
                                         <ChevronDownIcon className="h-5 w-5 mt-0.5" />
                                     }
                                 />
+                                <FormikTextField name="name" label="Name" placeholder="Enter name" type="text" />
+                                <FormikTextField name="email" label="Email" placeholder="Enter email" type="email" />
                             </div>
                         </ModalLayout>
 
