@@ -50,7 +50,7 @@ const ChatLayout = () => {
         setMyGroups(response.data.map((group) => ({
           id: group.id,
           name: group.name,
-          icon: group.icon,
+          image: group.icon,
           members: group.members,
           senderId: group.senderId ?? null,
           lastMessage: group.lastMessage,
@@ -73,16 +73,49 @@ const ChatLayout = () => {
       });
       if (response.data) {
         setMyPrivateChats(response.data.map((chat) => ({
-          id: chat._id,
-          name: response.userId === chat.sender._id ? chat.receiver.name : chat.sender.name,
-          icon: response.userId === chat.sender._id ? chat.receiver.profileimage?.url : chat.sender.profileimage?.url,
-          sender: response.userId === chat.sender._id ? chat.sender : chat.receiver,
-          receiver: response.userId === chat.sender._id ? chat.receiver : chat.sender,
+          id: chat.id,
+          name: chat.name,
+          image: chat.image,
+          senderId: chat.senderId,
           lastMessage: chat.lastMessage,
           lastMessageSender: chat.lastMessageSender,
           lastMessageTime: chat.lastMessage ? moment(chat.lastMessageTime).format('hh:mm A') : '',
         })));
         setUserId(response.userId);
+      }
+    } catch (error) {
+      console.error("Err:", error);
+    }
+  };
+
+  const handleStartChat = async (memberId: string) => {
+    try {
+      const { chat } = await apiCall({
+        endPoint: '/chat/create-private-chat',
+        method: "POST",
+        body: { memberId },
+        withToken: true,
+      });
+
+      if (chat) {
+        const newChatEntry: IPrivateChat = {
+          id: chat.id,
+          name: chat.name,
+          image: chat.image,
+          senderId: chat.senderId,
+          lastMessage: '',
+          lastMessageSender: '',
+          lastMessageTime: ''
+        };
+
+        setMyPrivateChats(prev => {
+          const existingChat = prev.find(c => c.id === newChatEntry.id);
+          if (!existingChat) {
+            return [...prev, newChatEntry];
+          }
+          return prev;
+        });
+        handleSetActiveChat(chat.id, 'private');
       }
     } catch (error) {
       console.error("Err:", error);
@@ -95,57 +128,14 @@ const ChatLayout = () => {
     setOpenChatInfo(false);
   };
 
-  const handleStartChat = async (memberId: string) => {
-    try {
-      const response = await apiCall({
-        endPoint: '/chat/create-private-chat',
-        method: "POST",
-        body: {
-          memberId: memberId,
-        },
-        withToken: true,
-      });
-
-      const { chat } = await response.json();
-      if (chat) {
-        const newChatEntry: IPrivateChat = {
-          id: chat._id,
-          sender: chat.sender,
-          receiver: chat.receiver,
-          lastMessage: chat.lastMessage,
-          lastMessageSender: chat.lastMessageSender,
-          lastMessageTime: chat.lastMessage ? moment(chat.lastMessageTime).format('hh:mm A') : '',
-        };
-
-        setMyPrivateChats(prev => {
-          const existingChat = prev.find(c => c.id === newChatEntry.id);
-          if (!existingChat) {
-            return [...prev, newChatEntry];
-          }
-          return prev;
-        });
-        handleSetActiveChat(chat, 'private');
-      }
-    } catch (error) {
-      console.error("Err:", error);
-    }
-  };
-
   const getActiveChatDetails = () => {
-    if (activeChatType === 'group' && activeChatId) {
-      const activeGroupDetails = myGroups.find(g => g.id === activeChatId);
-      return activeGroupDetails ? { type: 'group', ...activeGroupDetails } : null;
-    } else if (activeChatType === 'private' && activeChatId) {
-      const activePrivateChatDetails = myPrivateChats.find(c => c.id === activeChatId);
-      if (activePrivateChatDetails) {
-        const participant = activePrivateChatDetails.sender._id === userId
-          ? activePrivateChatDetails.receiver
-          : activePrivateChatDetails.sender;
-        return { type: 'private', ...activePrivateChatDetails, participantDetails: participant };
+    if (activeChatId) {
+      if (activeChatType === 'group') {
+        return myGroups.find(g => g.id === activeChatId);
+      } else if (activeChatType === 'private') {
+        return myPrivateChats.find(c => c.id === activeChatId);
       }
-      return null;
     }
-    return null;
   };
 
   const currentChatDetails = getActiveChatDetails();

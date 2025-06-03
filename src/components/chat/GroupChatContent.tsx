@@ -228,8 +228,9 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
   return (
     <>
       <ChatHeader
-        currentChatDetails={currentGroupDetails}
+        isGroup={true}
         setOpenChatInfo={setOpenChatInfo}
+        currentChatDetails={currentGroupDetails}
       />
       <ChatWindow
         chatId={groupId}

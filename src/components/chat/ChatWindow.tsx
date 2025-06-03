@@ -69,6 +69,7 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
       });
 
       if (response.data?.length) {
+        setIsScrollBottom(false);
         setGroupedMessage(prev => {
           const newMsgs = groupMessagesByDate(response.data);
           const mergedGroups = { ...newMsgs };
@@ -146,7 +147,7 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
       )}
       {Object.entries(groupedMessage).map(([dateTitle, msgs]) => (
         <div key={dateTitle}>
-          <div className='flex justify-center sticky top-0 mb-3'>
+          <div className='flex justify-center sticky top-0 mb-3 z-999'>
             <div className='w-fit pt-[2px] pb-[2px] pl-2 pr-2 font-medium border border-gray-300 rounded-[4px] bg-white'>
               {dateTitle}
             </div>
@@ -167,7 +168,7 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
 
               return (
                 <div key={`${index + 1}`} className={`flex gap-[5px] mb-3 ${isSentByMe ? 'justify-end' : 'justify-start'}`}>
-                  {!isSentByMe && (
+                  {!isSentByMe && isGroup && (
                     <div className="min-w-[28px]">
                       {isFirstOfSequence && (
                         msg.sender?.profileimage?.url ? (
@@ -188,7 +189,7 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
                     </div>
                   )}
                   <div>
-                    {!isSentByMe && isFirstOfSequence && (
+                    {!isSentByMe && isGroup && isFirstOfSequence && (
                       <div className="mb-[3px] text-sm font-semibold text-purple-500">{msg.sender.name}</div>
                     )}
                     <div className='relative flex items-center gap-2 group'>

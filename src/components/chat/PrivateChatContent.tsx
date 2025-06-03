@@ -20,6 +20,49 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [isScrollBottom, setIsScrollBottom] = useState(false);
 
+  const handleInitialLoad = (data: { messages: IPrivateMessage[] }) => {
+    setGroupedMessage(groupMessagesByDate(data.messages));
+    setIsScrollBottom(true);
+  };
+
+  const handleReceiveMessage = (message: IPrivateMessage) => {
+    if (message.privateChat === chatId) {
+      setGroupedMessage(prev => addMessageToGroup(message, prev));
+      setIsScrollBottom(true);
+      setMyPrivateChats(prev => prev.map((chat) =>
+        chat.id === message.privateChat
+          ? {
+            ...chat,
+            lastMessage: message.content,
+            senderId: message.sender?._id ?? "",
+            lastMessageSender: message.sender?.name ?? "",
+            lastMessageTime: moment(message.createdAt).format('hh:mm A')
+          }
+          : chat
+      ));
+    }
+  };
+
+  const handleEditDeletedMessage = ({ status, chatId: msgChatId, messageId, newMessage: updatedContent }: { status: 'edited' | 'deleted'; chatId: string; messageId: string; newMessage: string }) => {
+    if (msgChatId === chatId) {
+      setGroupedMessage(prev => {
+        const newGroups = { ...prev };
+        for (const dateKey in newGroups) {
+          newGroups[dateKey] = newGroups[dateKey].map(msg =>
+            msg._id === messageId ? { ...msg, status, content: updatedContent } : msg
+          );
+        }
+        return newGroups;
+      });
+    }
+  };
+
+  const handleSuccessMessageOperation = ({ status }: { status: 'edited' | 'deleted' }) => {
+    if (status === "edited") {
+      setEditMessage(null);
+    }
+  };
+
   useEffect(() => {
     const socket = getSocket();
     if (!chatId || !socket) return;
@@ -31,52 +74,16 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
 
     socket.emit("join_private_chat", { chatId });
 
-    socket.on("initial_private_messages", (data: { messages: IPrivateMessage[] }) => {
-      setGroupedMessage(groupMessagesByDate(data.messages));
-    });
-
-    socket.on("receive_private_message", (message: IPrivateMessage) => {
-      if (message.privateChat === chatId) {
-        setGroupedMessage(prev => addMessageToGroup(message, prev));
-        setMyPrivateChats(prev => prev.map((chat) =>
-          chat.id === message.privateChat
-            ? {
-              ...chat,
-              lastMessage: message.content,
-              senderId: message.sender?._id ?? "",
-              lastMessageSender: message.sender?.name ?? "",
-              lastMessageTime: moment(message.createdAt).format('hh:mm A')
-            }
-            : chat
-        ));
-      }
-    });
-
-    socket.on("new_edited_or_deleted_private_message", ({ status, chatId: msgChatId, messageId, newMessage: updatedContent }: { status: 'edited' | 'deleted'; chatId: string; messageId: string; newMessage: string }) => {
-      if (msgChatId === chatId) {
-        setGroupedMessage(prev => {
-          const newGroups = { ...prev };
-          for (const dateKey in newGroups) {
-            newGroups[dateKey] = newGroups[dateKey].map(msg =>
-              msg._id === messageId ? { ...msg, status, content: updatedContent } : msg
-            );
-          }
-          return newGroups;
-        });
-      }
-    });
-
-    socket.on("private_message_edited_or_deleted_successfully", ({ status }: { status: 'edited' | 'deleted' }) => {
-      if (status === "edited") {
-        setEditMessage(null);
-      }
-    });
+    socket.on("initial_private_messages", handleInitialLoad);
+    socket.on("receive_private_message", handleReceiveMessage);
+    socket.on("new_edited_or_deleted_private_message", handleEditDeletedMessage);
+    socket.on("private_message_edited_or_deleted_successfully", handleSuccessMessageOperation);
 
     return () => {
-      socket.off("initial_private_messages");
-      socket.off("receive_private_message");
-      socket.off("new_edited_or_deleted_private_message");
-      socket.off("private_message_edited_or_deleted_successfully");
+      socket.off("initial_private_messages", handleInitialLoad);
+      socket.off("receive_private_message", handleReceiveMessage);
+      socket.off("new_edited_or_deleted_private_message", handleEditDeletedMessage);
+      socket.off("private_message_edited_or_deleted_successfully", handleSuccessMessageOperation);
     };
   }, [chatId, setMyPrivateChats]);
 
@@ -162,13 +169,14 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
   return (
     <>
       <ChatHeader
-        currentChatDetails={currentPrivateChatDetails as any}
+        isGroup={false}
         setOpenChatInfo={setOpenChatInfo}
+        currentChatDetails={currentPrivateChatDetails}
       />
       <ChatWindow
         chatId={chatId}
         userId={userId}
-        isGroup={true}
+        isGroup={false}
         isScrollBottom={isScrollBottom}
         groupedMessage={groupedMessage}
         activeMenuId={activeMenuId}
@@ -176,9 +184,9 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
         setIsScrollBottom={setIsScrollBottom}
         setEditMessage={setEditMessage}
         editOrDeleteMessage={handleDeleteMessage}
-        setGroupedMessage={setGroupedMessage}
         groupMessagesByDate={groupMessagesByDate}
-        chatApiEndpoint={`/chat/messages/${chatId}`}
+        setGroupedMessage={setGroupedMessage as any}
+        chatApiEndpoint={`/chat/private-messages/${chatId}`}
       />
       <MessageInput
         typingUsers={typingUsers}

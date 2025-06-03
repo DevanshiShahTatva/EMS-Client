@@ -20,7 +20,7 @@ export interface IMessage {
 export interface IGroup {
   id: string;
   name: string;
-  icon?: string;
+  image?: string;
   senderId?: string;
   lastMessage?: string;
   lastMessageTime?: string;
@@ -30,15 +30,17 @@ export interface IGroup {
 
 export interface IPrivateChat {
   id: string;
-  sender: any;
-  receiver: any;
+  name: string;
+  image?: string;
+  senderId: string;
   lastMessage?: string;
-  lastMessageSender?: string;
   lastMessageTime?: string;
+  lastMessageSender?: string;
 }
 
 export interface IChatHeaderProps {
-  currentChatDetails: IGroup;
+  isGroup: boolean;
+  currentChatDetails: IGroup | IPrivateChat;
   setOpenChatInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -79,7 +81,7 @@ export interface IChatWindowProps {
   setIsScrollBottom: React.Dispatch<React.SetStateAction<boolean>>;
   groupedMessage: IGroupedMessages;
   groupMessagesByDate: any;
-  setGroupedMessage: React.Dispatch<React.SetStateAction<IGroupedMessages>>;
+  setGroupedMessage: React.Dispatch<React.SetStateAction<IGroupedPrivateMessages | IGroupedMessages>>;
 }
 
 export interface IGroupChatContentProps {

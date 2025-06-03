@@ -154,7 +154,6 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 6, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
     { id: 7, title: "Admin Config", route: ROUTES.ADMIN.ADMIN_CONFIGURATION, icon:  "/assets/settingsIcon.svg"},
     { id: 8, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
-    { id: 9, title: "My chat", route: ROUTES.ADMIN.ADMIN_CHAT, icon:  "/assets/dropdownsIcon.svg"},
 ]
 
 export const USER_SIDEBAR_ITEMS = [

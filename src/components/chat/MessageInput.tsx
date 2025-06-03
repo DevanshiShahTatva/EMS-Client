@@ -4,13 +4,13 @@ import EmojiPicker from 'emoji-picker-react';
 import { IMessageInputProps } from './type';
 
 const MessageInput: React.FC<IMessageInputProps> = ({
+  typingUsers,
+  editMessage,
   onSendMessage,
   onEditMessage,
   onStartTyping,
   onStopTyping,
   setEditMessage,
-  typingUsers,
-  editMessage,
 }) => {
   const [newMessage, setNewMessage] = useState<string>("");
   const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
@@ -36,8 +36,8 @@ const MessageInput: React.FC<IMessageInputProps> = ({
     }
   }, [editMessage]);
 
-  const handleInternalTyping = (isTyping: boolean) => {
-    if (isTyping) {
+  const handleInternalTyping = (action: string) => {
+    if (action === "start") {
       if (!typingTimeoutRef.current) {
         onStartTyping();
       }
@@ -62,9 +62,9 @@ const MessageInput: React.FC<IMessageInputProps> = ({
     setNewMessage(value);
 
     if (value.length > 0) {
-      handleInternalTyping(true);
+      handleInternalTyping("start");
     } else {
-      handleInternalTyping(false);
+      handleInternalTyping("stop");
     }
   };
 
@@ -91,20 +91,20 @@ const MessageInput: React.FC<IMessageInputProps> = ({
     }
     setNewMessage("");
     setEditMessage(null);
-    handleInternalTyping(false);
+    handleInternalTyping("stop");
   };
 
   const onEmojiClick = (emojiData: { emoji: string }) => {
     setNewMessage(prev => prev + emojiData.emoji);
     setShowEmojiPicker(false);
     if (newMessage.length === 0) {
-      handleInternalTyping(true);
+      handleInternalTyping("start");
     }
   };
 
   return (
     <div className='flex justify-center mb-4'>
-      <div className="w-full ml-6 mr-6 bg-white rounded-md shadow-sm relative">
+      <div className="w-full ml-16 mr-16 bg-white rounded-md shadow-sm relative">
         {typingUsers.length > 0 && (
           <div className="text-sm text-gray-500 mb-2">
             {typingUsers.length === 1

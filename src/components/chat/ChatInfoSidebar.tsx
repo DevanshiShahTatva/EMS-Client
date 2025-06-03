@@ -47,10 +47,10 @@ const ChatInfoSidebar: React.FC<IChatInfoSidebarProps> = ({
       </div>
       <div className='flex-1 h-full overflow-auto'>
         <div className='border-b border-b-gray-200 text-center pt-7 pb-7 flex flex-col items-center'>
-          {currentChatDetails.icon ? (
+          {currentChatDetails.image ? (
             <img
               alt="profile"
-              src={currentChatDetails.icon}
+              src={currentChatDetails.image}
               className="w-30 h-30 rounded-full"
             />
           ) : (
