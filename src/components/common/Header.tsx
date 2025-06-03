@@ -55,6 +55,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
     sessionStorage.clear()
     Cookie.remove("authToken")
     router.push(ROUTES.LOGIN)
+    window.dispatchEvent(new Event("handleShowChatBotUpdate"));
   }
 
   const navToProfile = () => {
