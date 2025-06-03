@@ -1,6 +1,6 @@
 "use client";
 
-import Chat from '@/components/chat/Chat';
+import Chat from '@/components/chat/ChatLayout';
 import React from 'react';
 
 function AdminChat() {

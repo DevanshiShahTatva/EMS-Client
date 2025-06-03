@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import Chat from '@/components/chat/Chat';
+import Chat from '@/components/chat/ChatLayout';
 
 function UserChat() {
   return (
