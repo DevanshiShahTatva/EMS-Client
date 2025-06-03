@@ -42,23 +42,3 @@ export const markAllAsRead = async () => {
     method: "DELETE",
   });
 };
-
-export const registerFCMToken = async (token: string) => {
-  await apiCall({
-    endPoint: `${API_URL}/register/fcm-token`,
-    method: "POST",
-    body: {
-      fcmToken: token,
-    },
-  });
-};
-
-export const unRegisterFCMToken = async (token: string) => {
-  await apiCall({
-    endPoint: `${API_URL}/unregister/fcm-token`,
-    method: "POST",
-    body: {
-      fcmToken: token,
-    },
-  });
-};
