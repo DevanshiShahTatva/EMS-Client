@@ -209,6 +209,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     socket.emit("edit_or_delete_message", {
       status,
       messageId,
+      newContent: "",
       groupId: groupId,
     });
   };
