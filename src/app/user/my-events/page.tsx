@@ -439,7 +439,7 @@ const MyEventsPage = () => {
 
                         <div className="flex gap-3 items-center my-2">
                           <IndianRupee className="h-5 w-5" />
-                          <p className="text-gray-800 ">Total Paid : ₹ {item.eventTicketPrice.toFixed(2)} {item.eventTicketDiscount > 0 && (`(${item.eventTicketDiscount} discounted)`)}</p>
+                          <p className="text-gray-800 ">Total Paid : ₹ {item.eventTicketPrice.toFixed(2)} {item.eventTicketDiscount > 0 && (`(₹ ${item.eventTicketDiscount} discounted)`)}</p>
                         </div>
                       </div>
                     </div>
@@ -466,19 +466,22 @@ const MyEventsPage = () => {
             isEditFlag={false}
             feedback={{
                  _id: '',
-                eventId: '',
-                userId: '',
-                name: '',
-                email: '',
                 rating: 0,
                 description: '',
                 isEdited: false,
                 createdAt: '',
                 updatedAt: '',
-                profileimage: '',
-                eventImage:'',
-                eventTitle:'',
-                __v: 0
+                event:{
+                  id: "",
+                  title: "",
+                  image: null
+                },
+                user:{
+                  id: "",
+                  name: "",
+                  email: "",
+                  profileimage: null
+                },
             }}
           />
 

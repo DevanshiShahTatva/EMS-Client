@@ -1,18 +1,18 @@
 'use client'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import BarChart from '../charts/BarChart';
 import { apiCall } from '@/utils/services/request';
 import { EventFeedbackSummary, IFilter } from '@/app/admin/dashboard/types';
 import { API_ROUTES } from '@/utils/constant';
+import ChartFallbackUI from './ChartFallbackUI';
 
 const EventFeedbackViewer = () => {
   const [events, setEvents] = useState<EventFeedbackSummary[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<EventFeedbackSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
       try {
         const response = await apiCall({
           endPoint: `${API_ROUTES.ADMIN.FEEDBACK_ANALYTICS}?period=overall`,
@@ -26,17 +26,17 @@ const EventFeedbackViewer = () => {
       } finally {
         setLoading(false);
       }
-    };
-
+    },[]);
+  useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [fetchEvents]);
 
   return (
-    <div className="flex h-[500px] rounded-lg overflow-hidden shadow mt-12">
-      <div className="w-1/3 overflow-y-auto p-4 bg-gray-50">
+    <div className="flex h-[500px] rounded-lg overflow-hidden shadow mt-4">
+      <div className={(events.length>0) ? "w-1/3 overflow-y-auto p-4 bg-gray-50":"w-full overflow-y-auto p-4 bg-gray-50 flex items-center justify-center"}>
         {loading ? (
           <Skeleton className="w-full h-full" />
-        ) : (
+        ) : (events.length>0) ? (
           <ul className="space-y-3">
             {events.map((event) => (
               <li
@@ -48,13 +48,17 @@ const EventFeedbackViewer = () => {
               </li>
             ))}
           </ul>
+        ) : (
+          <div className="min-h-[250px] h-[400px] md:h-[300px] w-full flex items-center justify-center">
+            <ChartFallbackUI handleRefresh={fetchEvents} />
+          </div>
         )}
       </div>
 
-      <div className="w-2/3 p-6">
+      <div className={(events.length>0)? "w-2/3 p-6" : ""}>
         {loading || !selectedEvent ? (
           <Skeleton className="w-full h-full" />
-        ) : (
+        ) : (selectedEvent.eventId) ? (
           <div className="space-y-6">
             <div>
               <h2 className="text-xl font-semibold">{selectedEvent.eventTitle || 'Untitled Event'}</h2>
@@ -70,7 +74,7 @@ const EventFeedbackViewer = () => {
               />
             </div>
           </div>
-        )}
+        ):(<></>)}
       </div>
     </div>
   );

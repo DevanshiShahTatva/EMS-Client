@@ -138,7 +138,7 @@ const AdminFaqsPage = () => {
       });
 
       if (response && response.success) {
-        const receivedArray = response.data.slice().reverse();
+        const receivedArray = response.data;
         setAllFaqsData(receivedArray)
         setFaqsData(receivedArray)
       }

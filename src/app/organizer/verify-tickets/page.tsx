@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState } from 'react'
-import Link from 'next/link'
 
 // Custom Components
 import QRCodeScanner from '@/components/organizer-components/QRCodeScanner'
@@ -17,7 +16,7 @@ import { toast } from 'react-toastify'
 import { apiCall } from '@/utils/services/request'
 
 // Conststans
-import { API_ROUTES, BREAD_CRUMBS_ITEMS, ROUTES } from '@/utils/constant'
+import { API_ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant'
 
 // Icons
 import { CheckCircleIcon, XCircleIcon } from 'lucide-react'
