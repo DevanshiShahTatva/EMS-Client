@@ -21,6 +21,8 @@ import { apiCall } from "@/utils/services/request";
 
 // Types
 import { IBulkUploadResponse, IBulkUploadsFileFields } from "@/app/admin/users/types"
+
+// Library
 import { toast } from "react-toastify";
 
 interface IBulkUserModalProps {
@@ -148,7 +150,7 @@ const AddBulkUserModal: React.FC<IBulkUserModalProps> = ({ isOpen, onClose, onSu
             <div className="flex flex-col items-center justify-center my-10">
                 <TriangleAlert className="h-25 w-25 text-red-500" />
                 <p className="text-2xl text-red-500 font-bold my-2">Error in uploading</p>
-                <p className="text-md my-2 font-semibold text-gray-500 text-center px-15">A total {uploadedFileArray.length} out of { uploadedFileArray.length + errorFileArray.length } users have been uploaded.Please check below File with error.</p>
+                <p className="text-md my-2 font-semibold text-gray-500 text-center px-15">Total {uploadedFileArray.length} out of { uploadedFileArray.length + errorFileArray.length } users have been validated correctly.Please check below File with errors.</p>
                 <p className="underline text-red-500 font-semibold cursor-pointer" onClick={downloadErrorFile}>users.xlsx</p>
             </div>
         )
