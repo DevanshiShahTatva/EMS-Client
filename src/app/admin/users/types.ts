@@ -42,3 +42,41 @@ export interface IUserData {
     points : number
     role: string;
 }
+
+export interface ISingleUserFormValues {
+    name: string
+    email: string
+    role: string
+}
+
+export interface IBulkUploadsFileFields {
+  name: string
+  email: string
+  role: string
+}
+
+
+export interface IBulkUploadFieldErrors {
+  email?: string;
+  name?: string;
+  role?: string;
+}
+
+export interface IBulkErrorArray {
+  email: string;
+  name: string;
+  role: string;
+  errors: IBulkUploadFieldErrors;
+}
+
+export interface IBulkUploadResponseData {
+  uploaded: IBulkUploadsFileFields[]; // Adjust if uploaded data has more structure
+  errors: IBulkErrorArray[];
+}
+
+export interface IBulkUploadResponse {
+  status: number;
+  data: IBulkUploadResponseData;
+  success: boolean;
+  message: string;
+}

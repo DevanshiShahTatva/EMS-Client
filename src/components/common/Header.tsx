@@ -20,6 +20,7 @@ import { TicketsIcon, UserCircle, LogOut, Calendar, HandCoins, Star, Menu } from
 // Services
 import { apiCall } from '@/utils/services/request';
 import { setUserLatLong } from '@/app/events/event-helper';
+import NotificationBell from './NotificationBell';
 
 
 
@@ -230,14 +231,17 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
               </nav>
             </>
           }
+        
           <div className="flex gap-4 items-center">
             {authToken !== "" ? (
               <div className="flex gap-4 items-center">
-                <div ref={menuRef} className='relative'>
+                <div ref={menuRef} className='relative flex  items-center gap-4'> 
+                 <NotificationBell />   
                   <div
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     className="flex items-center p-2 bg-white rounded-md w-max cursor-pointer space-x-2 md:space-x-4"
                   >
+                   
                     {logo !== "" ?
                       <Image
                         height={30}
@@ -308,7 +312,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
               </div>
             )}
           </div>
-        </div>
+        </div>  
       </header>
     </div>
   );
