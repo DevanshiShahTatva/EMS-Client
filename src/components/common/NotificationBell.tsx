@@ -179,7 +179,6 @@ const NotificationBell: React.FC = () => {
           router.push(ROUTES.USER_REVIEW_HISTORY);
         }
       }
-      fetchNotifications();
     }
   };
 
