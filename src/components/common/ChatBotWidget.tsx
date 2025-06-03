@@ -17,7 +17,8 @@ const ChatBotWidget = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [botTyping, setBotTyping] = useState(false);
-  const [showChatBot, setShowChatBot] = useState(false);
+  const [showChatBot, setShowChatBot] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -26,6 +27,7 @@ const ChatBotWidget = () => {
   }, [messages]);
 
   useEffect(() => {
+    setIsMounted(true);
     // Load initial messages if needed
     const initialMessages: Message[] = [
       {
@@ -35,7 +37,21 @@ const ChatBotWidget = () => {
       },
     ];
     setMessages(initialMessages);
-    setShowChatBot(getUserRole() !== "admin");
+  }, []);
+
+  useEffect(() => {
+    const handleShowChatBotUpdate = () => {
+      setShowChatBot(getUserRole() !== "admin");
+    };
+
+    window.addEventListener("handleShowChatBotUpdate", handleShowChatBotUpdate);
+
+    return () => {
+      window.removeEventListener(
+        "handleShowChatBotUpdate",
+        handleShowChatBotUpdate
+      );
+    };
   }, []);
 
   const sendMessage = async () => {
@@ -79,7 +95,7 @@ const ChatBotWidget = () => {
     }
   };
 
-  return showChatBot ? (
+  return showChatBot && isMounted ? (
     <div className="fixed bottom-4 right-4 z-50">
       {/* Chat Icon Button */}
       <button
