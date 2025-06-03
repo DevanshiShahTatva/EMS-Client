@@ -63,7 +63,7 @@ const LogInPage = () => {
       }
 
       toast.success(response.message);
-      
+      window.dispatchEvent(new Event("handleShowChatBotUpdate"));
     } else {
       toast.error(response.message || "Login failed. Please try again.");
     }
