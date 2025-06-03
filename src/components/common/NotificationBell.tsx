@@ -229,8 +229,8 @@ const NotificationBell: React.FC = () => {
           router.push(ROUTES.USER_MY_EVENTS);
         } else if (data.type === "profile") {
           router.push(ROUTES.USER_PROFILE);
-        } else if (data.type === "points") {
-          router.push(ROUTES.USER_MY_EVENTS);
+        } else if (data.type === "reward") {
+          router.push(ROUTES.USER_REWARDED_HISTORY);
         } else if (data.type === "feedback") {
           router.push(ROUTES.USER_REVIEW_HISTORY);
         }
@@ -267,7 +267,7 @@ const NotificationBell: React.FC = () => {
               </span>
               Notifications
             </h3>
-            {unreadCount > 0 && (
+            {notifications.length > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
                 className="cursor-pointer text-sm text-indigo-600 hover:text-indigo-800 font-medium transition flex items-center gap-1 group"
@@ -281,7 +281,7 @@ const NotificationBell: React.FC = () => {
             )}
           </div>
 
-          {unreadCount === 0 ? (
+          {notifications.length === 0 ? (
             <div className="p-8 text-center flex flex-col items-center">
               <div className="bg-indigo-100 rounded-full p-4 w-fit mb-4">
                 <Image
