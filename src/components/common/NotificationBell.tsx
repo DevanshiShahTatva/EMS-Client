@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import notification from "../../../public/assets/notificationIcon.svg";
-import { getToken, onMessage } from "firebase/messaging";
-import { getFirebaseMessaging } from "@/lib/firebaseClient";
 import alarm from "../../../public/assets/alarm.png";
 import { format, isToday, isYesterday, parseISO } from "date-fns";
 import {
@@ -11,29 +9,28 @@ import {
   markAsRead,
   NotificationResp,
   readNotification,
-  registerFCMToken,
 } from "@/utils/services/notification";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/utils/constant";
+import {
+  connectSocket,
+  disconnectSocket,
+  getSocket,
+} from "@/utils/services/socket";
 
 const NotificationBell: React.FC = () => {
   const router = useRouter();
   const [notifications, setNotifications] = useState<NotificationResp[]>([]);
-  const [loading, setLoading] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const fcmTokenRegistered = useRef(false); // Track FCM registration
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const fetchNotifications = useCallback(async () => {
-    setLoading(true);
     try {
       const data = await getNotifications();
       setNotifications(data);
     } catch (error) {
       console.error("Failed to fetch notifications", error);
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -91,56 +88,33 @@ const NotificationBell: React.FC = () => {
   );
 
   useEffect(() => {
-    fetchNotifications();
-    let unsubscribe: (() => void) | undefined;
-
-    async function setupFCM() {
-      const messaging = await getFirebaseMessaging();
-      if (!messaging || fcmTokenRegistered.current) return;
-
-      try {
-        const permission = await Notification.requestPermission();
-        if (permission === "granted") {
-          // Only register token once
-          if (!localStorage.getItem("fcmToken")) {
-            const token = await getToken(messaging, {
-              vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
-            });
-            console.log("FCM Token:", token);
-            localStorage.setItem("fcmToken", token);
-            await registerFCMToken(token);
-          }
-          fcmTokenRegistered.current = true;
-        }
-
-        unsubscribe = onMessage(messaging, (payload: any) => {
-          const data = payload.data || {};
-          const title = payload.notification?.title || "No title";
-          const body = payload.notification?.body || "No body";
-          const _id = data._id || `temp-${Date.now()}`;
-
-          playNotificationSound();
-
-          addNotification({
-            _id,
-            title,
-            body,
-            isRead: false,
-            data,
-            createdAt: new Date().toISOString(),
-          });
-        });
-      } catch (error) {
-        console.error("FCM error:", error);
-      }
-    }
-
-    setupFCM();
+    connectSocket();
 
     return () => {
-      if (unsubscribe) unsubscribe();
+      disconnectSocket();
     };
-  }, [fetchNotifications]);
+  }, []);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  useEffect(() => {
+    const socket = getSocket();
+
+    socket.emit("authenticate");
+
+    // Listen for notifications
+    socket.on("notification", (notification) => {
+      console.log("notification", notification);
+      addNotification(notification);
+      playNotificationSound();
+    });
+
+    return () => {
+      socket.off("notification");
+    };
+  }, []);
 
   const handleMarkAsRead = async (event: any, id: string) => {
     event.stopPropagation();
@@ -186,36 +160,6 @@ const NotificationBell: React.FC = () => {
     });
   };
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const handler = (event: MessageEvent) => {
-      if (event.data?.type === "PUSH_NOTIFICATION") {
-        const payload = event.data.payload;
-        const data = payload.data || {};
-        const title = payload.notification?.title || "No title";
-        const body = payload.notification?.body || "No body";
-        const _id = data._id;
-
-        playNotificationSound();
-
-        addNotification({
-          _id,
-          title,
-          body,
-          isRead: false,
-          data,
-          createdAt: new Date().toISOString(),
-        });
-      }
-    };
-
-    navigator.serviceWorker?.addEventListener("message", handler);
-    return () => {
-      navigator.serviceWorker?.removeEventListener("message", handler);
-    };
-  }, [addNotification]);
-
   const togglePopup = useCallback(() => {
     setPopupOpen((prev) => !prev);
   }, []);
@@ -229,13 +173,12 @@ const NotificationBell: React.FC = () => {
           router.push(ROUTES.USER_MY_EVENTS);
         } else if (data.type === "profile") {
           router.push(ROUTES.USER_PROFILE);
-        } else if (data.type === "points") {
-          router.push(ROUTES.USER_MY_EVENTS);
+        } else if (data.type === "reward") {
+          router.push(ROUTES.USER_REWARDED_HISTORY);
         } else if (data.type === "feedback") {
           router.push(ROUTES.USER_REVIEW_HISTORY);
         }
       }
-      fetchNotifications();
     }
   };
 
@@ -267,7 +210,7 @@ const NotificationBell: React.FC = () => {
               </span>
               Notifications
             </h3>
-            {unreadCount > 0 && (
+            {notifications.length > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
                 className="cursor-pointer text-sm text-indigo-600 hover:text-indigo-800 font-medium transition flex items-center gap-1 group"
@@ -281,7 +224,7 @@ const NotificationBell: React.FC = () => {
             )}
           </div>
 
-          {unreadCount === 0 ? (
+          {notifications.length === 0 ? (
             <div className="p-8 text-center flex flex-col items-center">
               <div className="bg-indigo-100 rounded-full p-4 w-fit mb-4">
                 <Image
@@ -341,14 +284,14 @@ const NotificationBell: React.FC = () => {
                                 {body}
                               </p>
                               <button
-                                  onClick={(event) => handleMarkAsRead(event, _id)}
-                                  className="cursor-pointer mt-2 text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-opacity opacity-70 hover:opacity-100"
-                                  aria-label="Mark as read"
-                                >
-                                  <span className="text-sm">
-                                    Mark as read ✓
-                                  </span>
-                                </button>
+                                onClick={(event) =>
+                                  handleMarkAsRead(event, _id)
+                                }
+                                className="cursor-pointer mt-2 text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-opacity opacity-70 hover:opacity-100"
+                                aria-label="Mark as read"
+                              >
+                                <span className="text-sm">Mark as read ✓</span>
+                              </button>
                             </div>
                           </div>
                         </div>
