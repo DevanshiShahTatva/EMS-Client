@@ -106,7 +106,6 @@ const NotificationBell: React.FC = () => {
 
     // Listen for notifications
     socket.on("notification", (notification) => {
-      console.log("notification", notification);
       addNotification(notification);
       playNotificationSound();
     });
@@ -120,7 +119,7 @@ const NotificationBell: React.FC = () => {
     event.stopPropagation();
     try {
       await markAsRead(id);
-      fetchNotifications();
+      markReadNotificationLocal(id);
     } catch (error) {
       console.error("Failed to mark as read", error);
     }
@@ -129,7 +128,7 @@ const NotificationBell: React.FC = () => {
   const handleMarkAllAsRead = async () => {
     try {
       await markAllAsRead();
-      fetchNotifications();
+      setNotifications([]);
     } catch (error) {
       console.error("Failed to mark all as read", error);
     }
@@ -164,9 +163,27 @@ const NotificationBell: React.FC = () => {
     setPopupOpen((prev) => !prev);
   }, []);
 
+  const readNotificationLocal = (notificationId: string) => {
+    const updateNotifications = notifications.map((noti) => {
+      return {
+        ...noti,
+        isRead: notificationId === noti._id ? true : noti.isRead,
+      };
+    });
+    setNotifications(updateNotifications);
+  };
+
+  const markReadNotificationLocal = (notificationId: string) => {
+    const updateNotifications = notifications.filter(
+      (noti) => noti._id !== notificationId
+    );
+    setNotifications(updateNotifications);
+  };
+
   const handleClickOnNotification = async (id: string, data: any) => {
     if (data.type) {
       const res = await readNotification(id);
+      readNotificationLocal(id);
       if (res.status) {
         togglePopup();
         if (data.type === "ticket") {
