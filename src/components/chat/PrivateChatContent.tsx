@@ -43,7 +43,7 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
     }
   };
 
-  const handleEditDeletedMessage = ({ status, chatId: msgChatId, messageId, newMessage: updatedContent }: { status: 'edited' | 'deleted'; chatId: string; messageId: string; newMessage: string }) => {
+  const handleEditDeletedMessage = ({ status, chatId: msgChatId, messageId, isLastMessage, updatedTime, newMessage: updatedContent }: any) => {
     if (msgChatId === chatId) {
       setGroupedMessage(prev => {
         const newGroups = { ...prev };
@@ -54,8 +54,19 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
         }
         return newGroups;
       });
+      if (isLastMessage) {
+        setMyPrivateChats(prev => prev.map((chat) =>
+          chat.id === msgChatId
+            ? {
+              ...chat,
+              lastMessage: updatedContent,
+              lastMessageTime: updatedTime ? moment(updatedTime).format('hh:mm A') : chat.lastMessageTime
+            }
+            : chat
+        ));
+      }
     }
-  };
+  }
 
   const handleSuccessMessageOperation = ({ status }: { status: 'edited' | 'deleted' }) => {
     if (status === "edited") {
