@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getSocket } from './socket';
+import { getSocket } from '@/utils/services/socket';
 import moment from 'moment';
+
 import ChatHeader from './ChatHeader';
 import ChatWindow from './ChatWindow';
 import MessageInput from './MessageInput';
@@ -11,7 +12,6 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
   userId,
   currentPrivateChatDetails,
   setMyPrivateChats,
-  getDateKey,
   setOpenChatInfo
 }) => {
   const [groupedMessage, setGroupedMessage] = useState<IGroupedPrivateMessages>({});
@@ -108,6 +108,13 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
       socket.off('private_user_stopped_typing');
     };
   }, [chatId, userId]);
+
+  const getDateKey = (date: string | Date) => {
+    const msgDate = moment(date);
+    if (msgDate.isSame(moment(), 'day')) return 'Today';
+    if (msgDate.isSame(moment().subtract(1, 'days'), 'day')) return 'Yesterday';
+    return msgDate.format('D MMMM, YYYY');
+  };
 
   const groupMessagesByDate = (messages: IPrivateMessage[]) => {
     return messages.reduce((groups, message) => {

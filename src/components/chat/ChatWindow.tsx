@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import moment from 'moment';
 import { Trash2Icon, PencilIcon, BanIcon, EllipsisVerticalIcon } from "lucide-react";
+
 import { apiCall } from '@/utils/services/request';
 import { IChatWindowProps, IMessage } from './type';
 
@@ -12,12 +13,12 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
   groupedMessage,
   activeMenuId,
   chatApiEndpoint,
+  groupMessagesByDate,
   setActiveMenuId,
   setEditMessage,
   setIsScrollBottom,
   editOrDeleteMessage,
   setGroupedMessage,
-  groupMessagesByDate
 }) => {
   const [loadingOlderMessages, setLoadingOlderMessages] = useState<boolean>(false);
   const [hasMoreMessages, setHasMoreMessages] = useState<boolean>(true);
@@ -147,7 +148,7 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
       )}
       {Object.entries(groupedMessage).map(([dateTitle, msgs]) => (
         <div key={dateTitle}>
-          <div className='flex justify-center sticky top-0 mb-3 z-999'>
+          <div className='flex justify-center sticky top-0 mb-3 z-10'>
             <div className='w-fit pt-[2px] pb-[2px] pl-2 pr-2 font-medium border border-gray-300 rounded-[4px] bg-white'>
               {dateTitle}
             </div>

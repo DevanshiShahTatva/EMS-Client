@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { toast } from 'react-toastify';
-import { getSocket } from './socket';
+import { getSocket } from '@/utils/services/socket';
+
 import ChatHeader from './ChatHeader';
 import ChatWindow from './ChatWindow';
 import MessageInput from './MessageInput';
@@ -12,7 +13,6 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
   userId,
   currentGroupDetails,
   setMyGroups,
-  getDateKey,
   setOpenChatInfo
 }) => {
   const [groupedMessage, setGroupedMessage] = useState<IGroupedMessages>({});
@@ -20,6 +20,13 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
   const [editMessage, setEditMessage] = useState<IMessage | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [isScrollBottom, setIsScrollBottom] = useState(false);
+
+  const getDateKey = (date: string | Date) => {
+    const msgDate = moment(date);
+    if (msgDate.isSame(moment(), 'day')) return 'Today';
+    if (msgDate.isSame(moment().subtract(1, 'days'), 'day')) return 'Yesterday';
+    return msgDate.format('D MMMM, YYYY');
+  };
 
   const addMessageToGroup = (message: IMessage, existingGroups: IGroupedMessages) => {
     const dateKey = getDateKey(message.createdAt);
@@ -38,19 +45,9 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     }, {} as IGroupedMessages);
   };
 
-  const onMessagesLoaded = (newMessages: IMessage[]) => {
-    setGroupedMessage(prev => {
-      const currentMessagesArray = Object.values(prev).flat();
-      const allMessages = [...currentMessagesArray, ...newMessages];
-      const sortedMessages = allMessages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-      return groupMessagesByDate(sortedMessages);
-    });
-  };
-
   const handleInitialLoad = ({ messages }: { messages: IMessage[] }) => {
     setGroupedMessage(groupMessagesByDate(messages));
     setIsScrollBottom(true);
-    onMessagesLoaded(messages);
   };
 
   const handleGroupMemberAdded = ({ groupId: addedGroupId, newMember }: { groupId: string; newMember: { id: string; name: string; avatar?: string } }) => {
@@ -111,7 +108,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     }
   };
 
-  const handleEditedOrDeletedMessage = ({ status, groupId: msgGroupId, messageId, newMessage: updatedContent }: { status: 'edited' | 'deleted'; groupId: string; messageId: string; newMessage: string }) => {
+  const handleEditedOrDeletedMessage = ({ status, groupId: msgGroupId, messageId, isLastMessage, updatedTime, newMessage: updatedContent }: any) => {
     if (msgGroupId === groupId) {
       setGroupedMessage(prev => {
         const newGroups = { ...prev };
@@ -122,6 +119,17 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
         }
         return newGroups;
       });
+      if (isLastMessage) {
+        setMyGroups(prev => prev.map((group) =>
+          group.id === msgGroupId
+            ? {
+              ...group,
+              lastMessage: updatedContent,
+              lastMessageTime: updatedTime ? moment(updatedTime).format('hh:mm A') : group.lastMessageTime
+            }
+            : group
+        ));
+      }
     }
   };
 
@@ -135,13 +143,14 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     const socket = getSocket();
     if (!groupId || !socket) return;
 
+    setGroupedMessage({});
     setTypingUsers([]);
     setEditMessage(null);
     setActiveMenuId(null);
 
     socket.emit("join_group_chat", { groupId });
 
-    socket.on("initial_messages", handleInitialLoad);
+    socket.on("initial_group_messages", handleInitialLoad);
     socket.on('group_member_added', handleGroupMemberAdded);
     socket.on('group_member_removed', handleGroupMemberRemoved);
     socket.on("receive_group_message", handleNewGroupMessage);
@@ -149,7 +158,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     socket.on("message_edited_or_deleted_successfully", handleMessageOperationSuccess);
 
     return () => {
-      socket.off("initial_messages", handleInitialLoad);
+      socket.off("initial_group_messages", handleInitialLoad);
       socket.off('group_member_added', handleGroupMemberAdded);
       socket.off("receive_group_message", handleNewGroupMessage);
       socket.off('group_member_removed', handleGroupMemberRemoved);
@@ -186,7 +195,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
   const handleSendMessage = (content: string) => {
     const socket = getSocket();
     if (!socket || !groupId) return;
-    socket.emit("group_message", {
+    socket.emit("send_group_message", {
       groupId: groupId,
       content: content,
     });
@@ -217,13 +226,13 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
   const handleStartTyping = () => {
     const socket = getSocket();
     if (!socket || !groupId) return;
-    socket.emit('member_typing', { groupId: groupId });
+    socket.emit('group_member_typing', { groupId: groupId });
   }
 
   const handleStopTyping = () => {
     const socket = getSocket();
     if (!socket || !groupId) return;
-    socket.emit('member_stop_typing', { groupId: groupId });
+    socket.emit('group_member_stop_typing', { groupId: groupId });
   };
 
   return (

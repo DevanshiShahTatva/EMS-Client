@@ -1,5 +1,5 @@
 import React from 'react';
-import { getSocket } from './socket';
+import { getSocket } from '@/utils/services/socket';
 import { LogOut, XIcon, MessageSquareMoreIcon } from "lucide-react";
 import { toast } from 'react-toastify';
 import { IChatInfoSidebarProps } from './type';

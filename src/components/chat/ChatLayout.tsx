@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { MessageSquareTextIcon } from "lucide-react";
 import moment from 'moment';
 
-import { connectSocket, disconnectSocket } from './socket';
+import { connectSocket, disconnectSocket } from '@/utils/services/socket';
 import ChatList from './ChatList';
 import ChatInfoSidebar from './ChatInfoSidebar';
 import GroupChatContent from './GroupChatContent';
@@ -19,13 +19,6 @@ const ChatLayout = () => {
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [activeChatType, setActiveChatType] = useState<'group' | 'private'>('private');
   const [openChatInfo, setOpenChatInfo] = useState<boolean>(false);
-
-  const getDateKey = (date: string | Date) => {
-    const msgDate = moment(date);
-    if (msgDate.isSame(moment(), 'day')) return 'Today';
-    if (msgDate.isSame(moment().subtract(1, 'days'), 'day')) return 'Yesterday';
-    return msgDate.format('D MMMM, YYYY');
-  };
 
   useEffect(() => {
     connectSocket();
@@ -52,7 +45,8 @@ const ChatLayout = () => {
           name: group.name,
           image: group.icon,
           members: group.members,
-          senderId: group.senderId ?? null,
+          status: group.status,
+          senderId: group.senderId,
           lastMessage: group.lastMessage,
           lastMessageSender: group.lastMessageSender,
           lastMessageTime: group.lastMessage ? moment(group.lastMessageTime).format('hh:mm A') : '',
@@ -76,6 +70,7 @@ const ChatLayout = () => {
           id: chat.id,
           name: chat.name,
           image: chat.image,
+          status: chat.status,
           senderId: chat.senderId,
           lastMessage: chat.lastMessage,
           lastMessageSender: chat.lastMessageSender,
@@ -103,6 +98,7 @@ const ChatLayout = () => {
           name: chat.name,
           image: chat.image,
           senderId: chat.senderId,
+          status: '',
           lastMessage: '',
           lastMessageSender: '',
           lastMessageTime: ''
@@ -157,7 +153,6 @@ const ChatLayout = () => {
             <GroupChatContent
               userId={userId}
               groupId={activeChatId}
-              getDateKey={getDateKey}
               setMyGroups={setMyGroups}
               setOpenChatInfo={setOpenChatInfo}
               currentGroupDetails={currentChatDetails as IGroup}
@@ -166,7 +161,6 @@ const ChatLayout = () => {
             <PrivateChatContent
               userId={userId}
               chatId={activeChatId}
-              getDateKey={getDateKey}
               setOpenChatInfo={setOpenChatInfo}
               setMyPrivateChats={setMyPrivateChats}
               currentPrivateChatDetails={currentChatDetails as IPrivateChat}

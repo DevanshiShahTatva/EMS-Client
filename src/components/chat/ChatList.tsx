@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
-import { UserIcon, UsersIcon } from "lucide-react";
-import { IChatListProps } from './type';
+import { BanIcon, UserIcon, UsersIcon } from "lucide-react";
+import { IChatListProps, IGroup, IPrivateChat } from './type';
 
 const ChatList: React.FC<IChatListProps> = ({
   userId,
@@ -15,6 +15,36 @@ const ChatList: React.FC<IChatListProps> = ({
   const isGroup = chatType === 'group';
   const list = isGroup ? myGroups : myPrivateChats;
 
+  const handleClick = (id: string) => {
+    if (id !== activeChatId) {
+      setActiveChat(id, isGroup ? "group" : "private");
+    }
+  }
+
+  const getSenderName = (item: IPrivateChat | IGroup): string => {
+    if (item.senderId === userId) return "You :";
+    if (item.lastMessageSender) return item.lastMessageSender + " :";
+    return "";
+  };
+
+  const renderLastMessage = (item: IPrivateChat | IGroup) => {
+    if (!item.lastMessage && item.status !== "deleted") return null;
+
+    const senderName = getSenderName(item);
+    return (
+      <div className="flex gap-2 text-xs text-gray-500 truncate">
+        <span>{senderName}</span>
+        {item.lastMessage ? (
+          <span>{item.lastMessage}</span>
+        ) : (
+          <span className="flex items-center gap-1 italic">
+            <BanIcon size={13} /> This message was deleted
+          </span>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="w-1/3 max-w-xs bg-white border-r border-gray-200 flex flex-col">
       <div className="p-4 font-bold text-lg border-b">Chats</div>
@@ -22,7 +52,7 @@ const ChatList: React.FC<IChatListProps> = ({
         {list.map((item, i: number) => (
           <button
             key={`${i + 1}`}
-            onClick={() => setActiveChat(item.id, isGroup ? "group" : "private")}
+            onClick={() => handleClick(item.id)}
             className={`w-full text-start px-4 py-3 border-b border-b-gray-200 hover:bg-gray-100 cursor-pointer ${activeChatId === item.id ? 'bg-gray-200' : ''}`}
           >
             <div className='flex items-center gap-2'>
@@ -36,18 +66,20 @@ const ChatList: React.FC<IChatListProps> = ({
               <div className='flex justify-between w-full'>
                 <div>
                   <div className="font-medium">{item.name}</div>
-                  {item.lastMessage && (
-                    <div className="text-xs text-gray-500 truncate">
-                      <span>{item.senderId === userId ? "You" : item.lastMessageSender} : </span>
-                      {item.lastMessage}
-                    </div>
-                  )}
+                  {renderLastMessage(item)}
                 </div>
                 <div className="text-xs text-gray-400 whitespace-nowrap">{item.lastMessageTime}</div>
               </div>
             </div>
           </button>
         ))}
+        {list.length == 0 && (
+          <div>
+            <div className="text-center text-gray-500 p-4">
+              {isGroup ? "No groups found" : "No private chats found"}
+            </div>
+          </div>
+        )}
       </div>
       <div className="flex border-t">
         <TabButton
