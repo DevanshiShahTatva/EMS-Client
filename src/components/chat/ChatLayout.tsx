@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { MessageSquareTextIcon } from "lucide-react";
 import moment from 'moment';
 
-import { connectSocket, disconnectSocket } from '@/utils/services/socket';
+import { connectSocket, disconnectSocket, getSocket } from '@/utils/services/socket';
 import ChatList from './ChatList';
 import ChatInfoSidebar from './ChatInfoSidebar';
 import GroupChatContent from './GroupChatContent';
@@ -22,6 +22,10 @@ const ChatLayout = () => {
 
   useEffect(() => {
     connectSocket();
+
+    const socket = getSocket();
+    socket.emit('activate_chat_handlers');
+
     return () => {
       disconnectSocket();
     };
