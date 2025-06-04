@@ -21,7 +21,6 @@ export interface IGroup {
   id: string;
   name: string;
   image?: string;
-  status?: string;
   senderId?: string;
   members: IMember[];
   lastMessage?: string;
@@ -33,7 +32,6 @@ export interface IPrivateChat {
   id: string;
   name: string;
   image?: string;
-  status?: string;
   senderId: string;
   lastMessage?: string;
   lastMessageTime?: string;

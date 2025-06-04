@@ -28,7 +28,7 @@ const ChatList: React.FC<IChatListProps> = ({
   };
 
   const renderLastMessage = (item: IPrivateChat | IGroup) => {
-    if (!item.lastMessage && item.status !== "deleted") return null;
+    if (!item.lastMessage && !item.senderId) return null;
 
     const senderName = getSenderName(item);
     return (

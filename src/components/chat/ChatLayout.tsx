@@ -49,7 +49,6 @@ const ChatLayout = () => {
           name: group.name,
           image: group.icon,
           members: group.members,
-          status: group.status,
           senderId: group.senderId,
           lastMessage: group.lastMessage,
           lastMessageSender: group.lastMessageSender,
@@ -74,7 +73,6 @@ const ChatLayout = () => {
           id: chat.id,
           name: chat.name,
           image: chat.image,
-          status: chat.status,
           senderId: chat.senderId,
           lastMessage: chat.lastMessage,
           lastMessageSender: chat.lastMessageSender,
@@ -102,7 +100,6 @@ const ChatLayout = () => {
           name: chat.name,
           image: chat.image,
           senderId: chat.senderId,
-          status: '',
           lastMessage: '',
           lastMessageSender: '',
           lastMessageTime: ''
@@ -136,10 +133,10 @@ const ChatLayout = () => {
         return myPrivateChats.find(c => c.id === activeChatId);
       }
     }
+    return null;
   };
 
   const currentChatDetails = getActiveChatDetails();
-
   return (
     <div className="w-full flex bg-gray-100">
       <ChatList
