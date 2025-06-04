@@ -17,6 +17,7 @@ import {
   disconnectSocket,
   getSocket,
 } from "@/utils/services/socket";
+import { BellIcon } from "@heroicons/react/24/outline";
 
 const NotificationBell: React.FC = () => {
   const router = useRouter();
@@ -100,15 +101,64 @@ const NotificationBell: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (Notification.permission === "default") {
+      Notification.requestPermission().then((permission) => {
+        console.log("Notification permission:", permission);
+      });
+    }
+  }, []);
+
+  const showSystemNotification = (notification: NotificationResp) => {
+    if (
+      Notification.permission === "granted" &&
+      document.visibilityState !== "visible"
+    ) {
+      let targetUrl = "/";
+
+      if (notification.data?.type === "ticket") {
+        targetUrl = ROUTES.USER_MY_EVENTS;
+      } else if (notification.data?.type === "profile") {
+        targetUrl = ROUTES.USER_PROFILE;
+      } else if (notification.data?.type === "reward") {
+        targetUrl = ROUTES.USER_REWARDED_HISTORY;
+      } else if (notification.data?.type === "feedback") {
+        targetUrl = ROUTES.USER_REVIEW_HISTORY;
+      }
+
+      new Notification(notification.title, {
+        body: notification.body,
+        icon: "/assets/notificationIcon.svg",
+        data: {
+          url: targetUrl,
+        },
+      });
+    }
+  };
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchNotifications();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [fetchNotifications]);
+
+  useEffect(() => {
     const socket = getSocket();
 
     socket.emit("authenticate");
 
     // Listen for notifications
     socket.on("notification", (notification) => {
-      console.log("notification", notification);
       addNotification(notification);
       playNotificationSound();
+      showSystemNotification(notification);
     });
 
     return () => {
@@ -116,11 +166,24 @@ const NotificationBell: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/firebase-messaging-sw.js")
+        .then((registration) => {
+          console.log("Service Worker registered:", registration);
+        })
+        .catch((err) => {
+          console.error("Service Worker registration failed:", err);
+        });
+    }
+  }, []);
+
   const handleMarkAsRead = async (event: any, id: string) => {
     event.stopPropagation();
     try {
       await markAsRead(id);
-      fetchNotifications();
+      markReadNotificationLocal(id);
     } catch (error) {
       console.error("Failed to mark as read", error);
     }
@@ -129,7 +192,7 @@ const NotificationBell: React.FC = () => {
   const handleMarkAllAsRead = async () => {
     try {
       await markAllAsRead();
-      fetchNotifications();
+      setNotifications([]);
     } catch (error) {
       console.error("Failed to mark all as read", error);
     }
@@ -164,9 +227,27 @@ const NotificationBell: React.FC = () => {
     setPopupOpen((prev) => !prev);
   }, []);
 
+  const readNotificationLocal = (notificationId: string) => {
+    const updateNotifications = notifications.map((noti) => {
+      return {
+        ...noti,
+        isRead: notificationId === noti._id ? true : noti.isRead,
+      };
+    });
+    setNotifications(updateNotifications);
+  };
+
+  const markReadNotificationLocal = (notificationId: string) => {
+    const updateNotifications = notifications.filter(
+      (noti) => noti._id !== notificationId
+    );
+    setNotifications(updateNotifications);
+  };
+
   const handleClickOnNotification = async (id: string, data: any) => {
     if (data.type) {
       const res = await readNotification(id);
+      readNotificationLocal(id);
       if (res.status) {
         togglePopup();
         if (data.type === "ticket") {
@@ -186,12 +267,13 @@ const NotificationBell: React.FC = () => {
     <div className="relative mt-1" ref={containerRef}>
       <button
         onClick={togglePopup}
-        className="relative p-2 bg-white rounded-full border border-gray-300 hover:bg-gray-100 shadow-sm transition-all duration-200 transform hover:scale-105"
+        className="relative cursor-pointer p-2 bg-white rounded-full border border-gray-300 hover:bg-gray-100 shadow-sm transition-all duration-200 transform hover:scale-105"
         aria-label="Toggle notifications"
       >
-        <Image src={notification} alt="notification" height={28} width={28} />
+        {/* <Image src={notification} alt="notification" height={28} width={28} /> */}
+        <BellIcon className="size-6 text-gray-500" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-600 text-white text-xs font-bold flex items-center justify-center rounded-full ring-2 ring-white">
+          <span className="absolute -top-1 -right-1 size-5 bg-red-600 text-white text-xs font-bold flex items-center justify-center rounded-full ring-2 ring-white">
             {unreadCount}
           </span>
         )}
@@ -199,7 +281,7 @@ const NotificationBell: React.FC = () => {
 
       {popupOpen && (
         <div
-          className="absolute right-0 mt-3 w-[420px] bg-white border border-gray-200 rounded-2xl shadow-xl z-50 max-h-[500px] overflow-hidden animate-fade-in"
+          className="absolute right-0 mt-3 w-[420px] bg-white border border-gray-200 rounded-2xl shadow-xl z-[9999] max-h-[500px] overflow-hidden animate-fade-in"
           role="region"
           aria-label="Notifications"
         >
