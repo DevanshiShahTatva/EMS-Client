@@ -1,0 +1,168 @@
+import React, { useRef, useEffect, useState } from 'react';
+import { SendHorizonalIcon, SmileIcon, XIcon } from "lucide-react";
+import EmojiPicker from 'emoji-picker-react';
+import { IMessageInputProps } from './type';
+
+const MessageInput: React.FC<IMessageInputProps> = ({
+  typingUsers,
+  editMessage,
+  onSendMessage,
+  onEditMessage,
+  onStartTyping,
+  onStopTyping,
+  setEditMessage,
+}) => {
+  const [newMessage, setNewMessage] = useState<string>("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
+
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(e.target as Node)) {
+        setShowEmojiPicker(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (editMessage) {
+      setNewMessage(editMessage.content);
+    } else {
+      setNewMessage("");
+    }
+  }, [editMessage]);
+
+  const handleInternalTyping = (action: string) => {
+    if (action === "start") {
+      if (!typingTimeoutRef.current) {
+        onStartTyping();
+      }
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      typingTimeoutRef.current = setTimeout(() => {
+        onStopTyping();
+        typingTimeoutRef.current = null;
+      }, 1000);
+    } else {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
+      }
+      onStopTyping();
+    }
+  };
+
+  const onInputChange = (value: string) => {
+    setNewMessage(value);
+
+    if (value.length > 0) {
+      handleInternalTyping("start");
+    } else {
+      handleInternalTyping("stop");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditMessage(null);
+    setNewMessage("");
+  };
+
+  const sendMessage = () => {
+    const content = newMessage.trim();
+    if (!content) return;
+
+    if (editMessage) {
+      onEditMessage(editMessage._id, content);
+    } else {
+      onSendMessage(content);
+    }
+    setNewMessage("");
+    setEditMessage(null);
+    handleInternalTyping("stop");
+  };
+
+  const onEmojiClick = (emojiData: { emoji: string }) => {
+    setNewMessage(prev => prev + emojiData.emoji);
+    setShowEmojiPicker(false);
+    if (newMessage.length === 0) {
+      handleInternalTyping("start");
+    }
+  };
+
+  return (
+    <div className='flex justify-center mb-4'>
+      <div className="w-full ml-16 mr-16 bg-white rounded-md shadow-sm relative">
+        {typingUsers.length > 0 && (
+          <div className="text-sm text-gray-500 mb-2">
+            {typingUsers.length === 1
+              ? `${typingUsers[0]} is typing...`
+              : `${typingUsers.join(', ')} are typing...`}
+          </div>
+        )}
+        <div className="flex flex-col border-b border-b-gray-200">
+          {editMessage && (
+            <div className="flex justify-between m-[6px] mb-3 p-2 rounded-md bg-[#f5f5f5]">
+              <div className='flex flex-col'>
+                <span className="text-[14px] text-black mb-1">Edit message</span>
+                <span className="text-[12px] text-[#727272]">{editMessage.content}</span>
+              </div>
+              <button className="h-fit cursor-pointer">
+                <XIcon
+                  size={18}
+                  onClick={() => handleCancelEdit()}
+                />
+              </button>
+            </div>
+          )}
+          <div className={`flex px-3 ${editMessage ? "h-[30px]" : "h-[45px]"}`}>
+            <input
+              value={newMessage}
+              placeholder="Enter your message here"
+              onKeyDown={(e) => handleKeyDown(e)}
+              onChange={(e) => onInputChange(e.target.value)}
+              className="w-full flex-1 border-none outline-none placeholder-gray-400 text-gray-700"
+            />
+          </div>
+        </div>
+        <div className="relative p-4 px-2 flex items-center justify-between">
+          {showEmojiPicker && (
+            <div ref={emojiPickerRef} className="absolute bottom-12 left-0">
+              <EmojiPicker
+                width={300}
+                height={350}
+                onEmojiClick={onEmojiClick}
+                previewConfig={{ showPreview: false }}
+              />
+            </div>
+          )}
+          <SmileIcon
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            className={`text-gray-400 cursor-pointer hover:text-purple-500 ${showEmojiPicker && 'text-purple-500'}`}
+          />
+          <button
+            disabled={!newMessage.trim()}
+            onClick={() => sendMessage()}
+            className="text-purple-600 text-lg cursor-pointer hover:text-purple-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <SendHorizonalIcon />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default MessageInput;
