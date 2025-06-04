@@ -101,6 +101,55 @@ const NotificationBell: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (Notification.permission === "default") {
+      Notification.requestPermission().then((permission) => {
+        console.log("Notification permission:", permission);
+      });
+    }
+  }, []);
+
+  const showSystemNotification = (notification: NotificationResp) => {
+    if (
+      Notification.permission === "granted" &&
+      document.visibilityState !== "visible"
+    ) {
+      let targetUrl = "/";
+
+      if (notification.data?.type === "ticket") {
+        targetUrl = ROUTES.USER_MY_EVENTS;
+      } else if (notification.data?.type === "profile") {
+        targetUrl = ROUTES.USER_PROFILE;
+      } else if (notification.data?.type === "reward") {
+        targetUrl = ROUTES.USER_REWARDED_HISTORY;
+      } else if (notification.data?.type === "feedback") {
+        targetUrl = ROUTES.USER_REVIEW_HISTORY;
+      }
+
+      new Notification(notification.title, {
+        body: notification.body,
+        icon: "/assets/notificationIcon.svg",
+        data: {
+          url: targetUrl,
+        },
+      });
+    }
+  };
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchNotifications();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [fetchNotifications]);
+
+  useEffect(() => {
     const socket = getSocket();
 
     socket.emit("authenticate");
@@ -109,11 +158,25 @@ const NotificationBell: React.FC = () => {
     socket.on("notification", (notification) => {
       addNotification(notification);
       playNotificationSound();
+      showSystemNotification(notification);
     });
 
     return () => {
       socket.off("notification");
     };
+  }, []);
+
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/firebase-messaging-sw.js")
+        .then((registration) => {
+          console.log("Service Worker registered:", registration);
+        })
+        .catch((err) => {
+          console.error("Service Worker registration failed:", err);
+        });
+    }
   }, []);
 
   const handleMarkAsRead = async (event: any, id: string) => {
