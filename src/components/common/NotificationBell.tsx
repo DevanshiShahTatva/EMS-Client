@@ -17,6 +17,7 @@ import {
   disconnectSocket,
   getSocket,
 } from "@/utils/services/socket";
+import { BellIcon } from "@heroicons/react/24/outline";
 
 const NotificationBell: React.FC = () => {
   const router = useRouter();
@@ -203,12 +204,13 @@ const NotificationBell: React.FC = () => {
     <div className="relative mt-1" ref={containerRef}>
       <button
         onClick={togglePopup}
-        className="relative p-2 bg-white rounded-full border border-gray-300 hover:bg-gray-100 shadow-sm transition-all duration-200 transform hover:scale-105"
+        className="relative cursor-pointer p-2 bg-white rounded-full border border-gray-300 hover:bg-gray-100 shadow-sm transition-all duration-200 transform hover:scale-105"
         aria-label="Toggle notifications"
       >
-        <Image src={notification} alt="notification" height={28} width={28} />
+        {/* <Image src={notification} alt="notification" height={28} width={28} /> */}
+        <BellIcon className="size-6 text-gray-500" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-600 text-white text-xs font-bold flex items-center justify-center rounded-full ring-2 ring-white">
+          <span className="absolute -top-1 -right-1 size-5 bg-red-600 text-white text-xs font-bold flex items-center justify-center rounded-full ring-2 ring-white">
             {unreadCount}
           </span>
         )}
@@ -216,7 +218,7 @@ const NotificationBell: React.FC = () => {
 
       {popupOpen && (
         <div
-          className="absolute right-0 mt-3 w-[420px] bg-white border border-gray-200 rounded-2xl shadow-xl z-50 max-h-[500px] overflow-hidden animate-fade-in"
+          className="absolute right-0 mt-3 w-[420px] bg-white border border-gray-200 rounded-2xl shadow-xl z-[9999] max-h-[500px] overflow-hidden animate-fade-in"
           role="region"
           aria-label="Notifications"
         >
