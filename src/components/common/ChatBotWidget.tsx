@@ -17,7 +17,7 @@ const ChatBotWidget = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [botTyping, setBotTyping] = useState(false);
-  const [showChatBot, setShowChatBot] = useState(true);
+  const [showChatBot, setShowChatBot] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -28,7 +28,6 @@ const ChatBotWidget = () => {
 
   useEffect(() => {
     setIsMounted(true);
-    // Load initial messages if needed
     const initialMessages: Message[] = [
       {
         sender: "bot",
@@ -36,13 +35,14 @@ const ChatBotWidget = () => {
         time: new Date().toLocaleTimeString(),
       },
     ];
-    setMessages(initialMessages);
-  }, []);
 
-  useEffect(() => {
     const handleShowChatBotUpdate = () => {
-      setShowChatBot(getUserRole() !== "admin");
+      setMessages(initialMessages);
+      setIsOpen(false);
+      setShowChatBot(!["organizer", "admin"].includes(getUserRole()));
     };
+
+    handleShowChatBotUpdate();
 
     window.addEventListener("handleShowChatBotUpdate", handleShowChatBotUpdate);
 
