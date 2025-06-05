@@ -579,6 +579,9 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
     formData.append("description", formValues.description);
     formData.append("numberOfPoint", formValues.points.toString());
 
+    formData.append("location[type]", "Point");
+    formData.append("location[coordinates][0]", formValues.location.long.toString());
+    formData.append("location[coordinates][1]", formValues.location.lat.toString());
     formData.append("location[address]", formValues.location.address);
     formData.append("location[lat]", formValues.location.lat.toString());
     formData.append("location[lng]", formValues.location.long.toString());
