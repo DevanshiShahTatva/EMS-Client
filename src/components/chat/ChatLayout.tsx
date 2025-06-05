@@ -21,7 +21,8 @@ const ChatLayout = () => {
   const [myGroups, setMyGroups] = useState<IGroup[]>([]);
   const [myPrivateChats, setMyPrivateChats] = useState<IPrivateChat[]>([]);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
-  const [activeChatType, setActiveChatType] = useState<'group' | 'private'>('private');
+  const [activeChatType, setActiveChatType] = useState<'group' | 'private'>('group');
+  const [currentChatType, setCurrentChatType] = useState<'group' | 'private'>('group');
   const [openChatInfo, setOpenChatInfo] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -37,7 +38,7 @@ const ChatLayout = () => {
   }, []);
 
   useEffect(() => {
-    fetchMyPrivateChats();
+    fetchMyGroup();
   }, []);
 
   const fetchMyGroup = async () => {
@@ -104,6 +105,7 @@ const ChatLayout = () => {
   const fetchChatList = async (type: 'group' | 'private') => {
     setActiveChatType(type);
     setIsLoading(true);
+
     if (type === 'group') {
       fetchMyGroup();
     } else {
@@ -148,14 +150,15 @@ const ChatLayout = () => {
   const handleSetActiveChat = (id: string, type: 'group' | 'private') => {
     setActiveChatId(id);
     setActiveChatType(type);
+    setCurrentChatType(type);
     setOpenChatInfo(false);
   };
 
   const getActiveChatDetails = () => {
     if (activeChatId) {
-      if (activeChatType === 'group') {
+      if (currentChatType === 'group') {
         return myGroups.find(g => g.id === activeChatId);
-      } else if (activeChatType === 'private') {
+      } else if (currentChatType === 'private') {
         return myPrivateChats.find(c => c.id === activeChatId);
       }
     }
@@ -176,8 +179,8 @@ const ChatLayout = () => {
         setActiveChat={handleSetActiveChat}
       />
       <div className="flex-1 flex flex-col">
-        {(activeChatId && activeChatType) && (
-          activeChatType === 'group' ? (
+        {(activeChatId && currentChatType) && (
+          currentChatType === 'group' ? (
             <GroupChatContent
               userId={userId}
               groupId={activeChatId}
@@ -195,7 +198,7 @@ const ChatLayout = () => {
             />
           )
         )}
-        {!(activeChatId && activeChatType) && (
+        {!(activeChatId && currentChatType) && (
           <div className="flex flex-col items-center justify-center h-full text-center text-gray-600">
             <div className="mb-6">
               <MessageSquareTextIcon size={100} color="#DCDCDC" />
@@ -207,7 +210,7 @@ const ChatLayout = () => {
           </div>
         )}
       </div>
-      {activeChatType === 'group' && (
+      {currentChatType === 'group' && (
         <ChatInfoSidebar
           userId={userId}
           openChatInfo={openChatInfo}

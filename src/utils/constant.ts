@@ -13,6 +13,7 @@ export const ROUTES = {
     USER_REWARDED_HISTORY: "/user/reward-history",
     USER_REVIEW_HISTORY: "/user/my-reviews",
     USER_CHAT: '/user/chat',
+    USER_PAYMENT_HISTORY : "/user/payment-history",
     ADMIN: {
         DASHBOARD: "/admin/dashboard",
         EVENTS: "/admin/event",
