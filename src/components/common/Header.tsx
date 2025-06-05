@@ -15,7 +15,7 @@ import { getAuthToken, getUserLogo, setUserLogo, setUserName, getUserName } from
 
 // Other library
 import Cookie from 'js-cookie'
-import { TicketsIcon, UserCircle, LogOut, Calendar, HandCoins, Star, Menu } from 'lucide-react';
+import { TicketsIcon, UserCircle, LogOut, Calendar, HandCoins, Star, Menu, IndianRupee } from 'lucide-react';
 
 // Services
 import { apiCall } from '@/utils/services/request';
@@ -80,6 +80,11 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
   const navToReviewPage = () => {
     setIsDropdownOpen(false);
     router.push(ROUTES.USER_REVIEW_HISTORY);
+  }
+
+  const navToPaymentHistoryPage = () => {
+    setIsDropdownOpen(false);
+    router.push(ROUTES.USER_PAYMENT_HISTORY);
   }
 
   const fetchUserInfo = async () => {
@@ -291,6 +296,10 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                           <button onClick={navToReviewPage} className={`flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer ${activeLink===ROUTES.USER_REVIEW_HISTORY ? "bg-gray-100":''} `}>
                             <Star className="w-5 h-5 mr-3" />
                             My Reviews
+                          </button>
+                          <button onClick={navToPaymentHistoryPage} className={`flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer ${activeLink===ROUTES.USER_PAYMENT_HISTORY ? "bg-gray-100":''} `}>
+                            <IndianRupee className="w-5 h-5 mr-3" />
+                            Payment History
                           </button>
                         </>
                       )}
