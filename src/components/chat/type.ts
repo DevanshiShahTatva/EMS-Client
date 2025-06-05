@@ -106,6 +106,7 @@ export interface IChatInfoSidebarProps {
 export interface IChatWindowProps {
   chatId: string;
   isGroup: boolean;
+  isLoading: boolean;
   userId: string | null;
   isScrollBottom: boolean;
   chatApiEndpoint: string;

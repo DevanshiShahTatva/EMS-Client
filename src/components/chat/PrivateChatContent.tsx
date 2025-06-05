@@ -19,10 +19,12 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
   const [editMessage, setEditMessage] = useState<IMessage | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [isScrollBottom, setIsScrollBottom] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleInitialLoad = (data: { messages: IPrivateMessage[] }) => {
     setGroupedMessage(groupMessagesByDate(data.messages));
     setIsScrollBottom(true);
+    setIsLoading(false);
   };
 
   const handleNewPrivateMessage = (message: IPrivateMessage) => {
@@ -86,6 +88,7 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
     const socket = getSocket();
     if (!chatId || !socket) return;
 
+    setIsLoading(true);
     setGroupedMessage({});
     setTypingUsers([]);
     setEditMessage(null);
@@ -203,6 +206,7 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
         chatId={chatId}
         userId={userId}
         isGroup={false}
+        isLoading={isLoading}
         isScrollBottom={isScrollBottom}
         groupedMessage={groupedMessage}
         activeMenuId={activeMenuId}

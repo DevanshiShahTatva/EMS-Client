@@ -20,6 +20,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
   const [editMessage, setEditMessage] = useState<IMessage | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [isScrollBottom, setIsScrollBottom] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getDateKey = (date: string | Date) => {
     const msgDate = moment(date);
@@ -48,6 +49,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
   const handleInitialLoad = ({ messages }: { messages: IMessage[] }) => {
     setGroupedMessage(groupMessagesByDate(messages));
     setIsScrollBottom(true);
+    setIsLoading(false);
   };
 
   const handleGroupMemberAdded = ({ groupId: addedGroupId, newMember }: { groupId: string; newMember: { id: string; name: string; avatar?: string } }) => {
@@ -156,6 +158,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     setEditMessage(null);
     setActiveMenuId(null);
 
+    setIsLoading(true);
     socket.emit("join_group_chat", { groupId });
 
     socket.on("initial_group_messages", handleInitialLoad);
@@ -255,6 +258,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
         chatId={groupId}
         userId={userId}
         isGroup={true}
+        isLoading={isLoading}
         isScrollBottom={isScrollBottom}
         groupedMessage={groupedMessage}
         activeMenuId={activeMenuId}
