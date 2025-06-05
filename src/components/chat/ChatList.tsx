@@ -5,12 +5,33 @@ import { IChatListProps, IGroup, IPrivateChat } from './type';
 const ChatList: React.FC<IChatListProps> = ({
   userId,
   myGroups,
+  isLoading,
   myPrivateChats,
   activeChatId,
   chatType,
   setActiveChat,
-  setChatType
+  fetchChatList
 }) => {
+
+  if (isLoading) {
+    return (
+      <div className="w-1/3 max-w-xs bg-white border-r border-gray-200 flex flex-col">
+        <div className="p-4 font-bold text-lg border-b">Chats</div>
+        <div className="flex-1 overflow-y-auto">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={`${i + 1}`} className="w-full px-4 py-3 border-b border-gray-200 animate-pulse flex items-center gap-3">
+              <div className="w-10 h-10 min-w-10 bg-gray-300 rounded-full"></div>
+              <div className="flex-1 space-y-2">
+                <div className="w-1/2 h-3 bg-gray-300 rounded"></div>
+                <div className="w-3/4 h-3 bg-gray-200 rounded"></div>
+              </div>
+              <div className="w-10 h-3 bg-gray-200 rounded"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   const isGroup = chatType === 'group';
   const list = isGroup ? myGroups : myPrivateChats;
@@ -86,13 +107,13 @@ const ChatList: React.FC<IChatListProps> = ({
           active={!isGroup}
           icon={<UserIcon />}
           label="Private"
-          onClick={() => setChatType('private')}
+          onClick={() => fetchChatList('private')}
         />
         <TabButton
           active={isGroup}
           icon={<UsersIcon />}
           label="Groups"
-          onClick={() => setChatType('group')}
+          onClick={() => fetchChatList('group')}
         />
       </div>
     </div>

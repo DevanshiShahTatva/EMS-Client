@@ -77,17 +77,19 @@ export interface IGroupedMessages {
 
 export interface IChatHeaderProps {
   isGroup: boolean;
+  totalMember?: number;
   currentChatDetails: IGroup | IPrivateChat;
   setOpenChatInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface IChatListProps {
   userId: string | null;
+  isLoading: boolean;
   myGroups: IGroup[];
   activeChatId: string | null;
   chatType: 'group' | 'private';
   myPrivateChats: IPrivateChat[];
-  setChatType: (type: 'group' | 'private') => void;
+  fetchChatList: (type: 'group' | 'private') => void;
   setActiveChat: (id: string, type: 'group' | 'private') => void;
 }
 
