@@ -31,6 +31,8 @@ const ChatInfoSidebar: React.FC<IChatInfoSidebarProps> = ({
     toast.success("You have left the group chat!");
   };
 
+  const totalMember = currentChatDetails.members.length;
+
   return (
     <div
       className={`
@@ -58,11 +60,11 @@ const ChatInfoSidebar: React.FC<IChatInfoSidebarProps> = ({
               {currentChatDetails.name?.charAt(0).toUpperCase()}
             </div>
           )}
-          <div className='mt-3 text-lg font-semibold'>
+          <div className='p-2 mt-3 text-lg font-semibold'>
             {currentChatDetails.name}
           </div>
           <div>
-            <div className="mt-2 text-sm text-gray-500 ">{currentChatDetails.members.length} Members</div>
+            <div className="mt-2 text-sm text-gray-500 ">{totalMember} Member{totalMember > 1 && "s"}</div>
           </div>
         </div>
         <div className="border-b border-b-gray-200 flex flex-col gap-4 p-4">
