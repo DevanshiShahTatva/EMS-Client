@@ -19,6 +19,7 @@ const ChatLayout = () => {
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [activeChatType, setActiveChatType] = useState<'group' | 'private'>('private');
   const [openChatInfo, setOpenChatInfo] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     connectSocket();
@@ -32,11 +33,11 @@ const ChatLayout = () => {
   }, []);
 
   useEffect(() => {
-    fetchMyGroup();
     fetchMyPrivateChats();
   }, []);
 
   const fetchMyGroup = async () => {
+    setIsLoading(true);
     try {
       const response: { data: any[]; userId: string } = await apiCall({
         endPoint: '/chat/my-group-chat',
@@ -49,7 +50,6 @@ const ChatLayout = () => {
           name: group.name,
           image: group.icon,
           members: group.members,
-          status: group.status,
           senderId: group.senderId,
           lastMessage: group.lastMessage,
           lastMessageSender: group.lastMessageSender,
@@ -60,9 +60,11 @@ const ChatLayout = () => {
     } catch (error) {
       console.error("Err:", error);
     }
+    setIsLoading(false);
   };
 
   const fetchMyPrivateChats = async () => {
+    setIsLoading(true);
     try {
       const response: { data: any[]; userId: string } = await apiCall({
         endPoint: '/chat/my-private-chat',
@@ -74,7 +76,6 @@ const ChatLayout = () => {
           id: chat.id,
           name: chat.name,
           image: chat.image,
-          status: chat.status,
           senderId: chat.senderId,
           lastMessage: chat.lastMessage,
           lastMessageSender: chat.lastMessageSender,
@@ -85,7 +86,18 @@ const ChatLayout = () => {
     } catch (error) {
       console.error("Err:", error);
     }
+    setIsLoading(false);
   };
+
+  const fetchChatList = async (type: 'group' | 'private') => {
+    setActiveChatType(type);
+    setIsLoading(true);
+    if (type === 'group') {
+      fetchMyGroup();
+    } else {
+      fetchMyPrivateChats();
+    }
+  }
 
   const handleStartChat = async (memberId: string) => {
     try {
@@ -102,7 +114,6 @@ const ChatLayout = () => {
           name: chat.name,
           image: chat.image,
           senderId: chat.senderId,
-          status: '',
           lastMessage: '',
           lastMessageSender: '',
           lastMessageTime: ''
@@ -136,19 +147,20 @@ const ChatLayout = () => {
         return myPrivateChats.find(c => c.id === activeChatId);
       }
     }
+    return null;
   };
 
   const currentChatDetails = getActiveChatDetails();
-
   return (
     <div className="w-full flex bg-gray-100">
       <ChatList
         userId={userId}
+        isLoading={isLoading}
         chatType={activeChatType}
         myGroups={myGroups}
         myPrivateChats={myPrivateChats}
         activeChatId={activeChatId}
-        setChatType={setActiveChatType}
+        fetchChatList={fetchChatList}
         setActiveChat={handleSetActiveChat}
       />
       <div className="flex-1 flex flex-col">

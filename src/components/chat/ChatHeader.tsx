@@ -4,6 +4,7 @@ import { IChatHeaderProps } from './type';
 
 const ChatHeader: React.FC<IChatHeaderProps> = ({
   isGroup,
+  totalMember,
   currentChatDetails,
   setOpenChatInfo
 }) => {
@@ -13,7 +14,7 @@ const ChatHeader: React.FC<IChatHeaderProps> = ({
   const displayImage = currentChatDetails.image;
 
   return (
-    <div className="p-4 bg-white border-b border-gray-200 flex items-center justify-between">
+    <div className="p-4 pt-[7px] pb-[13px] bg-white border-b border-gray-200 flex items-center justify-between">
       <div className="flex items-center gap-3">
         {displayImage ? (
           <img src={displayImage} alt={displayName} className="w-10 h-10 min-w-10 rounded-full" />
@@ -22,7 +23,12 @@ const ChatHeader: React.FC<IChatHeaderProps> = ({
             {displayName?.charAt(0).toUpperCase()}
           </div>
         )}
-        <div className="font-semibold text-lg">{displayName}</div>
+        <div>
+          <div className="font-medium">
+            {displayName}
+          </div>
+          {isGroup && <div className="text-xs text-green-500">{totalMember} Members</div>}
+        </div>
       </div>
       {isGroup && (
         <button

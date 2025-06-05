@@ -94,17 +94,25 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     if (message.group === groupId) {
       setGroupedMessage(prev => addMessageToGroup(message, prev));
       setIsScrollBottom(true);
-      setMyGroups(prev => prev.map((group) =>
-        group.id === message.group
-          ? {
-            ...group,
-            lastMessage: message.content,
-            senderId: message.sender?._id ?? "",
-            lastMessageSender: message.sender?.name ?? "",
-            lastMessageTime: moment(message.createdAt).format('hh:mm A')
-          }
-          : group
-      ));
+
+      setMyGroups(prev => {
+        const index = prev.findIndex(group => group.id === message.group);
+        if (index === -1) return prev;
+
+        const updatedGroup = {
+          ...prev[index],
+          lastMessage: message.content,
+          senderId: message.sender?._id ?? "",
+          lastMessageSender: message.sender?.name ?? "",
+          lastMessageTime: moment(message.createdAt).format('hh:mm A'),
+          updatedAt: new Date(message.createdAt)
+        };
+
+        const newGroups = prev.slice();
+        newGroups.splice(index, 1);
+        newGroups.unshift(updatedGroup);
+        return newGroups;
+      });
     }
   };
 
@@ -177,7 +185,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
       }
     };
 
-    const handleUserStoppedTyping = ({ user, groupId: typingGroupId }: { user: { _id: string; name: string }; groupId: string }) => {
+    const handleUserStoppedTyping = ({ user, groupId: typingGroupId }: { user: { name: string }; groupId: string }) => {
       if (typingGroupId === groupId) {
         setTypingUsers((prev) => prev.filter((name) => name !== user.name));
       }
@@ -239,6 +247,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     <>
       <ChatHeader
         isGroup={true}
+        totalMember={currentGroupDetails?.members?.length}
         setOpenChatInfo={setOpenChatInfo}
         currentChatDetails={currentGroupDetails}
       />

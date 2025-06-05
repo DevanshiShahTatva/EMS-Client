@@ -25,21 +25,29 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
     setIsScrollBottom(true);
   };
 
-  const handleReceiveMessage = (message: IPrivateMessage) => {
+  const handleNewPrivateMessage = (message: IPrivateMessage) => {
     if (message.privateChat === chatId) {
       setGroupedMessage(prev => addMessageToGroup(message, prev));
       setIsScrollBottom(true);
-      setMyPrivateChats(prev => prev.map((chat) =>
-        chat.id === message.privateChat
-          ? {
-            ...chat,
-            lastMessage: message.content,
-            senderId: message.sender?._id ?? "",
-            lastMessageSender: message.sender?.name ?? "",
-            lastMessageTime: moment(message.createdAt).format('hh:mm A')
-          }
-          : chat
-      ));
+
+      setMyPrivateChats(prev => {
+        const index = prev.findIndex(chat => chat.id === message.privateChat);
+        if (index === -1) return prev;
+
+        const updatedChat = {
+          ...prev[index],
+          lastMessage: message.content,
+          senderId: message.sender?._id ?? "",
+          lastMessageSender: message.sender?.name ?? "",
+          lastMessageTime: moment(message.createdAt).format('hh:mm A'),
+          updatedAt: new Date(message.createdAt)
+        };
+
+        const newChats = prev.slice();
+        newChats.splice(index, 1);
+        newChats.unshift(updatedChat);
+        return newChats;
+      });
     }
   };
 
@@ -86,13 +94,13 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
     socket.emit("join_private_chat", { chatId });
 
     socket.on("initial_private_messages", handleInitialLoad);
-    socket.on("receive_private_message", handleReceiveMessage);
+    socket.on("receive_private_message", handleNewPrivateMessage);
     socket.on("new_edited_or_deleted_private_message", handleEditDeletedMessage);
     socket.on("private_message_edited_or_deleted_successfully", handleSuccessMessageOperation);
 
     return () => {
       socket.off("initial_private_messages", handleInitialLoad);
-      socket.off("receive_private_message", handleReceiveMessage);
+      socket.off("receive_private_message", handleNewPrivateMessage);
       socket.off("new_edited_or_deleted_private_message", handleEditDeletedMessage);
       socket.off("private_message_edited_or_deleted_successfully", handleSuccessMessageOperation);
     };
@@ -108,7 +116,7 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
       }
     });
 
-    socket.on('private_user_stopped_typing', ({ user, chatId: typingChatId }: { user: { _id: string; name: string }; chatId: string }) => {
+    socket.on('private_user_stopped_typing', ({ user, chatId: typingChatId }: { user: { name: string }; chatId: string }) => {
       if (typingChatId === chatId) {
         setTypingUsers((prev) => prev.filter((name) => name !== user.name));
       }
