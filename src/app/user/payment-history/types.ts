@@ -113,6 +113,6 @@ export interface IPaymentHistory {
     totalAmount : number,
     refundedAmount : number,
     bookingDate : string,
-    cancelledDate : string
+    cancelledDate : string,
     staus : string,
 }
