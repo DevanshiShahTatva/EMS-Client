@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquareTextIcon } from "lucide-react";
 import moment from 'moment';
 
@@ -11,8 +11,12 @@ import GroupChatContent from './GroupChatContent';
 import PrivateChatContent from './PrivateChatContent';
 import { apiCall } from '@/utils/services/request';
 import { IGroup, IPrivateChat } from './type';
+import { useSearchParams } from 'next/navigation';
 
 const ChatLayout = () => {
+  const searchParams = useSearchParams();
+  const privateChatId = searchParams.get('id');
+  const handledRef = useRef(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [myGroups, setMyGroups] = useState<IGroup[]>([]);
   const [myPrivateChats, setMyPrivateChats] = useState<IPrivateChat[]>([]);
@@ -82,6 +86,14 @@ const ChatLayout = () => {
           lastMessageTime: chat.lastMessage ? moment(chat.lastMessageTime).format('hh:mm A') : '',
         })));
         setUserId(response.userId);
+        if (privateChatId && !handledRef.current) {
+          handleSetActiveChat(privateChatId, "private");
+          handledRef.current = true;
+          
+          const url = new URL(window.location.href);
+          url.searchParams.delete("id");
+          window.history.replaceState({}, "", url.toString());
+        }
       }
     } catch (error) {
       console.error("Err:", error);

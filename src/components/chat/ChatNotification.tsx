@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getSocket } from "@/utils/services/socket";
 import { X } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface MessageData {
   sender: {
@@ -24,10 +24,13 @@ interface MessageData {
 export default function ChatNotification() {
   const [notifications, setNotifications] = useState<MessageData[]>([]);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const socket = getSocket();
 
+    socket.emit("initiate_chat_notification");
+    
     socket.on("chat_notification", (data: MessageData) => {
       if (pathname.startsWith("/user/chat")) return;
 
@@ -57,6 +60,7 @@ export default function ChatNotification() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 100 }}
             transition={{ duration: 0.25 }}
+            onClick={() => router.push(`/user/chat?id=${notif.privateChat}`)}
             className="relative bg-white rounded-2xl shadow-lg border border-gray-200 p-4 pr-12 hover:shadow-xl transition-all duration-200"
           >
             <button
