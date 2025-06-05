@@ -27,7 +27,7 @@ const ChatHeader: React.FC<IChatHeaderProps> = ({
           <div className="font-medium">
             {displayName}
           </div>
-          {isGroup && <div className="text-xs text-green-500">{totalMember} Member{totalMember > 1 && "s"}</div>}
+          {isGroup && <div className="text-xs text-green-500">{totalMember} Member{(totalMember ?? 0) > 1 && "s"}</div>}
         </div>
       </div>
       {isGroup && (

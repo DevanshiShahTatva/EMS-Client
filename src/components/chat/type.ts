@@ -77,7 +77,7 @@ export interface IGroupedMessages {
 
 export interface IChatHeaderProps {
   isGroup: boolean;
-  totalMember: number;
+  totalMember?: number;
   currentChatDetails: IGroup | IPrivateChat;
   setOpenChatInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
