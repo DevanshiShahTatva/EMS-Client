@@ -252,7 +252,7 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                         className="rounded-full h-[30px] w-[30px] object-cover"
                       />
                       :
-                      <button className='h-10 w-10 rounded-full bg-indigo-600 text-white font-bold relative cursor-pointer'>
+                      <button className='h-[30px] w-[30px] rounded-full bg-indigo-600 text-white font-bold relative cursor-pointer'>
                         {isAdmiRole ? "A" : name.charAt(0).toUpperCase()}
                       </button>
                     }
