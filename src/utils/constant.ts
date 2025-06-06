@@ -211,6 +211,10 @@ export const BREAD_CRUMBS_ITEMS = {
         UPDATE_PAGE: [
             { label: "Events", navigateTo: ROUTES.ADMIN.EVENTS },
             { label: "Update", navigateTo: "" }
+        ],
+        CLONE_PAGE: [
+            { label: "Events", navigateTo: ROUTES.ADMIN.EVENTS },
+            { label: "Clone", navigateTo: "" }
         ]
     },
     FAQs: {
