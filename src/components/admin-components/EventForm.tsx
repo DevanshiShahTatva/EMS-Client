@@ -31,7 +31,7 @@ import { ALLOWED_FILE_FORMATS, API_ROUTES, MAX_FILE_SIZE_MB, ROUTES, BREAD_CRUMB
 
 // helper functions
 import { apiCall } from '@/utils/services/request';
-import { InitialEventFormDataErrorTypes, InitialEventFormDataValues, handleFreeTicketType } from '../../app/admin/event/helper';
+import { InitialEventFormDataErrorTypes, InitialEventFormDataValues, handleFreeTicketType, urlToFileArray } from '../../app/admin/event/helper';
 
 const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false }) => {
 
@@ -40,6 +40,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
 
   const [formValues, setFormValues] = useState<IEventFormData>(InitialEventFormDataValues)
   const [formValuesError, setFormValuesError] = useState<IEventFormDataErrorTypes>(InitialEventFormDataErrorTypes)
+  const [cloneEventTitle, setCloneEventTitle] = useState("")
 
   const [tickets, setTickets] = useState<ITicket[]>([]);
   const [addRowVisible, setAddRowVisible] = useState(false);
@@ -597,7 +598,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
     // Append ticket_type array items
     tickets.forEach((ticket, index) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      isEditMode && ticket._id === ticket.id && formData.append(`tickets[${index}][_id]`, ticket.id);
+      !isCloneEvent && isEditMode && ticket._id === ticket.id && formData.append(`tickets[${index}][_id]`, ticket.id);
       formData.append(`tickets[${index}][type]`, ticket.type);
       formData.append(`tickets[${index}][price]`, ticket.price);
       formData.append(`tickets[${index}][totalSeats]`, `${ticket.maxQty}`);
@@ -607,7 +608,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
     // Append files
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     {
-      !isEditMode && images.forEach((file) => {
+     !isCloneEvent && !isEditMode && images.forEach((file) => {
         formData.append("images", file); // assuming `file` is a File object
       })
     }
@@ -615,31 +616,53 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
 
     // update exisitng iamges (edit mode)
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    { isEditMode && existingImageIdsArray.length > 0 && formData.append("existingImages", JSON.stringify(existingImageIdsArray)); }
+    { !isCloneEvent && isEditMode && existingImageIdsArray.length > 0 && formData.append("existingImages", JSON.stringify(existingImageIdsArray)); }
 
     // update new images (edit mode)
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     {
-      isEditMode && updatedImagesArray.forEach((file) => {
+     !isCloneEvent &&  isEditMode && updatedImagesArray.forEach((file) => {
         formData.append("images", file); // assuming `file` is a File object
       })
     }
 
-    const result = await apiCall({
-      endPoint: isEditMode ? API_ROUTES.ADMIN.UPDATE_EVENT(eventType) : API_ROUTES.ADMIN.CREATE_EVENT,
-      method: isEditMode ? "PUT" : "POST",
-      body: formData,
-      isFormData: true,
-      headers: {}
-    })
+    // clone event images
+    let clonedImagesFiles: File[] = [];
 
-    if (result.success) {
-      setLoder(false)
-      router.push(ROUTES.ADMIN.EVENTS)
-      toast.success(isEditMode ? "Event updated successfully." : "Event added successfully.")
-      setFormValues(InitialEventFormDataValues)
-    } else {
-      toast.error("Some error has occured.")
+    // 1. Convert existingImages (EventImage[]) -> File[]
+    const imageUrls = existingImages
+      .filter((item): item is EventImage => 'url' in item)
+      .map((item) => item.url);
+
+    const fileArray = await urlToFileArray(imageUrls);
+
+    // 2. Combine both arrays
+    clonedImagesFiles = [...fileArray, ...updatedImagesArray];
+
+    {
+     isCloneEvent &&  clonedImagesFiles.forEach((file) => {
+        formData.append("images", file); // assuming `file` is a File object
+      })
+    }
+
+    try {
+      const result = await apiCall({
+        endPoint: (!isCloneEvent && isEditMode) ? API_ROUTES.ADMIN.UPDATE_EVENT(eventType) : API_ROUTES.ADMIN.CREATE_EVENT,
+        method: (!isCloneEvent && isEditMode) ? "PUT" : "POST",
+        body: formData,
+        isFormData: true,
+        headers: {}
+      })
+
+      if (result.success) {
+        router.push(ROUTES.ADMIN.EVENTS)
+        toast.success(isCloneEvent ? "Event cloned successfully." : isEditMode ? "Event updated successfully." : "Event added successfully.")
+        setFormValues(InitialEventFormDataValues)
+      }
+
+    } catch (error) {
+      console.error(error)
+    } finally {
       setLoder(false)
     }
   }
@@ -701,6 +724,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
       setFormValues(modifiedObj)
       setTickets(ticketsArray)
       setExistingImages(existingImagesArr)
+      setCloneEventTitle(receivedObj.title)
       setLoder(false)
     } else {
       setLoder(false)
@@ -837,7 +861,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
 
 
         <div className='mb-5'>
-          <TitleSection title={isCloneEvent ? `Clone ${formValues.title}`  : isEditMode ? "Update Event" : "Create Event"} />
+          <TitleSection title={isCloneEvent ? `Clone ${cloneEventTitle}`  : isEditMode ? "Update Event" : "Create Event"} />
         </div>
 
         <CustomTextField

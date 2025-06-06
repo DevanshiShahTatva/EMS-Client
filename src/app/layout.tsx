@@ -4,6 +4,7 @@ import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import ChatBotWidget from "@/components/common/ChatBotWidget";
+import ChatNotification from "@/components/chat/ChatNotification";
 
 const dmSans = DM_Sans({
   display: "swap",
@@ -30,6 +31,7 @@ export default function RootLayout({
         <ToastContainer />
         {children}
         <ChatBotWidget />
+        <ChatNotification />
       </body>
     </html>
   );

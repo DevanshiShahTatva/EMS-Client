@@ -346,3 +346,22 @@ export const getFilteredData = (events: EventsDataTypes[], filterValues : IApply
 
     return {data , filterCount : activeFiltersKey}
 }
+
+
+export const urlToFileArray = async (fileUrls: string[]): Promise<File[]> => {
+  const fileArray: File[] = [];
+
+  for (const fileUrl of fileUrls) {
+    const response = await fetch(fileUrl);
+    const blob = await response.blob();
+
+    const fileName = fileUrl.split("/").pop() || "downloaded-file";
+    const fileType = blob.type || "application/octet-stream";
+
+    const file = new File([blob], fileName, { type: fileType });
+    fileArray.push(file);
+  }
+
+  return fileArray;
+};
+
