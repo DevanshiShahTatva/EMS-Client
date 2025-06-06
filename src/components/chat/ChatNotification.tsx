@@ -20,6 +20,7 @@ interface MessageData {
   createdAt: string;
   updatedAt: string;
   group?: {
+    _id: string;
     event: {
       title: string;
       images: Array<{ url: string }>;
@@ -38,7 +39,8 @@ export default function ChatNotification() {
 
     socket.emit("initiate_chat_notification");
 
-    socket.on("chat_notification", (data: MessageData) => {
+    socket.on("chat_notification", (data: any) => {
+      console.log("DATA::", data);
       if (pathname.startsWith("/user/chat")) return;
 
       setNotifications((prev) => [...prev, data]);
@@ -58,9 +60,11 @@ export default function ChatNotification() {
   };
 
   const handleNavigateToPage = (notif: MessageData) => {
-    if(!notif.group) {
+    if (notif.group) {
+      router.push(`/user/chat?group=${notif.group._id}`);
+    } else {
       router.push(`/user/chat?id=${notif.privateChat}`);
-    };
+    }
   };
 
   return (
@@ -112,9 +116,11 @@ export default function ChatNotification() {
                   <span className="text-sm font-semibold text-gray-900 truncate">
                     {title}
                   </span>
-                  <span className="text-xs text-gray-500">
-                    {notif.sender.name}
-                  </span>
+                  {!title && (
+                    <span className="text-xs text-gray-500">
+                      {notif.sender.name}
+                    </span>
+                  )}
                   <span className="text-sm text-gray-600 break-words">
                     {notif.content}
                   </span>
