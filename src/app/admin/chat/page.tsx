@@ -1,12 +1,14 @@
-"use client";
+'use client'
 
+import React, { Suspense } from 'react';
 import Chat from '@/components/chat/ChatLayout';
-import React from 'react';
 
-function AdminChat() {
+const AdminChat = () => {
   return (
     <div className='min-h-[calc(100vh-81px)] max-h-[calc(100vh-81px)] w-full flex bg-[#f5f5fa] text-sm p-3'>
-      <Chat />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Chat />
+    </Suspense>
     </div>
   )
 }

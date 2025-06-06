@@ -30,7 +30,8 @@ const userRoutes = [
     ROUTES.USER_REWARDED_HISTORY,
     ROUTES.USER_REVIEW_HISTORY,
     ROUTES.USER_MY_CALENDER,
-    ROUTES.USER_CHAT
+    ROUTES.USER_CHAT,
+    ROUTES.USER_PAYMENT_HISTORY
 ];
 
 export async function middleware(request: NextRequest) {
