@@ -123,6 +123,10 @@ const NotificationBell: React.FC = () => {
         targetUrl = ROUTES.USER_REWARDED_HISTORY;
       } else if (notification.data?.type === "feedback") {
         targetUrl = ROUTES.USER_REVIEW_HISTORY;
+      } else if (notification.data?.type === "admin_query") {
+        targetUrl = ROUTES.ADMIN.CONTACT_US;
+      } else if (notification.data?.type === "admin_user") {
+        targetUrl = ROUTES.ADMIN.USERS;
       }
 
       new Notification(notification.title, {
