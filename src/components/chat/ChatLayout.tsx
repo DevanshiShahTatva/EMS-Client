@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquareTextIcon } from "lucide-react";
