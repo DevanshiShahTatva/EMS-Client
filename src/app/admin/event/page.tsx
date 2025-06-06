@@ -21,6 +21,7 @@ import { IEventCategoryResp } from '../dropdowns/types';
 import { useRouter } from 'next/navigation';
 import moment from 'moment';
 import { FunnelIcon, PlusIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline"
+import { Copy } from 'lucide-react';
 import { toast } from 'react-toastify';
 import {
   Tooltip,
@@ -58,6 +59,10 @@ function EventsListpage() {
 
   const navToEditPage = (eventId: string) => {
     router.push(`${ROUTES.ADMIN.EVENTS}/${eventId}`)
+  }
+
+  const navToClonePage = (eventId: string) => {
+    router.push(`${ROUTES.ADMIN.EVENTS}/clone/${eventId}`)
   }
 
   const openDeleteModal = (eventId: string) => {
@@ -293,6 +298,10 @@ function EventsListpage() {
   ];
 
   const tableActions: Action<EventsDataTypes>[] = [
+    {
+      icon: <Copy className="h-5 w-5 mr-1 text-gray-500 hover:text-gray-700 cursor-pointer" />,
+      onClick: (row: EventsDataTypes) => navToClonePage(row.id),
+    },
     {
       icon: <PencilSquareIcon className="h-5 w-5 text-blue-500 hover:text-blue-700 cursor-pointer" />,
       onClick: (row: EventsDataTypes) => navToEditPage(row.id),

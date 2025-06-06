@@ -33,7 +33,7 @@ import { ALLOWED_FILE_FORMATS, API_ROUTES, MAX_FILE_SIZE_MB, ROUTES, BREAD_CRUMB
 import { apiCall } from '@/utils/services/request';
 import { InitialEventFormDataErrorTypes, InitialEventFormDataValues, handleFreeTicketType } from '../../app/admin/event/helper';
 
-const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
+const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false }) => {
 
   const router = useRouter();
   const isEditMode = eventType !== "create" ? true : false
@@ -829,7 +829,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
       {loader && <Loader />}
 
       <Breadcrumbs breadcrumbsItems={
-        isEditMode ? BREAD_CRUMBS_ITEMS.EVENT.UPDATE_PAGE : BREAD_CRUMBS_ITEMS.EVENT.CREATE_PAGE
+        isCloneEvent ? BREAD_CRUMBS_ITEMS.EVENT.CLONE_PAGE : isEditMode ? BREAD_CRUMBS_ITEMS.EVENT.UPDATE_PAGE : BREAD_CRUMBS_ITEMS.EVENT.CREATE_PAGE
       }
       />
 
@@ -837,7 +837,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
 
 
         <div className='mb-5'>
-          <TitleSection title={isEditMode ? "Update Event" : "Create Event"} />
+          <TitleSection title={isCloneEvent ? `Clone ${formValues.title}`  : isEditMode ? "Update Event" : "Create Event"} />
         </div>
 
         <CustomTextField
@@ -1223,7 +1223,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType }) => {
             variant='primary'
             className="sm:w-max w-full py-3 px-6 rounded-[12px] hover:opacity-90 transition disabled:cursor-not-allowed cursor-pointer"
           >
-            {isEditMode ? "Update" : "Create"} Event
+            {isCloneEvent ? "Clone" : isEditMode ? "Update" : "Create"} Event
           </CustomButton>
         </div>
       </div>
