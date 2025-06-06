@@ -26,7 +26,16 @@ const ChatLayout = () => {
     connectSocket();
 
     const socket = getSocket();
+
     socket.emit('activate_chat_handlers');
+
+    socket.on('updated_unread_count_change', ({ chatId, unreadCount, type }: any) => {
+      if (type === 'group') {
+        setMyGroups(prev => prev.map(group => group.id === chatId ? { ...group, unreadCount: unreadCount } : group));
+      } else if (type === 'private') {
+        setMyPrivateChats(prev => prev.map(chat => chat.id === chatId ? { ...chat, unreadCount: unreadCount } : chat));
+      }
+    });
 
     return () => {
       disconnectSocket();
@@ -52,6 +61,7 @@ const ChatLayout = () => {
           image: group.icon,
           members: group.members,
           senderId: group.senderId,
+          unreadCount: group.unreadCount ?? 0,
           lastMessage: group.lastMessage,
           lastMessageSender: group.lastMessageSender,
           lastMessageTime: group.lastMessage ? moment(group.lastMessageTime).format('hh:mm A') : '',
@@ -78,6 +88,7 @@ const ChatLayout = () => {
           name: chat.name,
           image: chat.image,
           senderId: chat.senderId,
+          unreadCount: chat.unreadCount ?? 0,
           lastMessage: chat.lastMessage,
           lastMessageSender: chat.lastMessageSender,
           lastMessageTime: chat.lastMessage ? moment(chat.lastMessageTime).format('hh:mm A') : '',
@@ -116,6 +127,7 @@ const ChatLayout = () => {
           name: chat.name,
           image: chat.image,
           senderId: chat.senderId,
+          unreadCount: 0,
           lastMessage: '',
           lastMessageSender: '',
           lastMessageTime: ''

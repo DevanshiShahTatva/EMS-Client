@@ -50,6 +50,17 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     setGroupedMessage(groupMessagesByDate(messages));
     setIsScrollBottom(true);
     setIsLoading(false);
+    setMyGroups(prev => {
+      const updatedGroups = [...prev];
+      const groupIndex = updatedGroups.findIndex(group => group.id === groupId);
+      if (groupIndex !== -1) {
+        updatedGroups[groupIndex] = {
+          ...updatedGroups[groupIndex],
+          unreadCount: 0,
+        };
+      }
+      return updatedGroups;
+    });
   };
 
   const handleGroupMemberAdded = ({ groupId: addedGroupId, newMember }: { groupId: string; newMember: { id: string; name: string; avatar?: string } }) => {
@@ -103,6 +114,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
 
         const updatedGroup = {
           ...prev[index],
+          unreadCount: 0,
           lastMessage: message.content,
           senderId: message.sender?._id ?? "",
           lastMessageSender: message.sender?.name ?? "",
@@ -175,6 +187,8 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
       socket.off('group_member_removed', handleGroupMemberRemoved);
       socket.off("new_edited_or_deleted_message", handleEditedOrDeletedMessage);
       socket.off("message_edited_or_deleted_successfully", handleMessageOperationSuccess);
+
+      socket.emit("close_group_chat");
     };
   }, [groupId]);
 
