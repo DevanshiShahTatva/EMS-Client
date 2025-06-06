@@ -707,8 +707,8 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
           lat: receivedObj.location.lat,
           long: receivedObj.location.lng,
         },
-        start_time: new Date(receivedObj.startDateTime),
-        end_time: new Date(receivedObj.endDateTime),
+        start_time: isCloneEvent ? null : new Date(receivedObj.startDateTime),
+        end_time: isCloneEvent? null : new Date(receivedObj.endDateTime),
         duration: receivedObj.duration,
         category: receivedObj.category?._id,
         ticket_type: [
