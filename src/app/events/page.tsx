@@ -1,5 +1,6 @@
 'use client'
 import React, { useCallback, useEffect, useState, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 
 // Custom components
 import { FilterOptions } from '@/components/events-components/FilterOptions'
@@ -10,7 +11,7 @@ import FilterModal from '@/components/common/FilterModal'
 import SearchInput from '@/components/common/CommonSearchBar'
 
 // Constant support
-import { API_ROUTES } from '@/utils/constant'
+import { API_ROUTES, ROUTES } from '@/utils/constant'
 import { getTicketPriceRange } from '../admin/event/helper'
 import { areAllTicketsBooked, convertFiltersToArray, getEventStatus, isNearbyWithUserLocation, removeFilterFromObject, getFilteredEventsData, getMaxTicketPrice, getTicketAvailibilityStatus } from './event-helper'
 
@@ -31,8 +32,12 @@ import { FunnelIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { toast } from 'react-toastify'
 
+// Helpers
+import { getAuthToken } from '@/utils/helper'
+
 
 const EventsPage: React.FC = () => {
+  const router = useRouter()
   const [events, setEvents] = useState<EventData[]>([])
   const [allEvents, setAllEvents] = useState<EventData[]>([])
   const [searchQuery, setSearchQuery] = useState('')
@@ -144,6 +149,12 @@ const EventsPage: React.FC = () => {
   }
 
   const likeEvent = (id: string) => {
+
+    // Check for login 
+    const isUserLogged = getAuthToken()
+    if(isUserLogged === "") {
+      return router.push(ROUTES.LOGIN)
+    }
 
     // 1. Optimistically update local event state
     setEvents((prevEvents) => {

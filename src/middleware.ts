@@ -6,7 +6,7 @@ const adminDefaultRoute = ROUTES.ADMIN.DASHBOARD;
 const userDefaultRoute = ROUTES.USER_EVENTS;
 const organizerDefaultRoute = ROUTES.ORGANIZER.DASHBOARD;
 
-const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP, ROUTES.FORGOT_PASSWORD, ROUTES.RESET_PASSWORD];
+const publicRoutes = [ROUTES.LOGIN, ROUTES.SIGN_UP, ROUTES.FORGOT_PASSWORD, ROUTES.RESET_PASSWORD, ROUTES.USER_EVENTS, ROUTES.USER_EVENTS_DETAILS];
 const organizerRoutes = [ROUTES.ORGANIZER.VERIFY_TICKETS, ROUTES.ORGANIZER.DASHBOARD];
 
 const adminRoutes = [
@@ -70,7 +70,7 @@ export async function middleware(request: NextRequest) {
         const defaultRedirect = defaultRoutes[userRole] || "/";
 
         if (isPublicRoute) {
-            return NextResponse.redirect(new URL(defaultRedirect, request.url));
+            return NextResponse.next();
         }
 
         const isAllowed = allowedRoutes.some(route => currentPath.startsWith(route));

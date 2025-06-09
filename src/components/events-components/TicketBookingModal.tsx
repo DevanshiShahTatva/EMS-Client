@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Plus as PlusIcon,
   Minus as MinusIcon,
@@ -12,6 +12,8 @@ import { getTicketStatus } from '@/app/events/event-helper';
 import CommonModalLayout from '@/components/common/CommonModalLayout';
 import CoinRedeemCard from './CoinReedem';
 import { apiCall } from '@/utils/services/request';
+import { API_ROUTES } from '@/utils/constant';
+import { InformationCircleIcon } from "@heroicons/react/24/solid";
 
 interface TicketBookingModalProps {
   isOpen: boolean
@@ -41,8 +43,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   const [promoCodeDiscount, setPromoCodeDiscount] = useState(0);
   const [promoCodeMessage, setPromoCodeMessage] = useState<string | null>(null);
   const [activeMethod, setActiveMethod] = useState<'coins' | 'promo' | null>(null);
-
-  if (!isOpen) return null
+  const [charge, setCharge] = useState<number>(0);
 
   const selectedTicketType = tickets.find((t) => t.type?._id === selectedType)
   const totalPrice = selectedTicketType
@@ -50,6 +51,22 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
     : 0
   const discount = promoCodeDiscount > 0 ? promoCodeDiscount * 100 : Math.round((usedPoints / conversionRate) * 100);
   const finalAmount = Math.max(totalPrice * 100 - discount, 0);
+
+  useEffect(() => {
+    fetchChargeInfo();
+  }, []);
+
+  const fetchChargeInfo = async () => {
+    const res = await apiCall({
+      method: "GET",
+      endPoint: API_ROUTES.ADMIN.CANCEL_CHARGE,
+    });
+    if (res.success) {
+      setCharge(res.data.charge);
+    }
+  };
+
+  if (!isOpen) return null
 
   const handleTicketSelect = (type: string, price: number) => {
     if (selectedType === type) {
@@ -379,6 +396,18 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
             <input type="hidden" name="ticket" value={JSON.stringify({ type: selectedTicketType?.type, totalPrice: selectedTicketType?.price, quantity: quantity, ticketId: selectedTicketType?._id })} />
             <input type="hidden" name="eventTitle" value={eventTitle} />
           </form>
+          <div className="mt-4 mb-6 rounded-md border border-red-300 bg-red-50 p-4 shadow-md flex items-start space-x-3">
+            <InformationCircleIcon
+              color="oklch(44.4% .177 26.899)"
+              className="size-8"
+            />
+            <div className="text-sm text-red-800">
+              <span className="font-medium">Cancellation Policy:</span> A{" "}
+              <span className="font-semibold">{charge}%</span> cancellation fee
+              applies to this ticket. This charge will be deducted if you cancel
+              your booking.
+            </div>
+          </div>
         </div>
       </div>
     </CommonModalLayout>

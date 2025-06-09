@@ -242,9 +242,10 @@ const AdminContactUsPage = () => {
 
     const tableActions: Action<IRequestType>[] = [
         {
-            icon: <SquareCheckBig className="h-5 w-5 text-green-700 hover:text-green-800 cursor-pointer disabled:cursor-not-allowed ml-4 disabled:text-gray-400" />,
+            icon: <SquareCheckBig className="h-5 w-5 text-green-700 hover:text-green-800 cursor-pointer ml-4" />,
             onClick: (row: IRequestType) => markAsComplete(row._id),
-            disabled: (row) => row.status !== "pending"
+            disabled: (row) => row.status !== "pending",
+            disabledIcon: <SquareCheckBig className="h-5 w-5 cursor-not-allowed ml-4 text-gray-400" />
         },
         {
             icon: <EyeIcon className="h-5 w-5 text-blue-500 hover:text-blue-700 cursor-pointer ml-4" />,

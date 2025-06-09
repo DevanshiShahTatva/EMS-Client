@@ -11,6 +11,7 @@ import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/outline"
 
 // types
 import { DtataTable } from '@/utils/types';
+import clsx from 'clsx';
 
 export default function DataTable<T>({
     data,
@@ -116,10 +117,9 @@ export default function DataTable<T>({
                                                         key={idx}
                                                         onClick={() => !isDisabled && action.onClick(row)}
                                                         title={action.tooltip ?? ''}
-                                                        className=""
                                                         disabled={isDisabled}
                                                     >
-                                                        {action.icon}
+                                                        {isDisabled ? action.disabledIcon : action.icon}
                                                     </button>
                                                 );
                                             })}
