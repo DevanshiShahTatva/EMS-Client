@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
-import notification from "../../../public/assets/notificationIcon.svg";
 import alarm from "../../../public/assets/alarm.png";
 import { format, isToday, isYesterday, parseISO } from "date-fns";
 import {
@@ -155,8 +154,6 @@ const NotificationBell: React.FC = () => {
 
   useEffect(() => {
     const socket = getSocket();
-
-    socket.emit("authenticate");
 
     // Listen for notifications
     socket.on("notification", (notification) => {

@@ -25,6 +25,17 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
     setGroupedMessage(groupMessagesByDate(data.messages));
     setIsScrollBottom(true);
     setIsLoading(false);
+    setMyPrivateChats(prev => {
+      const updatedChat = [...prev];
+      const chatIndex = updatedChat.findIndex(chat => chat.id === chatId);
+      if (chatIndex !== -1) {
+        updatedChat[chatIndex] = {
+          ...updatedChat[chatIndex],
+          unreadCount: 0,
+        };
+      }
+      return updatedChat;
+    });
   };
 
   const handleNewPrivateMessage = (message: IPrivateMessage) => {
@@ -38,6 +49,7 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
 
         const updatedChat = {
           ...prev[index],
+          unreadCount: 0,
           lastMessage: message.content,
           senderId: message.sender?._id ?? "",
           lastMessageSender: message.sender?.name ?? "",
@@ -106,6 +118,8 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
       socket.off("receive_private_message", handleNewPrivateMessage);
       socket.off("new_edited_or_deleted_private_message", handleEditDeletedMessage);
       socket.off("private_message_edited_or_deleted_successfully", handleSuccessMessageOperation);
+
+      socket.emit("close_private_chat");
     };
   }, [chatId, setMyPrivateChats]);
 
