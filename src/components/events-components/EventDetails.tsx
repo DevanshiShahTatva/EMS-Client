@@ -72,7 +72,6 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
 
     if (result?.success && result.data) {
       setEventDetail(result.data);
-      fetchWeatherData(result.data.location.lat, result.data.location.lng);
     }
   }
   const getEventFeedback = async () => {
@@ -123,65 +122,6 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
         }
       },500)
     };
-
-    const fetchWeatherData = async (lat: number, lng: number) => {
-    try {
-      const apiKey = process.env.REACT_APP_OPENWEATHER_API_KEY || "d1871bd0599d1966396475295187f1e3";
-      const endPoint = API_ROUTES.USER.WEATHER_API + `?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric`;
-      const resp = await axios.get(endPoint, { withCredentials: false });
-      if(resp.data) {
-        const dailyForecasts = processForecastData(resp.data.list);
-        setWeatherData({
-          current: resp.data.list[0],
-          city: resp.data.city,
-          daily: dailyForecasts
-      });
-      };
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong");
-    }
-  };
-
-  const processForecastData = (forecasts: any[]) => {
-    const dailyData: Record<string, any> = {};
-    
-    forecasts.forEach(item => {
-      const date = item.dt_txt.split(' ')[0];
-      
-      if (!dailyData[date]) {
-        dailyData[date] = {
-          date,
-          temps: [],
-          weathers: [],
-          timeStamps: [],
-          icons: []
-        };
-      }
-      dailyData[date].temps.push(item.main.temp);
-      dailyData[date].icons.push(item.weather[0].icon);
-      dailyData[date].weathers.push(item.weather[0].main);
-      dailyData[date].timeStamps.push(item.dt_txt);
-    });
-    
-    return Object.values(dailyData).map(day => {
-      const latestWeather = day.weathers[day.weathers.length - 1];
-      const icon = day.icons[day.icons.length - 1];
-      return {
-        date: day.date,
-        minTemp: Math.min(...day.temps),
-        maxTemp: Math.max(...day.temps),
-        weather: latestWeather,
-        icon: icon,
-        forecasts: day.timeStamps.map((ts: string, i: number) => ({
-          time: ts.split(' ')[1],
-          icon: day.icons[i],
-          temp: day.temps[i],
-          weather: day.weathers[i]
-        }))
-      };
-    }).slice(0, 7);
-  };
   
   if (loading) {
     return <EventDetailsSkeleton />
@@ -375,7 +315,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
             </div>
           )}
           {activeTab === "Weather" && (
-            <WeatherReport data={weatherData} />
+            <WeatherReport lat={event.location.lat} lng={event.location.lng} />
           )}
         </div>
       </main>

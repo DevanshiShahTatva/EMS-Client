@@ -1,11 +1,15 @@
 export interface IEventFormProps {
     eventType: string
+    isCloneEvent? : boolean
 }
 
 export interface IEventPageProps {
     params: Promise<{ eventType: string }>;
 }
 
+export interface IEventClonePageProps {
+    params: Promise<{ eventId: string }>;
+}
 export interface ITicketType {
     type: string;
     price: string;
