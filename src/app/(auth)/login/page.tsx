@@ -16,7 +16,7 @@ import { Formik, Form, FormikHelpers } from "formik";
 import { toast } from "react-toastify";
 
 // Constant imports
-import { ROUTES, API_ROUTES, LOG_IN_IMAGE_BANNER_LINK } from "@/utils/constant";
+import { ROUTES, API_ROUTES, LOG_IN_IMAGE_BANNER_LINK, ROLE } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
 import { InitialLogInValues, LogInFormSchema } from "./helper";
 
@@ -56,8 +56,10 @@ const LogInPage = () => {
         sessionStorage.setItem("role", role);
       }
 
-      if (role === "admin") {
+      if (role === ROLE.Admin) {
         router.push(ROUTES.ADMIN.DASHBOARD);
+      } else if (role === ROLE.Organizer) {
+        router.push(ROUTES.ORGANIZER.DASHBOARD)
       } else {
         router.push(ROUTES.USER_EVENTS);
       }
@@ -76,8 +78,10 @@ const LogInPage = () => {
         <div className="p-8 lg:p-16 flex flex-col justify-between h-full">
           {/* Top Section */}
           <div>
-            <div className="mb-10">
-              <Logo />
+            <div className="mb-10" >
+              <Link href={ROUTES.HOME}>
+                <Logo />
+              </Link>
             </div>
 
             <div className="mb-8">

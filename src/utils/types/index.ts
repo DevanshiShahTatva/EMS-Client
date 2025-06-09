@@ -136,6 +136,7 @@ export type Action<T> = {
     onClick: (row: T) => void;
     tooltip?: string;
     disabled?: (row: T) => boolean;
+    disabledIcon?: React.ReactNode;
 };
 
 export type DtataTable<T> = {

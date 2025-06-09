@@ -39,7 +39,8 @@ export interface IUserData {
     profileImage: string;
     badge: string;
     address: string;
-    points : number
+    total_points : number
+    current_points : number
     role: string;
 }
 
