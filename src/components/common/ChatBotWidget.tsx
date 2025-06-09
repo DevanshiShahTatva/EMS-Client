@@ -96,7 +96,7 @@ const ChatBotWidget = () => {
   };
 
   return showChatBot && isMounted ? (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-4 right-4 ml-4 z-50">
       {/* Chat Icon Button */}
       <button
         className={`bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 ${
@@ -110,7 +110,7 @@ const ChatBotWidget = () => {
 
       {/* Chat Popup */}
       {isOpen && (
-        <div className="w-80 h-96 bg-white shadow-2xl rounded-xl flex flex-col overflow-hidden mt-2">
+        <div className="sm:max-w-96 max-w-72 w-full h-[500px] bg-white shadow-2xl rounded-xl flex flex-col overflow-hidden mt-2">
           {/* Header */}
           <div className="bg-blue-500 text-white px-4 py-2 font-semibold flex justify-between items-center">
             <span>AI Assistant</span>
@@ -129,7 +129,7 @@ const ChatBotWidget = () => {
                 }`}
               >
                 <span
-                  className={`px-3 py-2 rounded-xl max-w-[80%] ${
+                  className={`px-3 py-2 rounded-xl sm:max-w-[80%] max-w-[95%] ${
                     msg.sender === "user"
                       ? "bg-blue-500 text-white"
                       : "bg-gray-200 text-black"
