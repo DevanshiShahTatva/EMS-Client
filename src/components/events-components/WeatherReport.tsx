@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   SunIcon,
   EyeDropperIcon,
@@ -10,21 +10,99 @@ import {
   Bars3BottomLeftIcon,
   CloudIcon,
 } from "@heroicons/react/24/outline";
+import { API_ROUTES } from "@/utils/constant";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 interface Props {
-  data: any | null;
-}
+  lat: number;
+  lng: number;
+};
+
+const SkeletonBox = ({ className }: { className: string }) => (
+  <div className={`bg-gray-200 animate-pulse rounded ${className}`}></div>
+)
 
 const WeatherReport = (props: Props) => {
-  const { data } = props;
+  const { lat, lng } = props;
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  if (data === null) {
-    return (
-      <div className="text-center py-24">
-        <h1>No data found</h1>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (lat && lng) {
+      fetchWeatherData(lat, lng);
+    }
+  }, []);
+
+  const fetchWeatherData = async (lat: number, lng: number) => {
+    try {
+      setLoading(true);
+      const apiKey =
+        process.env.REACT_APP_OPENWEATHER_API_KEY ||
+        "d1871bd0599d1966396475295187f1e3";
+      const endPoint =
+        API_ROUTES.USER.WEATHER_API +
+        `?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric`;
+      const resp = await axios.get(endPoint, { withCredentials: false });
+      if (resp.data) {
+        const dailyForecasts = processForecastData(resp.data.list);
+        setData({
+          current: resp.data.list[0],
+          city: resp.data.city,
+          daily: dailyForecasts,
+        });
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const processForecastData = (forecasts: any[]) => {
+    const dailyData: Record<string, any> = {};
+
+    forecasts.forEach((item) => {
+      const date = item.dt_txt.split(" ")[0];
+
+      if (!dailyData[date]) {
+        dailyData[date] = {
+          date,
+          temps: [],
+          weathers: [],
+          timeStamps: [],
+          icons: [],
+        };
+      }
+      dailyData[date].temps.push(item.main.temp);
+      dailyData[date].icons.push(item.weather[0].icon);
+      dailyData[date].weathers.push(item.weather[0].main);
+      dailyData[date].timeStamps.push(item.dt_txt);
+    });
+
+    return Object.values(dailyData)
+      .map((day) => {
+        const latestWeather = day.weathers[day.weathers.length - 1];
+        const icon = day.icons[day.icons.length - 1];
+        return {
+          date: day.date,
+          minTemp: Math.min(...day.temps),
+          maxTemp: Math.max(...day.temps),
+          weather: latestWeather,
+          icon: icon,
+          forecasts: day.timeStamps.map((ts: string, i: number) => ({
+            time: ts.split(" ")[1],
+            icon: day.icons[i],
+            temp: day.temps[i],
+            weather: day.weathers[i],
+          })),
+        };
+      })
+      .slice(0, 7);
+  };
 
   // Helper function to format date
   const formatDate = (dateString: string) => {
@@ -63,6 +141,18 @@ const WeatherReport = (props: Props) => {
 
     return <SunIcon className="w-8 h-8 text-yellow-500 mx-auto" />;
   };
+
+  if (loading) {
+    return <SkeletonBox className="w-full h-96" />;
+  }
+
+  if (!data) {
+    return (
+      <div className="text-center py-24">
+        <h1>No data found</h1>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
@@ -131,7 +221,9 @@ const WeatherReport = (props: Props) => {
               <div className="h-2 bg-white/50 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-amber-500 to-amber-700 rounded-full"
-                  style={{ width: `${(data.current.main.temp / 40) * 100}%` }}
+                  style={{
+                    width: `${(data.current.main.temp / 40) * 100}%`,
+                  }}
                 ></div>
               </div>
               <div className="flex justify-between mt-1 text-sm text-gray-600">
