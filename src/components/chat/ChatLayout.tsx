@@ -34,11 +34,29 @@ const ChatLayout = () => {
 
     socket.emit('activate_chat_handlers');
 
-    socket.on('updated_unread_count_change', ({ chatId, unreadCount, type }: any) => {
-      if (type === 'group') {
-        setMyGroups(prev => prev.map(group => group.id === chatId ? { ...group, unreadCount: unreadCount } : group));
-      } else if (type === 'private') {
-        setMyPrivateChats(prev => prev.map(chat => chat.id === chatId ? { ...chat, unreadCount: unreadCount } : chat));
+    socket.on('unread_update', (updatedInfo: any) => {
+      if (updatedInfo.type === 'group') {
+        setMyGroups(prev => {
+          const index = prev.findIndex(group => group.id === updatedInfo.chatId);
+          if (index === -1) return prev;
+
+          const updatedGroup = {
+            ...prev[index],
+            unreadCount: updatedInfo.unreadCount,
+            senderId: updatedInfo.senderId ?? null,
+            status: updatedInfo.lastMessage?.status ?? "",
+            lastMessageSender: updatedInfo.lastMessageSender ?? null,
+            lastMessage: updatedInfo.lastMessage ?? null,
+            lastMessageTime: moment(updatedInfo.lastMessageTime).format('hh:mm A'),
+          };
+
+          const newGroups = prev.slice();
+          newGroups.splice(index, 1);
+          newGroups.unshift(updatedGroup);
+          return newGroups;
+        });
+      } else if (updatedInfo.type === 'private') {
+        setMyPrivateChats(prev => prev.map(chat => chat.id === updatedInfo.chatId ? { ...chat, unreadCount: updatedInfo.unreadCount } : chat));
       }
     });
 
@@ -50,7 +68,7 @@ const ChatLayout = () => {
   useEffect(() => {
     if (privateChatId && !handledRef.current) {
       fetchMyPrivateChats();
-    } else if(groupChatId && !handledRef.current) {
+    } else if (groupChatId && !handledRef.current) {
       fetchMyGroup();
     } else {
       fetchMyGroup();
@@ -78,10 +96,10 @@ const ChatLayout = () => {
           lastMessageTime: group.lastMessage ? moment(group.lastMessageTime).format('hh:mm A') : '',
         })));
         setUserId(response.userId);
-        if(groupChatId && !handledRef.current) {
+        if (groupChatId && !handledRef.current) {
           handleSetActiveChat(groupChatId, "group");
           handledRef.current = true;
-          
+
           const url = new URL(window.location.href);
           url.searchParams.delete("group");
           window.history.replaceState({}, "", url.toString());
@@ -116,7 +134,7 @@ const ChatLayout = () => {
         if (privateChatId && !handledRef.current) {
           handleSetActiveChat(privateChatId, "private");
           handledRef.current = true;
-          
+
           const url = new URL(window.location.href);
           url.searchParams.delete("id");
           window.history.replaceState({}, "", url.toString());
