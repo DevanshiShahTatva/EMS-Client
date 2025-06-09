@@ -193,7 +193,7 @@ const UsersPage = () => {
                         profileImage: item.profileimage !== null ? item.profileimage.url : "",
                         badge: item.current_badge ? item.current_badge : "-",
                         address: item.address !== null ? item.address : "-",
-                        points : item.total_earned_points,
+                        points : item.total_earned_points ? item.total_earned_points : 0,
                         role: item.role
                     }
                 })

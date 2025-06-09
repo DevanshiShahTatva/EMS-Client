@@ -1,6 +1,7 @@
 import { IApplyUserFiltersKey, IUserPoints } from "@/utils/types";
 import { IUserData } from "./types";
 import * as Yup from "yup";
+import { ROLE } from "@/utils/constant";
 
 export const SingleUserFormSchema = Yup.object().shape({
     name: Yup.string()
@@ -23,7 +24,7 @@ export const InitialSingleUserValues = {
 
 
 export const getMaxPoints = (userArr: IUserData[]): number => {
-    const pointsArray = userArr.map(item => item.points)
+    const pointsArray = userArr.filter(item => item.role !== ROLE.Admin).map(item => item.points)
     return Math.max(...pointsArray);
 };
 
