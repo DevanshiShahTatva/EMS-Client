@@ -23,6 +23,7 @@ export interface IGroup {
   image?: string;
   senderId?: string;
   members: IMember[];
+  unreadCount: number;
   lastMessage?: string;
   lastMessageTime?: string;
   lastMessageSender?: string;
@@ -33,6 +34,7 @@ export interface IPrivateChat {
   name: string;
   image?: string;
   senderId: string;
+  unreadCount: number;
   lastMessage?: string;
   lastMessageTime?: string;
   lastMessageSender?: string;

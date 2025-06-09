@@ -31,7 +31,34 @@ const ChatLayout = () => {
     connectSocket();
 
     const socket = getSocket();
+
     socket.emit('activate_chat_handlers');
+
+    socket.on('unread_update', (updatedInfo: any) => {
+      if (updatedInfo.type === 'group') {
+        setMyGroups(prev => {
+          const index = prev.findIndex(group => group.id === updatedInfo.chatId);
+          if (index === -1) return prev;
+
+          const updatedGroup = {
+            ...prev[index],
+            unreadCount: updatedInfo.unreadCount,
+            senderId: updatedInfo.senderId ?? null,
+            status: updatedInfo.lastMessage?.status ?? "",
+            lastMessageSender: updatedInfo.lastMessageSender ?? null,
+            lastMessage: updatedInfo.lastMessage ?? null,
+            lastMessageTime: moment(updatedInfo.lastMessageTime).format('hh:mm A'),
+          };
+
+          const newGroups = prev.slice();
+          newGroups.splice(index, 1);
+          newGroups.unshift(updatedGroup);
+          return newGroups;
+        });
+      } else if (updatedInfo.type === 'private') {
+        setMyPrivateChats(prev => prev.map(chat => chat.id === updatedInfo.chatId ? { ...chat, unreadCount: updatedInfo.unreadCount } : chat));
+      }
+    });
 
     return () => {
       disconnectSocket();
@@ -41,7 +68,7 @@ const ChatLayout = () => {
   useEffect(() => {
     if (privateChatId && !handledRef.current) {
       fetchMyPrivateChats();
-    } else if(groupChatId && !handledRef.current) {
+    } else if (groupChatId && !handledRef.current) {
       fetchMyGroup();
     } else {
       fetchMyGroup();
@@ -63,15 +90,16 @@ const ChatLayout = () => {
           image: group.icon,
           members: group.members,
           senderId: group.senderId,
+          unreadCount: group.unreadCount ?? 0,
           lastMessage: group.lastMessage,
           lastMessageSender: group.lastMessageSender,
           lastMessageTime: group.lastMessage ? moment(group.lastMessageTime).format('hh:mm A') : '',
         })));
         setUserId(response.userId);
-        if(groupChatId && !handledRef.current) {
+        if (groupChatId && !handledRef.current) {
           handleSetActiveChat(groupChatId, "group");
           handledRef.current = true;
-          
+
           const url = new URL(window.location.href);
           url.searchParams.delete("group");
           window.history.replaceState({}, "", url.toString());
@@ -97,6 +125,7 @@ const ChatLayout = () => {
           name: chat.name,
           image: chat.image,
           senderId: chat.senderId,
+          unreadCount: chat.unreadCount ?? 0,
           lastMessage: chat.lastMessage,
           lastMessageSender: chat.lastMessageSender,
           lastMessageTime: chat.lastMessage ? moment(chat.lastMessageTime).format('hh:mm A') : '',
@@ -105,7 +134,7 @@ const ChatLayout = () => {
         if (privateChatId && !handledRef.current) {
           handleSetActiveChat(privateChatId, "private");
           handledRef.current = true;
-          
+
           const url = new URL(window.location.href);
           url.searchParams.delete("id");
           window.history.replaceState({}, "", url.toString());
@@ -143,6 +172,7 @@ const ChatLayout = () => {
           name: chat.name,
           image: chat.image,
           senderId: chat.senderId,
+          unreadCount: 0,
           lastMessage: '',
           lastMessageSender: '',
           lastMessageTime: ''
