@@ -17,7 +17,7 @@ import ModalLayout from '@/components/common/CommonModalLayout'
 import DeleteModal from '@/components/common/DeleteModal'
 
 // Constant
-import { API_ROUTES, BREAD_CRUMBS_ITEMS } from '@/utils/constant'
+import { API_ROUTES, BREAD_CRUMBS_ITEMS, ROLE } from '@/utils/constant'
 
 // Services
 import { apiCall } from '@/utils/services/request'
@@ -193,7 +193,8 @@ const UsersPage = () => {
                         profileImage: item.profileimage !== null ? item.profileimage.url : "",
                         badge: item.current_badge ? item.current_badge : "-",
                         address: item.address !== null ? item.address : "-",
-                        points : item.total_earned_points ? item.total_earned_points : 0,
+                        total_points : item.total_earned_points ? item.total_earned_points : 0,
+                        current_points : item.current_points ? item.total_earned_points : 0,
                         role: item.role
                     }
                 })
@@ -266,10 +267,10 @@ const UsersPage = () => {
                 </TooltipWrapper>
         
         },
-        { header: "Earned Points", key : "points", 
+        { header: "Earned Points", key : "total_points", 
             render: (row) => 
-            <p className={`font-bold ${row.points > 0 && 'text-green-500'}`}>
-                {row.points}
+            <p className={`font-bold ${row.total_points > 0 && 'text-green-500'}`}>
+                {row.total_points}
             </p>
         },
         {
@@ -349,6 +350,8 @@ const UsersPage = () => {
         {
             icon: <TrashIcon className="h-5 w-5 text-red-500 hover:text-red-700 cursor-pointer ml-5" />,
             onClick: (row: IUserData) => openDeleteModal(row._id),
+            disabled: (row: IUserData) => row.role === ROLE.Admin,
+            disabledIcon: <TrashIcon className="h-5 w-5 text-gray-400 cursor-not-allowed ml-5" />
         },
     ];
 

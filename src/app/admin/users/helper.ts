@@ -24,7 +24,7 @@ export const InitialSingleUserValues = {
 
 
 export const getMaxPoints = (userArr: IUserData[]): number => {
-    const pointsArray = userArr.filter(item => item.role !== ROLE.Admin).map(item => item.points)
+    const pointsArray = userArr.filter(item => item.role !== ROLE.Admin).map(item => item.total_points)
     return Math.max(...pointsArray);
 };
 
@@ -35,7 +35,6 @@ export const filterBySearch = (array: IUserData[], searchVal: string) => {
         user.email.toLowerCase().includes(lowerKeyword) ||
         user.badge.toLowerCase().includes(lowerKeyword) ||
         user.address.toLowerCase().includes(lowerKeyword) ||
-        user.points.toString().toLowerCase().includes(lowerKeyword) ||
         user.role.toString().toLowerCase().includes(lowerKeyword)
     );
 }
@@ -46,7 +45,7 @@ export const filterByPointRange = (
 ): IUserData[] => {
   const { min, max } = pointsrange;
 
-  return users.filter(user => user.points >= min && user.points <= max);
+  return users.filter(user => user.current_points >= min && user.current_points <= max);
 };
 
 export const getFilteredData = (userData: IUserData[], filterValues: IApplyUserFiltersKey) => {
