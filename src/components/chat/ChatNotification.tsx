@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { connectSocket, getSocket } from "@/utils/services/socket";
 import { X } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
 
 interface MessageData {
   sender: {
@@ -37,10 +37,7 @@ export default function ChatNotification() {
     connectSocket();
     const socket = getSocket();
 
-    socket.emit("initiate_chat_notification");
-
     socket.on("chat_notification", (data: any) => {
-      console.log("DATA::", data);
       if (pathname.startsWith("/user/chat")) return;
 
       setNotifications((prev) => [...prev, data]);
@@ -104,7 +101,7 @@ export default function ChatNotification() {
                   {avatarUrl ? (
                     <img
                       src={avatarUrl}
-                      alt={title || "avatar"}
+                      alt={title ?? "avatar"}
                       className="w-full h-full object-cover"
                     />
                   ) : (
