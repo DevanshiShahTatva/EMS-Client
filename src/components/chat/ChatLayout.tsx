@@ -56,7 +56,25 @@ const ChatLayout = () => {
           return newGroups;
         });
       } else if (updatedInfo.type === 'private') {
-        setMyPrivateChats(prev => prev.map(chat => chat.id === updatedInfo.chatId ? { ...chat, unreadCount: updatedInfo.unreadCount } : chat));
+        setMyPrivateChats(prev => {
+          const index = prev.findIndex(chat => chat.id === updatedInfo.chatId);
+          if (index === -1) return prev;
+
+          const updatedChat = {
+            ...prev[index],
+            unreadCount: updatedInfo.unreadCount,
+            senderId: updatedInfo.senderId ?? null,
+            status: updatedInfo.lastMessage?.status ?? "",
+            lastMessageSender: updatedInfo.lastMessageSender ?? null,
+            lastMessage: updatedInfo.lastMessage ?? null,
+            lastMessageTime: moment(updatedInfo.lastMessageTime).format('hh:mm A'),
+          };
+
+          const newChats = prev.slice();
+          newChats.splice(index, 1);
+          newChats.unshift(updatedChat);
+          return newChats;
+        });
       }
     });
 
