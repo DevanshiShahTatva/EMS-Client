@@ -22,7 +22,7 @@ import {
   getLikesCount
 } from '@/app/events/event-helper'
 import { apiCall } from '@/utils/services/request'
-import { API_ROUTES } from '@/utils/constant'
+import { API_ROUTES, ROUTES } from '@/utils/constant'
 import { useRouter } from 'next/navigation'
 import BookingButton from './BookingButton'
 import GoogleMap from './GoogleMap'
@@ -33,6 +33,7 @@ import { toast } from 'react-toastify'
 import EventDetailsSkeleton from './EventDetailsSkeleton'
 import CustomerReviews from './CustomerReviews'
 import CategoryChip from './CategoryChip'
+import { getAuthToken } from '@/utils/helper'
 
 export default function EventDetailsPage({ eventId }: { eventId: string }) {
   const [eventsDetails, setEventsDetails] = useState<EventDataObjResponse[]>([])
@@ -91,7 +92,14 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
       setTimeout(() => setLoading(false), 2000);
     }
   }, [eventId])
+
     const likeEvent = (isLiked:boolean,id: string) => {
+      // Check for login 
+      const isUserLogged = getAuthToken()
+      if (isUserLogged === "") {
+        return router.push(ROUTES.LOGIN)
+      }
+      
       setEventDetail((prevEvent)=>{
         if(!prevEvent) return event;
         return {
@@ -191,7 +199,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                           className="p-1 bg-white rounded-full shadow-sm cursor-pointer"
                         >
                           <HeartIcon
-                            className={`h-5 w-5 ${event.isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
+                            className={`h-5 w-5 cursor-pointer ${event.isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
                           />
                         </button>
                           <span className="text-sm font-semibold text-gray-800">
