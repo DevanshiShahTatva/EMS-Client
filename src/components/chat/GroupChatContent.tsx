@@ -13,7 +13,8 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
   userId,
   currentGroupDetails,
   setMyGroups,
-  setOpenChatInfo
+  setOpenChatInfo,
+  onBackToListPage
 }) => {
   const [groupedMessage, setGroupedMessage] = useState<IGroupedMessages>({});
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -264,9 +265,10 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     <>
       <ChatHeader
         isGroup={true}
+        currentChatDetails={currentGroupDetails}
         totalMember={currentGroupDetails?.members?.length}
         setOpenChatInfo={setOpenChatInfo}
-        currentChatDetails={currentGroupDetails}
+        onBackToListPage={() => onBackToListPage()}
       />
       <ChatWindow
         chatId={groupId}

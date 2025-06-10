@@ -155,6 +155,7 @@ export const ADMIN_SIDEBAR_ITEMS = [
     { id: 6, title: "Terms & Conditions", route: ROUTES.ADMIN.TERMS_AND_CONDITIONS, icon:  "/assets/terms.svg"},
     { id: 7, title: "Admin Config", route: ROUTES.ADMIN.ADMIN_CONFIGURATION, icon:  "/assets/settingsIcon.svg"},
     { id: 8, title: "Dropdowns", route: ROUTES.ADMIN.DROPDOWNS, icon:  "/assets/dropdownsIcon.svg"},
+    { id: 9, title: "Chats", route: ROUTES.ADMIN.ADMIN_CHAT, icon:  "/assets/chatIcon.svg"},
 ]
 
 export const USER_SIDEBAR_ITEMS = [
@@ -162,6 +163,7 @@ export const USER_SIDEBAR_ITEMS = [
     { id: 2, title: "Events", route: ROUTES.USER_EVENTS, icon: "/assets/EventsIcon.svg" },
     { id: 3, title: "Contact Us", route: ROUTES.CONTACT_US, icon:  "/assets/support.svg"},
     { id: 4, title: "FAQs", route: ROUTES.FAQs, icon:  "/assets/faqs.svg"},
+    { id: 5, title: "Chat", route: ROUTES.USER_CHAT, icon:  "/assets/chatIcon.svg"},
 ]
 
 export const ORGANIZER_SIDEBAR_ITEMS = [

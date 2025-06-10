@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { SendHorizonalIcon, SmileIcon, XIcon } from "lucide-react";
+import { Send, SendHorizonalIcon, SmileIcon, XIcon } from "lucide-react";
 import EmojiPicker from 'emoji-picker-react';
 import { IMessageInputProps } from './type';
 
@@ -103,8 +103,8 @@ const MessageInput: React.FC<IMessageInputProps> = ({
   };
 
   return (
-    <div className='flex justify-center mb-4'>
-      <div className="w-full ml-16 mr-16 bg-white rounded-md shadow-sm relative">
+    <div className='flex justify-center mb-2 md:mb-4'>
+      <div className="w-full ml-4 mr-4 md:ml-16 md:mr-16 bg-white rounded-md shadow-sm relative">
         {typingUsers.length > 0 && (
           <div className="text-sm text-gray-500 mb-2">
             {typingUsers.length === 1
@@ -153,11 +153,11 @@ const MessageInput: React.FC<IMessageInputProps> = ({
             className={`text-gray-400 cursor-pointer hover:text-purple-500 ${showEmojiPicker && 'text-purple-500'}`}
           />
           <button
-            disabled={!newMessage.trim()}
             onClick={() => sendMessage()}
-            className="text-purple-600 text-lg cursor-pointer hover:text-purple-800 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!newMessage.trim()}
+            className="bg-blue-500 cursor-pointer disabled:cursor-not-allowed  disabled:bg-gray-200 text-white disabled:text-black p-2 rounded-full text-sm"
           >
-            <SendHorizonalIcon />
+            <SendHorizonalIcon className="w-4 h-4 text-white" />
           </button>
         </div>
       </div>

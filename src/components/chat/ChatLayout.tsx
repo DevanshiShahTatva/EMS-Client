@@ -228,6 +228,12 @@ const ChatLayout = () => {
     return null;
   };
 
+  const onBackToListPage = () => {
+    setActiveChatId(null);
+    setCurrentChatType('group');
+    setOpenChatInfo(false);
+  }
+
   const currentChatDetails = getActiveChatDetails();
   return (
     <div className="w-full flex bg-gray-100">
@@ -241,7 +247,7 @@ const ChatLayout = () => {
         fetchChatList={fetchChatList}
         setActiveChat={handleSetActiveChat}
       />
-      <div className="flex-1 flex flex-col">
+      <div className={`flex flex-1 flex-col ${!(activeChatId && currentChatType) ? "hidden md:flex" : ""}`}>
         {(activeChatId && currentChatType) && (
           currentChatType === 'group' ? (
             <GroupChatContent
@@ -249,6 +255,7 @@ const ChatLayout = () => {
               groupId={activeChatId}
               setMyGroups={setMyGroups}
               setOpenChatInfo={setOpenChatInfo}
+              onBackToListPage={() => onBackToListPage()}
               currentGroupDetails={currentChatDetails as IGroup}
             />
           ) : (
@@ -257,6 +264,7 @@ const ChatLayout = () => {
               chatId={activeChatId}
               setOpenChatInfo={setOpenChatInfo}
               setMyPrivateChats={setMyPrivateChats}
+              onBackToListPage={() => onBackToListPage()}
               currentPrivateChatDetails={currentChatDetails as IPrivateChat}
             />
           )

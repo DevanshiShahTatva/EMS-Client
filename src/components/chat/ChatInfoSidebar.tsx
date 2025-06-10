@@ -36,16 +36,28 @@ const ChatInfoSidebar: React.FC<IChatInfoSidebarProps> = ({
   return (
     <div
       className={`
-        flex flex-1 flex-col bg-white border-gray-200 shadow
+        flex md:flex-1 flex-col bg-white border-gray-200 shadow
+        fixed md:relative inset-0 md:inset-auto z-50 md:z-auto
         transition-all duration-400 ease-in-out overflow-hidden
-        ${openChatInfo ? 'max-w-[300px] ' : 'max-w-0 '}
-       `}
+        bottom-0 md:bottom-auto
+        right-0 md:right-auto
+        mt-[70px] md:mt-0
+        ${openChatInfo ?
+          'w-full md:w-auto md:max-w-[300px] translate-y-0 md:translate-y-0' :
+          'w-full md:max-w-0 md:translate-y-0 translate-y-full'
+        }
+      `}
     >
-      <div className='p-4 border-b flex justify-between items-center w-full'>
+      <div className='p-2 pr-[3px] md:p-[14px] border-b flex justify-between items-center w-full'>
         <div className="font-bold text-lg">
           Group Info
         </div>
-        <button className='cursor-pointer' onClick={() => setOpenChatInfo(false)}><XIcon /></button>
+        <button
+          onClick={() => setOpenChatInfo(false)}
+          className='p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer'
+        >
+          <XIcon className="text-lg" />
+        </button>
       </div>
       <div className='flex-1 h-full overflow-auto'>
         <div className='border-b border-b-gray-200 text-center pt-7 pb-7 flex flex-col items-center'>

@@ -55,8 +55,8 @@ const ChatList: React.FC<IChatListProps> = ({
   };
 
   return (
-    <div className="w-1/3 max-w-xs bg-white border-r border-gray-200 flex flex-col">
-      <div className="p-4 font-bold text-lg border-b">Chats</div>
+    <div className={`w-full md:w-1/3 md:max-w-xs bg-white border-r border-gray-200 flex-col flex ${activeChatId ? "hidden md:flex" : ""}`}>
+      <div className="p-4 font-bold text-lg border-b hidden md:block">Chats</div>
       {isLoading ? (
         <ListSkeleton />
       ) : (
