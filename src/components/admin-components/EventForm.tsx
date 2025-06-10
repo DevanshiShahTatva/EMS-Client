@@ -13,10 +13,11 @@ import CustomButton from '../common/CustomButton';
 import Breadcrumbs from '../common/BreadCrumbs';
 import TitleSection from '../common/TitleSection';
 import ImageUploadGrid from './ImageUploadSection';
+import SeatingModal from './SeatingModal';
 
 // types import
 import { EventDataObjResponse, EventImage } from '@/utils/types';
-import { IEventFormData, IEventFormDataErrorTypes, IEventFormProps, ILocationField, ITicket } from '../../app/admin/event/types';
+import { IEventFormData, IEventFormDataErrorTypes, IEventFormProps, ILocationField, ITicket, ITicketInfo } from '../../app/admin/event/types';
 import { IEventCategory, ITicketType, ITicketTypesResp, IEventCategoryResp } from '@/app/admin/dropdowns/types';
 
 // library support 
@@ -31,7 +32,8 @@ import { ALLOWED_FILE_FORMATS, API_ROUTES, MAX_FILE_SIZE_MB, ROUTES, BREAD_CRUMB
 
 // helper functions
 import { apiCall } from '@/utils/services/request';
-import { InitialEventFormDataErrorTypes, InitialEventFormDataValues, handleFreeTicketType, urlToFileArray } from '../../app/admin/event/helper';
+import { InitialEventFormDataErrorTypes, InitialEventFormDataValues, InitialTicketItems, handleFreeTicketType, urlToFileArray } from '../../app/admin/event/helper';
+import SeatLayoutBuilder from '../common/SeatingComponent';
 
 const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false }) => {
 
@@ -62,6 +64,29 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
   const [fileError, setFileError] = useState<null | string>(null)
   const [existingImages, setExistingImages] = useState<(EventImage | File)[]>([])
   const [loader, setLoder] = useState(false)
+
+  const [selectedLayoutItems, setSelectedLayoutItems] = useState<ITicketInfo>(InitialTicketItems);
+  const [openLayoutModal, setOpenLayoutModal] = useState(false);
+  const [layoutArray, setLayoutArray] = useState([])
+
+  const openModal = () => {
+    const { type, maxQty, price } = newTicket
+
+    const label = ticketTypeOptions.find(item => item._id === type)?.name ?? "";
+
+    if( type !== "" && maxQty !== "" && (Number(price) === 0 || Number(price) > 50)) {
+      const receivedObj = {
+        id: type,
+        ticketPrice: price,
+        ticketType: label,
+        totalSeats: maxQty,
+      }
+      setSelectedLayoutItems(receivedObj)
+      setOpenLayoutModal(true)
+    }
+
+    return false
+  }
 
   const hasTouchedDescription = useRef(false);
 
@@ -1000,10 +1025,11 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
                   <th className="border px-4 py-2 w-1/5 font-semibold">
                     Ticket Type
                   </th>
-                  <th className="border px-4 py-2 w-1/5">Price (₹)</th>
-                  <th className="border px-4 py-2 w-1/5">Max Qty</th>
-                  <th className="border px-4 py-2 w-1/5">Description</th>
-                  <th className="border px-4 py-2 w-1/5 text-center">
+                  <th className="border px-4 py-2 w-1/6">Price (₹)</th>
+                  <th className="border px-4 py-2 w-1/6">Max Qty</th>
+                  <th className="border px-4 py-2 w-1/6">Description</th>
+                  <th className="border px-4 py-2 w-1/6 text-center">Layout</th>
+                  <th className="border px-4 py-2 w-1/6 text-center">
                     Actions
                   </th>
                 </tr>
@@ -1074,6 +1100,9 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
                           placeholder='Description'
                         />
                       </td>
+                      <td className="border px-2 py-1">
+                        {ticket.isLayoutAdded ? "Edit Layout" : "Create Layout"}
+                      </td>
                       <td className="border text-center px-2 py-1 space-x-2">
                         <button
                           onClick={() => handleSave(ticket.id)}
@@ -1096,6 +1125,9 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
                       <td className="border px-4 py-2">{ticket.maxQty}</td>
                       <td className="border px-4 py-2">
                         {ticket.description}
+                      </td>
+                      <td className="border px-4 py-2">
+                        {ticket.isLayoutAdded ? "Edit Layout" : "Create Layout"}
                       </td>
                       <td className="border px-4 py-2 text-center md:space-x-2">
                         <button
@@ -1177,6 +1209,9 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
                         }
                       />
                     </td>
+                    <td className="border px-2 py-1 text-center">
+                        <button onClick={openModal} className='underline text-md text-blue-500 hover:text-blue-700 cursor-pointer'> Create Layout </button>
+                    </td>
                     <td className="border px-4 py-2 text-center md:space-x-2">
                       <button
                         onClick={ticketAddValidation}
@@ -1251,6 +1286,16 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
           </CustomButton>
         </div>
       </div>
+
+      {/* Seating Modal */}
+      <SeatingModal
+        isOpen={openLayoutModal}
+        onClose={() => setOpenLayoutModal(false)}
+        fullScreen
+        title='Select Seat Layout'
+      >
+        <SeatLayoutBuilder ticketItems={selectedLayoutItems} />
+      </SeatingModal>
     </div>
   );
 }

@@ -69,6 +69,14 @@ export type ITicket = {
     description: string;
     isEditing?: boolean;
     _id : string,
+    isLayoutAdded?: boolean
+};
+
+export interface ITicketInfo {
+    id: string;
+    ticketType: string;
+    ticketPrice: string;
+    totalSeats: string;
 };
 
 export interface ISuggestion {
