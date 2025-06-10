@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Bot, X, Send } from "lucide-react";
 import { API_ROUTES } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
@@ -13,6 +14,8 @@ interface Message {
 }
 
 const ChatBotWidget = () => {
+  
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -21,6 +24,8 @@ const ChatBotWidget = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  
+  const isChatPage = pathname.includes('/user/chat');
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -94,6 +99,8 @@ const ChatBotWidget = () => {
       setBotTyping(false);
     }
   };
+
+  if (isChatPage) return;
 
   return showChatBot && isMounted ? (
     <div className="fixed bottom-4 right-4 ml-4 z-50">

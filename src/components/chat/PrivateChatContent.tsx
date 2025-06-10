@@ -12,7 +12,8 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
   userId,
   currentPrivateChatDetails,
   setMyPrivateChats,
-  setOpenChatInfo
+  setOpenChatInfo,
+  onBackToListPage
 }) => {
   const [groupedMessage, setGroupedMessage] = useState<IGroupedPrivateMessages>({});
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -214,6 +215,7 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
       <ChatHeader
         isGroup={false}
         setOpenChatInfo={setOpenChatInfo}
+        onBackToListPage={() => onBackToListPage()}
         currentChatDetails={currentPrivateChatDetails}
       />
       <ChatWindow

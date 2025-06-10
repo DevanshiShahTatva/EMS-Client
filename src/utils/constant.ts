@@ -162,6 +162,7 @@ export const USER_SIDEBAR_ITEMS = [
     { id: 2, title: "Events", route: ROUTES.USER_EVENTS, icon: "/assets/EventsIcon.svg" },
     { id: 3, title: "Contact Us", route: ROUTES.CONTACT_US, icon:  "/assets/support.svg"},
     { id: 4, title: "FAQs", route: ROUTES.FAQs, icon:  "/assets/faqs.svg"},
+    { id: 5, title: "Chat", route: ROUTES.USER_CHAT, icon:  "/assets/faqs.svg"},
 ]
 
 export const ORGANIZER_SIDEBAR_ITEMS = [
