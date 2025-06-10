@@ -38,7 +38,7 @@ export default function ChatNotification() {
     const socket = getSocket();
 
     socket.on("chat_notification", (data: any) => {
-      if (pathname.startsWith("/user/chat")) return;
+      if (pathname.startsWith("/user/chat") || pathname.startsWith("/admin/chat")) return;
 
       setNotifications((prev) => [...prev, data]);
 
