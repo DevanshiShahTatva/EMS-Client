@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 
 // types
-import { ITicketInfo } from '@/app/admin/event/types';
+import { ISeatLayout, ITicketInfo } from '@/app/admin/event/types';
 
 // Custom components
-import CustomButton from './CustomButton';
+import CustomButton from '../common/CustomButton';
+
+// Library
+import { Plus, Undo, Redo } from 'lucide-react';
 
 interface Seat {
   id: string;
@@ -21,6 +24,9 @@ interface Move {
 
 interface LayoutProps {
   ticketItems: ITicketInfo
+  onSave: (layoutArray: ISeatLayout[]) => void
+  savedLayout?: ISeatLayout[]
+  isEditable? : boolean
 }
 
 type SeatInput = {
@@ -93,7 +99,7 @@ const transformSeatingData = (input: SeatInput[]): SeatOutput[] => {
 
 
 
-const SeatLayoutBuilder: React.FC<LayoutProps> = ({ ticketItems }) => {
+const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLayout= [], isEditable = false }) => {
   const [rows, setRows] = useState<Seat[][]>([[]]);
   const [addCount, setAddCount] = useState<number>(1);
   const [activeRowIndex, setActiveRowIndex] = useState<number>(0);
@@ -225,7 +231,19 @@ const SeatLayoutBuilder: React.FC<LayoutProps> = ({ ticketItems }) => {
 
     const layout = Object.values(layoutMap);
 
-    console.log("first", transformSeatingData(layout));
+    const modifiedArray = transformSeatingData(layout)
+    const finalArray: ISeatLayout[] = modifiedArray.map(item => {
+      return {
+        ticketType : ticketItems.id,
+        price: parseInt(ticketItems.ticketPrice),
+        rows: item.rows
+      }
+    }) 
+
+    console.log("first", rows)
+    
+    onSave(finalArray)
+    
   };
 
   const remainingSeats = useMemo(() => {
@@ -235,6 +253,48 @@ const SeatLayoutBuilder: React.FC<LayoutProps> = ({ ticketItems }) => {
     );
     return Number(ticketItems.totalSeats) - realSeatsCount;
   }, [rows, ticketItems.totalSeats]);
+
+  useEffect(() => {
+    if (isEditable && savedLayout.length > 0) {
+      const initialRows: Seat[][] = savedLayout.flatMap((layoutObject) => {
+        return layoutObject.rows.map((row) => {
+          return row.seats.map((seat, seatIndex) => ({
+            id: String(seat.seatNumber),
+            row: 0, // You'll need to calculate this based on the savedLayout structure
+            col: seatIndex,
+            type: String(seat.seatNumber) === '0' ? 'Space' : layoutObject.ticketType, // Or determine the type based on your data
+          }));
+        });
+      });
+
+
+      const structuredRows: Seat[][] = [];
+      savedLayout.forEach((layoutObject) => {
+        layoutObject.rows.forEach((rowObject, rowIndex) => {
+          const rowName = rowObject.row; // e.g., "A", "B", etc.
+          const actualRowIndex = rowName.charCodeAt(0) - 65; // Convert "A" to 0, "B" to 1, etc.
+
+          if (!structuredRows[actualRowIndex]) {
+            structuredRows[actualRowIndex] = []; // Initialize the row if it doesn't exist
+          }
+
+          rowObject.seats.forEach((seat, seatIndex) => {
+            structuredRows[actualRowIndex].push({
+              id: String(seat.seatNumber),
+              row: actualRowIndex,
+              col: seatIndex,
+              type: String(seat.seatNumber) === '0' ? 'Space' : layoutObject.ticketType,
+            });
+          });
+        });
+      });
+
+      setRows(structuredRows); // Set the structured array of rows to state
+      // --- FIX ENDS HERE ---
+    } else {
+      setRows([[]]); // Initialize with a single empty row
+    }
+  }, [savedLayout, isEditable, ticketItems.ticketType]);
 
 
   return (
@@ -352,31 +412,44 @@ const SeatLayoutBuilder: React.FC<LayoutProps> = ({ ticketItems }) => {
               </select>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              <CustomButton variant="primary" onClick={handleAddSeats}>
-                Add Seats
+            <div className="flex flex-wrap gap-4">
+              <CustomButton variant="primary" className='flex gap-2 items-center' startIcon={<Plus className='h-5 w-5' />} onClick={handleAddSeats}>
+                Seats
               </CustomButton>
 
-              <CustomButton onClick={handleAddSpace} variant="secondary">
-                Add Space
+              <CustomButton onClick={handleAddSpace} className='flex gap-2 items-center' startIcon={<Plus className='h-5 w-5' />} variant="secondary">
+                Space
               </CustomButton>
 
-              <CustomButton onClick={handleAddRow} variant="success">
-                Add Row
+              <CustomButton className='flex gap-2 items-center' startIcon={<Plus className='h-5 w-5' />} onClick={handleAddRow} variant="success">
+                 Row
               </CustomButton>
 
               <CustomButton
                 onClick={handleUndo}
                 disabled={history.length === 0}
                 variant={history.length === 0 ? "disabled" : "warning"}
+                className='flex gap-2 items-center' 
+                startIcon={<Undo className='h-5 w-5' />}
               >
                 Undo
               </CustomButton>
 
-              <CustomButton onClick={handleSaveLayout} variant="outlined">
-                Save Layout
+              <CustomButton
+                onClick={handleUndo}
+                disabled={history.length === 0}
+                variant={history.length === 0 ? "disabled" : "warning"}
+                className='flex gap-2 items-center' 
+                startIcon={<Redo className='h-5 w-5' />}
+              >
+                Redo
               </CustomButton>
+
             </div>
+
+            <CustomButton onClick={handleSaveLayout} className='w-full mt-10' variant="primary">
+              Save Layout
+            </CustomButton>
           </div>
         </div>
       </div>
@@ -386,4 +459,4 @@ const SeatLayoutBuilder: React.FC<LayoutProps> = ({ ticketItems }) => {
   );
 };
 
-export default SeatLayoutBuilder;
+export default AddEditSeatLayout;

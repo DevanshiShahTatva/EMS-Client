@@ -14,10 +14,12 @@ import Breadcrumbs from '../common/BreadCrumbs';
 import TitleSection from '../common/TitleSection';
 import ImageUploadGrid from './ImageUploadSection';
 import SeatingModal from './SeatingModal';
+import AddEditSeatLayout from './AddEditSeatLayout';
+import ViewSeatLayout from './ViewSeatLayout';
 
 // types import
 import { EventDataObjResponse, EventImage } from '@/utils/types';
-import { IEventFormData, IEventFormDataErrorTypes, IEventFormProps, ILocationField, ITicket, ITicketInfo } from '../../app/admin/event/types';
+import { IEventFormData, IEventFormDataErrorTypes, IEventFormProps, ILocationField, ISeatLayout, ISeatLayoutResponse, ITicket, ITicketInfo } from '../../app/admin/event/types';
 import { IEventCategory, ITicketType, ITicketTypesResp, IEventCategoryResp } from '@/app/admin/dropdowns/types';
 
 // library support 
@@ -33,7 +35,6 @@ import { ALLOWED_FILE_FORMATS, API_ROUTES, MAX_FILE_SIZE_MB, ROUTES, BREAD_CRUMB
 // helper functions
 import { apiCall } from '@/utils/services/request';
 import { InitialEventFormDataErrorTypes, InitialEventFormDataValues, InitialTicketItems, handleFreeTicketType, urlToFileArray } from '../../app/admin/event/helper';
-import SeatLayoutBuilder from '../common/SeatingComponent';
 
 const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false }) => {
 
@@ -67,7 +68,30 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
 
   const [selectedLayoutItems, setSelectedLayoutItems] = useState<ITicketInfo>(InitialTicketItems);
   const [openLayoutModal, setOpenLayoutModal] = useState(false);
-  const [layoutArray, setLayoutArray] = useState([])
+  const [viewLayoutModal, setViewLayoutModal] = useState(false);
+  const [editableId, setEditableId] = useState("");
+
+
+  const openViewModal = () => {
+     setViewLayoutModal(true)
+  }
+
+  const closeViewModal = () => {
+     setViewLayoutModal(false)
+  }
+
+   const openEditModal = (id: string) => {
+    const ticketInfo = editCache[id]
+    setEditableId(id)
+    setSelectedLayoutItems(InitialTicketItems)
+     setOpenLayoutModal(true)
+  }
+
+  const closeEditModal = () => {
+     setOpenLayoutModal(false)
+  }
+
+  const [layoutArray, setLayoutArray] = useState<ISeatLayout[]>([])
 
   const openModal = () => {
     const { type, maxQty, price } = newTicket
@@ -87,6 +111,16 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
 
     return false
   }
+
+  const closeModal = () => {
+    setSelectedLayoutItems(InitialTicketItems)
+    setOpenLayoutModal(false)
+  } 
+
+  const saveLayout = (newLayouts: ISeatLayout[]) => {
+    setLayoutArray(prevLayoutArray => [...prevLayoutArray, ...newLayouts]);
+    closeModal();
+  };
 
   const hasTouchedDescription = useRef(false);
 
@@ -680,11 +714,35 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
       })
 
       if (result.success) {
+        (!isCloneEvent && isEditMode) ? await handleSubmitLayout(eventType) : await handleSubmitLayout(result.data._id)
+      }
+
+    } catch (error) {
+      console.error(error)
+    } 
+  }
+
+  const handleSubmitLayout = async (eventId: string) => {
+    try {
+
+      const httpBody = {
+        eventId : eventId,
+        seatLayout: layoutArray
+      }
+
+
+      const result = await apiCall({
+        endPoint: API_ROUTES.ADMIN.SAVE_LAYOUT,
+        method: "POST",
+        body: httpBody,
+      })
+
+      if(result && result.success) {
         router.push(ROUTES.ADMIN.EVENTS)
         toast.success(isCloneEvent ? "Event cloned successfully." : isEditMode ? "Event updated successfully." : "Event added successfully.")
         setFormValues(InitialEventFormDataValues)
       }
-
+      
     } catch (error) {
       console.error(error)
     } finally {
@@ -788,11 +846,34 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
     }
   }, []);
 
+  const getSeatLayout = useCallback(async () => {
+    try {
+      const response: ISeatLayoutResponse = await apiCall({
+        endPoint: API_ROUTES.ADMIN.GET_LAYOUT(eventType),
+        method: 'GET',
+      });
+
+      if (response && response.success) {
+        const receivedArray = response.data[0].seatLayout.map(item => {
+          return {
+            ticketType: item.ticketType.name, // ObjectId as string
+            price: item.price,
+            rows: item.rows,
+          }
+        });
+        setLayoutArray(receivedArray)
+      }
+    } catch (err) {
+      console.error('Error fetching ticket types', err);
+    }
+  }, []);
+
   useEffect(() => {
     getCategories()
     getTicketTypes()
     if (eventType !== "create") {
       fetchEventWithId()
+      getSeatLayout()
     }
   }, [eventType, getCategories, getTicketTypes])
 
@@ -1100,8 +1181,8 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
                           placeholder='Description'
                         />
                       </td>
-                      <td className="border px-2 py-1">
-                        {ticket.isLayoutAdded ? "Edit Layout" : "Create Layout"}
+                     <td className="border px-2 py-1 text-center">
+                        <button onClick={() => openEditModal(ticket._id)} className='underline text-md text-blue-500 hover:text-blue-700 cursor-pointer'> Edit Layout </button>
                       </td>
                       <td className="border text-center px-2 py-1 space-x-2">
                         <button
@@ -1126,8 +1207,8 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
                       <td className="border px-4 py-2">
                         {ticket.description}
                       </td>
-                      <td className="border px-4 py-2">
-                        {ticket.isLayoutAdded ? "Edit Layout" : "Create Layout"}
+                      <td className="border px-4 py-2 text-center">
+                        <button onClick={openViewModal} className='underline text-md text-blue-500 hover:text-blue-700 cursor-pointer'> View Layout </button>
                       </td>
                       <td className="border px-4 py-2 text-center md:space-x-2">
                         <button
@@ -1287,14 +1368,24 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
         </div>
       </div>
 
-      {/* Seating Modal */}
+      {/* Add/Edit Seating Modal */}
       <SeatingModal
         isOpen={openLayoutModal}
-        onClose={() => setOpenLayoutModal(false)}
+        onClose={closeModal}
         fullScreen
         title='Select Seat Layout'
       >
-        <SeatLayoutBuilder ticketItems={selectedLayoutItems} />
+        <AddEditSeatLayout isEditable={editableId !== ""} savedLayout={editableId !== "" ? layoutArray : []} ticketItems={selectedLayoutItems} onSave={saveLayout} />
+      </SeatingModal>
+
+      {/* View Seating Modal */}
+      <SeatingModal
+        isOpen={viewLayoutModal}
+        onClose={closeViewModal}
+        fullScreen
+        title='View Layout'
+      >
+        <ViewSeatLayout seatLayoutDataFromProps={layoutArray} />
       </SeatingModal>
     </div>
   );
