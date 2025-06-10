@@ -147,7 +147,7 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
               </div>
             )}
             {!Object.values(groupedMessage).some(group => group.length > 0) && (
-              <div className="flex justify-center items-center h-full text-center text-gray-500">
+              <div className="mb-0 flex justify-center items-center h-full text-gray-500">
                 No messages yet. Start chatting!
               </div>
             )}
