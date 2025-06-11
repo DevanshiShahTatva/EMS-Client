@@ -82,6 +82,7 @@ export interface IChatHeaderProps {
   totalMember?: number;
   currentChatDetails: IGroup | IPrivateChat;
   setOpenChatInfo: React.Dispatch<React.SetStateAction<boolean>>;
+  onBackToListPage: () => void;
 }
 
 export interface IChatListProps {
@@ -126,6 +127,7 @@ export interface IGroupChatContentProps {
   groupId: string;
   userId: string | null;
   currentGroupDetails: IGroup;
+  onBackToListPage: () => void;
   setMyGroups: React.Dispatch<React.SetStateAction<IGroup[]>>;
   setOpenChatInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -144,6 +146,7 @@ export interface IPrivateChatContentProps {
   chatId: string;
   userId: string | null;
   currentPrivateChatDetails: IPrivateChat;
+  onBackToListPage: () => void;
   setMyPrivateChats: React.Dispatch<React.SetStateAction<IPrivateChat[]>>;
   setOpenChatInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Bot, X, Send } from "lucide-react";
 import { API_ROUTES } from "@/utils/constant";
 import { apiCall } from "@/utils/services/request";
@@ -13,6 +14,8 @@ interface Message {
 }
 
 const ChatBotWidget = () => {
+  
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -21,6 +24,8 @@ const ChatBotWidget = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  
+  const isChatPage = pathname.includes('/user/chat');
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -95,6 +100,8 @@ const ChatBotWidget = () => {
     }
   };
 
+  if (isChatPage) return;
+
   return showChatBot && isMounted ? (
     <div className="fixed bottom-4 right-4 ml-4 z-50">
       {/* Chat Icon Button */}
@@ -129,10 +136,10 @@ const ChatBotWidget = () => {
                 }`}
               >
                 <span
-                  className={`px-3 py-2 rounded-xl sm:max-w-[80%] max-w-[95%] ${
+                  className={`px-3 py-2 rounded-xl max-w-[95%] ${
                     msg.sender === "user"
                       ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-black"
+                      : "bg-gray-100 text-black"
                   }`}
                 >
                   <div

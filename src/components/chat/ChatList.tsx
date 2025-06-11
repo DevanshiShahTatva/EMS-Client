@@ -55,8 +55,8 @@ const ChatList: React.FC<IChatListProps> = ({
   };
 
   return (
-    <div className="w-1/3 max-w-xs bg-white border-r border-gray-200 flex flex-col">
-      <div className="p-4 font-bold text-lg border-b">Chats</div>
+    <div className={`w-full md:w-1/3 md:max-w-xs bg-white border-r border-gray-200 flex-col flex ${activeChatId ? "hidden md:flex" : ""}`}>
+      <div className="p-4 font-bold text-lg border-b hidden md:block">Chats</div>
       {isLoading ? (
         <ListSkeleton />
       ) : (
@@ -75,13 +75,8 @@ const ChatList: React.FC<IChatListProps> = ({
                     className="w-10 h-10 min-w-10 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="relative min-w-10 w-10 h-10 bg-purple-500 text-white rounded-full flex items-center justify-center font-semibold">
+                  <div className="min-w-10 w-10 h-10 bg-purple-500 text-white rounded-full flex items-center justify-center font-semibold">
                     {item.name.charAt(0).toUpperCase()}
-                    {item.unreadCount ? (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                        {item.unreadCount > 9 ? '9+' : item.unreadCount}
-                      </span>
-                    ) : null}
                   </div>
                 )}
                 <div className='flex-1 min-w-0'>

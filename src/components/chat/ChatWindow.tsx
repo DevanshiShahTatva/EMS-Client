@@ -135,7 +135,7 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
   return (
     <div
       onScroll={handleScroll}
-      className="flex-1 overflow-y-auto px-6 py-4 space-y-3 bg-[#f5f5f5]"
+      className="flex-1 overflow-y-auto px-2 md:px-6 py-4 space-y-3 bg-[#f5f5f5]"
     >
       {isLoading
         ? <ChatSkeleton />
@@ -147,7 +147,7 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
               </div>
             )}
             {!Object.values(groupedMessage).some(group => group.length > 0) && (
-              <div className="flex justify-center items-center h-full text-center text-gray-500">
+              <div className="mb-0 flex justify-center items-center h-full text-gray-500">
                 No messages yet. Start chatting!
               </div>
             )}

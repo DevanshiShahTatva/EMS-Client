@@ -56,7 +56,25 @@ const ChatLayout = () => {
           return newGroups;
         });
       } else if (updatedInfo.type === 'private') {
-        setMyPrivateChats(prev => prev.map(chat => chat.id === updatedInfo.chatId ? { ...chat, unreadCount: updatedInfo.unreadCount } : chat));
+        setMyPrivateChats(prev => {
+          const index = prev.findIndex(chat => chat.id === updatedInfo.chatId);
+          if (index === -1) return prev;
+
+          const updatedChat = {
+            ...prev[index],
+            unreadCount: updatedInfo.unreadCount,
+            senderId: updatedInfo.senderId ?? null,
+            status: updatedInfo.lastMessage?.status ?? "",
+            lastMessageSender: updatedInfo.lastMessageSender ?? null,
+            lastMessage: updatedInfo.lastMessage ?? null,
+            lastMessageTime: moment(updatedInfo.lastMessageTime).format('hh:mm A'),
+          };
+
+          const newChats = prev.slice();
+          newChats.splice(index, 1);
+          newChats.unshift(updatedChat);
+          return newChats;
+        });
       }
     });
 
@@ -210,6 +228,12 @@ const ChatLayout = () => {
     return null;
   };
 
+  const onBackToListPage = () => {
+    setActiveChatId(null);
+    setCurrentChatType('group');
+    setOpenChatInfo(false);
+  }
+
   const currentChatDetails = getActiveChatDetails();
   return (
     <div className="w-full flex bg-gray-100">
@@ -223,7 +247,7 @@ const ChatLayout = () => {
         fetchChatList={fetchChatList}
         setActiveChat={handleSetActiveChat}
       />
-      <div className="flex-1 flex flex-col">
+      <div className={`flex flex-1 flex-col ${!(activeChatId && currentChatType) ? "hidden md:flex" : ""}`}>
         {(activeChatId && currentChatType) && (
           currentChatType === 'group' ? (
             <GroupChatContent
@@ -231,6 +255,7 @@ const ChatLayout = () => {
               groupId={activeChatId}
               setMyGroups={setMyGroups}
               setOpenChatInfo={setOpenChatInfo}
+              onBackToListPage={() => onBackToListPage()}
               currentGroupDetails={currentChatDetails as IGroup}
             />
           ) : (
@@ -239,6 +264,7 @@ const ChatLayout = () => {
               chatId={activeChatId}
               setOpenChatInfo={setOpenChatInfo}
               setMyPrivateChats={setMyPrivateChats}
+              onBackToListPage={() => onBackToListPage()}
               currentPrivateChatDetails={currentChatDetails as IPrivateChat}
             />
           )
