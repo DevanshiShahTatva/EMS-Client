@@ -139,7 +139,7 @@ const MessageInput: React.FC<IMessageInputProps> = ({
         </div>
         <div className="relative p-4 px-2 flex items-center justify-between">
           {showEmojiPicker && (
-            <div ref={emojiPickerRef} className="absolute bottom-12 left-0">
+            <div ref={emojiPickerRef} className="absolute bottom-12 left-0 z-99">
               <EmojiPicker
                 width={300}
                 height={350}

@@ -12,8 +12,9 @@ import PrivateChatContent from './PrivateChatContent';
 import { apiCall } from '@/utils/services/request';
 import { IGroup, IPrivateChat } from './type';
 import { useSearchParams } from 'next/navigation';
+import { toast } from 'react-toastify';
 
-const ChatLayout = () => {
+const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
   const searchParams = useSearchParams();
   const privateChatId = searchParams.get('id');
   const groupChatId = searchParams.get('group');
@@ -27,67 +28,103 @@ const ChatLayout = () => {
   const [openChatInfo, setOpenChatInfo] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const handleUpdateUnreadCount = (updatedInfo: any) => {
+    if (updatedInfo.type === 'group') {
+      setMyGroups(prev => {
+        const index = prev.findIndex(group => group.id === updatedInfo.chatId);
+        if (index === -1) return prev;
+
+        const updatedGroup = {
+          ...prev[index],
+          unreadCount: updatedInfo.unreadCount,
+          senderId: updatedInfo.senderId ?? null,
+          status: updatedInfo.lastMessage?.status ?? "",
+          lastMessageSender: updatedInfo.lastMessageSender ?? null,
+          lastMessage: updatedInfo.lastMessage ?? null,
+          lastMessageTime: moment(updatedInfo.lastMessageTime).format('hh:mm A'),
+        };
+
+        const newGroups = prev.slice();
+        newGroups.splice(index, 1);
+        newGroups.unshift(updatedGroup);
+        return newGroups;
+      });
+    } else if (updatedInfo.type === 'private') {
+      setMyPrivateChats(prev => {
+        const index = prev.findIndex(chat => chat.id === updatedInfo.chatId);
+        if (index === -1) return prev;
+
+        const updatedChat = {
+          ...prev[index],
+          unreadCount: updatedInfo.unreadCount,
+          senderId: updatedInfo.senderId ?? null,
+          status: updatedInfo.lastMessage?.status ?? "",
+          lastMessageSender: updatedInfo.lastMessageSender ?? null,
+          lastMessage: updatedInfo.lastMessage ?? null,
+          lastMessageTime: moment(updatedInfo.lastMessageTime).format('hh:mm A'),
+        };
+
+        const newChats = prev.slice();
+        newChats.splice(index, 1);
+        newChats.unshift(updatedChat);
+        return newChats;
+      });
+    }
+  }
+
+  const handleGroupMemberAdded = ({ groupId, members }: any) => {
+    setMyGroups(prev => prev.map((group) =>
+      group.id === groupId
+        ? {
+          ...group,
+          members: [...group.members, ...members]
+        }
+        : group
+    ));
+  };
+
+  const handleGroupMemberRemoved = ({ groupId, groupName, removedMemberId }: any) => {
+    if (removedMemberId === userId) {
+      toast.success(`You were removed from the group ${groupName ?? ""}`);
+      setOpenChatInfo(false);
+      setMyGroups(prev => prev.filter(group => group.id !== groupId));
+      setActiveChatId(prev => prev === groupId ? null : prev);
+    } else {
+      setMyGroups(prev => prev.map((group) =>
+        group.id === groupId
+          ? {
+            ...group,
+            members: group.members.filter(member => member.id !== removedMemberId)
+          }
+          : group
+      ));
+    }
+  };
+
   useEffect(() => {
+    if (!userId) return;
+
     connectSocket();
 
     const socket = getSocket();
-
     socket.emit('activate_chat_handlers');
 
-    socket.on('unread_update', (updatedInfo: any) => {
-      if (updatedInfo.type === 'group') {
-        setMyGroups(prev => {
-          const index = prev.findIndex(group => group.id === updatedInfo.chatId);
-          if (index === -1) return prev;
-
-          const updatedGroup = {
-            ...prev[index],
-            unreadCount: updatedInfo.unreadCount,
-            senderId: updatedInfo.senderId ?? null,
-            status: updatedInfo.lastMessage?.status ?? "",
-            lastMessageSender: updatedInfo.lastMessageSender ?? null,
-            lastMessage: updatedInfo.lastMessage ?? null,
-            lastMessageTime: moment(updatedInfo.lastMessageTime).format('hh:mm A'),
-          };
-
-          const newGroups = prev.slice();
-          newGroups.splice(index, 1);
-          newGroups.unshift(updatedGroup);
-          return newGroups;
-        });
-      } else if (updatedInfo.type === 'private') {
-        setMyPrivateChats(prev => {
-          const index = prev.findIndex(chat => chat.id === updatedInfo.chatId);
-          if (index === -1) return prev;
-
-          const updatedChat = {
-            ...prev[index],
-            unreadCount: updatedInfo.unreadCount,
-            senderId: updatedInfo.senderId ?? null,
-            status: updatedInfo.lastMessage?.status ?? "",
-            lastMessageSender: updatedInfo.lastMessageSender ?? null,
-            lastMessage: updatedInfo.lastMessage ?? null,
-            lastMessageTime: moment(updatedInfo.lastMessageTime).format('hh:mm A'),
-          };
-
-          const newChats = prev.slice();
-          newChats.splice(index, 1);
-          newChats.unshift(updatedChat);
-          return newChats;
-        });
-      }
-    });
+    socket.on('unread_update', handleUpdateUnreadCount);
+    socket.on('group_member_added', handleGroupMemberAdded);
+    socket.on('group_member_removed', handleGroupMemberRemoved);
 
     return () => {
+      socket.off('unread_update', handleUpdateUnreadCount);
+      socket.off('group_member_added', handleGroupMemberAdded);
+      socket.off('group_member_removed', handleGroupMemberRemoved);
+
       disconnectSocket();
     };
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (privateChatId && !handledRef.current) {
       fetchMyPrivateChats();
-    } else if (groupChatId && !handledRef.current) {
-      fetchMyGroup();
     } else {
       fetchMyGroup();
     }
@@ -284,6 +321,7 @@ const ChatLayout = () => {
       {currentChatType === 'group' && (
         <ChatInfoSidebar
           userId={userId}
+          isAdmin={!!isAdmin}
           openChatInfo={openChatInfo}
           setMyGroups={setMyGroups}
           setOpenChatInfo={setOpenChatInfo}
