@@ -89,6 +89,21 @@ const ChatInfoSidebar: React.FC<IChatInfoSidebarProps> = ({
     }
   }
 
+  const removeMember = async (memberId: string) => {
+    try {
+      const response = await apiCall({
+        endPoint: "/chat/remove-member/" + currentChatDetails.id,
+        method: "POST",
+        body: { memberId }
+      });
+      if (response.success) {
+        toast.success("Member removed successfully!");
+      }
+    } catch (err) {
+      console.log("Err:" + err);
+    }
+  }
+
   const renderAddMemberUI = () => {
     if (!isAdmin) return null;
 
@@ -96,7 +111,10 @@ const ChatInfoSidebar: React.FC<IChatInfoSidebarProps> = ({
       <div className="flex-1 h-full overflow-auto bg-white flex flex-col">
         <div className="flex items-center gap-2 mb-4 p-4 pb-0">
           <button
-            onClick={() => setIsUsersPopoverOpen(false)}
+            onClick={() => {
+              setIsUsersPopoverOpen(false);
+              setSelectedUsers([]);
+            }}
             className="text-gray-600 hover:text-black cursor-pointer"
           >
             <ChevronLeftIcon />
@@ -257,7 +275,7 @@ const ChatInfoSidebar: React.FC<IChatInfoSidebarProps> = ({
                       <div className='flex gap-3'>
                         {isAdmin && (
                           <div className='text-[#f44649] hover:text-red-600 cursor-pointer'>
-                            <UserRoundMinusIcon />
+                            <UserRoundMinusIcon onClick={() => removeMember(member.id)} />
                           </div>
                         )}
                         <div className='text-blue-500 hover:text-blue-700 cursor-pointer'>

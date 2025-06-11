@@ -12,6 +12,7 @@ import PrivateChatContent from './PrivateChatContent';
 import { apiCall } from '@/utils/services/request';
 import { IGroup, IPrivateChat } from './type';
 import { useSearchParams } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
   const searchParams = useSearchParams();
@@ -82,7 +83,27 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
     ));
   };
 
+  const handleGroupMemberRemoved = ({ groupId, groupName, removedMemberId }: any) => {
+    if (removedMemberId === userId) {
+      toast.success(`You were removed from the group ${groupName ?? ""}`);
+      setOpenChatInfo(false);
+      setMyGroups(prev => prev.filter(group => group.id !== groupId));
+      setActiveChatId(prev => prev === groupId ? null : prev);
+    } else {
+      setMyGroups(prev => prev.map((group) =>
+        group.id === groupId
+          ? {
+            ...group,
+            members: group.members.filter(member => member.id !== removedMemberId)
+          }
+          : group
+      ));
+    }
+  };
+
   useEffect(() => {
+    if (!userId) return;
+
     connectSocket();
 
     const socket = getSocket();
@@ -90,11 +111,16 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
 
     socket.on('unread_update', handleUpdateUnreadCount);
     socket.on('group_member_added', handleGroupMemberAdded);
+    socket.on('group_member_removed', handleGroupMemberRemoved);
 
     return () => {
+      socket.off('unread_update', handleUpdateUnreadCount);
+      socket.off('group_member_added', handleGroupMemberAdded);
+      socket.off('group_member_removed', handleGroupMemberRemoved);
+
       disconnectSocket();
     };
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (privateChatId && !handledRef.current) {

@@ -7,6 +7,7 @@ export interface IMessage {
   systemMessageType?: string;
   systemMessageData?: {
     userId: string;
+    adminId: string;
   };
   sender?: {
     _id: string;

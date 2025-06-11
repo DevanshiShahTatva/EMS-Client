@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
-import { toast } from 'react-toastify';
 import { getSocket } from '@/utils/services/socket';
 
 import ChatHeader from './ChatHeader';
@@ -62,26 +61,6 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
       }
       return updatedGroups;
     });
-  };
-
-  const handleGroupMemberRemoved = ({ groupId: removedGroupId, removedMemberId }: { groupId: string; removedMemberId: string }) => {
-    if (removedGroupId === groupId) {
-      if (removedMemberId === userId) {
-        setGroupedMessage({});
-        setOpenChatInfo(false);
-        setMyGroups(prev => prev.filter(group => group.id !== removedGroupId));
-        toast.success("You were removed from the group chat!");
-      } else {
-        setMyGroups(prev => prev.map((group) =>
-          group.id === removedGroupId
-            ? {
-              ...group,
-              members: group.members.filter(member => member.id !== removedMemberId)
-            }
-            : group
-        ));
-      }
-    }
   };
 
   const handleNewGroupMessage = ({ message, isSystemMsg }: any) => {
@@ -164,7 +143,6 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     socket.emit("join_group_chat", { groupId });
 
     socket.on("initial_group_messages", handleInitialLoad);
-    socket.on('group_member_removed', handleGroupMemberRemoved);
     socket.on("receive_group_message", handleNewGroupMessage);
     socket.on("new_edited_or_deleted_message", handleEditedOrDeletedMessage);
     socket.on("message_edited_or_deleted_successfully", handleMessageOperationSuccess);
@@ -172,7 +150,6 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     return () => {
       socket.off("initial_group_messages", handleInitialLoad);
       socket.off("receive_group_message", handleNewGroupMessage);
-      socket.off('group_member_removed', handleGroupMemberRemoved);
       socket.off("new_edited_or_deleted_message", handleEditedOrDeletedMessage);
       socket.off("message_edited_or_deleted_successfully", handleMessageOperationSuccess);
 
