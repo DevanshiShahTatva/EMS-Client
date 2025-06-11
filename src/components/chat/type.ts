@@ -7,6 +7,7 @@ export interface IMessage {
   systemMessageType?: string;
   systemMessageData?: {
     userId: string;
+    adminId: string;
   };
   sender?: {
     _id: string;
@@ -97,6 +98,7 @@ export interface IChatListProps {
 }
 
 export interface IChatInfoSidebarProps {
+  isAdmin: boolean;
   openChatInfo: boolean;
   userId: string | null;
   currentChatDetails: IGroup;

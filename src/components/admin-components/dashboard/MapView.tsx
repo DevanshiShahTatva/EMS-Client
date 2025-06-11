@@ -47,8 +47,8 @@ const MapView = () => {
         const response = await apiCall({ endPoint: endpoint, method: "GET" });
         const responseData = response?.data
           .filter(
-            (item: { latitude: number; longitude: number }) =>
-              item.latitude && item.longitude
+            (item: { latitude: number; longitude: number; role: string }) =>
+              item.latitude && item.longitude && item.role === "user"
           )
           .map((item: { latitude: number; longitude: number; city: string }) => ({
             lat: item.latitude || 0,

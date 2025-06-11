@@ -126,11 +126,36 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
   };
 
   const getSystemMessageText = (msg: IMessage) => {
-    if (msg.systemMessageData?.userId === userId) {
-      return msg.systemMessageType === "user_joined" ? "You joined" : "You left";
+    const isCurrentUser = msg.systemMessageData?.userId === userId;
+    const isAdmin = msg.systemMessageData?.adminId === userId;
+
+    if (isAdmin) {
+      switch (msg.systemMessageType) {
+        case "user_added":
+          return msg.content?.replace(/^Admin/, "You");
+        case "user_removed":
+          return msg.content?.replace(/^Admin/, "You");
+        default:
+          return msg.content;
+      }
+    } else {
+      if (!isCurrentUser) {
+        return msg.content;
+      }
+      switch (msg.systemMessageType) {
+        case "user_added":
+          return msg.content?.replace(/(Admin added ).+$/, "$1you");
+        case "user_removed":
+          return msg.content?.replace(/(Admin removed ).+$/, "$1you");
+        case "user_joined":
+          return "You joined";
+        case "user_left":
+          return "You left";
+        default:
+          return msg.content;
+      }
     }
-    return msg.content;
-  }
+  };
 
   return (
     <div
