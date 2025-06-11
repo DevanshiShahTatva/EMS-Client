@@ -76,6 +76,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         })
       );
       sessionStorage.setItem("eventTitle", eventTitle);
+      sessionStorage.setItem("selectedSeats", JSON.stringify(selectedSeatNumbers));
       window.location.href = res.data.url;
     } catch (err) {
       console.error("Error initiating payment:", err);
