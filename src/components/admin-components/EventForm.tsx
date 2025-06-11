@@ -66,10 +66,20 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
   const [existingImages, setExistingImages] = useState<(EventImage | File)[]>([])
   const [loader, setLoder] = useState(false)
 
+   const hasTouchedDescription = useRef(false);
+
+  // CATEGORY AND TICKET TYPE
+  const [categoriesOptions, setCategoriesOptions] = useState<IEventCategory[]>([])
+  const [ticketTypeOptions, setTicketTypeOptions] = useState<ITicketType[]>([])
+
+
   const [selectedLayoutItems, setSelectedLayoutItems] = useState<ITicketInfo>(InitialTicketItems);
   const [openLayoutModal, setOpenLayoutModal] = useState(false);
   const [viewLayoutModal, setViewLayoutModal] = useState(false);
   const [editableId, setEditableId] = useState("");
+
+  const [layoutArray, setLayoutArray] = useState<ISeatLayout[]>([])
+  const [editableLayoutArray, setEditableLayoutArray] = useState<ISeatLayout[]>([])
 
 
   const openViewModal = () => {
@@ -80,18 +90,30 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
      setViewLayoutModal(false)
   }
 
-   const openEditModal = (id: string) => {
+  const openEditModal = (id: string) => {
     const ticketInfo = editCache[id]
+    const editArray = layoutArray.filter(item => item.id === ticketInfo.type)
+    const label = ticketTypeOptions.find(item => item._id === ticketInfo.type)?.name
+    const selectedTicketItem: ITicketInfo = {
+      id: ticketInfo.type || "",
+      ticketPrice: ticketInfo.price || "",
+      ticketType: label || "",
+      totalSeats: ticketInfo.maxQty || "",
+    }
+    setEditableLayoutArray(editArray)
     setEditableId(id)
-    setSelectedLayoutItems(InitialTicketItems)
-     setOpenLayoutModal(true)
+    setSelectedLayoutItems(selectedTicketItem)
+    setOpenLayoutModal(true)
   }
 
   const closeEditModal = () => {
-     setOpenLayoutModal(false)
+    setOpenLayoutModal(false)
+    setSelectedLayoutItems(InitialTicketItems)
+    setEditableLayoutArray([])
+    setEditableId("")
   }
 
-  const [layoutArray, setLayoutArray] = useState<ISeatLayout[]>([])
+  
 
   const openModal = () => {
     const { type, maxQty, price } = newTicket
@@ -118,15 +140,28 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
   } 
 
   const saveLayout = (newLayouts: ISeatLayout[]) => {
-    setLayoutArray(prevLayoutArray => [...prevLayoutArray, ...newLayouts]);
+    setLayoutArray((prevLayoutArray) => {
+      const updatedLayoutArray = [...prevLayoutArray];
+
+      newLayouts.forEach((newLayout) => {
+        const existingIndex = updatedLayoutArray.findIndex(
+          (layout) => layout.id === newLayout.id
+        );
+
+        if (existingIndex !== -1) {
+          // If layout with same ticketType exists, replace it (edit case)
+          updatedLayoutArray[existingIndex] = newLayout;
+        } else {
+          // Otherwise, push it as new
+          updatedLayoutArray.push(newLayout);
+        }
+      });
+
+      return updatedLayoutArray;
+    });
+    // setLayoutArray(prevLayoutArray => [...prevLayoutArray, ...newLayouts]);
     closeModal();
   };
-
-  const hasTouchedDescription = useRef(false);
-
-  // CATEGORY AND TICKET TYPE
-  const [categoriesOptions, setCategoriesOptions] = useState<IEventCategory[]>([])
-  const [ticketTypeOptions, setTicketTypeOptions] = useState<ITicketType[]>([])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -725,15 +760,22 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
   const handleSubmitLayout = async (eventId: string) => {
     try {
 
+      const bodyArray = layoutArray.map(item => {
+        return {
+          ticketType: item.id,
+          price: item.price,
+          rows: item.rows,
+        }
+      })
+
       const httpBody = {
         eventId : eventId,
-        seatLayout: layoutArray
+        seatLayout: bodyArray
       }
 
-
       const result = await apiCall({
-        endPoint: API_ROUTES.ADMIN.SAVE_LAYOUT,
-        method: "POST",
+        endPoint: (!isCloneEvent && isEditMode) ? API_ROUTES.ADMIN.UPDATE_LAYOUT(eventType) :  API_ROUTES.ADMIN.SAVE_LAYOUT,
+        method: (!isCloneEvent && isEditMode) ? "PUT" : "POST",
         body: httpBody,
       })
 
@@ -859,6 +901,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
             ticketType: item.ticketType.name, // ObjectId as string
             price: item.price,
             rows: item.rows,
+            id: item.ticketType._id
           }
         });
         setLayoutArray(receivedArray)
@@ -1371,11 +1414,11 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
       {/* Add/Edit Seating Modal */}
       <SeatingModal
         isOpen={openLayoutModal}
-        onClose={closeModal}
+        onClose={editableId !=="" ?  closeEditModal : closeModal}
         fullScreen
-        title='Select Seat Layout'
+        title={editableId !== "" ? 'Edit Seat Layout' : 'Select Seat Layout'}
       >
-        <AddEditSeatLayout isEditable={editableId !== ""} savedLayout={editableId !== "" ? layoutArray : []} ticketItems={selectedLayoutItems} onSave={saveLayout} />
+        <AddEditSeatLayout isEditable={editableId !== ""} savedLayout={editableId !== "" ? editableLayoutArray : []} ticketItems={selectedLayoutItems} onSave={saveLayout} />
       </SeatingModal>
 
       {/* View Seating Modal */}

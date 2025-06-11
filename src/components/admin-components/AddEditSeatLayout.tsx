@@ -1,14 +1,8 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-
-// types
 import { ISeatLayout, ITicketInfo } from '@/app/admin/event/types';
-
-// Custom components
 import CustomButton from '../common/CustomButton';
-
-// Library
 import { Plus, Undo, Redo } from 'lucide-react';
 
 interface Seat {
@@ -23,90 +17,37 @@ interface Move {
 }
 
 interface LayoutProps {
-  ticketItems: ITicketInfo
-  onSave: (layoutArray: ISeatLayout[]) => void
-  savedLayout?: ISeatLayout[]
-  isEditable? : boolean
+  ticketItems: ITicketInfo;
+  onSave: (layoutArray: ISeatLayout[]) => void;
+  savedLayout?: ISeatLayout[];
+  isEditable?: boolean;
 }
 
-type SeatInput = {
-  category: string;
-  row: string;
-  seats: {
-    seat: string | number;
-    isUsed: boolean;
-  }[];
-};
-
-type SeatOutput = {
-  category: string;
-  rows: {
-    row: string;
-    seats: {
-      seatNumber: string | number;
-      isUsed: boolean;
-    }[];
-  }[];
-};
-
-const transformSeatingData = (input: SeatInput[]): SeatOutput[] => {
-  const rowMap = new Map<
-    string,
-    {
-      category: string;
-      seats: { seatNumber: string | number; isUsed: boolean }[];
-    }
-  >();
-
-  input.forEach(({ category, row, seats }) => {
-    const key = row;
-    const formattedSeats = seats.map((s) => ({
-      seatNumber: s.seat.toString(),
-      isUsed: s.isUsed,
-    }));
-
-    if (category === "Space") {
-      if (rowMap.has(key)) {
-        rowMap.get(key)!.seats.push(...formattedSeats);
-      }
-    } else {
-      rowMap.set(key, {
-        category,
-        seats: [...(rowMap.get(key)?.seats || []), ...formattedSeats],
-      });
-    }
-  });
-
-  // Convert to final output format grouped by category
-  const categoryMap: Record<
-    string,
-    {
-      row: string;
-      seats: { seatNumber: string | number; isUsed: boolean }[];
-    }[]
-  > = {};
-
-  for (const [row, { category, seats }] of rowMap.entries()) {
-    if (!categoryMap[category]) categoryMap[category] = [];
-    categoryMap[category].push({ row, seats });
-  }
-
-  return Object.entries(categoryMap).map(([category, rows]) => ({
-    category,
-    rows,
+const transformSeatingData = (input: ISeatLayout[]): ISeatLayout[] => {
+  return input.map(({ ticketType, price, rows, id }) => ({
+    ticketType,
+    id,
+    price,
+    rows: rows.map((row) => ({
+      row: row.row,
+      seats: row.seats.map((s) => ({
+        seatNumber: s.seatNumber,
+        isUsed: s.isUsed,
+      })),
+    })),
   }));
 };
 
-
-
-const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLayout= [], isEditable = false }) => {
+const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLayout = [], isEditable = false }) => {
   const [rows, setRows] = useState<Seat[][]>([[]]);
   const [addCount, setAddCount] = useState<number>(1);
   const [activeRowIndex, setActiveRowIndex] = useState<number>(0);
   const [history, setHistory] = useState<Move[]>([]);
+  const [future, setFuture] = useState<Move[]>([]);
 
   const saveToHistory = (newRows: Seat[][]) => {
     setHistory((prev) => [...prev, { rows: JSON.parse(JSON.stringify(rows)) }]);
+    setFuture([]);
     setRows(newRows);
   };
 
@@ -116,12 +57,8 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
   };
 
   const handleAddSeats = () => {
-    const currentRealSeatCount = rows.reduce(
-      (count, row) => count + row.filter((seat) => seat.type !== 'Space').length,
-      0
-    );
+    const currentRealSeatCount = rows.reduce((count, row) => count + row.filter((seat) => seat.type !== 'Space').length, 0);
     const remaining = Number(ticketItems.totalSeats) - currentRealSeatCount;
-
     if (remaining <= 0) return;
 
     const newRows = [...rows];
@@ -141,18 +78,10 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
     saveToHistory(newRows);
   };
 
-
   const handleAddSpace = () => {
     const newRows = [...rows];
     const row = [...newRows[activeRowIndex]];
-
-    row.push({
-      id: '',
-      row: activeRowIndex,
-      col: row.length,
-      type: 'Space',
-    });
-
+    row.push({ id: '', row: activeRowIndex, col: row.length, type: 'Space' });
     newRows[activeRowIndex] = row;
     saveToHistory(newRows);
   };
@@ -160,12 +89,7 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
   const handleRemoveSeat = (rowIndex: number, seatIndex: number) => {
     const newRows = [...rows];
     const newRow = [...newRows[rowIndex]];
-
-    newRow[seatIndex] = {
-      ...newRow[seatIndex],
-      type: 'Space',
-      id: '',
-    };
+    newRow[seatIndex] = { ...newRow[seatIndex], type: 'Space', id: '' };
 
     let seatNumber = 1;
     for (let i = 0; i < newRow.length; i++) {
@@ -183,43 +107,35 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
   const handleUndo = () => {
     if (history.length === 0) return;
     const lastMove = history[history.length - 1];
+    setFuture((prev) => [...prev, { rows: JSON.parse(JSON.stringify(rows)) }]);
     setRows(lastMove.rows);
     setHistory((prev) => prev.slice(0, -1));
   };
 
-  const handleSaveLayout = () => {
-    const layoutMap: Record<
-      string,
-      {
-        category: string;
-        row: string;
-        seats: { seat: string | number; isUsed: boolean }[];
-      }
-    > = {};
+  const handleRedo = () => {
+    if (future.length === 0) return;
+    const nextMove = future[future.length - 1];
+    setHistory((prev) => [...prev, { rows: JSON.parse(JSON.stringify(rows)) }]);
+    setRows(nextMove.rows);
+    setFuture((prev) => prev.slice(0, -1));
+  };
 
+  const handleSaveLayout = () => {
+    const layoutMap: Record<string, { category: string; row: string; seats: { seatNumber: string | number; isUsed: boolean }[] }> = {};
     rows.forEach((row, rowIndex) => {
       const rowName = String.fromCharCode(65 + rowIndex);
-
-      let actualCategory = ""; // used to group this row under one actual category (e.g., VIP)
-
-      const seatsForThisRow: { seat: string | number; isUsed: boolean }[] = [];
+      let actualCategory = "";
+      const seatsForThisRow: { seatNumber: string | number; isUsed: boolean }[] = [];
 
       row.forEach((seat) => {
         if (seat.type === "Space") {
-          seatsForThisRow.push({
-            seat: 0,
-            isUsed: false,
-          });
+          seatsForThisRow.push({ seatNumber: 0, isUsed: false });
         } else {
-          actualCategory = seat.type; // assume all real seats in this row are of same type
-          seatsForThisRow.push({
-            seat: seat.id,
-            isUsed: true,
-          });
+          actualCategory = seat.type;
+          seatsForThisRow.push({ seatNumber: seat.id, isUsed: true });
         }
       });
 
-      // Only save rows that have real seats
       if (actualCategory) {
         layoutMap[`${actualCategory}-${rowName}`] = {
           category: actualCategory,
@@ -229,58 +145,33 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
       }
     });
 
-    const layout = Object.values(layoutMap);
-
-    const modifiedArray = transformSeatingData(layout)
-    const finalArray: ISeatLayout[] = modifiedArray.map(item => {
-      return {
-        ticketType : ticketItems.id,
+    const finalArray = transformSeatingData([
+      {
+        ticketType: ticketItems.ticketType,
+        id:ticketItems.id,
         price: parseInt(ticketItems.ticketPrice),
-        rows: item.rows
+        rows: Object.values(layoutMap).map(({ row, seats }) => ({ row, seats })),
       }
-    }) 
+    ]);
 
-    console.log("first", rows)
-    
-    onSave(finalArray)
-    
+    onSave(finalArray);
   };
 
   const remainingSeats = useMemo(() => {
-    const realSeatsCount = rows.reduce(
-      (count, row) => count + row.filter((seat) => seat.type !== 'Space').length,
-      0
-    );
-    return Number(ticketItems.totalSeats) - realSeatsCount;
+    return Number(ticketItems.totalSeats) - rows.reduce((count, row) => count + row.filter((seat) => seat.type !== 'Space').length, 0);
   }, [rows, ticketItems.totalSeats]);
 
   useEffect(() => {
     if (isEditable && savedLayout.length > 0) {
-      const initialRows: Seat[][] = savedLayout.flatMap((layoutObject) => {
-        return layoutObject.rows.map((row) => {
-          return row.seats.map((seat, seatIndex) => ({
-            id: String(seat.seatNumber),
-            row: 0, // You'll need to calculate this based on the savedLayout structure
-            col: seatIndex,
-            type: String(seat.seatNumber) === '0' ? 'Space' : layoutObject.ticketType, // Or determine the type based on your data
-          }));
-        });
-      });
-
-
       const structuredRows: Seat[][] = [];
       savedLayout.forEach((layoutObject) => {
-        layoutObject.rows.forEach((rowObject, rowIndex) => {
-          const rowName = rowObject.row; // e.g., "A", "B", etc.
-          const actualRowIndex = rowName.charCodeAt(0) - 65; // Convert "A" to 0, "B" to 1, etc.
-
-          if (!structuredRows[actualRowIndex]) {
-            structuredRows[actualRowIndex] = []; // Initialize the row if it doesn't exist
-          }
+        layoutObject.rows.forEach((rowObject) => {
+          const actualRowIndex = rowObject.row.charCodeAt(0) - 65;
+          if (!structuredRows[actualRowIndex]) structuredRows[actualRowIndex] = [];
 
           rowObject.seats.forEach((seat, seatIndex) => {
             structuredRows[actualRowIndex].push({
-              id: String(seat.seatNumber),
+              id: String(seat.seatNumber) === "0" ? "" : String(seat.seatNumber),
               row: actualRowIndex,
               col: seatIndex,
               type: String(seat.seatNumber) === '0' ? 'Space' : layoutObject.ticketType,
@@ -288,13 +179,11 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
           });
         });
       });
-
-      setRows(structuredRows); // Set the structured array of rows to state
-      // --- FIX ENDS HERE ---
+      setRows(structuredRows);
     } else {
-      setRows([[]]); // Initialize with a single empty row
+      setRows([[]]);
     }
-  }, [savedLayout, isEditable, ticketItems.ticketType]);
+  }, [savedLayout, isEditable]);
 
 
   return (
@@ -422,24 +311,24 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
               </CustomButton>
 
               <CustomButton className='flex gap-2 items-center' startIcon={<Plus className='h-5 w-5' />} onClick={handleAddRow} variant="success">
-                 Row
+                Row
               </CustomButton>
 
               <CustomButton
                 onClick={handleUndo}
                 disabled={history.length === 0}
                 variant={history.length === 0 ? "disabled" : "warning"}
-                className='flex gap-2 items-center' 
+                className='flex gap-2 items-center'
                 startIcon={<Undo className='h-5 w-5' />}
               >
                 Undo
               </CustomButton>
 
               <CustomButton
-                onClick={handleUndo}
+                onClick={handleRedo}
                 disabled={history.length === 0}
                 variant={history.length === 0 ? "disabled" : "warning"}
-                className='flex gap-2 items-center' 
+                className='flex gap-2 items-center'
                 startIcon={<Redo className='h-5 w-5' />}
               >
                 Redo

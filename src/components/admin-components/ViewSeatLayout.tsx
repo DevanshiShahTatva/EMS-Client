@@ -1,14 +1,11 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-
-// 1. Define types for the data coming from the backend (as per your schema)
 interface IBackendSeat {
   seatNumber: string | number; // Allowing for '0' as string or actual numbers
   isUsed: boolean;
   _id?: string; // Mongoose adds this automatically
 }
-
 interface IBackendRow {
   row: string;
   seats: IBackendSeat[];
@@ -21,8 +18,6 @@ interface IBackendSeatLayout {
   rows: IBackendRow[];
   _id?: string; // Optional if this is the top-level document ID
 }
-
-// 2. Define types for the transformed data used in your frontend state
 interface IFrontendSeat {
   id: string; // Mapped from seatNumber, always a string for display
   isUsed: boolean;
@@ -30,23 +25,19 @@ interface IFrontendSeat {
   originalId: string; // Storing the backend _id
 }
 
-// Frontend 'rows' state is an array of arrays of IFrontendSeat
 type IFrontendRows = IFrontendSeat[][];
-
-// 3. Define types for the component's props
 interface ViewSeatLayoutProps {
   seatLayoutDataFromProps: IBackendSeatLayout[] | null; // It's an array of IBackendSeatLayout, or null initially
 }
 
-// Add React.FC<PropsType> to the function component
+interface ITransformedLayout {
+  ticketType: string;
+  ticketPrice: number;
+  rows: IFrontendRows;
+}
+
 const ViewSeatLayout: React.FC<ViewSeatLayoutProps> = ({ seatLayoutDataFromProps }) => {
-  // Now, instead of 'rows', we'll store the fully transformed layouts,
-  // including their ticketType and price, as an array.
-  interface ITransformedLayout {
-    ticketType: string;
-    ticketPrice: number;
-    rows: IFrontendRows;
-  }
+  
   const [transformedLayouts, setTransformedLayouts] = useState<ITransformedLayout[]>([]);
 
   useEffect(() => {

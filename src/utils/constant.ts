@@ -70,7 +70,8 @@ export const API_ROUTES = {
         BULK_USER_CREATION : '/admin/bulk-uploads',
         DELETE_USER: (id: string) => `/admin/delete-user/${id}`,
         SAVE_LAYOUT: `/events/create-seat-layout`,
-        GET_LAYOUT: (id: string) => `events/get-seat-layout/${id}`
+        GET_LAYOUT: (id: string) => `events/get-seat-layout/${id}`,
+        UPDATE_LAYOUT: (id: string) => `events/update-seat-layout/${id}`
     },
     AUTH: {
         LOGIN: `/login`,

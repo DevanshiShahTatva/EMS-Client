@@ -161,6 +161,7 @@ export interface ISeatLayout {
   ticketType: string; // ObjectId as string
   price: number;
   rows: ISeatRow[];
+  id?:string
 }
 
 export interface ISeatRow {
