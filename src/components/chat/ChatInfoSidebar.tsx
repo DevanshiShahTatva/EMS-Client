@@ -56,6 +56,7 @@ const ChatInfoSidebar: React.FC<IChatInfoSidebarProps> = ({
         }
       });
       if (response.success) {
+        setSelectedUsers([]);
         setIsUsersPopoverOpen(false);
       }
     } catch (err) {
