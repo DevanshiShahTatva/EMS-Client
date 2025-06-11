@@ -68,7 +68,6 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
   const [loader, setLoder] = useState(false)
 
    const hasTouchedDescription = useRef(false);
-   const isFirstLayoutSyncDone = useRef(false);
 
   // CATEGORY AND TICKET TYPE
   const [categoriesOptions, setCategoriesOptions] = useState<IEventCategory[]>([])
@@ -928,7 +927,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
         method: 'GET',
       });
 
-      if (response && response.success) {
+      if (response && response.success && response.data.length > 0) {
         const receivedArray = response.data[0].seatLayout.map(item => {
           return {
             ticketType: item.ticketType.name, // ObjectId as string
@@ -938,37 +937,31 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
           }
         });
         setLayoutArray(receivedArray)
-        setTickets((prevTicketsArray) => {
-          return prevTicketsArray.map((ticket) => {
-            const matchingLayout = receivedArray.filter((layout) => layout.id === ticket.type);
-
-            return {
-              ...ticket,
-              isLayoutAdded: matchingLayout.length > 0 ? true : false,
-            };
-          });
-        });
+        return receivedArray
       }
     } catch (err) {
       console.error('Error fetching ticket types', err);
     }
+    return []
   }, []);
 
   useEffect(() => {
     getCategories()
     getTicketTypes()
     if (eventType !== "create") {
-      fetchEventWithId()
-      getSeatLayout()
+      fetchLayoutAndEventData()
     }
   }, [eventType, getCategories, getTicketTypes])
 
-  useEffect(() => {
-  // Run only once, when both layoutArray and tickets are available
-  if (!isFirstLayoutSyncDone.current && layoutArray.length > 0 && tickets.length > 0) {
+  const fetchLayoutAndEventData = async () => {
+    const [_, layout] = await Promise.all([
+      fetchEventWithId(),
+      getSeatLayout(),
+    ]);
+    if (!layout) return;
     setTickets((prevTicketsArray) => {
       return prevTicketsArray.map((ticket) => {
-        const matchingLayout = layoutArray.filter((layout) => layout.id === ticket.type);
+        const matchingLayout = layout.filter((layout) => layout.id === ticket.type);
 
         return {
           ...ticket,
@@ -977,10 +970,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
       });
     });
 
-    isFirstLayoutSyncDone.current = true;
   }
-}, [layoutArray, tickets]);
-
 
   const formattedTicketTypes = useMemo(() => {
     const selectedTypeIds = tickets.map(t => t.type);
