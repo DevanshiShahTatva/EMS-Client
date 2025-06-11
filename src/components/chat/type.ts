@@ -97,6 +97,7 @@ export interface IChatListProps {
 }
 
 export interface IChatInfoSidebarProps {
+  isAdmin: boolean;
   openChatInfo: boolean;
   userId: string | null;
   currentChatDetails: IGroup;

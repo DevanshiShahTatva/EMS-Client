@@ -64,26 +64,6 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     });
   };
 
-  const handleGroupMemberAdded = ({ groupId: addedGroupId, newMember }: { groupId: string; newMember: { id: string; name: string; avatar?: string } }) => {
-    if (addedGroupId === groupId) {
-      setMyGroups(prev => prev.map((group) =>
-        group.id === addedGroupId
-          ? {
-            ...group,
-            members: [
-              ...group.members,
-              {
-                id: newMember.id,
-                name: newMember.name,
-                avatar: newMember.avatar
-              }
-            ]
-          }
-          : group
-      ));
-    }
-  };
-
   const handleGroupMemberRemoved = ({ groupId: removedGroupId, removedMemberId }: { groupId: string; removedMemberId: string }) => {
     if (removedGroupId === groupId) {
       if (removedMemberId === userId) {
@@ -104,8 +84,17 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     }
   };
 
-  const handleNewGroupMessage = (message: any) => {
-    if (message.group === groupId) {
+  const handleNewGroupMessage = ({ message, isSystemMsg }: any) => {
+    if (isSystemMsg) {
+      message.map((msg: any) => {
+        const dateKey = getDateKey(msg.createdAt);
+        setGroupedMessage((prev) => ({
+          ...prev,
+          [dateKey]: [...(prev[dateKey] || []), msg]
+        }));
+      })
+      setIsScrollBottom(true);
+    } else if (message.group === groupId) {
       setGroupedMessage(prev => addMessageToGroup(message, prev));
       setIsScrollBottom(true);
 
@@ -175,7 +164,6 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     socket.emit("join_group_chat", { groupId });
 
     socket.on("initial_group_messages", handleInitialLoad);
-    socket.on('group_member_added', handleGroupMemberAdded);
     socket.on('group_member_removed', handleGroupMemberRemoved);
     socket.on("receive_group_message", handleNewGroupMessage);
     socket.on("new_edited_or_deleted_message", handleEditedOrDeletedMessage);
@@ -183,7 +171,6 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
 
     return () => {
       socket.off("initial_group_messages", handleInitialLoad);
-      socket.off('group_member_added', handleGroupMemberAdded);
       socket.off("receive_group_message", handleNewGroupMessage);
       socket.off('group_member_removed', handleGroupMemberRemoved);
       socket.off("new_edited_or_deleted_message", handleEditedOrDeletedMessage);
