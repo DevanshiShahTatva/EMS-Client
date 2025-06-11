@@ -14,6 +14,7 @@ import CoinRedeemCard from './CoinReedem';
 import { apiCall } from '@/utils/services/request';
 import { API_ROUTES } from '@/utils/constant';
 import { InformationCircleIcon } from "@heroicons/react/24/solid";
+import SeatBookingModal from '../common/seat/SeatBookingModal';
 
 interface TicketBookingModalProps {
   isOpen: boolean
@@ -22,6 +23,7 @@ interface TicketBookingModalProps {
   tickets: EventTicket[]
   points: number;
   conversionRate: number;
+  eventId: string;
 }
 
 const getAvailableSeats = (total: number, booked: number) => total - booked
@@ -32,7 +34,8 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   eventTitle,
   tickets,
   points,
-  conversionRate
+  conversionRate,
+  eventId
 }) => {
   const [selectedType, setSelectedType] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(0)
@@ -44,6 +47,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   const [promoCodeMessage, setPromoCodeMessage] = useState<string | null>(null);
   const [activeMethod, setActiveMethod] = useState<'coins' | 'promo' | null>(null);
   const [charge, setCharge] = useState<number>(0);
+  const [openSeatBookingModal, setSeatBookingModal] = useState<boolean>(false);
 
   const selectedTicketType = tickets.find((t) => t.type?._id === selectedType)
   const totalPrice = selectedTicketType
@@ -334,16 +338,28 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   );
 
   return (
+    <>
     <CommonModalLayout
       modalTitle={`Booking ${eventTitle}`}
       footerActions={[
+        // {
+        //   label: `Pay ₹${(finalAmount / 100).toFixed(2)}`,
+        //   type: "submit",
+        //   variant: "primary",
+        //   onClick: () => { handleProceedToPayment() },
+        //   disabled: (!selectedType || quantity === 0)
+        // }
         {
-          label: `Pay ₹${(finalAmount / 100).toFixed(2)}`,
-          type: "submit",
+          label: "Cancel",
+          onClick: onClose,
+          variant: "outlined",
+        },
+        {
+          label: "Select Seat and Pay",
+          onClick: () => setSeatBookingModal(true),
           variant: "primary",
-          onClick: () => { handleProceedToPayment() },
           disabled: (!selectedType || quantity === 0)
-        }
+        },
       ]}
       onClose={onClose}
     >
@@ -411,6 +427,15 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
         </div>
       </div>
     </CommonModalLayout>
+      {openSeatBookingModal && (
+        <SeatBookingModal
+          onClose={() => setSeatBookingModal(false)}
+          eventId={eventId}
+          ticketType={selectedType}
+          selectedQty={quantity}
+        />
+      )}
+    </>
   )
 }
 
