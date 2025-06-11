@@ -11,6 +11,7 @@ import { getTicketStatus } from '@/app/events/event-helper';
 import CommonModalLayout from '@/components/common/CommonModalLayout';
 import CheckoutModal from '@/components/common/CheckoutModal';
 import SeatBookingModal from '../common/seat/SeatBookingModal';
+import { SelectSeat } from '@/utils/types';
 
 interface TicketBookingModalProps {
   isOpen: boolean
@@ -37,12 +38,10 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
   const [quantity, setQuantity] = useState(0)
   const [openTicket, setOpenTicket] = useState<string | null>(null);
   const [openSeatBookingModal, setSeatBookingModal] = useState<boolean>(false);
-  const [openCheckoutModal, setOpenCheckoutModal] = useState<boolean>(false); // New state for checkout modal
+  const [openCheckoutModal, setOpenCheckoutModal] = useState<boolean>(false);
+  const [selectedSeatNumbers, setSelectedSeatNumbers] = useState<SelectSeat[]>([])
 
   const selectedTicketType = tickets.find((t) => t.type?._id === selectedType)
-  const totalPrice = selectedTicketType
-    ? selectedTicketType.price * quantity
-    : 0
 
   if (!isOpen) return null
 
@@ -74,7 +73,8 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
     setSeatBookingModal(true);
   };
 
-  const handleOpenCheckoutModal = () => {
+  const handleOpenCheckoutModal = (selectedSeats: SelectSeat[]) => {
+    setSelectedSeatNumbers(selectedSeats);
     setOpenCheckoutModal(true);
   };
 
@@ -177,22 +177,15 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
         ]}
         onClose={onClose}
       >
-        <div className='pt-6'>
+        <div className='py-6'>
           {renderDynamicTickets()}
-          
-          {/* <div className="flex justify-between items-center mt-6 mb-5">
-            <span className="text-gray-900 font-medium">Total Amount</span>
-            <span className="text-xl font-semibold text-gray-900">
-              ₹{totalPrice.toFixed(2)}
-            </span>
-          </div> */}
         </div>
       </CommonModalLayout>
       
       {openSeatBookingModal && (
         <SeatBookingModal
           onClose={() => setSeatBookingModal(false)}
-          onConfirmSeat={() => handleOpenCheckoutModal()}
+          onConfirmSeat={(selectedSeats) => handleOpenCheckoutModal(selectedSeats)}
           eventId={eventId}
           ticketType={selectedType}
           selectedQty={quantity}
@@ -212,6 +205,7 @@ const TicketBookingModal: React.FC<TicketBookingModalProps> = ({
           }}
           points={points}
           conversionRate={conversionRate}
+          selectedSeatNumbers={selectedSeatNumbers}
         />
       )}
     </>

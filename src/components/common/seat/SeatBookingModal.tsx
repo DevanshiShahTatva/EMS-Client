@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import ModalLayout from "../CommonModalLayout";
 import { apiCall } from "@/utils/services/request";
 import clsx from "clsx";
+import { SelectSeat } from "@/utils/types";
 
 interface Props {
   eventId: string;
   onClose: () => void;
   ticketType: string | null;
   selectedQty: number;
-  onConfirmSeat: () => void;
+  onConfirmSeat: (selectedSeats: SelectSeat[]) => void;
 }
 
 interface Seat {
@@ -42,11 +43,11 @@ const SeatBookingModal = ({
   onClose,
   ticketType,
   selectedQty,
-  onConfirmSeat
+  onConfirmSeat,
 }: Props) => {
   const [loading, setLoading] = useState(false);
   const [seatLayout, setSeatLayout] = useState<SeatLayoutSection[]>([]);
-  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
+  const [selectedSeats, setSelectedSeats] = useState<SelectSeat[]>([]);
 
   useEffect(() => {
     if (eventId) fetchSeatLayout();
@@ -69,14 +70,21 @@ const SeatBookingModal = ({
     }
   };
 
-  const handleSeatSelect = (seatId: string) => {
-    setSelectedSeats((prev) =>
-      prev.includes(seatId)
-        ? prev.filter((id) => id !== seatId)
-        : prev.length < selectedQty
-        ? [...prev, seatId]
-        : prev
-    );
+  const handleSeatSelect = (seatId: string, seatNumber: string) => {
+    const findIsSeatSelected = selectedSeats.find((seat) => seat.id === seatId);
+    if (findIsSeatSelected) {
+      const updateSeats = selectedSeats.filter((seat) => seat.id === seatId);
+      setSelectedSeats(updateSeats);
+    } else {
+      if (selectedSeats.length < selectedQty) {
+        const obj = {
+          id: seatId,
+          seatNumber: seatNumber,
+        };
+        const updateSeats = [...selectedSeats, obj];
+        setSelectedSeats(updateSeats);
+      }
+    }
   };
 
   const renderSeats = (seats: Seat[], ticketId: string) =>
@@ -85,7 +93,9 @@ const SeatBookingModal = ({
         return <div key={`gap-${index}`} className="w-8 h-8" />;
       }
 
-      const isSelected = selectedSeats.includes(seat._id);
+      const isSelected = selectedSeats.find(
+        (seatItem) => seatItem.id === seat._id
+      );
       const isCurrentType = ticketId === ticketType;
       const isSelectable =
         isCurrentType &&
@@ -96,7 +106,7 @@ const SeatBookingModal = ({
         <button
           key={seat._id}
           disabled={!isSelectable}
-          onClick={() => handleSeatSelect(seat._id)}
+          onClick={() => handleSeatSelect(seat._id, seat.seatNumber)}
           className={clsx(
             "w-8 h-8 rounded-md flex items-center justify-center text-xs font-medium transition-all",
             {
@@ -159,7 +169,7 @@ const SeatBookingModal = ({
     <ModalLayout
       onClose={onClose}
       modalTitle="Select Your Seats"
-      maxWidth="max-w-max"
+      maxWidth="max-w-[60vw]"
       footerActions={[
         {
           label: "Cancel",
@@ -170,7 +180,7 @@ const SeatBookingModal = ({
           label: "Confirm Seats",
           onClick: () => {
             console.log("Selected seats:", selectedSeats);
-            onConfirmSeat();
+            onConfirmSeat(selectedSeats);
             onClose();
           },
           variant: "primary",

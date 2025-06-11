@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react';
-import { CircleCheckIcon } from 'lucide-react';
-import CommonModalLayout from '@/components/common/CommonModalLayout';
-import { apiCall } from '@/utils/services/request';
-import axios from 'axios';
-import CoinRedeemCard from '../events-components/CoinReedem';
-import { InformationCircleIcon } from "@heroicons/react/24/solid";
+import React, { useState } from "react";
+import { CircleCheckIcon } from "lucide-react";
+import CommonModalLayout from "@/components/common/CommonModalLayout";
+import { apiCall } from "@/utils/services/request";
+import axios from "axios";
+import CoinRedeemCard from "../events-components/CoinReedem";
+import { SelectSeat } from "@/utils/types";
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -20,6 +20,7 @@ interface CheckoutModalProps {
   };
   points: number;
   conversionRate: number;
+  selectedSeatNumbers: SelectSeat[];
 }
 
 const CheckoutModal: React.FC<CheckoutModalProps> = ({
@@ -28,22 +29,28 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   eventTitle,
   ticket,
   points,
-  conversionRate
+  conversionRate,
+  selectedSeatNumbers,
 }) => {
   const [usedPoints, setUsedPoints] = useState(0);
   const [promoCode, setPromoCode] = useState("");
   const [voucherId, setVoucherId] = useState<string | null>(null);
   const [promoCodeDiscount, setPromoCodeDiscount] = useState(0);
   const [promoCodeMessage, setPromoCodeMessage] = useState<string | null>(null);
-  const [activeMethod, setActiveMethod] = useState<'coins' | 'promo' | null>(null);
+  const [activeMethod, setActiveMethod] = useState<"coins" | "promo" | null>(
+    null
+  );
 
   const totalPrice = ticket.price * ticket.quantity;
-  const discount = promoCodeDiscount > 0 ? promoCodeDiscount : Math.round((usedPoints / conversionRate) * 100);
+  const discount =
+    promoCodeDiscount > 0
+      ? promoCodeDiscount
+      : Math.round((usedPoints / conversionRate) * 100);
   const finalAmount = Math.max(totalPrice * 100 - discount, 0);
 
   const handlePayment = async () => {
     try {
-      const res = await axios.post('/api/create-payment-intent', {
+      const res = await axios.post("/api/create-payment-intent", {
         eventTitle,
         tickets: {
           quantity: ticket.quantity,
@@ -56,19 +63,22 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
           totalPrice: ticket.price,
         },
       });
-      sessionStorage.setItem("tickets", JSON.stringify({
-        type: ticket.type,
-        quantity: ticket.quantity,
-        totalPrice: finalAmount / 100,
-        ticketId: ticket.id,
-        voucherId,
-        usedPoints,
-        discount: discount / 100
-      }));
+      sessionStorage.setItem(
+        "tickets",
+        JSON.stringify({
+          type: ticket.type,
+          quantity: ticket.quantity,
+          totalPrice: finalAmount / 100,
+          ticketId: ticket.id,
+          voucherId,
+          usedPoints,
+          discount: discount / 100,
+        })
+      );
       sessionStorage.setItem("eventTitle", eventTitle);
       window.location.href = res.data.url;
     } catch (err) {
-      console.error('Error initiating payment:', err);
+      console.error("Error initiating payment:", err);
     }
   };
 
@@ -80,7 +90,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   const handleRemove = () => {
     setVoucherId(null);
-    setPromoCode('');
+    setPromoCode("");
     setPromoCodeDiscount(0);
     setPromoCodeMessage(null);
   };
@@ -90,11 +100,11 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       try {
         const res = await apiCall({
           method: "POST",
-          endPoint: '/voucher/validate-promocode',
+          endPoint: "/voucher/validate-promocode",
           body: {
             promoCode: promoCode.trim(),
-            amount: (finalAmount / 100).toFixed(2)
-          }
+            amount: (finalAmount / 100).toFixed(2),
+          },
         });
         if (res.success) {
           setVoucherId(res.voucherId);
@@ -112,23 +122,23 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   };
 
   const selectCoinMethod = () => {
-    if (activeMethod === 'coins') {
+    if (activeMethod === "coins") {
       setUsedPoints(0);
       setActiveMethod(null);
       return;
     }
-    setActiveMethod('coins');
+    setActiveMethod("coins");
     handleRemove();
   };
 
   const selectPromoMethod = () => {
-    if (activeMethod === 'promo') {
+    if (activeMethod === "promo") {
       setActiveMethod(null);
       handleRemove();
       return;
     }
     setUsedPoints(0);
-    setActiveMethod('promo');
+    setActiveMethod("promo");
   };
 
   const renderPromoCodeUI = () => {
@@ -163,7 +173,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         ) : (
           <div className="flex items-center justify-between border-2 border-green-700 rounded-md p-3 bg-white">
             <div className="flex items-start space-x-2">
-              <CircleCheckIcon color='green' />
+              <CircleCheckIcon color="green" />
               <div>
                 <p className="font-bold text-sm">{promoCode}</p>
                 <p className="text-sm text-gray-600">{promoCodeMessage}</p>
@@ -186,16 +196,22 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       {points > 0 && (
         <button
           onClick={() => selectCoinMethod()}
-          className={`px-3 py-1 text-sm rounded-md cursor-pointer ${activeMethod === 'coins' ? 'bg-yellow-400 text-black' : 'bg-gray-200 text-gray-700'
-            }`}
+          className={`px-3 py-1 text-sm rounded-md cursor-pointer ${
+            activeMethod === "coins"
+              ? "bg-yellow-400 text-black"
+              : "bg-gray-200 text-gray-700"
+          }`}
         >
           Redeem Coins
         </button>
       )}
       <button
         onClick={() => selectPromoMethod()}
-        className={`px-3 py-1 text-sm rounded-md cursor-pointer ${activeMethod === 'promo' ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-700'
-          }`}
+        className={`px-3 py-1 text-sm rounded-md cursor-pointer ${
+          activeMethod === "promo"
+            ? "bg-purple-600 text-white"
+            : "bg-gray-200 text-gray-700"
+        }`}
       >
         Use Promo Code
       </button>
@@ -206,10 +222,11 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   return (
     <CommonModalLayout
-      modalTitle="Checkout"
+      modalTitle="Complete Your Purchase"
+      maxWidth="max-w-2xl"
       footerActions={[
         {
-          label: "Cancel",
+          label: "Cancel Order",
           onClick: onClose,
           variant: "outlined",
         },
@@ -221,29 +238,101 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       ]}
       onClose={onClose}
     >
-      <div className="p-4">
-        <div className="border-b pb-4">
-          <h3 className="text-lg font-semibold">{eventTitle}</h3>
-          <div className="mt-2">
-            <p className="text-gray-700">
-              {ticket.type.name} × {ticket.quantity}
-            </p>
-            <p className="text-gray-500 text-sm">
-              ₹{ticket.price.toFixed(2)} per ticket
-            </p>
+      <div className="p-6">
+        {/* Event Header with Seats */}
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900">{eventTitle}</h3>
+
+            <div className="mt-3 flex flex-wrap gap-3">
+              <div className="bg-gray-50 rounded-lg px-3 py-2 border border-gray-200">
+                <p className="text-sm text-gray-600">Ticket Type</p>
+                <p className="font-medium text-gray-900">
+                  {ticket.type.name} × {ticket.quantity}
+                </p>
+              </div>
+
+              <div className="bg-gray-50 rounded-lg px-3 py-2 border border-gray-200">
+                <p className="text-sm text-gray-600">Price</p>
+                <p className="font-medium text-gray-900">
+                  ₹{ticket.price.toFixed(2)} per ticket
+                </p>
+              </div>
+
+              {selectedSeatNumbers.length > 0 && (
+                <div className="bg-blue-50 rounded-lg px-3 py-2 border border-blue-200">
+                  <p className="text-sm text-blue-600">Selected Seats</p>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {selectedSeatNumbers.map((seat, index) => (
+                      <span
+                        key={index}
+                        className="px-2 py-1 bg-white text-blue-700 text-xs font-medium rounded-md border border-blue-200"
+                      >
+                        {seat.seatNumber}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="mt-4">
-          <div className="flex justify-between">
-            <span className="font-medium">Subtotal:</span>
-            <span>₹{totalPrice.toFixed(2)}</span>
+        {/* Discount Options */}
+        <div className="mt-6">
+          <h4 className="text-sm font-medium text-gray-700 mb-3">
+            Apply Discount
+          </h4>
+
+          <div className="flex gap-3">
+            {points > 0 && (
+              <button
+                onClick={() => selectCoinMethod()}
+                className={`flex-1 py-3 px-4 rounded-lg border transition-all ${
+                  activeMethod === "coins"
+                    ? "border-yellow-400 bg-yellow-50 shadow-sm"
+                    : "border-gray-300 hover:border-gray-400"
+                }`}
+              >
+                <span
+                  className={`font-medium ${
+                    activeMethod === "coins"
+                      ? "text-yellow-700"
+                      : "text-gray-700"
+                  }`}
+                >
+                  Redeem Coins
+                </span>
+                <span className="block text-xs mt-1 text-gray-500">
+                  Available: {points} coins
+                </span>
+              </button>
+            )}
+
+            <button
+              onClick={() => selectPromoMethod()}
+              className={`flex-1 py-3 px-4 rounded-lg border transition-all ${
+                activeMethod === "promo"
+                  ? "border-purple-400 bg-purple-50 shadow-sm"
+                  : "border-gray-300 hover:border-gray-400"
+              }`}
+            >
+              <span
+                className={`font-medium ${
+                  activeMethod === "promo" ? "text-purple-700" : "text-gray-700"
+                }`}
+              >
+                Promo Code
+              </span>
+              <span className="block text-xs mt-1 text-gray-500">
+                Apply coupon code
+              </span>
+            </button>
           </div>
 
-          {renderToggle()}
-
-          {activeMethod === 'coins' && points > 0 && (
-            <div className="mt-4">
+          {/* Coin Redeem Section */}
+          {activeMethod === "coins" && points > 0 && (
+            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-100 rounded-lg">
               <CoinRedeemCard
                 totalUserCoins={points}
                 totalAmount={totalPrice}
@@ -253,30 +342,109 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
             </div>
           )}
 
-          {activeMethod === 'promo' && renderPromoCodeUI()}
-
-          {(usedPoints || promoCodeDiscount) > 0 && (
-            <div className="mt-4 flex justify-between text-green-600">
-              <span>Discount:</span>
-              <span>- ₹{usedPoints > 0 ? (usedPoints / conversionRate).toFixed(2) : promoCodeDiscount}</span>
+          {/* Promo Code Section */}
+          {activeMethod === "promo" && (
+            <div className="mt-4">
+              {!voucherId ? (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                    placeholder="Enter promo code"
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                  <button
+                    onClick={appliedPromoCode}
+                    disabled={!promoCode.trim()}
+                    className={`px-5 py-3 rounded-lg font-medium ${
+                      promoCode.trim()
+                        ? "bg-purple-600 text-white hover:bg-purple-700"
+                        : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    }`}
+                  >
+                    Apply
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-center gap-3">
+                    <CircleCheckIcon className="text-green-600 h-5 w-5" />
+                    <div>
+                      <p className="font-medium text-green-800">{promoCode}</p>
+                      <p className="text-sm text-green-700">
+                        {promoCodeMessage}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleRemove}
+                    className="text-sm font-medium text-purple-600 hover:text-purple-800"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
+              {promoCodeMessage && !voucherId && (
+                <p className="mt-2 text-sm text-red-600">{promoCodeMessage}</p>
+              )}
             </div>
           )}
+        </div>
 
-          <div className="mt-6 pt-4 border-t flex justify-between text-lg font-semibold">
-            <span>Total:</span>
-            <span>₹{(finalAmount / 100).toFixed(2)}</span>
+        {/* Pricing Summary */}
+        <div className="mt-6 bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <div className="space-y-3">
+            <div className="flex justify-between text-gray-600">
+              <span>Subtotal</span>
+              <span className="font-medium">₹{totalPrice.toFixed(2)}</span>
+            </div>
+
+            {(usedPoints || promoCodeDiscount) > 0 && (
+              <div className="flex justify-between text-green-600">
+                <span>Discount Applied</span>
+                <span className="font-medium">
+                  - ₹
+                  {usedPoints > 0
+                    ? (usedPoints / conversionRate).toFixed(2)
+                    : promoCodeDiscount}
+                </span>
+              </div>
+            )}
+
+            <div className="border-t border-gray-200 pt-3 flex justify-between text-base font-semibold text-gray-900">
+              <span>Total Amount</span>
+              <span>₹{(finalAmount / 100).toFixed(2)}</span>
+            </div>
           </div>
+        </div>
 
-          <div className="mt-4 mb-6 rounded-md border border-red-300 bg-red-50 p-4 shadow-md flex items-start space-x-3">
-            <InformationCircleIcon
-              color="oklch(44.4% .177 26.899)"
-              className="size-8"
-            />
-            <div className="text-sm text-red-800">
-              <span className="font-medium">Cancellation Policy:</span> A{" "}
-              <span className="font-semibold">10%</span> cancellation fee
-              applies to this ticket. This charge will be deducted if you cancel
-              your booking.
+        {/* Policy Notice */}
+        <div className="mt-6 p-4 bg-red-50 border border-red-100 rounded-lg">
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-red-500"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-red-800">
+                Cancellation Policy
+              </p>
+              <p className="mt-1 text-sm text-red-700">
+                A <span className="font-semibold">10% cancellation fee</span>{" "}
+                applies to this ticket. This charge will be deducted if you
+                cancel your booking.
+              </p>
             </div>
           </div>
         </div>
