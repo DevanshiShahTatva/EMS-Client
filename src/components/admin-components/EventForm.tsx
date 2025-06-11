@@ -57,6 +57,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
     maxQty: "",
     description: "",
     _id: "",
+    isDisabled: true,
   });
 
   const [editCache, setEditCache] = useState<{ [key: string]: Partial<ITicket> }>({});
@@ -67,6 +68,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
   const [loader, setLoder] = useState(false)
 
    const hasTouchedDescription = useRef(false);
+   const isFirstLayoutSyncDone = useRef(false);
 
   // CATEGORY AND TICKET TYPE
   const [categoriesOptions, setCategoriesOptions] = useState<IEventCategory[]>([])
@@ -90,10 +92,10 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
      setViewLayoutModal(false)
   }
 
-  const openEditModal = (id: string) => {
-    const ticketInfo = editCache[id]
+  const openEditModal = (ticketInfo: ITicket) => {
     const editArray = layoutArray.filter(item => item.id === ticketInfo.type)
     const label = ticketTypeOptions.find(item => item._id === ticketInfo.type)?.name
+    
     const selectedTicketItem: ITicketInfo = {
       id: ticketInfo.type || "",
       ticketPrice: ticketInfo.price || "",
@@ -101,7 +103,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
       totalSeats: ticketInfo.maxQty || "",
     }
     setEditableLayoutArray(editArray)
-    setEditableId(id)
+    setEditableId(ticketInfo.type)
     setSelectedLayoutItems(selectedTicketItem)
     setOpenLayoutModal(true)
   }
@@ -113,30 +115,26 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
     setEditableId("")
   }
 
-  
-
-  const openModal = () => {
-    const { type, maxQty, price } = newTicket
+  const openModal = (ticket : ITicket) => {
+    const { type, maxQty, price } = ticket
 
     const label = ticketTypeOptions.find(item => item._id === type)?.name ?? "";
 
-    if( type !== "" && maxQty !== "" && (Number(price) === 0 || Number(price) > 50)) {
-      const receivedObj = {
-        id: type,
-        ticketPrice: price,
-        ticketType: label,
-        totalSeats: maxQty,
-      }
-      setSelectedLayoutItems(receivedObj)
-      setOpenLayoutModal(true)
+    const receivedObj = {
+      id: type,
+      ticketPrice: price,
+      ticketType: label,
+      totalSeats: maxQty,
     }
-
-    return false
+    setSelectedLayoutItems(receivedObj)
+    setOpenLayoutModal(true)
   }
 
   const closeModal = () => {
     setSelectedLayoutItems(InitialTicketItems)
     setOpenLayoutModal(false)
+    setEditableLayoutArray([])
+    setEditableId("")
   } 
 
   const saveLayout = (newLayouts: ISeatLayout[]) => {
@@ -159,7 +157,21 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
 
       return updatedLayoutArray;
     });
-    // setLayoutArray(prevLayoutArray => [...prevLayoutArray, ...newLayouts]);
+
+    setTickets((prevTicketsArray) => {
+      return prevTicketsArray.map((ticket) => {
+        const matchingLayout = newLayouts.find((layout) => layout.id === ticket.type);
+
+        if (matchingLayout) {
+          return {
+            ...ticket,
+            isLayoutAdded: true, // or `matchingLayout.isLayoutAdded` if you want to copy that value
+          };
+        }
+
+        return ticket;
+      });
+    });
     closeModal();
   };
 
@@ -273,6 +285,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
     }
 
     setTicketErrorMsg(""); // Clear error
+
     handleAdd();
   }
 
@@ -312,12 +325,14 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
     const newItem: ITicket = {
       ...newTicket,
       id: Date.now().toString(),
+      isDisabled: false,
     };
     setTickets([...tickets, newItem]);
-    setNewTicket({ type: "", price: "", maxQty: "", description: "", _id: "" });
+    setNewTicket({ type: "", price: "", maxQty: "", description: "", _id: "", isDisabled: true });
     setAddRowVisible(false)
     setTicketErrorMsg("")
     setFormValuesError({ ...formValuesError, ticket_type : false})
+    openModal(newItem)
   };
 
   const handleEdit = (id: string) => {
@@ -346,6 +361,17 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
     const newCache = { ...editCache };
     delete newCache[id];
     setEditCache(newCache);
+    const selectedTicketItem = {
+      id: updated.id || "",
+      type: updated.type || "",
+      price: updated.price || "",
+      maxQty: updated.maxQty || "",
+      description: updated.description || "",
+      _id: updated._id || "",
+    }
+
+    openEditModal(selectedTicketItem)
+
   };
 
   const handleCancel = (id: string) => {
@@ -370,7 +396,10 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
     }));
   }
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string, ticketId : string) => {
+    const filteredLayoutArray = layoutArray.filter(item => item.id !== ticketId)
+    setLayoutArray(filteredLayoutArray)
+
     setTickets((prev) => {
       const updated = prev.filter((t) => t.id !== id);
 
@@ -657,6 +686,11 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
       return false
     }
 
+    if (!tickets.every(item => item.isLayoutAdded)) {
+      toast.error("Please add all layouts to continue");
+      return false;
+    }
+
 
     const existingImageIdsArray = existingImages
       .filter((item): item is EventImage => 'imageId' in item)
@@ -817,7 +851,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
           price: item.price.toString(),
           maxQty: `${item.totalSeats - item.totalBookedSeats}`,
           description: item.description,
-          _id: item._id
+          _id: item._id,
         }
       })
 
@@ -853,7 +887,6 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
       setLoder(false)
     } else {
       setLoder(false)
-
     }
   };
   const getCategories = useCallback(async () => {
@@ -905,6 +938,16 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
           }
         });
         setLayoutArray(receivedArray)
+        setTickets((prevTicketsArray) => {
+          return prevTicketsArray.map((ticket) => {
+            const matchingLayout = receivedArray.filter((layout) => layout.id === ticket.type);
+
+            return {
+              ...ticket,
+              isLayoutAdded: matchingLayout.length > 0 ? true : false,
+            };
+          });
+        });
       }
     } catch (err) {
       console.error('Error fetching ticket types', err);
@@ -919,6 +962,25 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
       getSeatLayout()
     }
   }, [eventType, getCategories, getTicketTypes])
+
+  useEffect(() => {
+  // Run only once, when both layoutArray and tickets are available
+  if (!isFirstLayoutSyncDone.current && layoutArray.length > 0 && tickets.length > 0) {
+    setTickets((prevTicketsArray) => {
+      return prevTicketsArray.map((ticket) => {
+        const matchingLayout = layoutArray.filter((layout) => layout.id === ticket.type);
+
+        return {
+          ...ticket,
+          isLayoutAdded: matchingLayout.length > 0 ? true : false,
+        };
+      });
+    });
+
+    isFirstLayoutSyncDone.current = true;
+  }
+}, [layoutArray, tickets]);
+
 
   const formattedTicketTypes = useMemo(() => {
     const selectedTypeIds = tickets.map(t => t.type);
@@ -1152,10 +1214,10 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
                   <th className="border px-4 py-2 w-1/6">Price (₹)</th>
                   <th className="border px-4 py-2 w-1/6">Max Qty</th>
                   <th className="border px-4 py-2 w-1/6">Description</th>
-                  <th className="border px-4 py-2 w-1/6 text-center">Layout</th>
                   <th className="border px-4 py-2 w-1/6 text-center">
                     Actions
                   </th>
+                  <th className="border px-4 py-2 w-1/6 text-center">Layout</th>
                 </tr>
               </thead>
               <tbody>
@@ -1224,9 +1286,6 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
                           placeholder='Description'
                         />
                       </td>
-                     <td className="border px-2 py-1 text-center">
-                        <button onClick={() => openEditModal(ticket._id)} className='underline text-md text-blue-500 hover:text-blue-700 cursor-pointer'> Edit Layout </button>
-                      </td>
                       <td className="border text-center px-2 py-1 space-x-2">
                         <button
                           onClick={() => handleSave(ticket.id)}
@@ -1241,6 +1300,23 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
                           <XMarkIcon className="h-5 w-5 cursor-pointer font-bold" />
                         </button>
                       </td>
+                      <td className="border px-2 py-1 text-center">
+                        {ticket.isLayoutAdded ?
+                          <button
+                            className='underline text-md text-blue-500 hover:text-blue-700 cursor-pointer disabled:text-gray-500 disabled:cursor-not-allowed'
+                            disabled
+                          >
+                            Edit Layout
+                          </button>
+                          :
+                          <button
+                            className='underline text-md text-blue-500 hover:text-blue-700 cursor-pointer disabled:text-gray-500 disabled:cursor-not-allowed'
+                            disabled
+                          >
+                            Add Layout
+                          </button>
+                        }
+                      </td>
                     </tr>
                   ) : (
                     <tr key={ticket.id}>
@@ -1249,9 +1325,6 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
                       <td className="border px-4 py-2">{ticket.maxQty}</td>
                       <td className="border px-4 py-2">
                         {ticket.description}
-                      </td>
-                      <td className="border px-4 py-2 text-center">
-                        <button onClick={openViewModal} className='underline text-md text-blue-500 hover:text-blue-700 cursor-pointer'> View Layout </button>
                       </td>
                       <td className="border px-4 py-2 text-center md:space-x-2">
                         <button
@@ -1262,10 +1335,28 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
                         </button>
                         <button
                           className="text-red-800 p-1 cursor-pointer font-bold"
-                          onClick={() => handleDelete(ticket.id)}
+                          onClick={() => handleDelete(ticket.id, ticket.type)}
                         >
                           <TrashIcon className="h-5 w-5" />
                         </button>
+                      </td>
+                      <td className="border px-4 py-2 text-center">
+                          {ticket.isLayoutAdded ?
+                            <button
+                              className='underline text-md text-blue-500 hover:text-blue-700 cursor-pointer disabled:text-gray-500 disabled:cursor-not-allowed'
+                              disabled={ticket.isDisabled}
+                              onClick={() => openEditModal(ticket)}
+                            >
+                              Edit Layout
+                            </button>
+                            :
+                            <button
+                              className='underline text-md text-blue-500 hover:text-blue-700 cursor-pointer disabled:text-gray-500 disabled:cursor-not-allowed'
+                              onClick={() => openModal(ticket)}
+                            >
+                              Add Layout
+                            </button>
+                          }
                       </td>
                     </tr>
                   )
@@ -1333,9 +1424,6 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
                         }
                       />
                     </td>
-                    <td className="border px-2 py-1 text-center">
-                        <button onClick={openModal} className='underline text-md text-blue-500 hover:text-blue-700 cursor-pointer'> Create Layout </button>
-                    </td>
                     <td className="border px-4 py-2 text-center md:space-x-2">
                       <button
                         onClick={ticketAddValidation}
@@ -1359,6 +1447,14 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
                         }}
                       >
                         Delete
+                      </button>
+                    </td>
+                    <td className="border px-2 py-1 text-center">
+                        <button 
+                          className='underline text-md text-blue-500 hover:text-blue-700 cursor-pointer disabled:text-gray-500 disabled:cursor-not-allowed'
+                          disabled={newTicket.isDisabled}
+                        > 
+                            Add Layout 
                       </button>
                     </td>
                   </tr>
@@ -1401,6 +1497,15 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
         />
 
         <div className="text-end my-6">
+          <CustomButton
+            onClick={openViewModal}
+            variant={layoutArray.length === 0 ? "disabled" : 'secondary'}
+            disabled={layoutArray.length === 0}
+            className="sm:w-max w-full py-3 px-6 rounded-[12px] hover:opacity-90 transition disabled:cursor-not-allowed cursor-pointer mr-5"
+          >
+             View Layout
+          </CustomButton>
+
           <CustomButton
             onClick={handleSubmit}
             variant='primary'

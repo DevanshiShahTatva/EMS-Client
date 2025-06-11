@@ -89,8 +89,11 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
   const handleRemoveSeat = (rowIndex: number, seatIndex: number) => {
     const newRows = [...rows];
     const newRow = [...newRows[rowIndex]];
-    newRow[seatIndex] = { ...newRow[seatIndex], type: 'Space', id: '' };
 
+    // Remove the seat completely (not just mark as space)
+    newRow.splice(seatIndex, 1);
+
+    // Recalculate IDs for remaining non-space seats
     let seatNumber = 1;
     for (let i = 0; i < newRow.length; i++) {
       if (newRow[i].type !== 'Space') {
@@ -98,6 +101,7 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
       } else {
         newRow[i].id = '';
       }
+      newRow[i].col = i; // keep col updated
     }
 
     newRows[rowIndex] = newRow;
@@ -148,7 +152,7 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
     const finalArray = transformSeatingData([
       {
         ticketType: ticketItems.ticketType,
-        id:ticketItems.id,
+        id: ticketItems.id,
         price: parseInt(ticketItems.ticketPrice),
         rows: Object.values(layoutMap).map(({ row, seats }) => ({ row, seats })),
       }
@@ -210,15 +214,13 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
                       <div className="w-10 h-10 rounded text-xs flex items-center justify-center border">
                         {seat.id}
                       </div>
-                      {seat.type !== 'Space' && (
-                        <button
-                          onClick={() => handleRemoveSeat(rowIndex, seatIndex)}
-                          className="absolute -top-1.5 -right-1.5 text-xs text-white bg-red-600 rounded-full w-4 h-4 flex items-center justify-center z-10 shadow-md"
-                          title="Delete Seat"
-                        >
-                          ×
-                        </button>
-                      )}
+                      <button
+                        onClick={() => handleRemoveSeat(rowIndex, seatIndex)}
+                        className="absolute -top-1.5 -right-1.5 text-xs cursor-pointer text-white bg-red-600 rounded-full w-4 h-4 flex items-center justify-center z-10 shadow-md"
+                        title="Delete Seat"
+                      >
+                        ×
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -306,7 +308,7 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
                 Seats
               </CustomButton>
 
-              <CustomButton onClick={handleAddSpace} className='flex gap-2 items-center' startIcon={<Plus className='h-5 w-5' />} variant="secondary">
+              <CustomButton onClick={handleAddSpace} className='flex gap-2 items-center' startIcon={<Plus className='h-5 w-5' />} variant="outlined">
                 Space
               </CustomButton>
 
@@ -327,16 +329,20 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
               <CustomButton
                 onClick={handleRedo}
                 disabled={history.length === 0}
-                variant={history.length === 0 ? "disabled" : "warning"}
+                variant={history.length === 0 ? "disabled" : "secondary"}
                 className='flex gap-2 items-center'
                 startIcon={<Redo className='h-5 w-5' />}
               >
                 Redo
               </CustomButton>
-
             </div>
 
-            <CustomButton onClick={handleSaveLayout} className='w-full mt-10' variant="primary">
+            <CustomButton
+              onClick={handleSaveLayout}
+              className='w-full mt-10'
+              variant={remainingSeats !== 0 ? "disabled" : "primary"}
+              disabled={remainingSeats !== 0}
+            >
               Save Layout
             </CustomButton>
           </div>

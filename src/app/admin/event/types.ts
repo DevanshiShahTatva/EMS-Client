@@ -70,6 +70,7 @@ export type ITicket = {
     isEditing?: boolean;
     _id : string,
     isLayoutAdded?: boolean
+    isDisabled?: boolean
 };
 
 export interface ITicketInfo {
