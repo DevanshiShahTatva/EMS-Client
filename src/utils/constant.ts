@@ -69,7 +69,10 @@ export const API_ROUTES = {
         FEEDBACK_DETAILS: '/dashboard/analytics/feedback-details',
         SINGLE_USER_CREATION : '/admin/single-user-creation',
         BULK_USER_CREATION : '/admin/bulk-uploads',
-        DELETE_USER: (id: string) => `/admin/delete-user/${id}`
+        DELETE_USER: (id: string) => `/admin/delete-user/${id}`,
+        SAVE_LAYOUT: `/events/create-seat-layout`,
+        GET_LAYOUT: (id: string) => `events/get-seat-layout/${id}`,
+        UPDATE_LAYOUT: (id: string) => `events/update-seat-layout/${id}`
     },
     AUTH: {
         LOGIN: `/login`,
