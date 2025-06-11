@@ -8,6 +8,7 @@ interface Props {
   onClose: () => void;
   ticketType: string | null;
   selectedQty: number;
+  onConfirmSeat: () => void;
 }
 
 interface Seat {
@@ -41,6 +42,7 @@ const SeatBookingModal = ({
   onClose,
   ticketType,
   selectedQty,
+  onConfirmSeat
 }: Props) => {
   const [loading, setLoading] = useState(false);
   const [seatLayout, setSeatLayout] = useState<SeatLayoutSection[]>([]);
@@ -168,6 +170,7 @@ const SeatBookingModal = ({
           label: "Confirm Seats",
           onClick: () => {
             console.log("Selected seats:", selectedSeats);
+            onConfirmSeat();
             onClose();
           },
           variant: "primary",
