@@ -14,7 +14,8 @@ const PaymentResultPage = () => {
 
   const [ticketDetails, setTicketDetails] = useState<CheckoutTicket | null>(null)
   const [eventTitle, setEventTitle] = useState<string>('')
-  const [isSuccess, setIsSuccess] = useState<boolean | null>(null)
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
 
   useEffect(() => {
     const storedTickets = sessionStorage.getItem('tickets')
@@ -29,6 +30,9 @@ const PaymentResultPage = () => {
 
     try {
       const parsedTickets: CheckoutTicket = JSON.parse(storedTickets);
+      const parsedSelectedSeats: SelectSeat[] = JSON.parse(selectedSeats);
+      const seatIds = parsedSelectedSeats.map((seat) => seat.seatNumber);
+      setSelectedSeats(seatIds);
       setTicketDetails(parsedTickets)
       setEventTitle(storedEventTitle)
 
@@ -107,10 +111,14 @@ const PaymentResultPage = () => {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Total Paid</span>
+              <span className="text-gray-600">Quantity</span>
               <span className="font-medium text-gray-900">
-              ₹{ticketDetails.totalPrice.toFixed(2)}
+                {ticketDetails.quantity}
               </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Seats</span>
+              <span>{selectedSeats.join(", ")}</span>
             </div>
             {ticketDetails.discount > 0 && (
               <div className="flex justify-between">
