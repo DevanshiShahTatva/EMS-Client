@@ -14,9 +14,11 @@ const MessageInput: React.FC<IMessageInputProps> = ({
 }) => {
   const [newMessage, setNewMessage] = useState<string>("");
   const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
+  const [cursorPosition, setCursorPosition] = useState<number>(0);
 
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -68,7 +70,7 @@ const MessageInput: React.FC<IMessageInputProps> = ({
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -95,11 +97,34 @@ const MessageInput: React.FC<IMessageInputProps> = ({
   };
 
   const onEmojiClick = (emojiData: { emoji: string }) => {
-    setNewMessage(prev => prev + emojiData.emoji);
+    const emoji = emojiData.emoji;
+
+    setNewMessage((prevMessage) => {
+      const text = prevMessage;
+      const start = text.substring(0, cursorPosition);
+      const end = text.substring(cursorPosition);
+      const updatedText = start + emoji + end;
+
+      const newCursorPos = start.length + emoji.length;
+
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.selectionStart = newCursorPos;
+          textareaRef.current.selectionEnd = newCursorPos;
+          textareaRef.current.focus();
+        }
+      }, 0);
+
+      setCursorPosition(newCursorPos);
+      return updatedText;
+    });
+
     setShowEmojiPicker(false);
-    if (newMessage.length === 0) {
-      handleInternalTyping("start");
-    }
+  };
+
+  const handleSelect = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+    const target = e.target as HTMLTextAreaElement;
+    setCursorPosition(target.selectionStart);
   };
 
   return (
@@ -128,12 +153,15 @@ const MessageInput: React.FC<IMessageInputProps> = ({
             </div>
           )}
           <div className={`flex px-3 ${editMessage ? "h-[30px]" : "h-[45px]"}`}>
-            <input
+            <textarea
+              ref={textareaRef}
               value={newMessage}
               placeholder="Enter your message here"
               onKeyDown={(e) => handleKeyDown(e)}
               onChange={(e) => onInputChange(e.target.value)}
-              className="w-full flex-1 border-none outline-none placeholder-gray-400 text-gray-700"
+              onSelect={handleSelect}
+              className="w-full flex-1 border-none outline-none text-gray-700 resize-none peer pt-3 placeholder-gray-400"
+              rows={1}
             />
           </div>
         </div>

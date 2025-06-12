@@ -245,25 +245,6 @@ const NotificationBell: React.FC = () => {
     setNotifications(updateNotifications);
   };
 
-  const handleClickOnNotification = async (id: string, data: any) => {
-    if (data.type) {
-      const res = await readNotification(id);
-      readNotificationLocal(id);
-      if (res.status) {
-        togglePopup();
-        if (data.type === "ticket") {
-          router.push(ROUTES.USER_MY_EVENTS);
-        } else if (data.type === "profile") {
-          router.push(ROUTES.USER_PROFILE);
-        } else if (data.type === "reward") {
-          router.push(ROUTES.USER_REWARDED_HISTORY);
-        } else if (data.type === "feedback") {
-          router.push(ROUTES.USER_REVIEW_HISTORY);
-        }
-      }
-    }
-  };
-
   return (
     <div className="relative mt-1" ref={containerRef}>
       <button
@@ -340,10 +321,9 @@ const NotificationBell: React.FC = () => {
                       ) => (
                         <div
                           key={`${groupIndex}-${index}`}
-                          className={`px-4 py-3 hover:bg-indigo-50 cursor-pointer transition-all duration-150 border-b border-gray-100 last:border-0 ${
+                          className={`px-4 py-3 hover:bg-indigo-50 transition-all duration-150 border-b border-gray-100 last:border-0 ${
                             !isRead ? "bg-indigo-50/50" : ""
                           }`}
-                          onClick={() => handleClickOnNotification(_id, data)}
                         >
                           <div className="flex gap-3">
                             <div className="flex flex-col items-center">
