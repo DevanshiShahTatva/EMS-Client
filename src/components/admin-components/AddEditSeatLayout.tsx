@@ -4,6 +4,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { ISeatLayout, ITicketInfo } from '@/app/admin/event/types';
 import CustomButton from '../common/CustomButton';
 import { Plus, Undo, Redo } from 'lucide-react';
+import CustomTextField from './InputField';
+import CustomSelectField from './SelectField';
 
 interface Seat {
   id: string;
@@ -192,13 +194,12 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
 
   return (
     <div className="p-6 space-y-6 mx-auto">
-
       {/* grid layout */}
 
       <div className="grid grid-cols-12 gap-8">
         {/* Seat Layout Section (8 columns) */}
         <div className="col-span-12 md:col-span-8 space-y-6">
-          <div className='text-xl text-gray-800 font-bold mb-4'>
+          <div className="text-xl text-gray-800 font-bold mb-4">
             Rs. {ticketItems.ticketPrice} - {ticketItems.ticketType}
           </div>
 
@@ -234,41 +235,45 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
         <div className="col-span-12 md:col-span-4 space-y-6">
           {/* Info Section */}
           <div className="space-y-4">
-            <div className="flex gap-4 items-center">
-              <label className="block text-lg">Seat Type:</label>
+            {/* Seat Type */}
+            <div className="grid grid-cols-12 items-center gap-2">
+              <label className="col-span-4 text-lg">Seat Type</label>
               <input
                 value={ticketItems.ticketType}
-                className="border px-2 py-1 rounded w-40 bg-gray-200 cursor-not-allowed"
+                className="col-span-8 border px-2 py-1 rounded bg-gray-100 text-gray-400 cursor-not-allowed font-bold"
                 disabled
                 readOnly
               />
             </div>
 
-            <div className="flex gap-4 items-center">
-              <label className="block text-lg">Price:</label>
+            {/* Price */}
+            <div className="grid grid-cols-12 items-center gap-2">
+              <label className="col-span-4 text-lg">Price</label>
               <input
                 value={ticketItems.ticketPrice}
-                className="border px-2 py-1 rounded w-40 bg-gray-200 cursor-not-allowed"
+                className="col-span-8 border px-2 py-1 rounded bg-gray-100 text-gray-400 cursor-not-allowed font-bold"
                 disabled
                 readOnly
               />
             </div>
 
-            <div className="flex gap-4 items-center">
-              <label className="block text-lg">Total Seats:</label>
+            {/* Total Seats */}
+            <div className="grid grid-cols-12 items-center gap-2">
+              <label className="col-span-4 text-lg">Total Seats</label>
               <input
                 value={ticketItems.totalSeats}
-                className="border px-2 py-1 rounded w-40 bg-gray-200 cursor-not-allowed"
+                className="col-span-8 border px-2 py-1 rounded bg-gray-100 text-gray-400 cursor-not-allowed font-bold"
                 disabled
                 readOnly
               />
             </div>
 
-            <div className="flex gap-4 items-center">
-              <label className="block text-lg">Remaining Seats:</label>
+            {/* Remaining Seats */}
+            <div className="grid grid-cols-12 items-center gap-2">
+              <label className="col-span-4 text-lg">Remaining Seats</label>
               <input
                 value={remainingSeats}
-                className="border px-2 py-1 rounded w-40 bg-gray-200 cursor-not-allowed"
+                className="col-span-8 border px-2 py-1 rounded bg-gray-100 text-gray-400 cursor-not-allowed font-bold"
                 disabled
                 readOnly
               />
@@ -277,7 +282,16 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
 
           {/* Controls Section */}
           <div className="space-y-4">
+            {/* Add Seats Input */}
             <div>
+              <CustomTextField
+                label="Seats to Add"
+                errorKey={false}
+                name="seats"
+                type="number"
+                value={addCount.toString()}
+                onChange={(e) => setAddCount(Number(e.target.value))}
+              />
               <label className="block font-medium">Seats to Add</label>
               <input
                 type="number"
@@ -288,40 +302,62 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
               />
             </div>
 
+            {/* Active Row Selector */}
             <div>
-              <label className="block font-medium">Active Row</label>
-              <select
+              <CustomSelectField
+                name="row"
+                label="Active Row"
+                errorKey={false}
                 value={activeRowIndex}
-                onChange={(e) => setActiveRowIndex(Number(e.target.value))}
-                className="border px-2 py-1 rounded w-full"
-              >
-                {rows.map((_, index) => (
-                  <option key={index} value={index}>
-                    {String.fromCharCode(65 + index)}
-                  </option>
-                ))}
-              </select>
+                isClearable={false}
+                onChange={(e) => setActiveRowIndex(Number(e))}
+                options={rows.map((_, index) => {
+                  return {
+                    label: String.fromCharCode(65 + index),
+                    value: index,
+                  };
+                })}
+              />
             </div>
 
-            <div className="flex flex-wrap gap-4">
-              <CustomButton variant="primary" className='flex gap-2 items-center' startIcon={<Plus className='h-5 w-5' />} onClick={handleAddSeats}>
+            {/* Seats, Space, Row Buttons */}
+            <div className="grid grid-cols-3 gap-4">
+              <CustomButton
+                variant="primary"
+                className="flex gap-2 justify-center items-center w-full"
+                startIcon={<Plus className="h-5 w-5" />}
+                onClick={handleAddSeats}
+              >
                 Seats
               </CustomButton>
 
-              <CustomButton onClick={handleAddSpace} className='flex gap-2 items-center' startIcon={<Plus className='h-5 w-5' />} variant="outlined">
+              <CustomButton
+                onClick={handleAddSpace}
+                className="flex gap-2 justify-center items-center w-full"
+                startIcon={<Plus className="h-5 w-5" />}
+                variant="outlined"
+              >
                 Space
               </CustomButton>
 
-              <CustomButton className='flex gap-2 items-center' startIcon={<Plus className='h-5 w-5' />} onClick={handleAddRow} variant="success">
+              <CustomButton
+                className="flex gap-2 justify-center items-center w-full"
+                startIcon={<Plus className="h-5 w-5" />}
+                onClick={handleAddRow}
+                variant="success"
+              >
                 Row
               </CustomButton>
+            </div>
 
+            {/* Undo & Redo Buttons */}
+            <div className="grid grid-cols-2 gap-4">
               <CustomButton
                 onClick={handleUndo}
                 disabled={history.length === 0}
                 variant={history.length === 0 ? "disabled" : "warning"}
-                className='flex gap-2 items-center'
-                startIcon={<Undo className='h-5 w-5' />}
+                className="flex gap-2 justify-center items-center w-full"
+                startIcon={<Undo className="h-5 w-5" />}
               >
                 Undo
               </CustomButton>
@@ -330,16 +366,17 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
                 onClick={handleRedo}
                 disabled={history.length === 0}
                 variant={history.length === 0 ? "disabled" : "secondary"}
-                className='flex gap-2 items-center'
-                startIcon={<Redo className='h-5 w-5' />}
+                className="flex gap-2 justify-center items-center w-full"
+                startIcon={<Redo className="h-5 w-5" />}
               >
                 Redo
               </CustomButton>
             </div>
 
+            {/* Save Layout Button */}
             <CustomButton
               onClick={handleSaveLayout}
-              className='w-full mt-10'
+              className="w-full mt-10"
               variant={remainingSeats !== 0 ? "disabled" : "primary"}
               disabled={remainingSeats !== 0}
             >
@@ -348,8 +385,6 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
           </div>
         </div>
       </div>
-
-
     </div>
   );
 };

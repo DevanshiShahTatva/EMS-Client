@@ -63,6 +63,8 @@ const ViewSeatLayout: React.FC<ViewSeatLayoutProps> = ({
           rows: transformedRows,
         };
       });
+
+      console.log("first", allTransformedLayouts)
       setTransformedLayouts(allTransformedLayouts);
     } else {
       setTransformedLayouts([]);
