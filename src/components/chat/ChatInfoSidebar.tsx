@@ -123,14 +123,14 @@ const ChatInfoSidebar: React.FC<IChatInfoSidebarProps> = ({
           <h2 className="text-lg font-semibold">Users</h2>
         </div>
         <div className="p-4 pb-2 pt-1">
-          <div className="flex items-center bg-gray-100 rounded-full px-3 py-2">
-            <SearchIcon />
+          <div className="flex items-center bg-gray-100 rounded-full px-3 py-[10px]">
+            <SearchIcon size={15} className='text-gray-400' />
             <input
               type="text"
               value={search}
               placeholder="Search"
               onChange={(e) => setSearch(e.target.value)}
-              className="bg-transparent outline-none flex-1 text-sm pl-2"
+              className="bg-transparent outline-none flex-1 text-sm pl-2 placeholder-gray-400 text-gray-700"
             />
           </div>
         </div>
@@ -163,7 +163,11 @@ const ChatInfoSidebar: React.FC<IChatInfoSidebarProps> = ({
                       type="checkbox"
                       checked={selectedUsers.includes(user._id)}
                       onClick={() => handleUserSelect(user._id)}
-                      className="w-5 h-5 accent-purple-500 cursor-pointer"
+                      className="appearance-none w-6 h-6 border-[1.5px] border-gray-300 rounded-sm
+                      bg-white checked:bg-purple-500 checked:border-purple-500 cursor-pointer
+                        relative transition-colors duration-200  checked:after:content-['✓']
+                        checked:after:font-bold checked:after:left-[5px] checked:after:absolute 
+                        checked:after:text-white checked:after:text-sm checked:after:top-[0px]"
                     />
                   </button>
                 ))}
