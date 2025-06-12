@@ -127,6 +127,14 @@ const MessageInput: React.FC<IMessageInputProps> = ({
     setCursorPosition(target.selectionStart);
   };
 
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onInputChange(e.target.value); 
+  
+    const textarea = e.target;
+    textarea.style.height = 'auto'; 
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  };
+
   return (
     <div className='flex justify-center mb-2 md:mb-4'>
       <div className="w-full ml-4 mr-4 md:ml-16 md:mr-16 bg-white rounded-md shadow-sm relative">
@@ -152,17 +160,17 @@ const MessageInput: React.FC<IMessageInputProps> = ({
               </button>
             </div>
           )}
-          <div className={`flex px-3 ${editMessage ? "h-[30px]" : "h-[45px]"}`}>
-            <textarea
-              ref={textareaRef}
-              value={newMessage}
-              placeholder="Enter your message here"
-              onKeyDown={(e) => handleKeyDown(e)}
-              onChange={(e) => onInputChange(e.target.value)}
-              onSelect={handleSelect}
-              className="w-full flex-1 border-none outline-none text-gray-700 resize-none peer pt-3 placeholder-gray-400"
-              rows={1}
-            />
+          <div className={`flex`}>
+          <textarea
+            ref={textareaRef}
+            value={newMessage}
+            placeholder="Enter your message here"
+            onKeyDown={(e) => handleKeyDown(e)}
+            onChange={handleInput}
+            onSelect={handleSelect}
+            className="w-full flex-1 border-none outline-none text-gray-700 resize-none peer py-3 px-3 placeholder-gray-400 overflow-hidden"
+            rows={1}
+          />
           </div>
         </div>
         <div className="relative p-4 px-2 flex items-center justify-between">
