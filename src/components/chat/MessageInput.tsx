@@ -139,7 +139,7 @@ const MessageInput: React.FC<IMessageInputProps> = ({
     <div className='flex justify-center mb-2 md:mb-4'>
       <div className="w-full ml-4 mr-4 md:ml-16 md:mr-16 bg-white rounded-md shadow-sm relative">
         {typingUsers.length > 0 && (
-          <div className="text-sm text-gray-500 mb-2">
+          <div className="text-sm text-gray-500 py-2 px-3">
             {typingUsers.length === 1
               ? `${typingUsers[0]} is typing...`
               : `${typingUsers.join(', ')} are typing...`}

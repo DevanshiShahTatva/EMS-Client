@@ -265,7 +265,7 @@ const NotificationBell: React.FC = () => {
   };
 
   return (
-    <div className="relative mt-1" ref={containerRef}>
+    <div className="relative" ref={containerRef}>
       <button
         onClick={togglePopup}
         className="relative cursor-pointer p-2 bg-white rounded-full border border-gray-300 hover:bg-gray-100 shadow-sm transition-all duration-200 transform hover:scale-105"
