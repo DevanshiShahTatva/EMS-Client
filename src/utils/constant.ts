@@ -29,7 +29,8 @@ export const ROUTES = {
     },
     ORGANIZER: {
         VERIFY_TICKETS : "/organizer/verify-tickets",
-        DASHBOARD : "/organizer/dashboard"
+        DASHBOARD : "/organizer/dashboard",
+        PROFILE : "/organizer/profile"
     },
     RESET_PASSWORD: "/reset-password",
     FORGOT_PASSWORD:"/forgot-password",
@@ -68,7 +69,10 @@ export const API_ROUTES = {
         FEEDBACK_DETAILS: '/dashboard/analytics/feedback-details',
         SINGLE_USER_CREATION : '/admin/single-user-creation',
         BULK_USER_CREATION : '/admin/bulk-uploads',
-        DELETE_USER: (id: string) => `/admin/delete-user/${id}`
+        DELETE_USER: (id: string) => `/admin/delete-user/${id}`,
+        SAVE_LAYOUT: `/events/create-seat-layout`,
+        GET_LAYOUT: (id: string) => `events/get-seat-layout/${id}`,
+        UPDATE_LAYOUT: (id: string) => `events/update-seat-layout/${id}`
     },
     AUTH: {
         LOGIN: `/login`,
@@ -169,6 +173,7 @@ export const USER_SIDEBAR_ITEMS = [
 export const ORGANIZER_SIDEBAR_ITEMS = [
     { id: 1, title: "Dashboard", route: ROUTES.ORGANIZER.DASHBOARD, icon: "/assets/DashboardIcon.svg" },
     { id: 2, title: "Scan Tickets", route: ROUTES.ORGANIZER.VERIFY_TICKETS, icon:  "/assets/scannerIcon.svg"},
+    { id: 3, title: "Profile", route: ROUTES.ORGANIZER.PROFILE, icon:  "/assets/circle-user.svg"},
 ]
 
 export const USER_HEADER_ITEMS = [

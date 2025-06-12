@@ -69,6 +69,15 @@ export type ITicket = {
     description: string;
     isEditing?: boolean;
     _id : string,
+    isLayoutAdded?: boolean
+    isDisabled?: boolean
+};
+
+export interface ITicketInfo {
+    id: string;
+    ticketType: string;
+    ticketPrice: string;
+    totalSeats: string;
 };
 
 export interface ISuggestion {
@@ -148,3 +157,70 @@ export interface ISelectFieldsProps {
   disabled?:boolean;
   height?: string,
 };
+
+export interface ISeatLayout {
+  ticketType: string; // ObjectId as string
+  price: number;
+  rows: ISeatRow[];
+  id?:string
+}
+
+export interface ISeatRow {
+  row: string; // e.g., "A", "B", etc.
+  seats: ISeat[];
+}
+
+export interface ISeat {
+  seatNumber: string | number; // e.g., "A1", "A2"
+  isUsed: boolean;
+}
+
+
+
+interface ISeatApiResponse {
+  seatNumber: string | number; // `0` is a string, others like "A1" are strings
+  isUsed: boolean;
+  _id?: string;
+}
+
+// Define the type for a row object within a seat layout
+interface IRow {
+  row: string;
+  seats: ISeatApiResponse[];
+  _id?: string;
+}
+
+// Define the type for the TicketType object (nested inside seatLayout)
+interface ISeatTicketType {
+  _id: string;
+  name: string;
+  description: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+// Define the type for a single seat layout item
+interface IEventSeatLayout {
+  ticketType: ISeatTicketType; // This is now an object, not just an ID string
+  price: number;
+  rows: IRow[];
+  _id: string;
+}
+
+// Define the type for a single data entry in the 'data' array
+interface ISeactLayoutData {
+  _id: string;
+  event: string; // Assuming this is an event ID string
+  seatLayout: IEventSeatLayout[]; // This is an array of seat layouts
+  __v: number;
+}
+
+// Define the overall structure of the API response
+export interface ISeatLayoutResponse {
+  status: number;
+  data: ISeactLayoutData[];
+  success: boolean;
+  message: string;
+}

@@ -1,5 +1,5 @@
 import { EventsDataTypes, EventTicket, IApplyFiltersKey, IEventPrice, IEventRangeDate } from "@/utils/types";
-import { IEventFormData } from "./types";
+import { IEventFormData, ITicketInfo } from "./types";
 import moment from "moment";
 
 export const getTicketPriceRange = (data: EventTicket[]) => {
@@ -102,6 +102,13 @@ export const InitialEventFormDataErrorTypes = {
     images: false,
     points : false
 };
+
+export const InitialTicketItems : ITicketInfo = {
+    id : "",
+    ticketPrice : "",
+    ticketType: "",
+    totalSeats: "",
+}
 
 export const parseDurationToMinutes = (duration: string): number => {
     const regex = /(\d+)\s*(day|days|hr|hrs|hour|hours|min|minutes)/gi;
