@@ -6,6 +6,7 @@ interface IBackendSeat {
   seatNumber: string | number;
   isUsed: boolean;
   _id?: string;
+  isBooked?: boolean
 }
 
 interface IBackendRow {
@@ -51,7 +52,7 @@ const ViewSeatLayout: React.FC<ViewSeatLayoutProps> = ({
         const transformedRows: IFrontendRows = layoutObject.rows.map((row) =>
           row.seats.map((seat) => ({
             id: String(seat.seatNumber),
-            isUsed: seat.isUsed,
+            isUsed: seat.isBooked ? false : true,
             type: String(seat.seatNumber) === "0" ? "Space" : "Seat",
             originalId: seat._id || "",
           }))
@@ -64,7 +65,6 @@ const ViewSeatLayout: React.FC<ViewSeatLayoutProps> = ({
         };
       });
 
-      console.log("first", allTransformedLayouts)
       setTransformedLayouts(allTransformedLayouts);
     } else {
       setTransformedLayouts([]);
@@ -76,66 +76,73 @@ const ViewSeatLayout: React.FC<ViewSeatLayoutProps> = ({
   }
 
   return (
-    <div className="w-full flex flex-col items-center py-8 px-4">
-      <div className="w-full max-w-7xl overflow-auto space-y-10">
-        {transformedLayouts.map((layout, layoutIndex) => (
-          <div
-            key={layoutIndex}
-            className="border border-gray-200 rounded-lg shadow-sm p-6 bg-white"
-          >
-            <div className="text-center mb-4">
-              <h2 className="text-xl font-bold text-gray-800">
+    <div className="w-full flex justify-center py-8 px-4">
+      <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg border border-gray-200 p-6 flex flex-col gap-6">
+        {/* Scrollable Layout */}
+        <div className="border border-gray-100 rounded-lg p-4 bg-gray-50">
+          {transformedLayouts.map((layout, layoutIndex) => (
+            <div key={layoutIndex} className="mb-10">
+              {/* Section Title */}
+              <h2 className="text-center text-lg font-bold text-gray-700 mb-4">
                 {layout.ticketType} - ₹{layout.ticketPrice}
               </h2>
-            </div>
 
-            <div className="flex flex-col gap-4 mt-4">
-              {layout.rows.map((row, rowIndex) => (
-                <div key={rowIndex} className="flex items-center gap-4">
-                  <div className="w-6 text-right text-sm font-medium text-gray-700">
-                    {String.fromCharCode(65 + rowIndex)}
-                  </div>
-                  <div className="flex gap-2 flex-wrap">
-                    {row.map((seat, seatIndex) => (
-                      <div key={seatIndex}>
-                        <div
-                          className={`
-                          w-10 h-10 flex items-center justify-center rounded-md text-xs font-semibold
-                          ${seat.type === "Space"
+              {/* Seat Rows */}
+              <div className="flex flex-col gap-4">
+                {layout.rows.map((row, rowIndex) => (
+                  <div
+                    key={rowIndex}
+                    className="flex items-center gap-4 w-full"
+                  >
+                    {/* Row Label */}
+                    <div className="w-6 text-right text-sm font-medium text-gray-600">
+                      {String.fromCharCode(65 + rowIndex)}
+                    </div>
+
+                    {/* Centered Seats */}
+                    <div className="flex-1 flex justify-center gap-2 flex-wrap">
+                      {row.map((seat, seatIndex) => (
+                        <div key={seatIndex}>
+                          <div
+                            className={`
+                          w-10 h-10 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-md text-xs font-semibold
+                          ${
+                            seat.type === "Space"
                               ? "bg-transparent border border-dashed border-gray-400 text-gray-400"
                               : seat.isUsed
-                                ? "bg-green-500 text-white"
-                                : "bg-gray-300 text-gray-600"
-                            }
+                              ? "bg-green-500 text-white"
+                              : "bg-gray-300 text-gray-600"
+                          }
                         `}
-                        >
-                          {seat.id === "0" ? "" : seat.id}
+                          >
+                            {seat.id === "0" ? "" : seat.id}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
 
-        {/* Full-width screen */}
-        <div className="w-full  mt-10">
-          <div className="w-full h-10 bg-gray-800 rounded-md text-white flex items-center justify-center text-sm font-semibold">
-            SCREEN
+        {/* STAGE */}
+        <div className="w-full flex justify-center">
+          <div className="bg-gradient-to-b from-gray-800 to-gray-700 text-white font-bold text-sm rounded-t-2xl w-1/2 h-15 flex items-center justify-center shadow">
+            STAGE/SCREEN
           </div>
         </div>
 
-        {/* Legend / Marker */}
-        <div className="mt-6 flex gap-6 items-center flex-wrap">
+        {/* Legend */}
+        <div className="flex gap-6 items-center flex-wrap justify-center mt-4">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-green-500 rounded-md"></div>
             <span className="text-sm text-gray-700">Available</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-gray-300 rounded-md"></div>
-            <span className="text-sm text-gray-700">Not Available</span>
+            <span className="text-sm text-gray-700">Booked</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 border border-dashed border-gray-400 rounded-md"></div>

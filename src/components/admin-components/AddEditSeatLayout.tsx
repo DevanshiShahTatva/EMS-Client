@@ -12,6 +12,7 @@ interface Seat {
   row: number;
   col: number;
   type: string;
+  isBooked?: boolean
 }
 
 interface Move {
@@ -35,6 +36,7 @@ const transformSeatingData = (input: ISeatLayout[]): ISeatLayout[] => {
       seats: row.seats.map((s) => ({
         seatNumber: s.seatNumber,
         isUsed: s.isUsed,
+        isBooked: s.isBooked ? true : false
       })),
     })),
   }));
@@ -131,14 +133,14 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
     rows.forEach((row, rowIndex) => {
       const rowName = String.fromCharCode(65 + rowIndex);
       let actualCategory = "";
-      const seatsForThisRow: { seatNumber: string | number; isUsed: boolean }[] = [];
+      const seatsForThisRow: { seatNumber: string | number; isUsed: boolean, isBooked? : boolean }[] = [];
 
       row.forEach((seat) => {
         if (seat.type === "Space") {
-          seatsForThisRow.push({ seatNumber: 0, isUsed: false });
+          seatsForThisRow.push({ seatNumber: 0, isUsed: false, isBooked: false });
         } else {
           actualCategory = seat.type;
-          seatsForThisRow.push({ seatNumber: seat.id, isUsed: true });
+          seatsForThisRow.push({ seatNumber: seat.id, isUsed: true, isBooked : seat.isBooked ? true : false  });
         }
       });
 
@@ -181,10 +183,12 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
               row: actualRowIndex,
               col: seatIndex,
               type: String(seat.seatNumber) === '0' ? 'Space' : layoutObject.ticketType,
+              isBooked: seat.isBooked ? true : false
             });
           });
         });
       });
+
       setRows(structuredRows);
     } else {
       setRows([[]]);
@@ -212,16 +216,16 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
                 <div className="flex gap-2 flex-wrap mt-2">
                   {row.map((seat, seatIndex) => (
                     <div key={seatIndex} className="relative">
-                      <div className="w-10 h-10 rounded text-xs flex items-center justify-center border">
+                      <div className={`w-10 h-10 rounded font-bold text-xs flex items-center justify-center border ${!seat.isBooked ? "bg-white" : "bg-gray-200"}`}>
                         {seat.id}
                       </div>
-                      <button
+                      {!seat.isBooked && <button
                         onClick={() => handleRemoveSeat(rowIndex, seatIndex)}
                         className="absolute -top-1.5 -right-1.5 text-xs cursor-pointer text-white bg-red-600 rounded-full w-4 h-4 flex items-center justify-center z-10 shadow-md"
                         title="Delete Seat"
                       >
                         ×
-                      </button>
+                      </button>}
                     </div>
                   ))}
                 </div>
@@ -291,14 +295,6 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
                 type="number"
                 value={addCount.toString()}
                 onChange={(e) => setAddCount(Number(e.target.value))}
-              />
-              <label className="block font-medium">Seats to Add</label>
-              <input
-                type="number"
-                min={1}
-                value={addCount}
-                onChange={(e) => setAddCount(Number(e.target.value))}
-                className="border px-2 py-1 rounded w-full"
               />
             </div>
 
