@@ -202,7 +202,7 @@ const SeatBookingModal = ({
           </div>
         ) : (
           <>
-            <div className="max-h-[80vh] overflow-y-auto">{renderLayout()}</div>
+            <div className="">{renderLayout()}</div>
 
             {/* Legend */}
             <div className="flex justify-center mt-6 space-x-6 text-sm">
