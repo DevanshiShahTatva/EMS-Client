@@ -14,6 +14,7 @@ export interface IBooking {
     paymentId: string;
     bookingDate: string;
     __v: number;
+    selectedSeatsNumbers: Seat[]
 }
 
 export interface IUser {
@@ -95,3 +96,9 @@ export interface IEventsState {
 }
 
 export type SortOption = 'none' | 'date-asc' | 'date-desc' | 'title-asc' | 'title-desc';
+
+export interface Seat {
+    id: string;
+    seatNumber: string;
+    _id: string;
+}
