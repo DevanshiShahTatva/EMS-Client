@@ -6,6 +6,7 @@ import CustomButton from '../common/CustomButton';
 import { Plus, Undo, Redo } from 'lucide-react';
 import CustomTextField from './InputField';
 import CustomSelectField from './SelectField';
+import AlertBox from '../events-components/AlertBox';
 
 interface Seat {
   id: string;
@@ -44,6 +45,8 @@ const transformSeatingData = (input: ISeatLayout[]): ISeatLayout[] => {
 
 const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLayout = [], isEditable = false }) => {
   const [rows, setRows] = useState<Seat[][]>([[]]);
+  const [lockedLayout, setLockedLayout] = useState<Seat[][]>([[]]);
+  const [isLayoutLocked, setIsLayoutLocked] = useState<boolean>(false);
   const [addCount, setAddCount] = useState<number>(1);
   const [activeRowIndex, setActiveRowIndex] = useState<number>(0);
   const [history, setHistory] = useState<Move[]>([]);
@@ -162,6 +165,8 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
       }
     ]);
 
+    setLockedLayout([[]]);
+    setIsLayoutLocked(false)
     onSave(finalArray);
   };
 
@@ -172,6 +177,7 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
   useEffect(() => {
     if (isEditable && savedLayout.length > 0) {
       const structuredRows: Seat[][] = [];
+
       savedLayout.forEach((layoutObject) => {
         layoutObject.rows.forEach((rowObject) => {
           const actualRowIndex = rowObject.row.charCodeAt(0) - 65;
@@ -189,12 +195,23 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
         });
       });
 
+       const isAnySeatBooked = savedLayout.some((layout) =>
+         layout.rows.some((row) =>
+           row.seats.some((seat) => seat.isBooked === true)
+         )
+       );
+
       setRows(structuredRows);
+      if (isAnySeatBooked) {
+        setLockedLayout(structuredRows); 
+        setIsLayoutLocked(true)
+      }
     } else {
       setRows([[]]);
+      setLockedLayout([[]]);
+      setIsLayoutLocked(false)
     }
   }, [savedLayout, isEditable]);
-
 
   return (
     <div className="p-6 space-y-6 mx-auto">
@@ -203,11 +220,18 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
       <div className="grid grid-cols-12 gap-8">
         {/* Seat Layout Section (8 columns) */}
         <div className="col-span-12 md:col-span-8 space-y-6">
+
+          { isLayoutLocked && 
+             <AlertBox type='warning'>
+                This ticket catogory includes booked seats so it cannot be edited.
+             </AlertBox>
+          }
+
           <div className="text-xl text-gray-800 font-bold mb-4">
             Rs. {ticketItems.ticketPrice} - {ticketItems.ticketType}
           </div>
 
-          {rows.map((row, rowIndex) => (
+          {isLayoutLocked && lockedLayout.map((row, rowIndex) => (
             <div key={rowIndex}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg font-semibold w-6">
@@ -216,16 +240,46 @@ const AddEditSeatLayout: React.FC<LayoutProps> = ({ ticketItems, onSave, savedLa
                 <div className="flex gap-2 flex-wrap mt-2">
                   {row.map((seat, seatIndex) => (
                     <div key={seatIndex} className="relative">
-                      <div className={`w-10 h-10 rounded font-bold text-xs flex items-center justify-center border ${!seat.isBooked ? "bg-white" : "bg-gray-200"}`}>
+                      <div
+                        className={`w-10 h-10 rounded font-bold text-xs flex items-center justify-center border ${
+                          !seat.isBooked ? "bg-white" : "bg-gray-200"
+                        }`}
+                      >
                         {seat.id}
                       </div>
-                      {!seat.isBooked && <button
-                        onClick={() => handleRemoveSeat(rowIndex, seatIndex)}
-                        className="absolute -top-1.5 -right-1.5 text-xs cursor-pointer text-white bg-red-600 rounded-full w-4 h-4 flex items-center justify-center z-10 shadow-md"
-                        title="Delete Seat"
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <hr className="border-gray-300" />
+            </div>
+          ))}
+
+          {!isLayoutLocked && rows.map((row, rowIndex) => (
+            <div key={rowIndex}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-lg font-semibold w-6">
+                  {String.fromCharCode(65 + rowIndex)}
+                </span>
+                <div className="flex gap-2 flex-wrap mt-2">
+                  {row.map((seat, seatIndex) => (
+                    <div key={seatIndex} className="relative">
+                      <div
+                        className={`w-10 h-10 rounded font-bold text-xs flex items-center justify-center border ${
+                          !seat.isBooked ? "bg-white" : "bg-gray-200"
+                        }`}
                       >
-                        ×
-                      </button>}
+                        {seat.id}
+                      </div>
+                      {!seat.isBooked && (
+                        <button
+                          onClick={() => handleRemoveSeat(rowIndex, seatIndex)}
+                          className="absolute -top-1.5 -right-1.5 text-xs cursor-pointer text-white bg-red-600 rounded-full w-4 h-4 flex items-center justify-center z-10 shadow-md"
+                          title="Delete Seat"
+                        >
+                          ×
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>

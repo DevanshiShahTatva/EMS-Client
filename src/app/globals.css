@@ -311,3 +311,10 @@
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
 }
+
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(20, 32px);
+  gap: 6px;
+  margin: 0 0 0 12px;
+}

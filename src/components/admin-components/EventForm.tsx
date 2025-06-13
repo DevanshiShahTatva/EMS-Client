@@ -961,7 +961,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
     if (!layout) return;
     setTickets((prevTicketsArray) => {
       return prevTicketsArray.map((ticket) => {
-        const matchingLayout = layout.filter((layout) => layout.id === ticket.type);
+        const matchingLayout = layout.filter((layout) => layout.id === ticket.type && layout.rows.length > 0);
 
         return {
           ...ticket,

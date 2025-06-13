@@ -124,19 +124,11 @@ const SeatBookingModal = ({
 
   const renderLayout = () => (
     <div className="space-y-8 py-4">
-      {/* Stage */}
-      <div className="text-center mb-6">
-        <div className="bg-gradient-to-t from-gray-800 to-gray-700 text-white py-3 px-8 rounded-t-lg mx-auto max-w-md">
-          <span className="font-bold tracking-wider">STAGE</span>
-        </div>
-      </div>
-
-      {/* Seat Sections */}
       <div className="space-y-10">
         {seatLayout.map((section) => (
           <div
             key={section._id}
-            className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+            className="bg-gray-50 p-4 rounded-lg border border-gray-200 overflow-auto"
           >
             <div className="mb-4 flex gap-2 items-center">
               <h3 className="text-lg font-bold text-gray-800">
@@ -153,7 +145,7 @@ const SeatBookingModal = ({
                   <span className="w-8 text-center font-medium text-sm text-gray-600">
                     {row.row}
                   </span>
-                  <div className="flex gap-1.5 ml-2">
+                  <div className="seat-grid">
                     {renderSeats(row.seats, section.ticketType._id)}
                   </div>
                 </div>
@@ -161,6 +153,12 @@ const SeatBookingModal = ({
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="text-center mb-6">
+        <div className="bg-gradient-to-t from-gray-800 to-gray-700 text-white py-3 px-8 rounded-b-lg mx-auto max-w-md">
+          <span className="font-bold tracking-wider">STAGE / SCREEN</span>
+        </div>
       </div>
     </div>
   );
@@ -202,7 +200,7 @@ const SeatBookingModal = ({
           </div>
         ) : (
           <>
-            <div className="">{renderLayout()}</div>
+            <div>{renderLayout()}</div>
 
             {/* Legend */}
             <div className="flex justify-center mt-6 space-x-6 text-sm">
