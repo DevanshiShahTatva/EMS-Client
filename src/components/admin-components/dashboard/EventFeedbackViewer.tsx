@@ -36,7 +36,7 @@ const EventFeedbackViewer = () => {
       <div className={(events.length>0) ? "w-1/3 overflow-y-auto p-4 bg-gray-50":"w-full overflow-y-auto p-4 bg-gray-50 flex items-center justify-center"}>
         {loading ? (
           <Skeleton className="w-full h-full" />
-        ) : (events.length>0) ? (
+        ) : (events.filter(event => event?.eventTitle !== null).length>0) ? (
           <ul className="space-y-3">
             {events.map((event) => (
               <li
@@ -44,7 +44,7 @@ const EventFeedbackViewer = () => {
                 className={`cursor-pointer p-2 rounded hover:bg-gray-200 ${selectedEvent?.eventId === event.eventId ? 'bg-gray-300' : ''}`}
                 onClick={() => setSelectedEvent(event)}
               >
-                {event.eventTitle || 'Untitled Event'}
+                {event.eventTitle}
               </li>
             ))}
           </ul>
