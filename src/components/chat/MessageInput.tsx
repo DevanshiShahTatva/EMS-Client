@@ -33,8 +33,14 @@ const MessageInput: React.FC<IMessageInputProps> = ({
   useEffect(() => {
     if (editMessage) {
       setNewMessage(editMessage.content);
+      setTimeout(() => {
+        adjustTextareaHeight();
+      }, 0);
     } else {
       setNewMessage("");
+      setTimeout(() => {
+        adjustTextareaHeight();
+      }, 0);
     }
   }, [editMessage]);
 
@@ -94,6 +100,10 @@ const MessageInput: React.FC<IMessageInputProps> = ({
     setNewMessage("");
     setEditMessage(null);
     handleInternalTyping("stop");
+
+    setTimeout(() => {
+      adjustTextareaHeight();
+    }, 0);
   };
 
   const onEmojiClick = (emojiData: { emoji: string }) => {
@@ -133,6 +143,13 @@ const MessageInput: React.FC<IMessageInputProps> = ({
     const textarea = e.target;
     textarea.style.height = 'auto'; 
     textarea.style.height = `${textarea.scrollHeight}px`;
+  };
+
+  const adjustTextareaHeight = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
   };
 
   return (
