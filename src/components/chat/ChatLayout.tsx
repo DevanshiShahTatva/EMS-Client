@@ -19,6 +19,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
   const privateChatId = searchParams.get('id');
   const groupChatId = searchParams.get('group');
   const handledRef = useRef(false);
+  const userRef = useRef<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [myGroups, setMyGroups] = useState<IGroup[]>([]);
   const [myPrivateChats, setMyPrivateChats] = useState<IPrivateChat[]>([]);
@@ -84,7 +85,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
   };
 
   const handleGroupMemberRemoved = ({ groupId, groupName, removedMemberId }: any) => {
-    if (removedMemberId === userId) {
+    if (removedMemberId === userRef.current) {
       toast.success(`You were removed from the group ${groupName ?? ""}`);
       setOpenChatInfo(false);
       setMyGroups(prev => prev.filter(group => group.id !== groupId));
@@ -102,8 +103,6 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
   };
 
   useEffect(() => {
-    if (!userId) return;
-
     connectSocket();
 
     const socket = getSocket();
@@ -120,7 +119,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
 
       disconnectSocket();
     };
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
     if (privateChatId && !handledRef.current) {
@@ -151,6 +150,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
           lastMessageTime: group.lastMessage ? moment(group.lastMessageTime).format('hh:mm A') : '',
         })));
         setUserId(response.userId);
+        userRef.current = response.userId;
         if (groupChatId && !handledRef.current) {
           handleSetActiveChat(groupChatId, "group");
           handledRef.current = true;
@@ -186,6 +186,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
           lastMessageTime: chat.lastMessage ? moment(chat.lastMessageTime).format('hh:mm A') : '',
         })));
         setUserId(response.userId);
+        userRef.current = response.userId;
         if (privateChatId && !handledRef.current) {
           handleSetActiveChat(privateChatId, "private");
           handledRef.current = true;
