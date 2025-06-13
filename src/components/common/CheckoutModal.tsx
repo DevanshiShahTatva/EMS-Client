@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CircleCheckIcon } from "lucide-react";
 import CommonModalLayout from "@/components/common/CommonModalLayout";
 import { apiCall } from "@/utils/services/request";
 import axios from "axios";
 import CoinRedeemCard from "../events-components/CoinReedem";
 import { SelectSeat } from "@/utils/types";
+import { API_ROUTES } from "@/utils/constant";
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -40,6 +41,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [activeMethod, setActiveMethod] = useState<"coins" | "promo" | null>(
     null
   );
+  const [charge, setCharge] = useState("0");
 
   const totalPrice = ticket.price * ticket.quantity;
   const discount =
@@ -80,6 +82,20 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       window.location.href = res.data.url;
     } catch (err) {
       console.error("Error initiating payment:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchChargeInfo();
+  }, []);
+
+  const fetchChargeInfo = async () => {
+    const res = await apiCall({
+      method: "GET",
+      endPoint: API_ROUTES.ADMIN.CANCEL_CHARGE,
+    });
+    if (res.success) {
+      setCharge(res.data.charge);
     }
   };
 
@@ -141,83 +157,6 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     setUsedPoints(0);
     setActiveMethod("promo");
   };
-
-  const renderPromoCodeUI = () => {
-    return (
-      <div className="space-y-2 mt-4">
-        <div className="block text-sm font-medium text-gray-700">
-          Promo code
-        </div>
-        {!voucherId ? (
-          <div>
-            <div className="flex items-center space-x-2">
-              <input
-                type="text"
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value)}
-                placeholder="Enter promo code"
-                className="flex-1 px-4 py-2 border rounded-md border-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <button
-                onClick={appliedPromoCode}
-                className="px-4 py-2 cursor-pointer bg-purple-600 text-white rounded-md hover:bg-purple-700 transition"
-              >
-                Apply
-              </button>
-            </div>
-            <div>
-              {promoCodeMessage && (
-                <p className="text-sm text-red-600 mt-2">*{promoCodeMessage}</p>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between border-2 border-green-700 rounded-md p-3 bg-white">
-            <div className="flex items-start space-x-2">
-              <CircleCheckIcon color="green" />
-              <div>
-                <p className="font-bold text-sm">{promoCode}</p>
-                <p className="text-sm text-gray-600">{promoCodeMessage}</p>
-              </div>
-            </div>
-            <button
-              onClick={handleRemove}
-              className="text-purple-600 cursor-pointer font-medium hover:underline text-sm"
-            >
-              Remove
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderToggle = () => (
-    <div className="flex space-x-4 items-center mt-4">
-      {points > 0 && (
-        <button
-          onClick={() => selectCoinMethod()}
-          className={`px-3 py-1 text-sm rounded-md cursor-pointer ${
-            activeMethod === "coins"
-              ? "bg-yellow-400 text-black"
-              : "bg-gray-200 text-gray-700"
-          }`}
-        >
-          Redeem Coins
-        </button>
-      )}
-      <button
-        onClick={() => selectPromoMethod()}
-        className={`px-3 py-1 text-sm rounded-md cursor-pointer ${
-          activeMethod === "promo"
-            ? "bg-purple-600 text-white"
-            : "bg-gray-200 text-gray-700"
-        }`}
-      >
-        Use Promo Code
-      </button>
-    </div>
-  );
 
   if (!isOpen) return null;
 
@@ -442,7 +381,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 Cancellation Policy
               </p>
               <p className="mt-1 text-sm text-red-700">
-                A <span className="font-semibold">10% cancellation fee</span>{" "}
+                A <span className="font-semibold">{charge}% cancellation fee</span>{" "}
                 applies to this ticket. This charge will be deducted if you
                 cancel your booking.
               </p>
