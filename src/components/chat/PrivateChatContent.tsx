@@ -19,6 +19,7 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [editMessage, setEditMessage] = useState<IMessage | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [isNewMessages, setIsNewMessages] = useState(false);
   const [isScrollBottom, setIsScrollBottom] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -52,10 +53,10 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
           ...prev[index],
           unreadCount: 0,
           lastMessage: message.content,
+          msgType: message.msgType ?? 'text',
           senderId: message.sender?._id ?? "",
           lastMessageSender: message.sender?.name ?? "",
           lastMessageTime: moment(message.createdAt).format('hh:mm A'),
-          updatedAt: new Date(message.createdAt)
         };
 
         const newChats = prev.slice();
@@ -63,6 +64,7 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
         newChats.unshift(updatedChat);
         return newChats;
       });
+      setIsNewMessages(true);
     }
   };
 
@@ -82,6 +84,7 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
           chat.id === msgChatId
             ? {
               ...chat,
+              msgType: 'text',
               lastMessage: updatedContent,
               lastMessageTime: updatedTime ? moment(updatedTime).format('hh:mm A') : chat.lastMessageTime
             }
@@ -182,10 +185,10 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
     socket.emit('user_stopped_typing', { chatId });
   };
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = (type: 'text' | 'image', content: string, imageId?: string) => {
     const socket = getSocket();
     if (!socket || !chatId) return;
-    socket.emit("new_private_message", { chatId, content });
+    socket.emit("new_private_message", { chatId, type, content, imageId });
   };
 
   const handleDeleteMessage = (status: 'deleted', messageId: string) => {
@@ -226,6 +229,8 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
         isScrollBottom={isScrollBottom}
         groupedMessage={groupedMessage}
         activeMenuId={activeMenuId}
+        isNewMessages={isNewMessages}
+        setIsNewMessages={setIsNewMessages}
         setActiveMenuId={setActiveMenuId}
         setIsScrollBottom={setIsScrollBottom}
         setEditMessage={setEditMessage}

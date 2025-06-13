@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import moment from 'moment';
-import { Trash2Icon, PencilIcon, BanIcon, EllipsisVerticalIcon } from "lucide-react";
+import { toast } from 'react-toastify';
+import { Trash2Icon, PencilIcon, BanIcon, EllipsisVerticalIcon, Loader2 } from "lucide-react";
 
 import { apiCall } from '@/utils/services/request';
 import { IChatWindowProps, IMessage } from './type';
@@ -10,11 +11,13 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
   userId,
   isGroup,
   isLoading,
+  isNewMessages,
   isScrollBottom,
   groupedMessage,
   activeMenuId,
   chatApiEndpoint,
   groupMessagesByDate,
+  setIsNewMessages,
   setActiveMenuId,
   setEditMessage,
   setIsScrollBottom,
@@ -23,6 +26,9 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
 }) => {
   const [loadingOlderMessages, setLoadingOlderMessages] = useState<boolean>(false);
   const [hasMoreMessages, setHasMoreMessages] = useState<boolean>(true);
+  const [deletingMessages, setDeletingMessages] = useState<Set<string>>(new Set());
+  const [imagesLoaded, setImagesLoaded] = useState(0);
+  const [totalImages, setTotalImages] = useState(0);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -33,12 +39,31 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
     setGroupedMessage({});
     setHasMoreMessages(true);
     setLoadingOlderMessages(false);
+    setDeletingMessages(new Set());
 
   }, [chatId]);
 
   useEffect(() => {
     isScrollBottom && scrollToBottom();
   }, [groupedMessage, isScrollBottom]);
+
+  useEffect(() => {
+    if (!isScrollBottom) return;
+
+    const imageCount = Object.values(groupedMessage)
+      .flat()
+      .filter(msg => msg.msgType === 'image' && msg.status !== 'deleted')
+      .length;
+
+    setTotalImages(imageCount);
+    setImagesLoaded(0);
+  }, [groupedMessage, isScrollBottom]);
+
+  useEffect(() => {
+    if (isScrollBottom && totalImages > 0 && imagesLoaded >= totalImages) {
+      scrollToBottom();
+    }
+  }, [imagesLoaded, totalImages, isScrollBottom]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -107,7 +132,6 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
   };
 
   const scrollToBottom = () => {
-    setIsScrollBottom(false);
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -120,9 +144,52 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
     setActiveMenuId(null);
   };
 
-  const handleDeleteClick = (messageId: string) => {
-    editOrDeleteMessage('deleted', messageId);
+  const handleDeleteClick = async (messageId: string, msgType: 'text' | 'image', imageId?: string) => {
+    setDeletingMessages(prev => new Set(prev).add(messageId));
     setActiveMenuId(null);
+
+    if (msgType === 'image') {
+      try {
+        const response = await apiCall({
+          endPoint: `/chat/remove-image?imageId=${imageId}`,
+          method: "DELETE",
+          withToken: true,
+        });
+
+        if (response.success) {
+          setDeletingMessages(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(messageId);
+            return newSet;
+          });
+          editOrDeleteMessage('deleted', messageId);
+        } else {
+          setDeletingMessages(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(messageId);
+            return newSet;
+          });
+          toast.error("Failed to delete image message");
+        }
+      } catch (err: any) {
+        setDeletingMessages(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(messageId);
+          return newSet;
+        });
+        console.log("Err:" + err);
+        toast.error(err.message ?? "Failed to delete image message");
+      }
+    } else {
+      setTimeout(() => {
+        setDeletingMessages(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(messageId);
+          return newSet;
+        });
+        editOrDeleteMessage('deleted', messageId);
+      }, 300);
+    }
   };
 
   const getSystemMessageText = (msg: IMessage) => {
@@ -157,6 +224,185 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
     }
   };
 
+  const renderDateHeader = (dateTitle: string) => (
+    <div className='flex justify-center sticky top-0 mb-3 z-10'>
+      <div className='w-fit pt-[2px] pb-[2px] pl-2 pr-2 font-medium border border-gray-300 rounded-[4px] bg-white'>
+        {dateTitle}
+      </div>
+    </div>
+  );
+
+  const renderSystemMessage = (msg: IMessage, index: number) => (
+    <div key={`sys-${index}`} className='flex justify-center mb-3'>
+      <div className="inline-block px-4 py-1 bg-white text-gray-700 text-sm rounded-full border border-gray-200">
+        {getSystemMessageText(msg)}
+      </div>
+    </div>
+  );
+
+  const renderUserAvatar = (msg: IMessage, isFirst: boolean) => {
+    if (!isFirst) return <div className="w-7 h-7" />;
+    if (msg.sender?.profileimage?.url) {
+      return (
+        <img
+          src={msg.sender.profileimage.url}
+          alt="not found"
+          className="w-7 h-7 rounded-full"
+        />
+      );
+    }
+    return (
+      <div className="w-7 h-7 bg-purple-500 text-white rounded-full flex items-center justify-center font-semibold">
+        {msg.sender?.name?.charAt(0)?.toUpperCase()}
+      </div>
+    );
+  };
+
+  const renderMessageMenu = (msg: IMessage, isSentByMe: boolean) => {
+    if (!isSentByMe || msg.status === 'deleted') return null;
+
+    const isDeleting = deletingMessages.has(msg._id);
+
+    return (
+      <div className='relative transition-all duration-400 ease-in-out opacity-0 group-hover:opacity-100'>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleMessageMenuClick(msg._id);
+          }}
+          className='bg-white rounded-full p-[6px] shadow cursor-pointer'
+          disabled={isDeleting}
+        >
+          <EllipsisVerticalIcon size={14} color={isDeleting ? '#ccc' : 'gray'} />
+        </button>
+        {activeMenuId === msg._id && !isDeleting && (
+          <div
+            ref={menuRef}
+            className={`absolute left-[-120px] ${msg.msgType === 'image' ? "top-[-7px]" : "top-[-20px]"} w-28 bg-white rounded-sm shadow-lg text-sm z-10`}
+          >
+            {msg.msgType !== 'image' && (
+              <button
+                onClick={() => handleEditClick(msg)}
+                className="flex justify-start items-center gap-2 w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-50"
+              >
+                <PencilIcon size={12} /> Edit
+              </button>
+            )}
+            <button
+              onClick={() => handleDeleteClick(msg._id, msg.msgType, msg.imageId)}
+              className="flex justify-start items-center gap-2 w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-50 text-red-600"
+            >
+              <Trash2Icon size={15} /> Delete
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderMessageContent = (msg: IMessage) => {
+    const isDeleting = deletingMessages.has(msg._id);
+
+    if (msg.status === 'deleted') {
+      return (
+        <span className="flex items-center gap-1 italic">
+          <BanIcon size={13} /> This message was deleted
+        </span>
+      );
+    }
+
+    if (isDeleting) {
+      return (
+        <div className="flex items-center gap-2">
+          <Loader2 size={14} className="animate-spin" />
+          <span className="text-sm opacity-70">Deleting...</span>
+        </div>
+      );
+    }
+
+    if (msg.msgType === 'image') {
+      return <img
+        src={msg.content}
+        alt="not found"
+        className='rounded-lg pb-1'
+        onLoad={() => {
+          if (isScrollBottom) {
+            setImagesLoaded(prev => prev + 1);
+            if (isNewMessages) {
+              scrollToBottom();
+              setIsNewMessages(false);
+            }
+          }
+        }}
+        onError={() => isScrollBottom && setImagesLoaded(prev => prev + 1)}
+      />;
+    }
+    return <span>{msg.content}</span>;
+  };
+
+  const getMessageBubbleClassName = (msgType: string, status: string, isSentByMe: boolean, isDeleting: boolean) => {
+    const baseClasses = "min-w-[80px] max-w-xs rounded-lg transition-all duration-300 peer";
+
+    const isImage = msgType === 'image' && status !== 'deleted';
+    const padding = isImage ? "p-[6px]" : "p-[12px] pt-[9px] pb-1";
+
+    let theme = "";
+    if (isDeleting) {
+      theme = "bg-gray-300 text-gray-500 opacity-70 animate-pulse";
+    } else if (isSentByMe) {
+      theme = "bg-purple-500 text-white";
+    } else {
+      theme = "bg-gray-200 text-gray-700";
+    }
+    return `${baseClasses} ${padding} ${theme}`;
+  };
+
+  const renderMessageBubble = (msg: any, isSentByMe: boolean) => {
+    const isDeleting = deletingMessages.has(msg._id);
+
+    return (
+      <div className={getMessageBubbleClassName(msg.msgType, msg.status, isSentByMe, isDeleting)}>
+        {renderMessageContent(msg)}
+        {!isDeleting && (
+          <div className="mt-[5px] text-[10px] text-right">
+            {msg.status === 'edited' && (
+              <span className="mr-2">Edited</span>
+            )}
+            {moment(msg.createdAt).format('hh:mm A')}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderMessageRow = (msg: IMessage, index: number, msgs: IMessage[]) => {
+    const isSentByMe = msg.sender?._id === userId;
+    const isFirstOfSequence = index === 0 || msg.sender?._id !== msgs[index - 1]?.sender?._id;
+    const isDeleting = deletingMessages.has(msg._id);
+
+    return (
+      <div
+        key={`msg-${index}`}
+        className={`flex gap-[5px] mb-3 transition-all duration-300 ${isSentByMe ? 'justify-end' : 'justify-start'} ${isDeleting ? 'opacity-70 scale-95' : ''}`}
+      >
+        {!isSentByMe && isGroup && (
+          <div className="min-w-[28px]">
+            {renderUserAvatar(msg, isFirstOfSequence)}
+          </div>
+        )}
+        <div>
+          {!isSentByMe && isGroup && isFirstOfSequence && (
+            <div className="mb-[3px] text-sm font-semibold text-purple-500">{msg.sender?.name}</div>
+          )}
+          <div className='flex items-center gap-2 group'>
+            {renderMessageMenu(msg, isSentByMe)}
+            {renderMessageBubble(msg, isSentByMe)}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div
       onScroll={handleScroll}
@@ -178,102 +424,13 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
             )}
             {Object.entries(groupedMessage).map(([dateTitle, msgs]) => (
               <div key={dateTitle}>
-                <div className='flex justify-center sticky top-0 mb-3 z-10'>
-                  <div className='w-fit pt-[2px] pb-[2px] pl-2 pr-2 font-medium border border-gray-300 rounded-[4px] bg-white'>
-                    {dateTitle}
-                  </div>
-                </div>
-                {msgs.map((msg, index) => {
-                  if (msg.isSystemMessage) {
-                    return (
-                      <div key={`${index + 1}`} className='flex justify-center mb-3'>
-                        <div className="inline-block px-4 py-1 bg-white text-gray-700 text-sm rounded-full border border-gray-200">
-                          {getSystemMessageText(msg)}
-                        </div>
-                      </div>
-                    );
-                  }
-                  if (msg.sender) {
-                    const isSentByMe = msg.sender._id === userId;
-                    const isFirstOfSequence = index === 0 || msg.sender._id !== msgs[index - 1]?.sender?._id;
+                {renderDateHeader(dateTitle)}
 
-                    return (
-                      <div key={`${index + 1}`} className={`flex gap-[5px] mb-3 ${isSentByMe ? 'justify-end' : 'justify-start'}`}>
-                        {!isSentByMe && isGroup && (
-                          <div className="min-w-[28px]">
-                            {isFirstOfSequence && (
-                              msg.sender?.profileimage?.url ? (
-                                <img
-                                  src={msg.sender.profileimage.url}
-                                  alt="not found"
-                                  className="w-7 h-7 rounded-full"
-                                />
-                              ) : (
-                                <div className="w-7 h-7 bg-purple-500 text-white rounded-full flex items-center justify-center font-semibold">
-                                  {msg.sender.name.charAt(0).toUpperCase()}
-                                </div>
-                              )
-                            )}
-                            {!isFirstOfSequence && (
-                              <div className="w-7 h-7" />
-                            )}
-                          </div>
-                        )}
-                        <div>
-                          {!isSentByMe && isGroup && isFirstOfSequence && (
-                            <div className="mb-[3px] text-sm font-semibold text-purple-500">{msg.sender.name}</div>
-                          )}
-                          <div className='relative flex items-center gap-2 group'>
-                            {(isSentByMe && msg.status !== 'deleted') && (
-                              <div className='transition-all duration-400 ease-in-out opacity-0 group-hover:opacity-100'>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleMessageMenuClick(msg._id);
-                                  }}
-                                  className='bg-white rounded-full p-[6px] shadow cursor-pointer'
-                                >
-                                  <EllipsisVerticalIcon size={14} color='gray' />
-                                </button>
-                                {activeMenuId === msg._id && (
-                                  <div ref={menuRef} className="absolute left-[-120px] top-[-10px] w-28 bg-white rounded-sm shadow-lg text-sm z-10">
-                                    <button
-                                      onClick={() => handleEditClick(msg)}
-                                      className="flex justify-start items-center gap-2 w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-50"
-                                    >
-                                      <PencilIcon size={12} />Edit
-                                    </button>
-                                    <button
-                                      onClick={() => handleDeleteClick(msg._id)}
-                                      className="flex justify-start items-center gap-2 w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-50 text-red-600"
-                                    >
-                                      <Trash2Icon size={15} /> Delete
-                                    </button>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                            <div className={`min-w-[80px] max-w-xs rounded-lg p-3 pt-[9px] peer pb-1 ${isSentByMe ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-700'}`}>
-                              {msg.status !== 'deleted' ? (
-                                <span>{msg.content}</span>
-                              ) : (
-                                <span className="flex items-center gap-1 italic">
-                                  <BanIcon size={13} /> This message was deleted
-                                </span>
-                              )}
-                              <div className="mt-[5px] text-[10px] text-right">
-                                {msg.status === 'edited' && (
-                                  <span className="mr-2">Edited</span>
-                                )}
-                                {moment(msg.createdAt).format('hh:mm A')}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  }
-                })}
+                {msgs.map((msg, index) =>
+                  msg.isSystemMessage
+                    ? renderSystemMessage(msg, index)
+                    : renderMessageRow(msg, index, msgs)
+                )}
               </div>
             ))}
             <div ref={messagesEndRef} />
@@ -305,10 +462,7 @@ const SkeletonMessage = ({ isOutgoing = false }: { isOutgoing?: boolean }) => (
       {!isOutgoing && (
         <div className="h-4 w-24 bg-gray-300 rounded mb-2" />
       )}
-      <div
-        className={`bg-gray-300 rounded-xl h-10 mb-1 ${isOutgoing ? 'w-40 ml-auto' : 'w-50'
-          }`}
-      />
+      <div className={`bg-gray-300 rounded-xl h-10 mb-1 ${isOutgoing ? 'w-40 ml-auto' : 'w-50'}`} />
     </div>
   </div>
 );

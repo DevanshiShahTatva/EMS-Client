@@ -40,15 +40,24 @@ const ChatList: React.FC<IChatListProps> = ({
           </span>
         )}
         <span className='pl-1 pr-1'>:</span>
-        {item.lastMessage ? (
-          <span className="truncate flex-1">
-            {item.lastMessage}
+        {item.msgType === 'image' ? (
+          <span className="flex items-center gap-1 flex-1 truncate">
+            <svg width="16px" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path fill='#a1a1a1' d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2M8.5 13.5l2.5 3.01L14.5 12l4.5 6H5z"></path></svg>
+            <span className='truncate pr-[2px]'>Image</span>
           </span>
         ) : (
-          <span className="flex items-center gap-1 flex-1 italic truncate">
-            <BanIcon size={13} />
-            <span className='truncate pr-[2px]'>This message was deleted</span>
-          </span>
+          <>
+            {item.lastMessage ? (
+              <span className="truncate flex-1">
+                {item.lastMessage}
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 flex-1 italic truncate">
+                <BanIcon size={13} />
+                <span className='truncate pr-[2px]'>This message was deleted</span>
+              </span>
+            )}
+          </>
         )}
       </div>
     );

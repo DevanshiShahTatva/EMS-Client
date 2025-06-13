@@ -20,6 +20,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
   const [editMessage, setEditMessage] = useState<IMessage | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [isScrollBottom, setIsScrollBottom] = useState(false);
+  const [isNewMessages, setIsNewMessages] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const getDateKey = (date: string | Date) => {
@@ -85,10 +86,10 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
           ...prev[index],
           unreadCount: 0,
           lastMessage: message.content,
+          msgType: message.msgType ?? 'text',
           senderId: message.sender?._id ?? "",
           lastMessageSender: message.sender?.name ?? "",
           lastMessageTime: moment(message.createdAt).format('hh:mm A'),
-          updatedAt: new Date(message.createdAt)
         };
 
         const newGroups = prev.slice();
@@ -97,6 +98,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
         return newGroups;
       });
     }
+    setIsNewMessages(true);
   };
 
   const handleEditedOrDeletedMessage = ({ status, groupId: msgGroupId, messageId, isLastMessage, updatedTime, newMessage: updatedContent }: any) => {
@@ -115,6 +117,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
           group.id === msgGroupId
             ? {
               ...group,
+              msgType: 'text',
               lastMessage: updatedContent,
               lastMessageTime: updatedTime ? moment(updatedTime).format('hh:mm A') : group.lastMessageTime
             }
@@ -182,23 +185,20 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     };
   }, [groupId, userId]);
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = (type: 'text' | 'image', content: string, imageId?: string) => {
     const socket = getSocket();
     if (!socket || !groupId) return;
-    socket.emit("send_group_message", {
-      groupId: groupId,
-      content: content,
-    });
+    socket.emit("send_group_message", { groupId, type, content, imageId });
   };
 
   const handleEditMessage = (messageId: string, newContent: string) => {
     const socket = getSocket();
     if (!socket) return;
     socket.emit("edit_or_delete_message", {
-      status: 'edited',
+      groupId,
       messageId,
       newContent,
-      groupId: groupId,
+      status: 'edited',
     });
   };
 
@@ -206,23 +206,23 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     const socket = getSocket();
     if (!socket) return;
     socket.emit("edit_or_delete_message", {
+      groupId,
       status,
       messageId,
       newContent: "",
-      groupId: groupId,
     });
   };
 
   const handleStartTyping = () => {
     const socket = getSocket();
     if (!socket || !groupId) return;
-    socket.emit('group_member_typing', { groupId: groupId });
+    socket.emit('group_member_typing', { groupId });
   }
 
   const handleStopTyping = () => {
     const socket = getSocket();
     if (!socket || !groupId) return;
-    socket.emit('group_member_stop_typing', { groupId: groupId });
+    socket.emit('group_member_stop_typing', { groupId });
   };
 
   return (
@@ -242,6 +242,8 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
         isScrollBottom={isScrollBottom}
         groupedMessage={groupedMessage}
         activeMenuId={activeMenuId}
+        isNewMessages={isNewMessages}
+        setIsNewMessages={setIsNewMessages}
         setActiveMenuId={setActiveMenuId}
         setIsScrollBottom={setIsScrollBottom}
         setEditMessage={setEditMessage}
