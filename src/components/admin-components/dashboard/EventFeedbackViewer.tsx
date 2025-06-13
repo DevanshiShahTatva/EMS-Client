@@ -19,8 +19,12 @@ const EventFeedbackViewer = () => {
           method: 'GET',
         });
         const eventList = response?.data?.data || [];
-        setEvents(eventList);
-        setSelectedEvent(eventList[0] || null);
+
+        if(eventList.length > 0) {
+          const filterdEventList = eventList.filter((event: any) => event?.eventTitle !== null)
+          setEvents(filterdEventList);
+          setSelectedEvent(filterdEventList[0] || null);
+        }
       } catch (error) {
         console.error('Error fetching event feedback:', error);
       } finally {
@@ -36,7 +40,7 @@ const EventFeedbackViewer = () => {
       <div className={(events.length>0) ? "w-1/3 overflow-y-auto p-4 bg-gray-50":"w-full overflow-y-auto p-4 bg-gray-50 flex items-center justify-center"}>
         {loading ? (
           <Skeleton className="w-full h-full" />
-        ) : (events.filter(event => event?.eventTitle !== null).length>0) ? (
+        ) : (events.length>0) ? (
           <ul className="space-y-3">
             {events.map((event) => (
               <li
