@@ -218,3 +218,8 @@ export interface IRequestParams {
     withToken?: boolean; // optional flag
     isFormData?: boolean;
 }
+
+export interface SelectSeat {
+  seatNumber: string;
+  id: string;
+}

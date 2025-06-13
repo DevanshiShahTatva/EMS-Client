@@ -37,7 +37,7 @@ const StatCards: React.FC = () => {
 
             setStats({
                 Users: getTruthyNumber(result?.totalUsers),
-                Revenue: getTruthyNumber(result?.totalRevenue),
+                Revenue: +getTruthyNumber(result?.totalRevenue).toFixed(2),
                 Events: getTruthyNumber(result?.totalEvents),
                 Places: getTruthyNumber(result?.totalLocations),
             });

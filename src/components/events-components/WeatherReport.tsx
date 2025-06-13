@@ -155,13 +155,13 @@ const WeatherReport = (props: Props) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="bg-white rounded-3xl shadow-xl overflow-hidden grid md:grid-cols-3 w-full max-w-7xl">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6 sm:p-6">
+      <div className="bg-white rounded-3xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-3 w-full max-w-7xl">
         {/* Enhanced Left Section */}
-        <div className="col-span-1 relative bg-gradient-to-br from-amber-200 via-amber-300 to-yellow-400 p-8 flex flex-col justify-between text-gray-800 overflow-hidden">
+        <div className="col-span-1 relative bg-gradient-to-br from-amber-200 via-amber-300 to-yellow-400 p-6 sm:p-8 flex flex-col justify-between text-gray-800 overflow-hidden">
           {/* Decorative elements */}
-          <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-amber-100/30 -mt-16 -mr-16"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-amber-100/20 -mb-24 -ml-24"></div>
+          <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-amber-100/30 -mt-12 -mr-12 sm:-mt-16 sm:-mr-16"></div>
+          <div className="absolute bottom-0 left-0 w-36 h-36 sm:w-48 sm:h-48 rounded-full bg-amber-100/20 -mb-20 -ml-20 sm:-mb-24 sm:-ml-24"></div>
 
           {/* Weather pattern overlay */}
           <div className="absolute inset-0 opacity-10">
@@ -180,7 +180,7 @@ const WeatherReport = (props: Props) => {
           <div className="relative z-10 flex flex-col h-full">
             {/* Location and Date */}
             <div className="mb-6 text-center">
-              <h1 className="text-2xl font-bold">
+            <h1 className="text-xl sm:text-2xl font-bold">
                 {data.city.name}, {data.city.country}
               </h1>
               <p className="text-gray-700">
@@ -191,20 +191,20 @@ const WeatherReport = (props: Props) => {
             {/* Weather Visualization */}
             <div className="flex-grow flex flex-col items-center justify-center py-4">
               <div className="relative mb-10">
-                <div className="absolute -inset-4 bg-amber-100 rounded-full animate-pulse opacity-30"></div>
+              <div className="absolute -inset-3 sm:-inset-4 bg-amber-100 rounded-full animate-pulse opacity-30"></div>
                 <img
                   src={`https://openweathermap.org/img/wn/${data.current.weather[0].icon}@4x.png`}
                   alt={data.current.weather[0].description}
-                  className="w-40 h-40 drop-shadow-lg"
+                  className="w-32 h-32 sm:w-40 sm:h-40 drop-shadow-lg"
                 />
               </div>
 
               <div className="text-center">
-                <div className="text-7xl font-bold mb-2 relative inline-block">
+                <div className="text-5xl sm:text-7xl font-bold mb-2 relative inline-block">
                   {Math.round(data.current.main.temp)}°
-                  <span className="absolute top-0 -right-6 text-2xl">C</span>
+                  <span className="absolute top-0 -right-4 sm:-right-6 text-lg sm:text-2xl">C</span>
                 </div>
-                <p className="text-xl font-medium capitalize text-gray-700">
+                <p className="text-lg sm:text-xl font-medium capitalize text-gray-700">
                   {data.current.weather[0].description}
                 </p>
               </div>
@@ -212,7 +212,7 @@ const WeatherReport = (props: Props) => {
 
             {/* Temperature Range */}
             <div className="mb-6">
-              <div className="flex justify-between text-sm text-gray-600 mb-1">
+              <div className="flex justify-between text-xs sm:text-sm text-gray-600 mb-1">
                 <span>
                   Feels like {Math.round(data.current.main.feels_like)}°
                 </span>
@@ -226,7 +226,7 @@ const WeatherReport = (props: Props) => {
                   }}
                 ></div>
               </div>
-              <div className="flex justify-between mt-1 text-sm text-gray-600">
+              <div className="flex justify-between mt-1 text-xs sm:text-sm text-gray-600">
                 <span>0°</span>
                 <span>20°</span>
                 <span>40°</span>
@@ -236,18 +236,18 @@ const WeatherReport = (props: Props) => {
         </div>
 
         {/* Right Section - Forecast + Highlights */}
-        <div className="col-span-2 p-8 space-y-8 bg-white">
+        <div className="col-span-2 p-6 sm:p-8 space-y-8 bg-white">
           <div>
             <h3 className="text-xl font-semibold mb-4">Week Forecast</h3>
-            <div className="grid grid-cols-3 sm:grid-cols-7 gap-4 text-center">
+            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-7 gap-4 text-center">
               {data.daily.map((day: any, index: number) => (
                 <div
                   key={index}
-                  className="p-4 rounded-xl bg-gray-50 shadow-sm"
+                  className="p-3 sm:p-4 rounded-xl bg-gray-50 shadow-sm"
                 >
-                  <p className="font-medium mb-1">{formatDate(day.date)}</p>
+                  <p className="font-medium mb-1 text-sm sm:text-base">{formatDate(day.date)}</p>
                   {getWeatherIcon(day.weather)}
-                  <p className="text-sm mt-1">
+                  <p className="text-xs sm:text-sm mt-1">
                     {Math.round(day.maxTemp)}° / {Math.round(day.minTemp)}°
                   </p>
                 </div>
@@ -257,13 +257,13 @@ const WeatherReport = (props: Props) => {
 
           {/* Highlights Section */}
           <div>
-            <h3 className="text-xl font-semibold mb-4">Today's Highlights</h3>
+            <h3 className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">Today's Highlights</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {/* Feels Like */}
               <div className="p-4 bg-gray-50 rounded-xl text-center shadow-sm">
-                <SunIcon className="w-6 h-6 mx-auto text-yellow-500 mb-2" />
-                <p className="text-sm opacity-70 mb-1">Feels Like</p>
-                <p className="text-xl font-bold">
+                <SunIcon className="w-5 h-5 sm:w-6 sm:h-6 mx-auto text-yellow-500 mb-2" />
+                <p className="text-xs sm:text-sm opacity-70 mb-1">Feels Like</p>
+                <p className="text-lg sm:text-xl font-bold">
                   {Math.round(data.current.main.feels_like)}°C
                 </p>
               </div>

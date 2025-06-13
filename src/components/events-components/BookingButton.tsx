@@ -12,13 +12,15 @@ interface BookingButtonProps {
   status:boolean;
   points: number;
   conversionRate: number;
+  eventId: string
 }
 const BookingButton: React.FC<BookingButtonProps> = ({
   tickets,
   eventTitle,
   status,
   points,
-  conversionRate
+  conversionRate,
+  eventId
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const isSoldOut = areAllTicketsBooked(tickets)
@@ -74,6 +76,7 @@ const BookingButton: React.FC<BookingButtonProps> = ({
         onClose={() => setIsModalOpen(false)}
         eventTitle={eventTitle}
         tickets={tickets}
+        eventId={eventId}
       />
     </>
   )

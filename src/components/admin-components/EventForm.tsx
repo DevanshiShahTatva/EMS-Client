@@ -848,7 +848,7 @@ const EventForm: React.FC<IEventFormProps> = ({ eventType , isCloneEvent = false
           id: item._id,
           type: item.type?._id,
           price: item.price.toString(),
-          maxQty: `${item.totalSeats - item.totalBookedSeats}`,
+          maxQty: item.totalSeats.toString(),
           description: item.description,
           _id: item._id,
         }

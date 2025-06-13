@@ -148,7 +148,7 @@ export interface ISelectFieldsProps {
   name: string;
   errorKey : boolean;
   options :  any[];
-  value: string;
+  value: string | number;
   onChange: (option: string) => void;
   placeholder?: string;
   errorMsg?: string;
@@ -156,13 +156,15 @@ export interface ISelectFieldsProps {
   readOnly?:boolean;
   disabled?:boolean;
   height?: string,
+  isClearable? : boolean
 };
 
 export interface ISeatLayout {
   ticketType: string; // ObjectId as string
   price: number;
   rows: ISeatRow[];
-  id?:string
+  id?:string,
+  isBooked? : boolean
 }
 
 export interface ISeatRow {
@@ -173,6 +175,7 @@ export interface ISeatRow {
 export interface ISeat {
   seatNumber: string | number; // e.g., "A1", "A2"
   isUsed: boolean;
+  isBooked?: boolean;
 }
 
 

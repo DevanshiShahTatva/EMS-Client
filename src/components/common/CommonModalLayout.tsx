@@ -21,7 +21,8 @@ interface ICustomModalProps {
     modalTitle : string,
     children : React.ReactNode,
     footerActions?: TModalFooterActions[]
-    maxHeight?: string
+    maxHeight?: string;
+    maxWidth?: string;
 }
 
 const ModalLayout: React.FC<ICustomModalProps> = ({
@@ -30,15 +31,17 @@ const ModalLayout: React.FC<ICustomModalProps> = ({
   children,
   footerActions = [],
   maxHeight,
+  maxWidth
 }) => {
 
     const gridCols =
         footerActions.length === 1 ? "grid-cols-1" : "grid-cols-2";
     const contentMaxHeigh = maxHeight ? `max-h-[${maxHeight}]` : "max-h-96";
+    const modalMaxWidth = maxWidth ? maxWidth : `max-w-xl`
 
   return (
     <div className="fixed inset-0 z-45 flex items-center justify-center bg-black/60 bg-opacity-40 px-8 md:px-0">
-      <div className="bg-white w-full max-w-xl rounded-lg shadow-xl relative">
+      <div className={`bg-white w-full ${modalMaxWidth} rounded-lg shadow-xl relative`}>
         {/* Title Section Start */}
         <div className="flex justify-between items-center border-b-1 px-6 py-5 border-b-gray-300">
           <p className="font-bold text-2xl">{modalTitle}</p>

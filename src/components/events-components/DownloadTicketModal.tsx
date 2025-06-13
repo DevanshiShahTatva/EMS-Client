@@ -23,6 +23,7 @@ const DownloadTicketModal: React.FC<ITicketProps> = ({ eventData, isOpen, onClos
     eventName: eventData.event.title || "",
     eventTicketCount: eventData.seats,
     eventTicketPrice: eventData.totalAmount,
+    eventSeatsNumber:eventData.selectedSeatsNumbers.map(seat => seat.seatNumber).join(", ")
   };
 
   const { toPDF, targetRef } = usePDF({
@@ -51,6 +52,7 @@ const DownloadTicketModal: React.FC<ITicketProps> = ({ eventData, isOpen, onClos
                 <div><span className='text-black font-bold'>{eventData.event.location.address}</span></div>
                 <div><span className='text-black font-bold'>{moment(eventData.event.startDateTime).local().format("DD MMM YYYY")} - {moment(eventData.event.endDateTime).local().format("DD MMM YYYY")}</span></div>
                 <div><span className='text-black font-bold'>{moment(eventData.event.startDateTime).local().format('hh:mm A')} - {moment(eventData.event.endDateTime).local().format('hh:mm A')}</span></div>
+                <div><span className='text-black font-bold'>{eventData.selectedSeatsNumbers.map(seat => seat.seatNumber).join(", ")}</span></div>
                 <div><span className='text-black font-bold'>Rs. ₹{eventData.totalAmount}</span></div>
               </div>
               <div className="relative my-4">

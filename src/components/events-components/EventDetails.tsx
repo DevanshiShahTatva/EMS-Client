@@ -272,6 +272,7 @@ export default function EventDetailsPage({ eventId }: { eventId: string }) {
                   eventTitle={event.title}
                   conversionRate={event.conversionRate}
                   status={hasEventEnded(event.endDateTime)}
+                  eventId={event._id}
                 />
               </div>
             </div>

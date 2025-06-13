@@ -21,7 +21,8 @@ const CustomSelectField: React.FC<ISelectFieldsProps> = ({
   errorKey,
   readOnly = false,
   disabled = false,
-  height = "1rem"
+  height = "1rem",
+  isClearable = true
 }) => {
 
     const customStyles = {
@@ -110,7 +111,7 @@ const CustomSelectField: React.FC<ISelectFieldsProps> = ({
         placeholder={placeholder}
         styles={customStyles}
         formatOptionLabel={formatOptionLabel}
-        isClearable
+        isClearable={isClearable}
         isDisabled={disabled || readOnly}
       />
       {errorKey && <p className="text-red-500 text-sm mt-1">{errorMsg}</p>}
