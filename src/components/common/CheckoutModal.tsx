@@ -272,7 +272,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
           {/* Coin Redeem Section */}
           {activeMethod === "coins" && points > 0 && (
-            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-100 rounded-lg">
+            <div className="mt-4 bg-yellow-50 border border-yellow-100 rounded-lg">
               <CoinRedeemCard
                 totalUserCoins={points}
                 totalAmount={totalPrice}
@@ -360,12 +360,12 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         </div>
 
         {/* Policy Notice */}
-        <div className="mt-6 p-4 bg-red-50 border border-red-100 rounded-lg">
+        <div className="mt-6 p-4 bg-yellow-50 border border-yellow-100 rounded-lg">
           <div className="flex items-start gap-3">
             <div className="mt-0.5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-red-500"
+                className="h-5 w-5 text-yellow-500"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -377,10 +377,10 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </svg>
             </div>
             <div>
-              <p className="text-sm font-medium text-red-800">
+              <p className="text-sm font-medium text-yellow-800">
                 Cancellation Policy
               </p>
-              <p className="mt-1 text-sm text-red-700">
+              <p className="mt-1 text-sm text-yellow-700">
                 A <span className="font-semibold">{charge}% cancellation fee</span>{" "}
                 applies to this ticket. This charge will be deducted if you
                 cancel your booking.
