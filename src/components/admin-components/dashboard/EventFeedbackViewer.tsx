@@ -19,8 +19,12 @@ const EventFeedbackViewer = () => {
           method: 'GET',
         });
         const eventList = response?.data?.data || [];
-        setEvents(eventList);
-        setSelectedEvent(eventList[0] || null);
+
+        if(eventList.length > 0) {
+          const filterdEventList = eventList.filter((event: any) => event?.eventTitle !== null)
+          setEvents(filterdEventList);
+          setSelectedEvent(filterdEventList[0] || null);
+        }
       } catch (error) {
         console.error('Error fetching event feedback:', error);
       } finally {
@@ -44,7 +48,7 @@ const EventFeedbackViewer = () => {
                 className={`cursor-pointer p-2 rounded hover:bg-gray-200 ${selectedEvent?.eventId === event.eventId ? 'bg-gray-300' : ''}`}
                 onClick={() => setSelectedEvent(event)}
               >
-                {event.eventTitle || 'Untitled Event'}
+                {event.eventTitle}
               </li>
             ))}
           </ul>

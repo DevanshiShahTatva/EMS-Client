@@ -18,6 +18,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
   const searchParams = useSearchParams();
   const privateChatId = searchParams.get('id');
   const groupChatId = searchParams.get('group');
+
   const [userId, setUserId] = useState<string | null>(null);
   const [myGroups, setMyGroups] = useState<IGroup[]>([]);
   const [myPrivateChats, setMyPrivateChats] = useState<IPrivateChat[]>([]);
