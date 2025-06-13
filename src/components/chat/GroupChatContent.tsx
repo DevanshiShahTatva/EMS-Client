@@ -20,6 +20,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
   const [editMessage, setEditMessage] = useState<IMessage | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [isScrollBottom, setIsScrollBottom] = useState(false);
+  const [isNewMessages, setIsNewMessages] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const getDateKey = (date: string | Date) => {
@@ -97,6 +98,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
         return newGroups;
       });
     }
+    setIsNewMessages(true);
   };
 
   const handleEditedOrDeletedMessage = ({ status, groupId: msgGroupId, messageId, isLastMessage, updatedTime, newMessage: updatedContent }: any) => {
@@ -240,6 +242,8 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
         isScrollBottom={isScrollBottom}
         groupedMessage={groupedMessage}
         activeMenuId={activeMenuId}
+        isNewMessages={isNewMessages}
+        setIsNewMessages={setIsNewMessages}
         setActiveMenuId={setActiveMenuId}
         setIsScrollBottom={setIsScrollBottom}
         setEditMessage={setEditMessage}

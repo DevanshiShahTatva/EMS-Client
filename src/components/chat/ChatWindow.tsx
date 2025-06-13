@@ -11,11 +11,13 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
   userId,
   isGroup,
   isLoading,
+  isNewMessages,
   isScrollBottom,
   groupedMessage,
   activeMenuId,
   chatApiEndpoint,
   groupMessagesByDate,
+  setIsNewMessages,
   setActiveMenuId,
   setEditMessage,
   setIsScrollBottom,
@@ -323,7 +325,15 @@ const ChatWindow: React.FC<IChatWindowProps> = ({
         src={msg.content}
         alt="not found"
         className='rounded-lg pb-1'
-        onLoad={() => isScrollBottom && setImagesLoaded(prev => prev + 1)}
+        onLoad={() => {
+          if (isScrollBottom) {
+            setImagesLoaded(prev => prev + 1);
+            if (isNewMessages) {
+              scrollToBottom();
+              setIsNewMessages(false);
+            }
+          }
+        }}
         onError={() => isScrollBottom && setImagesLoaded(prev => prev + 1)}
       />;
     }

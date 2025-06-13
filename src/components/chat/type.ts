@@ -118,11 +118,13 @@ export interface IChatWindowProps {
   isGroup: boolean;
   isLoading: boolean;
   userId: string | null;
+  isNewMessages: boolean;
   isScrollBottom: boolean;
   chatApiEndpoint: string;
   groupMessagesByDate: any;
   activeMenuId: string | null;
   groupedMessage: IGroupedMessages;
+  setIsNewMessages: React.Dispatch<React.SetStateAction<boolean>>;
   setIsScrollBottom: React.Dispatch<React.SetStateAction<boolean>>;
   setActiveMenuId: React.Dispatch<React.SetStateAction<string | null>>;
   setEditMessage: React.Dispatch<React.SetStateAction<IMessage | null>>;

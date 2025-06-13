@@ -19,6 +19,7 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [editMessage, setEditMessage] = useState<IMessage | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [isNewMessages, setIsNewMessages] = useState(false);
   const [isScrollBottom, setIsScrollBottom] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -63,6 +64,7 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
         newChats.unshift(updatedChat);
         return newChats;
       });
+      setIsNewMessages(true);
     }
   };
 
@@ -82,6 +84,7 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
           chat.id === msgChatId
             ? {
               ...chat,
+              msgType: 'text',
               lastMessage: updatedContent,
               lastMessageTime: updatedTime ? moment(updatedTime).format('hh:mm A') : chat.lastMessageTime
             }
@@ -226,6 +229,8 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
         isScrollBottom={isScrollBottom}
         groupedMessage={groupedMessage}
         activeMenuId={activeMenuId}
+        isNewMessages={isNewMessages}
+        setIsNewMessages={setIsNewMessages}
         setActiveMenuId={setActiveMenuId}
         setIsScrollBottom={setIsScrollBottom}
         setEditMessage={setEditMessage}
