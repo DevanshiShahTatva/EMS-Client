@@ -52,10 +52,10 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
           ...prev[index],
           unreadCount: 0,
           lastMessage: message.content,
+          msgType: message.msgType ?? 'text',
           senderId: message.sender?._id ?? "",
           lastMessageSender: message.sender?.name ?? "",
           lastMessageTime: moment(message.createdAt).format('hh:mm A'),
-          updatedAt: new Date(message.createdAt)
         };
 
         const newChats = prev.slice();
@@ -182,10 +182,10 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
     socket.emit('user_stopped_typing', { chatId });
   };
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = (content: string, type: 'text' | 'image') => {
     const socket = getSocket();
     if (!socket || !chatId) return;
-    socket.emit("new_private_message", { chatId, content });
+    socket.emit("new_private_message", { chatId, type, content });
   };
 
   const handleDeleteMessage = (status: 'deleted', messageId: string) => {

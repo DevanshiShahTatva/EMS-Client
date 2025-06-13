@@ -36,6 +36,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
 
         const updatedGroup = {
           ...prev[index],
+          msgType: updatedInfo.msgType,
           unreadCount: updatedInfo.unreadCount,
           senderId: updatedInfo.senderId ?? null,
           status: updatedInfo.lastMessage?.status ?? "",
@@ -56,6 +57,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
 
         const updatedChat = {
           ...prev[index],
+          msgType: updatedInfo.msgType,
           unreadCount: updatedInfo.unreadCount,
           senderId: updatedInfo.senderId ?? null,
           status: updatedInfo.lastMessage?.status ?? "",
@@ -144,6 +146,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
           name: group.name,
           image: group.icon,
           members: group.members,
+          msgType: group.msgType,
           senderId: group.senderId,
           unreadCount: group.unreadCount ?? 0,
           lastMessage: group.lastMessage,
@@ -179,6 +182,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
           id: chat.id,
           name: chat.name,
           image: chat.image,
+          msgType: chat.msgType,
           senderId: chat.senderId,
           unreadCount: chat.unreadCount ?? 0,
           lastMessage: chat.lastMessage,
@@ -226,6 +230,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
           id: chat.id,
           name: chat.name,
           image: chat.image,
+          msgType: 'text',
           senderId: chat.senderId,
           unreadCount: 0,
           lastMessage: '',

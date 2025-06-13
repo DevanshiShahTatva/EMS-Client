@@ -85,10 +85,10 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
           ...prev[index],
           unreadCount: 0,
           lastMessage: message.content,
+          msgType: message.msgType ?? 'text',
           senderId: message.sender?._id ?? "",
           lastMessageSender: message.sender?.name ?? "",
           lastMessageTime: moment(message.createdAt).format('hh:mm A'),
-          updatedAt: new Date(message.createdAt)
         };
 
         const newGroups = prev.slice();
@@ -182,23 +182,20 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     };
   }, [groupId, userId]);
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = (content: string, type: 'text' | 'image') => {
     const socket = getSocket();
     if (!socket || !groupId) return;
-    socket.emit("send_group_message", {
-      groupId: groupId,
-      content: content,
-    });
+    socket.emit("send_group_message", { groupId, type, content });
   };
 
   const handleEditMessage = (messageId: string, newContent: string) => {
     const socket = getSocket();
     if (!socket) return;
     socket.emit("edit_or_delete_message", {
-      status: 'edited',
+      groupId,
       messageId,
       newContent,
-      groupId: groupId,
+      status: 'edited',
     });
   };
 
@@ -206,23 +203,23 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     const socket = getSocket();
     if (!socket) return;
     socket.emit("edit_or_delete_message", {
+      groupId,
       status,
       messageId,
       newContent: "",
-      groupId: groupId,
     });
   };
 
   const handleStartTyping = () => {
     const socket = getSocket();
     if (!socket || !groupId) return;
-    socket.emit('group_member_typing', { groupId: groupId });
+    socket.emit('group_member_typing', { groupId });
   }
 
   const handleStopTyping = () => {
     const socket = getSocket();
     if (!socket || !groupId) return;
-    socket.emit('group_member_stop_typing', { groupId: groupId });
+    socket.emit('group_member_stop_typing', { groupId });
   };
 
   return (

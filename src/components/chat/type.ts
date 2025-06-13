@@ -4,6 +4,7 @@ export interface IMessage {
   content: string;
   status?: 'edited' | 'deleted';
   isSystemMessage?: boolean;
+  msgType: 'text' | 'image';
   systemMessageType?: string;
   systemMessageData?: {
     userId: string;
@@ -25,6 +26,7 @@ export interface IGroup {
   senderId?: string;
   members: IMember[];
   unreadCount: number;
+  msgType: 'text' | 'image';
   lastMessage?: string;
   lastMessageTime?: string;
   lastMessageSender?: string;
@@ -34,6 +36,7 @@ export interface IPrivateChat {
   id: string;
   name: string;
   image?: string;
+  msgType: 'text' | 'image';
   senderId: string;
   unreadCount: number;
   lastMessage?: string;
@@ -52,6 +55,7 @@ export interface IPrivateMessage {
   };
   content: string;
   createdAt: string;
+  msgType: 'text' | 'image';
   status: 'edited' | 'deleted';
 }
 
@@ -139,7 +143,7 @@ export interface IMessageInputProps {
   editMessage: IMessage | null;
   onStartTyping: () => void;
   onStopTyping: () => void;
-  onSendMessage: (content: string) => void;
+  onSendMessage: (content: string, type: 'text' | 'image') => void;
   onEditMessage: (messageId: string, newContent: string) => void;
   setEditMessage: React.Dispatch<React.SetStateAction<IMessage | null>>;
 }
