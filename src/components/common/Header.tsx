@@ -58,6 +58,11 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
     window.dispatchEvent(new Event("handleShowChatBotUpdate"));
   }
 
+  const navToStaffProfile = () => {
+    setIsDropdownOpen(false)
+    router.push(ROUTES.ORGANIZER.PROFILE)
+  }
+
   const navToProfile = () => {
     setIsDropdownOpen(false)
     router.push(ROUTES.USER_PROFILE)
@@ -254,10 +259,10 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                         width={30}
                         src={logo}
                         alt="Logo"
-                        className="rounded-full h-[30px] w-[30px] object-cover"
+                        className="rounded-full h-[41.80px] w-[41.80px] object-cover"
                       />
                       :
-                      <button className='h-[30px] w-[30px] rounded-full bg-indigo-600 text-white font-bold relative cursor-pointer'>
+                      <button className='h-[41.80px] w-[41.80px] rounded-full bg-indigo-600 text-white font-bold relative cursor-pointer'>
                         {isAdmiRole ? "A" : name.charAt(0).toUpperCase()}
                       </button>
                     }
@@ -302,6 +307,12 @@ const Header: React.FC<HeaderPageProps> = ({ toggleSidebar, isAdmiRole = false, 
                             Payment History
                           </button>
                         </>
+                      )}
+                      {isStaffRole && (
+                        <button onClick={navToStaffProfile} className={`flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer  ${activeLink===ROUTES.ORGANIZER.PROFILE ? "bg-gray-100":''}`  }>
+                          <UserCircle className="w-5 h-5 mr-3" />
+                          Profile
+                        </button>
                       )}
                       <button onClick={handleLogout} className="flex items-center w-full px-4 py-2 font-semibold text-gray-500 hover:bg-gray-100 cursor-pointer">
                         <LogOut className="w-5 h-5 mr-3" />

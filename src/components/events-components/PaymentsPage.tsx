@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { apiCall } from '@/utils/services/request'
 import { API_ROUTES } from '@/utils/constant'
 import { CheckoutTicket } from '@/app/events/types'
+import { SelectSeat } from '@/utils/types'
 
 const PaymentResultPage = () => {
   const router = useRouter()
@@ -13,20 +14,25 @@ const PaymentResultPage = () => {
 
   const [ticketDetails, setTicketDetails] = useState<CheckoutTicket | null>(null)
   const [eventTitle, setEventTitle] = useState<string>('')
-  const [isSuccess, setIsSuccess] = useState<boolean | null>(null)
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
 
   useEffect(() => {
     const storedTickets = sessionStorage.getItem('tickets')
     const storedEventTitle = sessionStorage.getItem('eventTitle')
     const storedEventId = sessionStorage.getItem('eventId')
+    const selectedSeats = sessionStorage.getItem('selectedSeats')
     const paymentId = searchParams.get('session_id')
-    if (!storedTickets || !storedEventTitle || !storedEventId || !paymentId) {
+    if (!storedTickets || !storedEventTitle || !storedEventId || !paymentId || !selectedSeats) {
       setIsSuccess(false)
       return
     }
 
     try {
-      const parsedTickets: CheckoutTicket = JSON.parse(storedTickets)
+      const parsedTickets: CheckoutTicket = JSON.parse(storedTickets);
+      const parsedSelectedSeats: SelectSeat[] = JSON.parse(selectedSeats);
+      const seatIds = parsedSelectedSeats.map((seat) => seat.seatNumber);
+      setSelectedSeats(seatIds);
       setTicketDetails(parsedTickets)
       setEventTitle(storedEventTitle)
 
@@ -39,6 +45,7 @@ const PaymentResultPage = () => {
       formData.append('totalAmount', parsedTickets.totalPrice.toString())
       formData.append('paymentId', paymentId)
       formData.append('bookingDate', creationDate)
+      formData.append('selectedSeats', selectedSeats)
       parsedTickets.voucherId && formData.append('voucherId', parsedTickets.voucherId);
       parsedTickets?.usedPoints > 0 && formData.append('usedPoints', parsedTickets.usedPoints.toString())
       parsedTickets?.discount > 0 && formData.append('discount', parsedTickets.discount.toString())
@@ -104,10 +111,14 @@ const PaymentResultPage = () => {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Total Paid</span>
+              <span className="text-gray-600">Quantity</span>
               <span className="font-medium text-gray-900">
-              ₹{ticketDetails.totalPrice.toFixed(2)}
+                {ticketDetails.quantity}
               </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Seats</span>
+              <span>{selectedSeats.join(", ")}</span>
             </div>
             {ticketDetails.discount > 0 && (
               <div className="flex justify-between">
