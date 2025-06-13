@@ -18,7 +18,6 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
   const searchParams = useSearchParams();
   const privateChatId = searchParams.get('id');
   const groupChatId = searchParams.get('group');
-  const handledRef = useRef(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [myGroups, setMyGroups] = useState<IGroup[]>([]);
   const [myPrivateChats, setMyPrivateChats] = useState<IPrivateChat[]>([]);
@@ -27,6 +26,9 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
   const [currentChatType, setCurrentChatType] = useState<'group' | 'private'>('group');
   const [openChatInfo, setOpenChatInfo] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const handledRef = useRef(false);
+  const userIdRef = useRef<string | null>(null);
 
   const handleUpdateUnreadCount = (updatedInfo: any) => {
     if (updatedInfo.type === 'group') {
@@ -86,7 +88,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
   };
 
   const handleGroupMemberRemoved = ({ groupId, groupName, removedMemberId }: any) => {
-    if (removedMemberId === userId) {
+    if (removedMemberId === userIdRef.current) {
       toast.success(`You were removed from the group ${groupName ?? ""}`);
       setOpenChatInfo(false);
       setMyGroups(prev => prev.filter(group => group.id !== groupId));
@@ -104,8 +106,6 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
   };
 
   useEffect(() => {
-    if (!userId) return;
-
     connectSocket();
 
     const socket = getSocket();
@@ -122,7 +122,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
 
       disconnectSocket();
     };
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
     if (privateChatId && !handledRef.current) {
@@ -154,6 +154,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
           lastMessageTime: group.lastMessage ? moment(group.lastMessageTime).format('hh:mm A') : '',
         })));
         setUserId(response.userId);
+        userIdRef.current = response.userId;
         if (groupChatId && !handledRef.current) {
           handleSetActiveChat(groupChatId, "group");
           handledRef.current = true;
@@ -190,6 +191,7 @@ const ChatLayout = ({ isAdmin }: { isAdmin?: boolean }) => {
           lastMessageTime: chat.lastMessage ? moment(chat.lastMessageTime).format('hh:mm A') : '',
         })));
         setUserId(response.userId);
+        userIdRef.current = response.userId;
         if (privateChatId && !handledRef.current) {
           handleSetActiveChat(privateChatId, "private");
           handledRef.current = true;

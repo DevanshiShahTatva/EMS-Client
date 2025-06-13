@@ -182,10 +182,10 @@ const PrivateChatContent: React.FC<IPrivateChatContentProps> = ({
     socket.emit('user_stopped_typing', { chatId });
   };
 
-  const handleSendMessage = (content: string, type: 'text' | 'image') => {
+  const handleSendMessage = (type: 'text' | 'image', content: string, imageId?: string) => {
     const socket = getSocket();
     if (!socket || !chatId) return;
-    socket.emit("new_private_message", { chatId, type, content });
+    socket.emit("new_private_message", { chatId, type, content, imageId });
   };
 
   const handleDeleteMessage = (status: 'deleted', messageId: string) => {

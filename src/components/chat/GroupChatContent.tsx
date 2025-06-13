@@ -115,6 +115,7 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
           group.id === msgGroupId
             ? {
               ...group,
+              msgType: 'text',
               lastMessage: updatedContent,
               lastMessageTime: updatedTime ? moment(updatedTime).format('hh:mm A') : group.lastMessageTime
             }
@@ -182,10 +183,10 @@ const GroupChatContent: React.FC<IGroupChatContentProps> = ({
     };
   }, [groupId, userId]);
 
-  const handleSendMessage = (content: string, type: 'text' | 'image') => {
+  const handleSendMessage = (type: 'text' | 'image', content: string, imageId?: string) => {
     const socket = getSocket();
     if (!socket || !groupId) return;
-    socket.emit("send_group_message", { groupId, type, content });
+    socket.emit("send_group_message", { groupId, type, content, imageId });
   };
 
   const handleEditMessage = (messageId: string, newContent: string) => {

@@ -114,7 +114,7 @@ const MessageInput: React.FC<IMessageInputProps> = ({
     if (editMessage) {
       onEditMessage(editMessage._id, content);
     } else {
-      onSendMessage(content, 'text');
+      onSendMessage('text', content);
     }
     setNewMessage("");
     setEditMessage(null);
@@ -208,8 +208,8 @@ const MessageInput: React.FC<IMessageInputProps> = ({
     const formData = new FormData();
     formData.append('image', file);
     try {
-      const response = await apiCall({
-        endPoint: '/chat/upload',
+      const { imageObj } = await apiCall({
+        endPoint: '/chat/image-upload',
         method: 'POST',
         headers: {},
         isFormData: true,
@@ -224,9 +224,9 @@ const MessageInput: React.FC<IMessageInputProps> = ({
         uploadProgress: 100
       } : null);
 
-      const url = response.imageObj?.url;
+      const url = imageObj?.url;
       if (url) {
-        onSendMessage(url, 'image');
+        onSendMessage('image', url, imageObj.imageId);
 
         setTimeout(() => {
           setImageUpload(null);

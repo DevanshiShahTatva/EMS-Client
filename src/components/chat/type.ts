@@ -5,6 +5,7 @@ export interface IMessage {
   status?: 'edited' | 'deleted';
   isSystemMessage?: boolean;
   msgType: 'text' | 'image';
+  imageId?: string;
   systemMessageType?: string;
   systemMessageData?: {
     userId: string;
@@ -143,7 +144,7 @@ export interface IMessageInputProps {
   editMessage: IMessage | null;
   onStartTyping: () => void;
   onStopTyping: () => void;
-  onSendMessage: (content: string, type: 'text' | 'image') => void;
+  onSendMessage: (type: 'text' | 'image', content: string, imageId?: string) => void;
   onEditMessage: (messageId: string, newContent: string) => void;
   setEditMessage: React.Dispatch<React.SetStateAction<IMessage | null>>;
 }

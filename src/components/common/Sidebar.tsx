@@ -28,7 +28,7 @@ const Sidebar: React.FC<ISidebarPageProps> = ({ children, isOpen, onClose, activ
         />
       )}
 
-      <div className="flex min-h-[calc(100vh-82px)]">
+      <div className="flex min-h-[calc(100vh-83px)]">
         {/* Sidebar */}
         <div className={`md:flex flex-col transition-all duration-300 ease-in-out ${role === ROLE.Admin || role === ROLE.Organizer
             ? isCollase
